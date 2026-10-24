@@ -394,7 +394,7 @@ function renderPasscodeDots() {
 }
 
 function enterPasscodeDigit(digit) {
-  if (!/^\\d$/.test(String(digit)) || enteredPasscode.length >= 4) return;
+  if (!/^[0-9]$/.test(String(digit)) || enteredPasscode.length >= 4) return;
   window.clearTimeout(passcodeResetTimer);
   const error = $('#passcodeError');
   if (error) error.textContent = '';
@@ -579,7 +579,7 @@ $('#appHomebar').addEventListener('click',goHome);
 $('#passcodeCancel').addEventListener('click',closePasscode);
 $('#passcodePad').addEventListener('click',e=>{const key=e.target.closest('[data-digit]');if(key)enterPasscodeDigit(key.dataset.digit)});
 $('#passcodeDelete').addEventListener('click',()=>{enteredPasscode=enteredPasscode.slice(0,-1);renderPasscodeDots();$('#passcodeError').textContent=''});
-document.addEventListener('keydown',e=>{if(!$('#passcodeScreen').classList.contains('active'))return;if(/^\\d$/.test(e.key))enterPasscodeDigit(e.key);else if(e.key==='Backspace'){enteredPasscode=enteredPasscode.slice(0,-1);renderPasscodeDots()}else if(e.key==='Escape')closePasscode()});
+document.addEventListener('keydown',e=>{if(!$('#passcodeScreen').classList.contains('active'))return;if(/^[0-9]$/.test(e.key))enterPasscodeDigit(e.key);else if(e.key==='Backspace'){enteredPasscode=enteredPasscode.slice(0,-1);renderPasscodeDots()}else if(e.key==='Escape')closePasscode()});
 // Unified swipe gesture for touch, pen, and mouse; move the lock screen with the finger.
 const lockScreen=$('#lock');let swipeStartY=null,swipePointerId=null,swipeMoved=false;
 lockScreen.addEventListener('pointerdown',e=>{if(!lockScreen.classList.contains('active')||unlockInProgress)return;if(e.pointerType==='mouse'&&e.button!==0)return;swipeStartY=e.clientY;swipePointerId=e.pointerId;swipeMoved=false;lockScreen.classList.add('dragging');try{lockScreen.setPointerCapture(e.pointerId)}catch(_){}},{passive:true});
