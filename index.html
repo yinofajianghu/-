@@ -692,16 +692,13 @@ wallpaperStyle();initHome();updateClock();setInterval(updateClock,1000);
     screen.style.zIndex='9999';
     screen.style.position='absolute';
     screen.style.inset='0';
-    screen.classList.add('active');
-    screen.setAttribute('aria-hidden','false');
-    if(typeof closePasscode==='function')closePasscodeFallbackInit();
-  }
-  function closePasscodeFallbackInit(){
-    /* Keep any existing passcode state in sync without closing the screen. */
-    const dots=document.querySelectorAll('#passcodeDots .passcode-dot');
-    dots.forEach(d=>d.classList.remove('filled'));
-    const error=document.getElementById('passcodeError');if(error)error.textContent='';
-  }
+    if(typeof openPasscode==='function'){
+      try{openPasscode();}catch(_){screen.classList.add('active');screen.setAttribute('aria-hidden','false');}
+    }else{
+      screen.classList.add('active');screen.setAttribute('aria-hidden','false');
+      const dots=document.querySelectorAll('#passcodeDots .passcode-dot');dots.forEach(d=>d.classList.remove('filled'));
+      const error=document.getElementById('passcodeError');if(error)error.textContent='';
+    }
   function hidePasscode(){
     screen.classList.remove('active');screen.style.display='none';screen.setAttribute('aria-hidden','true');
   }
