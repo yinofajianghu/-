@@ -8,7 +8,7 @@
 <style>
 :root{--ink:#fff;--muted:rgba(255,255,255,.7);--glass:rgba(255,255,255,.18);--line:rgba(255,255,255,.2);--blue:#0a84ff;--safe-top:env(safe-area-inset-top,0px);--safe-bottom:env(safe-area-inset-bottom,0px)}
 *{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#111;color:white;overscroll-behavior:none}button,input,textarea{font:inherit}button{cursor:pointer;color:inherit;border:0}button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid #fff;outline-offset:3px}
-#phone{position:relative;width:100%;height:100dvh;overflow:hidden;background:#17233e;isolation:isolate}
+#phone{position:relative;width:100%;height:100dvh;overflow:hidden;background:#17233e;isolation:isolate;--screen-brightness:1}
 .wallpaper{position:absolute;inset:0;background-image:linear-gradient(145deg,rgba(8,17,40,.15),rgba(10,8,35,.35)),var(--wallpaper);background-size:cover;background-position:center;z-index:-2}
 .wallpaper:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.08),transparent 35%,rgba(0,0,0,.15))}
 #lock,#home,#appView{position:absolute;inset:0;display:none}
@@ -184,7 +184,7 @@ html,body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro 
 @media(max-width:360px){#home{padding-left:14px;padding-right:14px}.widgets{gap:8px}.widget{padding:11px}.app-grid{column-gap:4px}.lock-controls{padding:0 24px}}
 
 
-#phone.flashlight-on .wallpaper{filter:brightness(2.8) saturate(.2)}
+#phone .wallpaper{filter:brightness(var(--screen-brightness,1))}\n#phone.flashlight-on .wallpaper{filter:brightness(2.8) saturate(.2)}
 #phone.flashlight-on .wallpaper:after{background:rgba(255,255,235,.88)}
 #phone.flashlight-on #lock{color:#252525;text-shadow:none}
 #phone.flashlight-on .lock-time,#phone.flashlight-on .lock-date,#phone.flashlight-on .lock-small{color:#252525;text-shadow:none}
@@ -498,29 +498,81 @@ wallpaperStyle();initHome();updateClock();setInterval(updateClock,1000);
 
 
 (function(){
- const cc=document.querySelector('#controlCenter'),phone=document.querySelector('#phone');
- const openCC=()=>cc.classList.add('active'),closeCC=()=>cc.classList.remove('active');
- document.querySelector('#ccDone').addEventListener('click',closeCC);
- document.querySelector('#ccClose').addEventListener('click',closeCC);
- document.querySelector('.status').addEventListener('click',openCC);
- document.querySelectorAll('[data-toggle]').forEach(b=>b.addEventListener('click',()=>{
-   b.classList.toggle('on');
-   if(b.dataset.toggle==='flashlight')phone.classList.toggle('flashlight-on',b.classList.contains('on'));
- }));
- document.querySelector('#brightnessControl').addEventListener('input',e=>{phone.style.filter='brightness('+Number(e.target.value)/100+')'});
- document.querySelector('#flashlightButton').addEventListener('click',()=>{
-   phone.classList.toggle('flashlight-on');
-   const b=document.querySelector('[data-toggle="flashlight"]');b.classList.toggle('on',phone.classList.contains('flashlight-on'));
- });
- document.querySelector('#lockCameraButton').addEventListener('click',()=>{unlock();setTimeout(()=>showApp('camera'),280)});
- const weather=document.querySelector('#lockWeather'),event=document.querySelector('#lockEvent');
- if(weather)weather.textContent=(CONFIG.weather?.desc||'晴朗')+' · '+(CONFIG.weather?.temp||'24°');
- if(event)event.textContent=CONFIG.events?.[0]?.title||'今天沒有其他安排';
- let startY=0;
- phone.addEventListener('touchstart',e=>{startY=e.touches[0].clientY},{passive:true});
- phone.addEventListener('touchend',e=>{const dy=e.changedTouches[0].clientY-startY;if(startY<48&&dy>70)openCC();if(cc.classList.contains('active')&&dy < -70)closeCC()},{passive:true});
- document.addEventListener('keydown',e=>{if(e.key==='Escape'&&cc.classList.contains('active'))closeCC()});
-})();
+  const $ = (selector) => document.querySelector(selector);
+  const phone = $('#phone');
+  const cc = $('#controlCenter');
+  if (!phone || !cc) return;
+
+  const closeCC = () => { cc.classList.remove('active'); cc.setAttribute('aria-hidden', 'true'); };
+  const openCC = () => { cc.classList.add('active'); cc.setAttribute('aria-hidden', 'false'); };
+
+  function setFlashlight(enabled) {
+    phone.classList.toggle('flashlight-on', Boolean(enabled));
+    document.querySelectorAll('[data-toggle="flashlight"]').forEach((b) => {
+      b.classList.toggle('on', Boolean(enabled));
+      b.setAttribute('aria-pressed', String(Boolean(enabled)));
+    });
+    const lockButton = $('#flashlightButton');
+    if (lockButton) lockButton.setAttribute('aria-pressed', String(Boolean(enabled)));
+  }
+
+  // One delegated handler means all controls work consistently on touch and mouse.
+  document.addEventListener('click', (e) => {
+    if (e.target.closest('.status')) { e.preventDefault(); openCC(); return; }
+    if (e.target.closest('#ccDone, #ccClose')) { e.preventDefault(); closeCC(); return; }
+    const tile = e.target.closest('[data-toggle]');
+    if (tile) {
+      const enabled = tile.classList.toggle('on');
+      tile.setAttribute('aria-pressed', String(enabled));
+      if (tile.dataset.toggle === 'flashlight') setFlashlight(enabled);
+      return;
+    }
+    if (e.target.closest('#flashlightButton')) {
+      e.preventDefault(); setFlashlight(!phone.classList.contains('flashlight-on')); return;
+    }
+    if (e.target.closest('#lockCameraButton')) {
+      e.preventDefault();
+      const lock = $('#lock');
+      if (lock && lock.classList.contains('active')) {
+        unlock();
+        window.setTimeout(() => showApp('camera'), 320);
+      } else showApp('camera');
+    }
+  });
+
+  const brightness = $('#brightnessControl');
+  if (brightness) {
+    const applyBrightness = () => {
+      const value = Math.max(35, Math.min(100, Number(brightness.value) || 100));
+      phone.style.setProperty('--screen-brightness', String(value / 100));
+      brightness.setAttribute('aria-valuenow', String(value));
+    };
+    brightness.addEventListener('input', applyBrightness);
+    brightness.addEventListener('change', applyBrightness);
+    applyBrightness();
+  }
+
+  const weather = $('#lockWeather'), event = $('#lockEvent');
+  if (weather) weather.textContent = (CONFIG.weather?.desc || '晴朗') + ' · ' + (CONFIG.weather?.temp || '24°');
+  if (event) event.textContent = CONFIG.events?.[0]?.title || '今天沒有其他安排';
+
+  let startY = 0, tracking = false;
+  phone.addEventListener('pointerdown', (e) => {
+    if (e.clientY > 48 || cc.classList.contains('active')) return;
+    startY = e.clientY; tracking = true;
+  }, {passive:true});
+  phone.addEventListener('pointerup', (e) => {
+    if (!tracking) return;
+    tracking = false;
+    const dy = e.clientY - startY;
+    if (dy > 65 && startY < 48) openCC();
+    else if (dy < -65 && cc.classList.contains('active')) closeCC();
+  }, {passive:true});
+  phone.addEventListener('pointercancel', () => { tracking = false; }, {passive:true});
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && cc.classList.contains('active')) closeCC();
+  });
+})();;
 
 </script>
 </body>
