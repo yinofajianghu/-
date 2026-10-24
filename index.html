@@ -352,8 +352,10 @@ function appButton(a){
   settings:`<svg viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="set" x2="0" y2="1"><stop stop-color="#d7dbe2"/><stop offset="1" stop-color="#6e7480"/></linearGradient></defs><rect width="64" height="64" rx="14" fill="url(#set)"/><g transform="translate(32 32)" fill="#f7f8fa"><path d="M-4-25h8l2 7 6 3 6-3 5 7-5 5v7l5 5-5 7-6-3-6 3-2 7h-8l-2-7-6-3-6 3-5-7 5-5v-7l-5-5 5-7 6 3 6-3z"/><circle r="11" fill="#747b86"/><circle r="5" fill="#e8ebf0"/></g></svg>`
  };
  const notesSVG=`<svg viewBox="0 0 64 64" focusable="false"><defs><linearGradient id="notesPaper" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#f5f5f7"/></linearGradient><linearGradient id="notesYellow" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe878"/><stop offset="1" stop-color="#ffbf32"/></linearGradient></defs><rect x="3" y="3" width="58" height="58" rx="12" fill="url(#notesPaper)"/><path d="M3 15a12 12 0 0 1 12-12h34a12 12 0 0 1 12 12v5H3z" fill="url(#notesYellow)"/><path d="M3 18h58" stroke="#e9b72e" stroke-width="1"/><g stroke="#d8d8dc" stroke-width="1.5" stroke-linecap="round"><path d="M12 29h40"/><path d="M12 37h40"/><path d="M12 45h40"/><path d="M12 53h28"/></g></svg>`;
+ const imageFiles={phone:"Telephone",line:"Line",camera:"Camera",youtube:"Youtube",spotify:"Spotify",photos:"Photo",maps:"Map",settings:"Setting",music:"Music"};
+ const file=imageFiles[a.id];
  const svg= a.id==="notes" ? notesSVG : iconSVG[a.id];
- const glyph=svg ? `<span class="glyph ios26-inline-glyph ${a.id==="notes"?"notes26-glyph":""}" aria-hidden="true">${svg}</span>` : `<span class="glyph ${a.cls}" aria-hidden="true">${escapeHTML(a.icon)}</span>`;
+ const glyph=file ? `<span class="glyph ios26-inline-glyph"><img src="image/${file}" alt="" style="display:block;width:100%;height:100%;object-fit:cover;border-radius:inherit"></span>` : svg ? `<span class="glyph ios26-inline-glyph ${a.id==="notes"?"notes26-glyph":""}" aria-hidden="true">${svg}</span>` : `<span class="glyph ${a.cls}" aria-hidden="true">${escapeHTML(a.icon)}</span>`;
  return `<button class="app-icon" data-app="${a.id}" aria-label="${a.name}">${glyph}<span class="app-name">${a.name}</span></button>`
 }
 function initHome(){
