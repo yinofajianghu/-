@@ -127,7 +127,7 @@ html,body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro 
 #phone{background:#182d47}
 .wallpaper{background-image:radial-gradient(ellipse at 22% 18%,rgba(255,255,255,.58),transparent 28%),radial-gradient(ellipse at 78% 36%,rgba(104,171,229,.8),transparent 38%),radial-gradient(ellipse at 48% 82%,rgba(194,126,194,.48),transparent 42%),linear-gradient(155deg,#b7d7ec 0%,#7da4cf 34%,#626b9e 62%,#253754 100%);background-size:cover;background-position:center;animation:none}
 .wallpaper:after{background:linear-gradient(180deg,rgba(0,0,0,.06),transparent 35%,rgba(0,0,0,.2))}
-#lock{padding-top:calc(7vh + var(--safe-top));touch-action:pan-y}
+#lock{padding-top:calc(7vh + var(--safe-top));touch-action:none;-webkit-user-select:none;user-select:none}
 .lock-small{font-size:14px;font-weight:600;letter-spacing:0;text-shadow:0 1px 12px #0005}
 .lock-time{font-size:clamp(76px,20vw,104px);font-weight:300;letter-spacing:-.065em;line-height:1.02;margin-top:12px;text-shadow:0 2px 18px #0002}
 .lock-date{font-size:20px;font-weight:600;letter-spacing:-.02em;margin-top:8px;text-shadow:0 1px 12px #0003}
@@ -635,50 +635,7 @@ wallpaperStyle();initHome();updateClock();setInterval(updateClock,1000);
 
 </script>
 <script>
-/* Passcode controls: self-contained state and direct button listeners. */
-(function(){
- const lock=document.getElementById('lock');
- const pass=document.getElementById('passcodeScreen');
- const dots=Array.from(document.querySelectorAll('#passcodeDots .passcode-dot'));
- const error=document.getElementById('passcodeError');
- const prompt=document.getElementById('unlockPrompt');
- const bar=document.getElementById('lockBar');
- let code='';
- function paint(){dots.forEach((d,i)=>d.classList.toggle('filled',i<code.length));}
- function showCode(e){
-   if(e){e.preventDefault();e.stopPropagation();}
-   if(!lock||!pass||!lock.classList.contains('active'))return;
-   code='';paint();if(error)error.textContent='';
-   pass.classList.add('active');pass.setAttribute('aria-hidden','false');
-   pass.style.display='flex';pass.style.visibility='visible';pass.style.pointerEvents='auto';pass.style.zIndex='9999';
- }
- function hideCode(e){
-   if(e){e.preventDefault();e.stopPropagation();}
-   code='';paint();pass.classList.remove('active');pass.setAttribute('aria-hidden','true');
-   pass.style.display='none';pass.style.visibility='hidden';
-   if(error)error.textContent='';
- }
- function addDigit(d,e){
-   if(e){e.preventDefault();e.stopPropagation();}
-   if(!pass.classList.contains('active')||code.length>=4)return;
-   code+=String(d);paint();
-   if(code.length===4){
-     if(code==='0525'){
-       if(error)error.textContent='';
-       hideCode();
-       try{unlock()}catch(_){lock.classList.remove('active');document.getElementById('home')?.classList.add('active');}
-     }else{
-       if(error)error.textContent='密碼錯誤，請再試一次';
-       code='';window.setTimeout(paint,500);
-     }
-   }
- }
- function bind(el,fn){if(!el)return;el.addEventListener('click',fn);el.addEventListener('touchend',fn,{passive:false});}
- bind(prompt,showCode);bind(bar,showCode);
- bind(document.getElementById('passcodeCancel'),hideCode);
- document.querySelectorAll('#passcodePad [data-digit]').forEach(btn=>bind(btn,e=>addDigit(btn.dataset.digit,e)));
- bind(document.getElementById('passcodeDelete'),e=>{if(e){e.preventDefault();e.stopPropagation();}if(!pass.classList.contains('active'))return;code=code.slice(0,-1);paint();if(error)error.textContent='';});
-})();
+/* Passcode is handled by the primary click handlers above; avoid duplicate touch+click input. */
 </script>
 </body>
 </html>
