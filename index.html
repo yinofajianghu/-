@@ -639,6 +639,19 @@ wallpaperStyle();initHome();updateClock();setInterval(updateClock,1000);
 (function(){
  const lock=document.getElementById('lock');
  const pass=document.getElementById('passcodeScreen');
+ /* Ensure the entire passcode layer and its controls receive taps. */
+ pass.style.pointerEvents='auto';
+ pass.querySelectorAll('button').forEach(b=>{b.style.pointerEvents='auto';b.style.position='relative';b.style.zIndex='1001';b.type='button';});
+ function handlePasscodeClick(e){
+   const cancel=e.target.closest('#passcodeCancel');
+   const digit=e.target.closest('#passcodePad [data-digit]');
+   const del=e.target.closest('#passcodeDelete');
+   if(cancel){e.preventDefault();e.stopPropagation();try{closePasscode()}catch(_){pass.classList.remove('active');pass.style.display='none';pass.setAttribute('aria-hidden','true')}return;}
+   if(!pass.classList.contains('active'))return;
+   if(digit){e.preventDefault();e.stopPropagation();try{enterPasscodeDigit(digit.dataset.digit)}catch(_){}return;}
+   if(del){e.preventDefault();e.stopPropagation();try{enteredPasscode=enteredPasscode.slice(0,-1);renderPasscodeDots();document.getElementById('passcodeError').textContent=''}catch(_){}}
+ }
+ document.addEventListener('click',handlePasscodeClick,true);
  function showCode(){
    if(!lock||!pass||!lock.classList.contains('active'))return;
    pass.classList.add('active');
