@@ -161,14 +161,38 @@ html,body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro 
 @media(max-height:700px){.widgets .widget{height:100px}.app-grid{margin-top:15px;gap:13px 8px}.glyph{width:50px;height:50px;font-size:26px}.app-name{font-size:10px}}
 @media(min-width:700px){#phone{border-radius:46px}#phone:before{content:"";position:absolute;z-index:100;top:10px;left:50%;transform:translateX(-50%);width:94px;height:26px;border-radius:999px;background:#101014;pointer-events:none}}
 
+
+/* Final pass: lock-screen shortcuts, compact layout, and iOS Control Center */
+.lock-widgets{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:24px auto 0;max-width:330px}
+.lock-widget{min-height:58px;padding:10px 12px;border-radius:17px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.16);backdrop-filter:blur(20px);text-align:left;font-size:12px}
+.lock-widget strong{display:block;font-size:15px;margin-bottom:4px}
+.lock-controls{position:absolute;bottom:calc(52px + var(--safe-bottom));left:0;right:0;display:flex;justify-content:space-between;padding:0 28px;pointer-events:none}
+.lock-control{pointer-events:auto;width:48px;height:48px;border-radius:50%;background:rgba(20,24,30,.32);border:1px solid rgba(255,255,255,.24);backdrop-filter:blur(18px);display:grid;place-items:center;font-size:22px;color:white}
+#controlCenter{position:absolute;z-index:80;inset:0;padding:calc(54px + var(--safe-top)) 18px calc(30px + var(--safe-bottom));background:rgba(238,241,247,.9);color:#1c1c1e;backdrop-filter:blur(36px) saturate(1.5);display:none;overflow:auto}
+#controlCenter.active{display:block;animation:ccIn .22s ease both}
+@keyframes ccIn{from{opacity:0;transform:translateY(-16px)}to{opacity:1;transform:translateY(0)}}
+.cc-top{display:flex;align-items:center;justify-content:space-between;font-size:14px;font-weight:700;margin-bottom:16px}
+.cc-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.cc-tile{border-radius:22px;background:rgba(255,255,255,.8);padding:14px;min-height:76px;color:#1c1c1e;text-align:left;display:flex;align-items:center;gap:10px;font-size:13px}
+.cc-symbol{width:36px;height:36px;border-radius:50%;background:#dfe2e8;display:grid;place-items:center;font-size:18px;flex-shrink:0}
+.cc-tile.on .cc-symbol{background:#087cff;color:white}
+.cc-slider{margin-top:14px;border-radius:20px;background:rgba(255,255,255,.8);padding:16px}
+.cc-slider input{width:100%;accent-color:#087cff}
+.cc-close{position:absolute;bottom:calc(10px + var(--safe-bottom));left:50%;width:135px;height:5px;border-radius:8px;background:#202124}
+.status{cursor:pointer}
+@media(max-height:760px){.lock-widgets{margin-top:16px}.lock-widget{min-height:50px;padding:8px 10px}.lock-time{font-size:clamp(66px,17vw,84px)}.app-grid{margin-top:14px;gap:12px 8px}}
+@media(max-width:360px){#home{padding-left:14px;padding-right:14px}.widgets{gap:8px}.widget{padding:11px}.app-grid{column-gap:4px}.lock-controls{padding:0 24px}}
+
 </style>
 </head>
 <body>
 <div id="phone">
   <div class="wallpaper" id="wallpaper"></div>
   <section id="lock" class="active" aria-label="鎖定畫面">
-    <div class="lock-small">●　攥在手裡的秘密</div>
+    <div class="lock-small">●　拾得物</div>
     <div id="lockTime" class="lock-time">9:41</div><div id="lockDate" class="lock-date">星期日，10月25日</div>
+    <div class="lock-widgets"><div class="lock-widget"><strong>☀︎　天氣</strong><span id="lockWeather">晴朗 · 24°</span></div><div class="lock-widget"><strong>▦　行事曆</strong><span id="lockEvent">今天沒有其他安排</span></div></div>
+    <div class="lock-controls"><button class="lock-control" id="flashlightButton" aria-label="手電筒">⌁</button><button class="lock-control" id="lockCameraButton" aria-label="相機">◉</button></div>
     <div class="lock-bottom"><div class="lock-hint">向上滑動以解鎖</div><div id="lockBar" class="home-indicator lock-indicator" aria-label="解鎖"></div></div>
   </section>
   <section id="home" aria-label="主畫面">
@@ -181,6 +205,7 @@ html,body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro 
     <div class="dock" id="dock"></div>
   </section>
   <section id="appView"><div id="appContent"></div><div class="app-homebar-wrap"><span id="appHomebar" class="home-indicator" aria-label="返回桌面"></span></div></section>
+  <section id="controlCenter" aria-label="控制中心"><div class="cc-top"><span>控制中心</span><button id="ccDone" class="nav-button">完成</button></div><div class="cc-grid"><button class="cc-tile on" data-toggle="airplane"><span class="cc-symbol">✈</span><span>飛航模式</span></button><button class="cc-tile on" data-toggle="wifi"><span class="cc-symbol">⌁</span><span>Wi-Fi</span></button><button class="cc-tile" data-toggle="bluetooth"><span class="cc-symbol">ᛒ</span><span>Bluetooth</span></button><button class="cc-tile" data-toggle="focus"><span class="cc-symbol">☾</span><span>專注模式</span></button><button class="cc-tile" data-toggle="flashlight"><span class="cc-symbol">☼</span><span>手電筒</span></button><button class="cc-tile" data-toggle="rotation"><span class="cc-symbol">↻</span><span>方向鎖定</span></button></div><div class="cc-slider"><div>☼　亮度</div><input id="brightnessControl" type="range" min="35" max="100" value="100" aria-label="螢幕亮度"></div><div class="cc-slider"><div>🔊　音量</div><input type="range" min="0" max="100" value="65" aria-label="音量"></div><div class="cc-close" id="ccClose"></div></section>
 </div>
 <script>
 /* ===================== 只需要修改這裡的 CONFIG ===================== */
@@ -462,6 +487,32 @@ wallpaperStyle();initHome();updateClock();setInterval(updateClock,1000);
  });
  // Keep the app usable in standalone/full-screen Safari and desktop browsers.
  document.documentElement.style.webkitTapHighlightColor='transparent';
+})();
+
+
+(function(){
+ const cc=document.querySelector('#controlCenter'),phone=document.querySelector('#phone');
+ const openCC=()=>cc.classList.add('active'),closeCC=()=>cc.classList.remove('active');
+ document.querySelector('#ccDone').addEventListener('click',closeCC);
+ document.querySelector('#ccClose').addEventListener('click',closeCC);
+ document.querySelector('.status').addEventListener('click',openCC);
+ document.querySelectorAll('[data-toggle]').forEach(b=>b.addEventListener('click',()=>{
+   b.classList.toggle('on');
+   if(b.dataset.toggle==='flashlight')phone.classList.toggle('flashlight-on',b.classList.contains('on'));
+ }));
+ document.querySelector('#brightnessControl').addEventListener('input',e=>{phone.style.filter='brightness('+Number(e.target.value)/100+')'});
+ document.querySelector('#flashlightButton').addEventListener('click',()=>{
+   phone.classList.toggle('flashlight-on');
+   const b=document.querySelector('[data-toggle="flashlight"]');b.classList.toggle('on',phone.classList.contains('flashlight-on'));
+ });
+ document.querySelector('#lockCameraButton').addEventListener('click',()=>{unlock();setTimeout(()=>showApp('camera'),280)});
+ const weather=document.querySelector('#lockWeather'),event=document.querySelector('#lockEvent');
+ if(weather)weather.textContent=(CONFIG.weather?.desc||'晴朗')+' · '+(CONFIG.weather?.temp||'24°');
+ if(event)event.textContent=CONFIG.events?.[0]?.title||'今天沒有其他安排';
+ let startY=0;
+ phone.addEventListener('touchstart',e=>{startY=e.touches[0].clientY},{passive:true});
+ phone.addEventListener('touchend',e=>{const dy=e.changedTouches[0].clientY-startY;if(startY<48&&dy>70)openCC();if(cc.classList.contains('active')&&dy < -70)closeCC()},{passive:true});
+ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&cc.classList.contains('active'))closeCC()});
 })();
 
 </script>
