@@ -354,24 +354,24 @@ notes:'<svg viewBox="0 0 48 48" aria-hidden="true"><rect x="5" y="5" width="38" 
 maps:'<svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#65c466" d="M5 8l12-4 14 5 12-4v35l-12 4-14-5-12 4z"/><path fill="#f7d75c" d="M17 4v35l14 5V9z"/><path fill="#49a5f5" d="M5 25l12-5 14 5 12-5v15l-12 4-14-5-12 4z"/><circle cx="24" cy="20" r="9" fill="#1687d1"/><path fill="white" d="M24 13l5 13-5-3-5 3z"/></svg>',
 settings:'<svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="20" fill="#e7e9ed" stroke="#737984" stroke-width="3"/><circle cx="24" cy="24" r="13" fill="#747985"/><circle cx="24" cy="24" r="6" fill="#e7e9ed"/><g stroke="#747985" stroke-width="4"><path d="M24 2v8M24 38v8M2 24h8M38 24h8M8 8l6 6M34 34l6 6M40 8l-6 6M14 34l-6 6"/></g></svg>'
 };
-const appStoreArtwork={line:"LINE",youtube:"YouTube",spotify:"Spotify",instagram:"Instagram"};
+const appStoreArtwork={line:"LINE",x:"X",youtube:"YouTube",spotify:"Spotify",instagram:"Instagram"};
 async function loadOfficialAppIcons(){
   for(const [id,term] of Object.entries(appStoreArtwork)){
     try{
-      const response=await fetch("https://itunes.apple.com/search?term="+encodeURIComponent(term)+"&entity=software&country=tw&limit=10");
+      const response=await fetch("https://itunes.apple.com/search?term="+encodeURIComponent(term)+"&entity=software&country=tw&limit=25");
       if(!response.ok) continue;
       const data=await response.json();
       const results=data.results||[];
-      const exact=results.find(item=>String(item.trackName||"").toLowerCase()===term.toLowerCase())
-        ||results.find(item=>String(item.trackName||"").toLowerCase().includes(term.toLowerCase()));
+      const exact=results.find(item=>String(item.trackName||"").trim().toLowerCase()===term.toLowerCase());
       const url=exact&&(exact.artworkUrl512||exact.artworkUrl100);
       if(!url) continue;
       document.querySelectorAll('.app-icon[data-app="'+id+'"] .glyph').forEach(glyph=>{
         const img=document.createElement("img");
         img.src=url;img.alt="";img.loading="eager";img.decoding="async";
+        img.addEventListener("error",()=>{img.remove();glyph.classList.remove("official-app-artwork");},{once:true});
         glyph.replaceChildren(img);glyph.classList.add("official-app-artwork");
       });
-    }catch(error){/* Embedded vector artwork remains as fallback if the store lookup fails. */}
+    }catch(error){/* If Apple does not return verified artwork, do not substitute a fabricated image. */}
   }
 }
 function appButton(a){const art=appIconMarkup[a.id]||'<span>'+a.icon+'</span>';return '<button class="app-icon" data-app="'+a.id+'" aria-label="'+a.name+'"><span class="glyph '+a.cls+'" style="background:'+appIconBackgrounds[a.id]+'">'+art+'</span><span class="app-name">'+a.name+'</span></button>'}
