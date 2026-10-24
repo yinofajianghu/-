@@ -8,12 +8,12 @@
 <style>
 :root{--ink:#fff;--muted:rgba(255,255,255,.7);--glass:rgba(255,255,255,.18);--line:rgba(255,255,255,.2);--blue:#0a84ff;--safe-top:env(safe-area-inset-top,0px);--safe-bottom:env(safe-area-inset-bottom,0px)}
 *{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#111;color:white;overscroll-behavior:none}button,input,textarea{font:inherit}button{cursor:pointer;color:inherit;border:0}button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid #fff;outline-offset:3px}
-#phone{position:relative;width:100%;height:100dvh;overflow:hidden;background:#17233e;isolation:isolate}
+#phone{position:relative;width:100%;height:100dvh;overflow:hidden;background:#17233e;isolation:isolate;--screen-brightness:1}
 .wallpaper{position:absolute;inset:0;background-image:linear-gradient(145deg,rgba(8,17,40,.15),rgba(10,8,35,.35)),var(--wallpaper);background-size:cover;background-position:center;z-index:-2}
 .wallpaper:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.08),transparent 35%,rgba(0,0,0,.15))}
 #lock,#home,#appView{position:absolute;inset:0;display:none}
 #lock.active,#home.active,#appView.active{display:block}
-#lock{padding:calc(7vh + var(--safe-top)) 22px calc(22px + var(--safe-bottom));text-align:center;touch-action:pan-y}
+#lock{padding:calc(7vh + var(--safe-top)) 22px calc(22px + var(--safe-bottom));text-align:center;touch-action:pan-y;transform:translateY(0);opacity:1;transition:transform .28s cubic-bezier(.2,.8,.2,1),opacity .24s ease;will-change:transform,opacity}#lock.unlocking{transform:translateY(-18%);opacity:0;pointer-events:none}#lock.dragging{transition:none}
 .lock-small{font-size:14px;letter-spacing:.08em;text-shadow:0 2px 12px #0008}.lock-time{font-size:clamp(64px,17vw,100px);font-weight:200;letter-spacing:-.06em;line-height:1.12;margin-top:8px;text-shadow:0 2px 20px #0005}.lock-date{font-size:19px;font-weight:500;text-shadow:0 2px 12px #0008}
 .lock-bottom{position:absolute;bottom:calc(18px + var(--safe-bottom));left:0;right:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px}.lock-hint{font-size:13px;color:#ffffffd9;text-shadow:0 1px 8px #000}.home-indicator{width:134px;height:5px;border-radius:10px;background:#fff;display:block;cursor:pointer;flex-shrink:0}.lock-indicator{margin-top:5px}
 #home{padding:calc(12px + var(--safe-top)) 20px calc(18px + var(--safe-bottom));display:none}
@@ -120,14 +120,86 @@ button:active{transform:scale(.965);filter:brightness(.96)}
  *,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}
 }
 
+
+/* ===== iOS-style full interface redesign ===== */
+:root{--ios-blue:#007aff;--ios-bg:#f2f2f7;--ios-label:#1c1c1e;--ios-secondary:#8e8e93;--ios-separator:rgba(60,60,67,.18)}
+html,body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+#phone{background:#182d47}
+.wallpaper{background-image:radial-gradient(ellipse at 22% 18%,rgba(255,255,255,.58),transparent 28%),radial-gradient(ellipse at 78% 36%,rgba(104,171,229,.8),transparent 38%),radial-gradient(ellipse at 48% 82%,rgba(194,126,194,.48),transparent 42%),linear-gradient(155deg,#b7d7ec 0%,#7da4cf 34%,#626b9e 62%,#253754 100%);background-size:cover;background-position:center;animation:none}
+.wallpaper:after{background:linear-gradient(180deg,rgba(0,0,0,.06),transparent 35%,rgba(0,0,0,.2))}
+#lock{padding-top:calc(7vh + var(--safe-top));touch-action:pan-y}
+.lock-small{font-size:14px;font-weight:600;letter-spacing:0;text-shadow:0 1px 12px #0005}
+.lock-time{font-size:clamp(76px,20vw,104px);font-weight:300;letter-spacing:-.065em;line-height:1.02;margin-top:12px;text-shadow:0 2px 18px #0002}
+.lock-date{font-size:20px;font-weight:600;letter-spacing:-.02em;margin-top:8px;text-shadow:0 1px 12px #0003}
+.lock-bottom{bottom:calc(22px + var(--safe-bottom));gap:20px}
+.lock-hint{border:0;background:transparent;padding:0;font-size:14px;font-weight:500;backdrop-filter:none;animation:none;text-shadow:0 1px 8px #0006}
+.lock-indicator{width:134px;height:5px;background:#fff}
+#home{padding:calc(8px + var(--safe-top)) 20px calc(12px + var(--safe-bottom))}
+.status{height:27px;padding:0 5px;font-size:15px;font-weight:650;letter-spacing:-.02em;text-shadow:0 1px 5px #0003}
+.status-right{gap:6px}.signal{font-size:0;letter-spacing:0;width:17px;height:13px;display:inline-block;position:relative;background:linear-gradient(to top,#fff 0 25%,transparent 25%);clip-path:polygon(0 100%,0 76%,20% 76%,20% 58%,40% 58%,40% 38%,60% 38%,60% 18%,80% 18%,80% 0,100% 0,100% 100%)}
+.battery{width:24px;height:12px;border-radius:4px;border:1.5px solid rgba(255,255,255,.95)}.battery:before{left:2px;top:2px;bottom:2px;width:72%;border-radius:2px}.battery:after{height:5px;top:2px}
+.widgets{gap:12px;margin-top:16px}
+.widget{height:clamp(112px,29vw,145px);border:1px solid rgba(255,255,255,.24);background:rgba(248,250,255,.28);border-radius:24px;padding:14px;backdrop-filter:blur(30px) saturate(1.5);-webkit-backdrop-filter:blur(30px) saturate(1.5);box-shadow:inset 0 1px 0 rgba(255,255,255,.25),0 6px 20px #182a4510}
+.widget-label{font-size:12px;font-weight:600;letter-spacing:0;color:#fff}
+.weather-place{font-size:14px;font-weight:600;margin-top:8px}.weather-temp{font-size:34px;font-weight:300;letter-spacing:-.05em}.weather-desc,.event-row{font-size:11px;color:#fff}
+.app-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(18px,3.8vh,27px) 8px;margin:clamp(22px,4vh,35px) 0 18px}
+.app-icon{gap:5px;text-shadow:0 1px 3px #0005;box-shadow:none!important;background:transparent;min-width:0}
+.glyph{width:clamp(55px,15vw,68px);height:clamp(55px,15vw,68px);border-radius:22.5%;font-size:clamp(27px,7.3vw,35px);box-shadow:0 3px 8px rgba(0,0,0,.18),inset 0 1px 0 rgba(255,255,255,.22);border:0;transition:transform .16s cubic-bezier(.2,.8,.2,1)}
+.app-name{font-size:11px;font-weight:500;letter-spacing:-.01em;color:#fff;text-shadow:0 1px 4px #0008}
+.g-phone{background:linear-gradient(145deg,#70e58e,#0a9b51)}.g-line{background:linear-gradient(145deg,#bcff5a,#72d83c)}.g-message{background:linear-gradient(145deg,#55e879,#12b957)}.g-camera{background:linear-gradient(145deg,#5b6068,#15171c);color:#fff}.g-x{background:#000}.g-yt{background:#ff0033}.g-spotify{background:#1ed760;color:#111}.g-ig{background:radial-gradient(circle at 30% 100%,#ffd776 0%,#ff5c65 42%,#c135a8 70%,#5557d9 100%)}.g-photos{background:#fff;color:#fff}.g-notes{background:linear-gradient(#fff 0 30%,#ffcc42 30%);color:#d39a00}.g-maps{background:linear-gradient(135deg,#9fe0a6,#fff 45%,#76b9f5);color:#1687d1}.g-settings{background:linear-gradient(145deg,#c7cbd3,#656b76)}
+.dock{grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;padding:12px;border-radius:29px;background:rgba(245,246,250,.3);border:1px solid rgba(255,255,255,.25);box-shadow:0 8px 28px rgba(0,0,0,.1),inset 0 1px 0 rgba(255,255,255,.2);backdrop-filter:blur(30px) saturate(1.45);-webkit-backdrop-filter:blur(30px) saturate(1.45)}
+.dock .glyph{width:100%;max-width:64px;height:auto;aspect-ratio:1;border-radius:22.5%;font-size:clamp(26px,7vw,35px)}
+#appView{background:#f2f2f7;color:#1c1c1e}
+#appContent{background:#f2f2f7;color:#1c1c1e}
+.page{padding:8px 20px 28px;background:#f2f2f7}
+.nav{padding:8px 0 18px}.nav-title{font-size:30px;letter-spacing:-.04em;font-weight:750}.nav-button{color:var(--ios-blue);font-weight:500}
+.section-label{color:#6d6d72;font-size:13px;text-transform:none}
+.profile-row,.call-row,.settings-row{border-color:var(--ios-separator)}
+.simple-card{border-radius:16px;box-shadow:0 1px 3px rgba(0,0,0,.06);background:#fff}
+.settings-row{padding:15px 0}
+.app-homebar-wrap{background:inherit}
+@media(max-height:700px){.widgets .widget{height:100px}.app-grid{margin-top:15px;gap:13px 8px}.glyph{width:50px;height:50px;font-size:26px}.app-name{font-size:10px}}
+@media(min-width:700px){#phone{border-radius:46px}#phone:before{content:"";position:absolute;z-index:100;top:10px;left:50%;transform:translateX(-50%);width:94px;height:26px;border-radius:999px;background:#101014;pointer-events:none}}
+
+
+/* Final pass: lock-screen shortcuts, compact layout, and iOS Control Center */
+.lock-widgets{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:24px auto 0;max-width:330px}
+.lock-widget{min-height:58px;padding:10px 12px;border-radius:17px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.16);backdrop-filter:blur(20px);text-align:left;font-size:12px}
+.lock-widget strong{display:block;font-size:15px;margin-bottom:4px}
+.lock-controls{position:absolute;bottom:calc(52px + var(--safe-bottom));left:0;right:0;display:flex;justify-content:space-between;padding:0 28px;pointer-events:none}
+.lock-control{pointer-events:auto;width:48px;height:48px;border-radius:50%;background:rgba(20,24,30,.32);border:1px solid rgba(255,255,255,.24);backdrop-filter:blur(18px);display:grid;place-items:center;font-size:22px;color:white}
+#controlCenter{position:absolute;z-index:80;inset:0;padding:calc(54px + var(--safe-top)) 18px calc(30px + var(--safe-bottom));background:rgba(238,241,247,.9);color:#1c1c1e;backdrop-filter:blur(36px) saturate(1.5);display:none;overflow:auto}
+#controlCenter.active{display:block;animation:ccIn .22s ease both}
+@keyframes ccIn{from{opacity:0;transform:translateY(-16px)}to{opacity:1;transform:translateY(0)}}
+.cc-top{display:flex;align-items:center;justify-content:space-between;font-size:14px;font-weight:700;margin-bottom:16px}
+.cc-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.cc-tile{border-radius:22px;background:rgba(255,255,255,.8);padding:14px;min-height:76px;color:#1c1c1e;text-align:left;display:flex;align-items:center;gap:10px;font-size:13px}
+.cc-symbol{width:36px;height:36px;border-radius:50%;background:#dfe2e8;display:grid;place-items:center;font-size:18px;flex-shrink:0}
+.cc-tile.on .cc-symbol{background:#087cff;color:white}
+.cc-slider{margin-top:14px;border-radius:20px;background:rgba(255,255,255,.8);padding:16px}
+.cc-slider input{width:100%;accent-color:#087cff}
+.cc-close{position:absolute;bottom:calc(10px + var(--safe-bottom));left:50%;width:135px;height:5px;border-radius:8px;background:#202124}
+.status{cursor:pointer}
+@media(max-height:760px){.lock-widgets{margin-top:16px}.lock-widget{min-height:50px;padding:8px 10px}.lock-time{font-size:clamp(66px,17vw,84px)}.app-grid{margin-top:14px;gap:12px 8px}}
+@media(max-width:360px){#home{padding-left:14px;padding-right:14px}.widgets{gap:8px}.widget{padding:11px}.app-grid{column-gap:4px}.lock-controls{padding:0 24px}}
+
+
+#phone .wallpaper{filter:brightness(var(--screen-brightness,1))}\n#phone.flashlight-on .wallpaper{filter:brightness(2.8) saturate(.2)}
+#phone.flashlight-on .wallpaper:after{background:rgba(255,255,235,.88)}
+#phone.flashlight-on #lock{color:#252525;text-shadow:none}
+#phone.flashlight-on .lock-time,#phone.flashlight-on .lock-date,#phone.flashlight-on .lock-small{color:#252525;text-shadow:none}
+#phone.flashlight-on .lock-control{background:rgba(30,30,30,.1);color:#222;border-color:#777}
+
 </style>
 </head>
 <body>
 <div id="phone">
   <div class="wallpaper" id="wallpaper"></div>
   <section id="lock" class="active" aria-label="鎖定畫面">
-    <div class="lock-small">●　攥在手裡的秘密</div>
+    <div class="lock-small">●　拾得物</div>
     <div id="lockTime" class="lock-time">9:41</div><div id="lockDate" class="lock-date">星期日，10月25日</div>
+    <div class="lock-widgets"><div class="lock-widget"><strong>☀︎　天氣</strong><span id="lockWeather">晴朗 · 24°</span></div><div class="lock-widget"><strong>▦　行事曆</strong><span id="lockEvent">今天沒有其他安排</span></div></div>
+    <div class="lock-controls"><button class="lock-control" id="flashlightButton" aria-label="手電筒">⌁</button><button class="lock-control" id="lockCameraButton" aria-label="相機">◉</button></div>
     <div class="lock-bottom"><div class="lock-hint">向上滑動以解鎖</div><div id="lockBar" class="home-indicator lock-indicator" aria-label="解鎖"></div></div>
   </section>
   <section id="home" aria-label="主畫面">
@@ -140,6 +212,7 @@ button:active{transform:scale(.965);filter:brightness(.96)}
     <div class="dock" id="dock"></div>
   </section>
   <section id="appView"><div id="appContent"></div><div class="app-homebar-wrap"><span id="appHomebar" class="home-indicator" aria-label="返回桌面"></span></div></section>
+  <section id="controlCenter" aria-label="控制中心"><div class="cc-top"><span>控制中心</span><button id="ccDone" class="nav-button">完成</button></div><div class="cc-grid"><button class="cc-tile on" data-toggle="airplane"><span class="cc-symbol">✈</span><span>飛航模式</span></button><button class="cc-tile on" data-toggle="wifi"><span class="cc-symbol">⌁</span><span>Wi-Fi</span></button><button class="cc-tile" data-toggle="bluetooth"><span class="cc-symbol">ᛒ</span><span>Bluetooth</span></button><button class="cc-tile" data-toggle="focus"><span class="cc-symbol">☾</span><span>專注模式</span></button><button class="cc-tile" data-toggle="flashlight"><span class="cc-symbol">☼</span><span>手電筒</span></button><button class="cc-tile" data-toggle="rotation"><span class="cc-symbol">↻</span><span>方向鎖定</span></button></div><div class="cc-slider"><div>☼　亮度</div><input id="brightnessControl" type="range" min="35" max="100" value="100" aria-label="螢幕亮度"></div><div class="cc-slider"><div>🔊　音量</div><input type="range" min="0" max="100" value="65" aria-label="音量"></div><div class="cc-close" id="ccClose"></div></section>
 </div>
 <script>
 /* ===================== 只需要修改這裡的 CONFIG ===================== */
@@ -236,7 +309,8 @@ function initHome(){
  $('#appGrid').innerHTML=apps.slice(0,8).map(appButton).join('')+apps.slice(8).map(appButton).join('');
  $('#dock').innerHTML=[apps[0],apps[1],apps[2],apps[3]].map(appButton).join('');
 }
-function unlock(){ $('#lock').classList.remove('active');$('#home').classList.add('active');$('#appView').classList.remove('active');}
+let unlockInProgress=false;
+function unlock(){const lock=$('#lock');if(unlockInProgress||!lock.classList.contains('active'))return;unlockInProgress=true;lock.classList.add('unlocking');const finish=()=>{lock.classList.remove('active','unlocking','dragging');lock.style.transform='';lock.style.opacity='';$('#home').classList.add('active');$('#appView').classList.remove('active');unlockInProgress=false;};if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){finish();return;}window.setTimeout(finish,260);}
 function showLock(){closeAudio();stopCall();$('#appView').classList.remove('active');$('#home').classList.remove('active');$('#lock').classList.add('active');}
 function showApp(id){
  if(id==="instagram"){startIncomingCall();return}
@@ -354,13 +428,13 @@ function openFullPlayer(){
  $('#appView').appendChild(overlay);$('#fullClose').onclick=()=>overlay.remove();$('#fullPlay').onclick=toggleSong;$('#fullPrev').onclick=()=>playSong((currentSong-1+(s.songs.length||1))%(s.songs.length||1));$('#fullNext').onclick=()=>playSong((currentSong+1)%(s.songs.length||1));$('#fullShuffle').onclick=()=>playSong(Math.floor(Math.random()*s.songs.length));$('#fullRepeat').onclick=e=>{e.currentTarget.style.color=e.currentTarget.style.color?'':'#1db954';if(audioEl)audioEl.loop=!audioEl.loop};$('#fullRange').oninput=e=>{songProgress=+e.target.value;if(audioEl)audioEl.currentTime=songProgress;updatePlayerProgress()};
 }
 $('#appHomebar').addEventListener('click',goHome);
-$('#lockBar').addEventListener('click',unlock);
-let touchStartY=null;
-$('#lock').addEventListener('touchstart',e=>{touchStartY=e.touches[0].clientY},{passive:true});
-$('#lock').addEventListener('touchend',e=>{if(touchStartY!==null&&touchStartY-e.changedTouches[0].clientY>35)unlock();touchStartY=null},{passive:true});
-let mouseY=null;
-$('#lock').addEventListener('pointerdown',e=>{mouseY=e.clientY});
-$('#lock').addEventListener('pointerup',e=>{if(mouseY!==null&&mouseY-e.clientY>35)unlock();mouseY=null});
+$('#lockBar').addEventListener('click',()=>{if(!unlockInProgress)unlock()});
+// Unified swipe gesture for touch, pen, and mouse; move the lock screen with the finger.
+const lockScreen=$('#lock');let swipeStartY=null,swipePointerId=null,swipeMoved=false;
+lockScreen.addEventListener('pointerdown',e=>{if(!lockScreen.classList.contains('active')||unlockInProgress)return;if(e.pointerType==='mouse'&&e.button!==0)return;swipeStartY=e.clientY;swipePointerId=e.pointerId;swipeMoved=false;lockScreen.classList.add('dragging');try{lockScreen.setPointerCapture(e.pointerId)}catch(_){}},{passive:true});
+lockScreen.addEventListener('pointermove',e=>{if(swipeStartY===null||e.pointerId!==swipePointerId)return;const delta=Math.min(0,e.clientY-swipeStartY);if(Math.abs(delta)>3)swipeMoved=true;const progress=Math.min(1,Math.abs(delta)/Math.max(180,window.innerHeight*.24));lockScreen.style.transform=`translateY(${Math.max(-window.innerHeight*.22,delta)}px)`;lockScreen.style.opacity=String(1-progress*.45);},{passive:true});
+function finishLockSwipe(e){if(swipeStartY===null||(e&&e.pointerId!==swipePointerId))return;const delta=e?e.clientY-swipeStartY:0;const shouldUnlock=delta < -Math.max(72,window.innerHeight*.12);swipeStartY=null;swipePointerId=null;lockScreen.classList.remove('dragging');if(shouldUnlock){lockScreen.style.transform='';lockScreen.style.opacity='';unlock();return;}if(swipeMoved){lockScreen.style.transition='transform .24s cubic-bezier(.2,.8,.2,1),opacity .24s ease';requestAnimationFrame(()=>{lockScreen.style.transform='translateY(0)';lockScreen.style.opacity='1';window.setTimeout(()=>{lockScreen.style.transition='';lockScreen.style.transform='';lockScreen.style.opacity='';},260)});}else{lockScreen.style.transform='';lockScreen.style.opacity='';}}
+lockScreen.addEventListener('pointerup',finishLockSwipe);lockScreen.addEventListener('pointercancel',()=>finishLockSwipe(null));
 document.addEventListener('click',e=>{const b=e.target.closest('[data-app]');if(b)showApp(b.dataset.app)});
 wallpaperStyle();initHome();updateClock();setInterval(updateClock,1000);
 
@@ -421,6 +495,84 @@ wallpaperStyle();initHome();updateClock();setInterval(updateClock,1000);
  // Keep the app usable in standalone/full-screen Safari and desktop browsers.
  document.documentElement.style.webkitTapHighlightColor='transparent';
 })();
+
+
+(function(){
+  const $ = (selector) => document.querySelector(selector);
+  const phone = $('#phone');
+  const cc = $('#controlCenter');
+  if (!phone || !cc) return;
+
+  const closeCC = () => { cc.classList.remove('active'); cc.setAttribute('aria-hidden', 'true'); };
+  const openCC = () => { cc.classList.add('active'); cc.setAttribute('aria-hidden', 'false'); };
+
+  function setFlashlight(enabled) {
+    phone.classList.toggle('flashlight-on', Boolean(enabled));
+    document.querySelectorAll('[data-toggle="flashlight"]').forEach((b) => {
+      b.classList.toggle('on', Boolean(enabled));
+      b.setAttribute('aria-pressed', String(Boolean(enabled)));
+    });
+    const lockButton = $('#flashlightButton');
+    if (lockButton) lockButton.setAttribute('aria-pressed', String(Boolean(enabled)));
+  }
+
+  // One delegated handler means all controls work consistently on touch and mouse.
+  document.addEventListener('click', (e) => {
+    if (e.target.closest('.status')) { e.preventDefault(); openCC(); return; }
+    if (e.target.closest('#ccDone, #ccClose')) { e.preventDefault(); closeCC(); return; }
+    const tile = e.target.closest('[data-toggle]');
+    if (tile) {
+      const enabled = tile.classList.toggle('on');
+      tile.setAttribute('aria-pressed', String(enabled));
+      if (tile.dataset.toggle === 'flashlight') setFlashlight(enabled);
+      return;
+    }
+    if (e.target.closest('#flashlightButton')) {
+      e.preventDefault(); setFlashlight(!phone.classList.contains('flashlight-on')); return;
+    }
+    if (e.target.closest('#lockCameraButton')) {
+      e.preventDefault();
+      const lock = $('#lock');
+      if (lock && lock.classList.contains('active')) {
+        unlock();
+        window.setTimeout(() => showApp('camera'), 320);
+      } else showApp('camera');
+    }
+  });
+
+  const brightness = $('#brightnessControl');
+  if (brightness) {
+    const applyBrightness = () => {
+      const value = Math.max(35, Math.min(100, Number(brightness.value) || 100));
+      phone.style.setProperty('--screen-brightness', String(value / 100));
+      brightness.setAttribute('aria-valuenow', String(value));
+    };
+    brightness.addEventListener('input', applyBrightness);
+    brightness.addEventListener('change', applyBrightness);
+    applyBrightness();
+  }
+
+  const weather = $('#lockWeather'), event = $('#lockEvent');
+  if (weather) weather.textContent = (CONFIG.weather?.desc || '晴朗') + ' · ' + (CONFIG.weather?.temp || '24°');
+  if (event) event.textContent = CONFIG.events?.[0]?.title || '今天沒有其他安排';
+
+  let startY = 0, tracking = false;
+  phone.addEventListener('pointerdown', (e) => {
+    if (e.clientY > 48 || cc.classList.contains('active')) return;
+    startY = e.clientY; tracking = true;
+  }, {passive:true});
+  phone.addEventListener('pointerup', (e) => {
+    if (!tracking) return;
+    tracking = false;
+    const dy = e.clientY - startY;
+    if (dy > 65 && startY < 48) openCC();
+    else if (dy < -65 && cc.classList.contains('active')) closeCC();
+  }, {passive:true});
+  phone.addEventListener('pointercancel', () => { tracking = false; }, {passive:true});
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && cc.classList.contains('active')) closeCC();
+  });
+})();;
 
 </script>
 </body>
