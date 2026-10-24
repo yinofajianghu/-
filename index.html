@@ -338,24 +338,22 @@ function updateClock(){
  $('#lockDate').textContent=now.toLocaleDateString('ja-JP',{month:'long',day:'numeric',weekday:'long'});
 }
 function appButton(a){
- const iconAssets={
-  phone:"com.apple.mobilephone-large.png",
-  messages:"com.apple.MobileSMS-large.png",
-  camera:"com.apple.camera-large.png",
-  x:"com.atebits.Tweetie2-large.png",
-  youtube:"com.google.ios.youtube-large.png",
-  spotify:"com.spotify.client-large.png",
-  instagram:"Instagram.png",
-  photos:"com.apple.mobileslideshow-large.png",
-  maps:"com.apple.Maps-large.png",
-  settings:"com.apple.Preferences-large.png"
+ const iconSVG={
+  phone:`<svg viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="phbg" x2="0" y2="1"><stop stop-color="#8df0a0"/><stop offset="1" stop-color="#19b957"/></linearGradient></defs><rect width="64" height="64" rx="14" fill="url(#phbg)"/><path d="M19 12c-3 0-7 4-7 8 0 15 17 32 32 32 4 0 8-4 8-7l-1-7-11-5-6 6c-6-3-10-7-13-13l6-6-5-11z" fill="#fff"/></svg>`,
+  line:`<svg viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="libg" x2="0" y2="1"><stop stop-color="#baff70"/><stop offset="1" stop-color="#70ce36"/></linearGradient></defs><rect width="64" height="64" rx="14" fill="url(#libg)"/><path d="M10 28c0-12 10-20 22-20s22 8 22 20-10 20-22 20h-5l-9 7 2-12c-6-4-10-9-10-15z" fill="#fff"/><text x="32" y="34" font-size="13" font-weight="800" text-anchor="middle" fill="#65bd2b">LINE</text></svg>`,
+  messages:`<svg viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="msgbg" x2="0" y2="1"><stop stop-color="#75ddff"/><stop offset="1" stop-color="#0879f9"/></linearGradient></defs><rect width="64" height="64" rx="14" fill="url(#msgbg)"/><path d="M32 12c-13 0-23 8-23 19 0 6 4 12 10 15l-2 8 11-5h4c13 0 23-8 23-18S45 12 32 12z" fill="#fff"/></svg>`,
+  camera:`<svg viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="cam" x2="0" y2="1"><stop stop-color="#f8f8fb"/><stop offset="1" stop-color="#a6aab4"/></linearGradient></defs><rect width="64" height="64" rx="14" fill="url(#cam)"/><path d="M12 22h10l4-6h12l4 6h10a4 4 0 0 1 4 4v21a4 4 0 0 1-4 4H12a4 4 0 0 1-4-4V26a4 4 0 0 1 4-4z" fill="#454951"/><circle cx="32" cy="35" r="12" fill="#dfe3e9"/><circle cx="32" cy="35" r="8" fill="#4a7eaa"/><circle cx="32" cy="35" r="4" fill="#152c43"/></svg>`,
+  x:`<svg viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#050505"/><path d="M14 13h11l12 16 13-16h4L39 32l15 19H43L30 34 16 51h-4l16-19z" fill="#fff"/></svg>`,
+  youtube:`<svg viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#ff2634"/><rect x="9" y="17" width="46" height="30" rx="9" fill="#fff"/><path d="M28 24v16l13-8z" fill="#ff2634"/></svg>`,
+  spotify:`<svg viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#1ed760"/><g fill="none" stroke="#073b25" stroke-linecap="round"><path d="M13 25c13-5 27-3 38 3" stroke-width="4"/><path d="M16 33c11-4 23-2 32 3" stroke-width="3.5"/><path d="M19 41c8-3 17-1 24 3" stroke-width="3"/></g></svg>`,
+  instagram:`<svg viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="ig" x1="0" y1="1" x2="1" y2="0"><stop stop-color="#ffd86b"/><stop offset=".45" stop-color="#f34b69"/><stop offset="1" stop-color="#8751d6"/></linearGradient></defs><rect width="64" height="64" rx="14" fill="url(#ig)"/><rect x="13" y="13" width="38" height="38" rx="11" fill="none" stroke="#fff" stroke-width="4"/><circle cx="32" cy="32" r="9" fill="none" stroke="#fff" stroke-width="4"/><circle cx="44" cy="20" r="2.8" fill="#fff"/></svg>`,
+  photos:`<svg viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#fff"/><g transform="translate(32 32)"><ellipse cy="-12" rx="7" ry="13" fill="#ff5148"/><ellipse cx="12" rx="7" ry="13" transform="rotate(90 12 0)" fill="#ffbf35"/><ellipse cy="12" rx="7" ry="13" fill="#39c96e"/><ellipse cx="-12" rx="7" ry="13" transform="rotate(90 -12 0)" fill="#3988ff"/><circle r="6" fill="#fff"/></g></svg>`,
+  maps:`<svg viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#e9f4ed"/><path d="M0 13l18-7 15 8 17-8 14 5v17l-16 8-16-6-16 9-16-4z" fill="#9bd8a7"/><path d="M0 45l16-8 16 7 18-8 14 6v22H0z" fill="#f5d98a"/><path d="M35 13c-9 0-15 7-15 15 0 11 15 25 15 25s15-14 15-25c0-8-6-15-15-15z" fill="#3989f6"/><circle cx="35" cy="28" r="5" fill="#fff"/></svg>`,
+  settings:`<svg viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="set" x2="0" y2="1"><stop stop-color="#d7dbe2"/><stop offset="1" stop-color="#6e7480"/></linearGradient></defs><rect width="64" height="64" rx="14" fill="url(#set)"/><g transform="translate(32 32)" fill="#f7f8fa"><path d="M-4-25h8l2 7 6 3 6-3 5 7-5 5v7l5 5-5 7-6-3-6 3-2 7h-8l-2-7-6-3-6 3-5-7 5-5v-7l-5-5 5-7 6 3 6-3z"/><circle r="11" fill="#747b86"/><circle r="5" fill="#e8ebf0"/></g></svg>`
  };
- const asset=iconAssets[a.id];
- const glyph=a.id==="notes"
- ? `<span class="glyph notes26-glyph" aria-hidden="true"><svg viewBox="0 0 64 64" focusable="false"><defs><linearGradient id="notesPaper" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#f5f5f7"/></linearGradient><linearGradient id="notesYellow" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe878"/><stop offset="1" stop-color="#ffbf32"/></linearGradient></defs><rect x="3" y="3" width="58" height="58" rx="12" fill="url(#notesPaper)"/><path d="M3 15a12 12 0 0 1 12-12h34a12 12 0 0 1 12 12v5H3z" fill="url(#notesYellow)"/><path d="M3 18h58" stroke="#e9b72e" stroke-width="1"/><g stroke="#d8d8dc" stroke-width="1.5" stroke-linecap="round"><path d="M12 29h40"/><path d="M12 37h40"/><path d="M12 45h40"/><path d="M12 53h28"/></g></svg></span>`
- : asset
- ? `<span class="glyph ios26-image-glyph" aria-hidden="true"><img src="https://raw.githubusercontent.com/kkkik/iOS26/main/${encodeURIComponent(asset).replace(/%2F/g,"/")}" alt="" loading="eager" onerror="this.parentElement.classList.add('asset-fallback');this.remove()"></span>`
- : `<span class="glyph ${a.cls}" aria-hidden="true">${escapeHTML(a.icon)}</span>`;
+ const notesSVG=`<svg viewBox="0 0 64 64" focusable="false"><defs><linearGradient id="notesPaper" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#f5f5f7"/></linearGradient><linearGradient id="notesYellow" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe878"/><stop offset="1" stop-color="#ffbf32"/></linearGradient></defs><rect x="3" y="3" width="58" height="58" rx="12" fill="url(#notesPaper)"/><path d="M3 15a12 12 0 0 1 12-12h34a12 12 0 0 1 12 12v5H3z" fill="url(#notesYellow)"/><path d="M3 18h58" stroke="#e9b72e" stroke-width="1"/><g stroke="#d8d8dc" stroke-width="1.5" stroke-linecap="round"><path d="M12 29h40"/><path d="M12 37h40"/><path d="M12 45h40"/><path d="M12 53h28"/></g></svg>`;
+ const svg= a.id==="notes" ? notesSVG : iconSVG[a.id];
+ const glyph=svg ? `<span class="glyph ios26-inline-glyph ${a.id==="notes"?"notes26-glyph":""}" aria-hidden="true">${svg}</span>` : `<span class="glyph ${a.cls}" aria-hidden="true">${escapeHTML(a.icon)}</span>`;
  return `<button class="app-icon" data-app="${a.id}" aria-label="${a.name}">${glyph}<span class="app-name">${a.name}</span></button>`
 }
 function initHome(){
