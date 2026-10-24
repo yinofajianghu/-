@@ -163,6 +163,17 @@ html,body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro 
 
 
 
+
+/* Taiwan LINE redesign: five interactive bottom tabs */
+.line-page{position:relative;padding-bottom:78px!important}
+.line-bottom{position:sticky;bottom:0;display:grid;grid-template-columns:repeat(5,1fr);gap:0;margin:20px -20px -25px;padding:9px 4px calc(8px + var(--safe-bottom));background:#fff;border-top:1px solid #eee;z-index:5}
+.line-bottom button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;background:transparent;color:#777;font-size:10px;min-width:0;padding:2px 0}
+.line-bottom button.active{color:#06c755;font-weight:700}.line-bottom .line-tab-icon{font-size:21px;line-height:1.1}
+.line-toolbar{display:flex;align-items:center;justify-content:space-between;margin:10px 0 16px}.line-toolbar button,.line-action{background:#f4f5f6;color:#222;border-radius:18px;padding:8px 12px}
+.line-subtabs{display:flex;gap:18px;border-bottom:1px solid #eee;padding:10px 0;margin-bottom:8px}.line-subtabs button{background:transparent;color:#888;padding:4px 0}.line-subtabs button.active{color:#06c755;font-weight:700;border-bottom:2px solid #06c755}
+.line-card{border:1px solid #eee;border-radius:16px;padding:14px;margin:10px 0;background:#fff}.line-card button{background:#06c755;color:white;border-radius:18px;padding:8px 12px}.line-search{display:flex;gap:8px;background:#f1f2f4;border-radius:12px;padding:10px;margin:10px 0}.line-search input{border:0;background:transparent;outline:0;flex:1;min-width:0;color:#222}
+.line-tool-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.line-tool-grid button{padding:16px 10px;border-radius:14px;background:#f6f7f8;text-align:left;color:#222}.line-page .line-title{margin-top:8px}
+
 /* iOS 26-inspired Phone app screens */
 .phone26-app{min-height:100%;height:100%;display:flex;flex-direction:column;background:linear-gradient(180deg,#f7f7fa,#f1f1f6);color:#161619;padding:clamp(62px,11vh,104px) 18px 0;box-sizing:border-box}
 .phone26-top{position:relative;padding:8px 2px 8px;flex-shrink:0}
@@ -547,10 +558,56 @@ function renderPhoneCall(number){
  $('#phoneCallKeypad').onclick=()=>renderPhone('keypad');
  $('#phoneCallAudio').onclick=()=>{const b=$('#phoneCallAudio'),on=b.getAttribute('aria-pressed')!=='true';b.setAttribute('aria-pressed',String(on));b.textContent=on?'🔈 音訊已開':'🔊 音訊';$('#phoneCallCaption').textContent=on?'已切換模擬音訊狀態':'模擬通話介面'};
 }
-function renderLine(){
- $('#appContent').innerHTML=`<div class="page"><div class="line-page"><div class="nav"><span style="font-size:20px;font-weight:800">LINE</span><span style="font-size:20px">⌕　＋</span></div><div class="line-title">ホーム</div><div class="line-profile" id="myProfile"><div class="avatar">${escapeHTML((CONFIG.userName||"M").slice(0,1))}</div><div><div class="profile-name">${escapeHTML(CONFIG.userName)}</div><div class="profile-sub">プロフィールを見てみよう</div></div><div class="chevron">›</div></div><div class="section-label">友だち</div>${[CONFIG.contactName,"ユイ","ソラ"].map((n,i)=>`<div class="friend" data-friend="${escapeHTML(n)}"><div class="avatar" style="${i===1?'background:linear-gradient(135deg,#8bc9d8,#6c7ab7)':i===2?'background:linear-gradient(135deg,#d9b9e8,#a66b8c)':''}">${escapeHTML(n.slice(0,1))}</div><div class="friend-info"><div class="profile-name">${escapeHTML(n)}</div><div class="friend-preview">${i===0?escapeHTML(CONFIG.chat.at(-1)?.text||"メッセージ"):i===1?"今日もおつかれさま！":"写真を送信しました"}</div></div><div class="friend-time">${i===0?"18:06":"昨日"}</div></div>`).join('')}</div></div>`;
- $('#myProfile').addEventListener('click',renderProfile);
- document.querySelectorAll('[data-friend]').forEach(el=>el.addEventListener('click',()=>{currentFriend=el.dataset.friend;renderChat()}));
+let lineTab='home',lineChatSub='chats',lineSearchMode=false;
+function renderLine(tab){
+ if(tab)lineTab=tab;
+ const title={home:'主頁',chats:'聊天',discover:'逛逛',news:'LINE TODAY',wallet:'錢包'}[lineTab];
+ let content='';
+ if(lineTab==='home'){
+  content=`<div class="line-profile" id="myProfile"><div class="avatar">${escapeHTML((CONFIG.userName||"M").slice(0,1))}</div><div><div class="profile-name">${escapeHTML(CONFIG.userName)}</div><div class="profile-sub">查看個人檔案與設定</div></div><div class="chevron">›</div></div>
+  <div class="section-label">常用服務</div><div class="line-tool-grid"><button data-line-action="services">🧰　所有服務</button><button data-line-action="stickers">🎁　貼圖小舖</button><button data-line-action="calendar">📅　行事曆</button><button data-line-action="albums">🖼️　相簿</button></div>
+  <div class="section-label" style="margin-top:20px">好友</div>${[CONFIG.contactName,"ユイ","ソラ"].map((n,i)=>`<div class="friend" data-friend="${escapeHTML(n)}"><div class="avatar">${escapeHTML(n.slice(0,1))}</div><div class="friend-info"><div class="profile-name">${escapeHTML(n)}</div><div class="friend-preview">${i===0?escapeHTML(CONFIG.chat.at(-1)?.text||"傳送訊息"):i===1?"今天也辛苦了！":"傳送了照片"}</div></div><div class="friend-time">${i===0?"18:06":"昨天"}</div></div>`).join('')}`;
+ }else if(lineTab==='chats'){
+  content=`<div class="line-subtabs"><button class="${lineChatSub==='chats'?'active':''}" data-line-sub="chats">聊天</button><button class="${lineChatSub==='friends'?'active':''}" data-line-sub="friends">好友</button></div><div class="line-toolbar"><button data-line-action="search">⌕ 搜尋</button><button data-line-action="newchat">＋</button></div><div class="line-search" id="lineSearchBox" style="display:none"><input id="lineSearchInput" placeholder="搜尋聊天或好友"><button data-line-action="closeSearch">取消</button></div>${lineChatSub==='friends'?[CONFIG.contactName,"ユイ","ソラ"].map(n=>`<div class="friend" data-friend="${escapeHTML(n)}"><div class="avatar">${escapeHTML(n.slice(0,1))}</div><div class="friend-info"><div class="profile-name">${escapeHTML(n)}</div><div class="friend-preview">傳送訊息</div></div><button class="line-action" data-start-chat="${escapeHTML(n)}">聊天</button></div>`).join(''):[CONFIG.contactName,"ユイ","ソラ"].map((n,i)=>`<div class="friend line-chat-row" data-friend="${escapeHTML(n)}"><div class="avatar">${escapeHTML(n.slice(0,1))}</div><div class="friend-info"><div class="profile-name">${escapeHTML(n)}</div><div class="friend-preview">${i===0?escapeHTML(CONFIG.chat.at(-1)?.text||"訊息"):i===1?"今天也辛苦了！":"傳送了照片"}</div></div><div class="friend-time">${i===0?"18:06":"昨天"}</div></div>`).join('')}`;
+ }else if(lineTab==='discover'){
+  content=`<div class="line-card" style="background:linear-gradient(135deg,#e7f9d7,#fff);border:0"><div style="font-size:21px;font-weight:800">逛逛，發現好生活</div><p>探索購物、送禮、旅遊與官方商店</p><button data-line-action="shop">開始探索</button></div><div class="line-tool-grid"><button data-line-action="shop">🛍️　LINE 購物</button><button data-line-action="gift">🎁　LINE 禮物</button><button data-line-action="travel">✈️　LINE 旅遊</button><button data-line-action="official">🏪　官方帳號商店</button></div><div class="section-label" style="margin-top:20px">為你推薦</div><div class="line-card"><b>今日人氣精選</b><p>探索熱門商品與生活靈感</p><button data-line-action="popular">查看內容</button></div><div class="line-card"><b>我的購物筆記</b><p>儲存喜歡的商品與靈感</p><button data-line-action="notes">開啟筆記</button></div>`;
+ }else if(lineTab==='news'){
+  content=`<div class="line-subtabs"><button class="active" data-news-cat="推薦">推薦</button><button data-news-cat="焦點">焦點</button><button data-news-cat="生活">生活</button><button data-news-cat="國際">國際</button></div><div id="lineNewsFeed"><div class="line-card"><div style="font-size:12px;color:#777">LINE TODAY · 推薦</div><h3>今日焦點與熱門話題</h3><p>這是模擬新聞首頁，點選分類可切換內容。</p><button data-news-open="焦點">閱讀焦點</button></div><div class="line-card"><b>生活新知</b><p>掌握生活、娛樂與趨勢資訊。</p><button data-news-open="生活">閱讀生活</button></div><div class="line-card"><b>國際消息</b><p>查看世界各地的重要消息。</p><button data-news-open="國際">閱讀國際</button></div></div>`;
+ }else{
+  content=`<div class="line-card" style="text-align:center;padding:24px 14px"><div style="font-size:36px">👛</div><h3>LINE 錢包</h3><p>支付與生活服務入口（模擬介面）</p></div><div class="line-tool-grid"><button data-line-action="linepay">💳　LINE Pay</button><button data-line-action="points">🟡　LINE POINTS</button><button data-line-action="coupons">🎟️　優惠券</button><button data-line-action="services">▦　所有服務</button></div>`;
+ }
+ $('#appContent').innerHTML=`<div class="page"><div class="line-page"><div class="nav"><strong style="font-size:20px">LINE</strong><div style="display:flex;gap:14px"><button aria-label="搜尋" data-line-action="search">⌕</button><button aria-label="新增" data-line-action="plus">＋</button></div></div><div class="line-title">${title}</div>${content}<div class="line-bottom">${[['home','⌂','主頁'],['chats','▤','聊天'],['discover','⌕','逛逛'],['news','▥','新聞'],['wallet','▣','錢包']].map(([id,icon,label])=>`<button class="${lineTab===id?'active':''}" data-line-tab="${id}"><span class="line-tab-icon">${icon}</span>${label}</button>`).join('')}</div></div></div>`;
+ $('#appContent').querySelectorAll('[data-line-tab]').forEach(b=>b.onclick=()=>renderLine(b.dataset.lineTab));
+ const profile=$('#myProfile');if(profile)profile.onclick=renderProfile;
+ $('#appContent').querySelectorAll('[data-friend],[data-start-chat]').forEach(el=>el.onclick=()=>{currentFriend=el.dataset.friend||el.dataset.startChat;renderChat()});
+ $('#appContent').querySelectorAll('[data-line-sub]').forEach(b=>b.onclick=()=>{lineChatSub=b.dataset.lineSub;renderLine('chats')});
+ $('#appContent').querySelectorAll('[data-line-action]').forEach(b=>b.onclick=()=>{
+  const a=b.dataset.lineAction;
+  if(a==='search'){const box=$('#lineSearchBox');if(box){box.style.display='flex';$('#lineSearchInput')?.focus()}else lineSimplePage('搜尋','輸入關鍵字搜尋好友、服務與內容',['好友','聊天','服務'])}
+  else if(a==='closeSearch'){const box=$('#lineSearchBox');if(box)box.style.display='none'}
+  else if(a==='plus')lineSimplePage('新增','選擇要使用的新增功能',['加入好友','建立聊天室','掃描行動條碼','全部標記為已讀']);
+  else if(a==='newchat')lineSimplePage('建立聊天室','選擇好友後開始聊天',[CONFIG.contactName,'ユイ','ソラ']);
+  else if(a==='services')lineSimplePage('所有服務','常用服務入口',['貼圖小舖','行事曆','相簿','LINE Pay']);
+  else if(a==='stickers')lineSimplePage('貼圖小舖','瀏覽與管理貼圖',['熱門貼圖','我的貼圖','推薦貼圖']);
+  else if(a==='calendar')lineSimplePage('行事曆','查看近期行程',['今天','本週','新增行程']);
+  else if(a==='albums')lineSimplePage('相簿','查看聊天室相簿',['所有相簿','建立相簿']);
+  else if(a==='shop')lineSimplePage('LINE 購物','探索商品與優惠',['今日優惠','人氣商品','我的購物筆記']);
+  else if(a==='gift')lineSimplePage('LINE 禮物','挑選禮物送給好友',['生日禮物','人氣禮物']);
+  else if(a==='travel')lineSimplePage('LINE 旅遊','探索旅遊商品',['國內旅遊','海外旅遊']);
+  else if(a==='official')lineSimplePage('官方帳號商店','探索品牌與商店',['熱門品牌','我的收藏']);
+  else if(a==='popular')lineSimplePage('今日人氣精選','探索熱門內容',['熱門商品','生活靈感']);
+  else if(a==='notes')lineSimplePage('購物筆記','儲存你的購物靈感',['新增筆記','已儲存項目']);
+  else if(a==='linepay')lineSimplePage('LINE Pay','模擬支付服務，不會進行真實交易',['付款','轉帳','交易紀錄']);
+  else if(a==='points')lineSimplePage('LINE POINTS','點數服務模擬頁面',['點數餘額','點數紀錄']);
+  else if(a==='coupons')lineSimplePage('優惠券','查看可用優惠',['可用優惠','已使用']);
+ });
+ $('#appContent').querySelectorAll('[data-news-cat],[data-news-open]').forEach(b=>b.onclick=()=>{const cat=b.dataset.newsCat||b.dataset.newsOpen;const feed=$('#lineNewsFeed');if(feed)feed.innerHTML=`<div class="line-card"><div style="font-size:12px;color:#777">LINE TODAY · ${escapeHTML(cat)}</div><h3>${escapeHTML(cat)}新聞與熱門內容</h3><p>這是可互動的模擬內容頁，實際新聞需連線至 LINE TODAY。</p><button data-news-back>返回推薦</button></div>`;const back=$('[data-news-back]');if(back)back.onclick=()=>renderLine('news')});
+ const searchInput=$('#lineSearchInput');if(searchInput)searchInput.oninput=()=>$('#appContent').querySelectorAll('.line-chat-row').forEach(row=>row.style.display=row.textContent.toLowerCase().includes(searchInput.value.toLowerCase())?'flex':'none');
+}
+function lineSimplePage(title,desc,items){
+ $('#appContent').innerHTML=`<div class="page"><div class="profile-full"><div class="nav"><button class="nav-button" id="lineSimpleBack">‹ 返回</button><strong>${escapeHTML(title)}</strong><span></span></div><div class="line-card"><p>${escapeHTML(desc)}</p></div>${items.map((x,i)=>`<button class="settings-row" style="width:100%;text-align:left;color:#222;background:#fff" data-line-simple-item="${escapeHTML(x)}">${escapeHTML(x)} <span style="float:right;color:#aaa">›</span></button>`).join('')}<div id="lineSimpleResult" style="padding:12px;color:#777"></div></div></div>`;
+ $('#lineSimpleBack').onclick=()=>renderLine(lineTab);
+ $('#appContent').querySelectorAll('[data-line-simple-item]').forEach(b=>b.onclick=()=>{const res=$('#lineSimpleResult');if(res)res.textContent='已開啟「'+b.dataset.lineSimpleItem+'」模擬功能。'});
 }
 function renderProfile(){
  viewBeforeProfile="line";$('#appContent').innerHTML=`<div class="page"><div class="profile-full"><div class="nav"><button class="nav-button" id="profileBack">‹ 戻る</button><strong>プロフィール</strong><span></span></div><div class="profile-hero"><div class="avatar">${escapeHTML((CONFIG.userName||"M").slice(0,1))}</div><div style="font-size:23px;font-weight:800">${escapeHTML(CONFIG.userName)}</div><div class="profile-bio">大切な人との思い出を、ここに。</div><div class="profile-stats"><span><b>24</b><br>投稿</span><span><b>128</b><br>友だち</span><span><b>18</b><br>写真</span></div></div><div class="settings-row">🎂　誕生日 <span style="margin-left:auto;color:#888">非公開</span></div><div class="settings-row">📍　ステータス <span style="margin-left:auto;color:#888">元気です</span></div></div></div>`;
