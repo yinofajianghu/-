@@ -15,7 +15,7 @@
 #lock.active,#home.active,#appView.active{display:block}
 #lock{padding:calc(7vh + var(--safe-top)) 22px calc(22px + var(--safe-bottom));text-align:center;touch-action:pan-y;-webkit-user-select:none;user-select:none;transform:translateY(0);opacity:1;transition:transform .28s cubic-bezier(.2,.8,.2,1),opacity .24s ease;will-change:transform,opacity}#lock.unlocking{transform:translateY(-18%);opacity:0;pointer-events:none}#lock.dragging{transition:none}
 .lock-small{font-size:14px;letter-spacing:.08em;text-shadow:0 2px 12px #0008}.lock-time{font-size:clamp(64px,17vw,100px);font-weight:200;letter-spacing:-.06em;line-height:1.12;margin-top:8px;text-shadow:0 2px 20px #0005}.lock-date{font-size:19px;font-weight:500;text-shadow:0 2px 12px #0008}
-.lock-bottom{position:absolute;bottom:calc(18px + var(--safe-bottom));left:0;right:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px}.lock-hint{font-size:13px;color:#ffffffd9;text-shadow:0 1px 8px #000}.home-indicator{width:134px;height:5px;border-radius:10px;background:#fff;display:block;cursor:pointer;flex-shrink:0}.lock-indicator{margin-top:5px}
+.lock-bottom{position:absolute;bottom:calc(18px + var(--safe-bottom));left:0;right:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px}.lock-hint{font-size:13px;color:#ffffffd9;text-shadow:0 1px 8px #000}.home-indicator{width:134px;height:5px;border:0;padding:0;border-radius:10px;background:#fff;display:block;cursor:pointer;flex-shrink:0}.lock-indicator{margin-top:5px}
 #home{padding:calc(12px + var(--safe-top)) 20px calc(18px + var(--safe-bottom));display:none}
 #home.active{display:flex;flex-direction:column}
 .status{height:25px;display:flex;align-items:center;justify-content:space-between;padding:0 8px;font-size:12px;font-weight:700;text-shadow:0 1px 8px #0006;flex-shrink:0}
@@ -219,7 +219,7 @@ html,body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro 
     <div id="lockTime" class="lock-time">9:41</div><div id="lockDate" class="lock-date">星期日，10月25日</div>
     <div class="lock-widgets"><div class="lock-widget"><strong>☀︎　天氣</strong><span id="lockWeather">晴朗 · 24°</span></div><div class="lock-widget"><strong>▦　行事曆</strong><span id="lockEvent">今天沒有其他安排</span></div></div>
     <div class="lock-controls"><button class="lock-control" id="flashlightButton" aria-label="手電筒">⌁</button><button class="lock-control" id="lockCameraButton" aria-label="相機">◉</button></div>
-    <div class="lock-bottom"><div class="lock-hint">向上滑動以解鎖</div><div id="lockBar" class="home-indicator lock-indicator" aria-label="解鎖"></div></div>
+    <div class="lock-bottom"><button type="button" id="unlockPrompt" class="lock-hint" aria-label="輸入密碼解鎖">點此輸入密碼</button><button type="button" id="lockBar" class="home-indicator lock-indicator" aria-label="輸入密碼解鎖"></button></div>
   </section>
     <div id="passcodeScreen" aria-label="輸入密碼" aria-hidden="true">
       <button class="passcode-back" id="passcodeCancel" aria-label="返回鎖定畫面">取消</button>
@@ -635,27 +635,24 @@ wallpaperStyle();initHome();updateClock();setInterval(updateClock,1000);
 
 </script>
 <script>
-/* Reliable lock-screen fallback handlers, isolated from the main initialization. */
+/* Simple explicit unlock controls; no swipe detection required. */
 (function(){
  const lock=document.getElementById('lock');
- const hint=document.querySelector('.lock-hint');
- const bar=document.getElementById('lockBar');
  const pass=document.getElementById('passcodeScreen');
- if(!lock||!pass)return;
  function showCode(){
-   if(!lock.classList.contains('active')||window.__phoneUnlocking)return;
-   pass.style.display='flex';
-   pass.style.zIndex='999';
+   if(!lock||!pass||!lock.classList.contains('active'))return;
    pass.classList.add('active');
    pass.setAttribute('aria-hidden','false');
-   try{openPasscode()}catch(e){}
+   pass.style.display='flex';
+   pass.style.zIndex='999';
+   const dots=document.querySelectorAll('#passcodeDots .passcode-dot');
+   dots.forEach(d=>d.classList.remove('filled'));
+   const err=document.getElementById('passcodeError');if(err)err.textContent='';
  }
- if(hint){hint.style.cursor='pointer';hint.style.pointerEvents='auto';hint.addEventListener('click',showCode);hint.addEventListener('touchend',function(e){e.preventDefault();showCode()},{passive:false});}
- if(bar){bar.style.pointerEvents='auto';bar.addEventListener('click',showCode);bar.addEventListener('touchend',function(e){e.preventDefault();showCode()},{passive:false});}
- let startY=null;
- lock.addEventListener('touchstart',function(e){if(!lock.classList.contains('active'))return;startY=e.changedTouches[0].clientY;},{passive:true});
- lock.addEventListener('touchend',function(e){if(startY===null)return;const endY=e.changedTouches[0].clientY;const delta=startY-endY;startY=null;if(delta>35)showCode();},{passive:true});
- lock.addEventListener('click',function(e){if(e.target.closest('.lock-control'))return;if(e.target.closest('.lock-hint,#lockBar'))showCode();});
+ document.getElementById('unlockPrompt')?.addEventListener('click',showCode);
+ document.getElementById('lockBar')?.addEventListener('click',showCode);
+ document.getElementById('unlockPrompt')?.addEventListener('touchend',showCode,{passive:true});
+ document.getElementById('lockBar')?.addEventListener('touchend',showCode,{passive:true});
 })();
 </script>
 </body>
