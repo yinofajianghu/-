@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#111827">
-<title>撿到的手機</title>
+<meta name="theme-color" content="#dce7dd">
+<title>拾得物｜iPhone Simulation</title>
 <style>
 :root{--ink:#fff;--muted:rgba(255,255,255,.7);--glass:rgba(255,255,255,.18);--line:rgba(255,255,255,.2);--blue:#0a84ff;--safe-top:env(safe-area-inset-top,0px);--safe-bottom:env(safe-area-inset-bottom,0px)}
 *{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#111;color:white;overscroll-behavior:none}button,input,textarea{font:inherit}button{cursor:pointer;color:inherit;border:0}button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid #fff;outline-offset:3px}
@@ -36,6 +36,90 @@
 .simple-card{border-radius:18px;background:#fff;padding:18px;margin:12px 0;box-shadow:0 3px 15px #00008}.note-card{background:#fff9ce;border-radius:12px;padding:18px;color:#333;margin:12px 0;min-height:120px;white-space:pre-wrap}.photo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:4px}.photo{aspect-ratio:1;border-radius:8px;display:grid;place-items:center;font-size:34px;background:linear-gradient(135deg,#f4c9bd,#b4cbe2);cursor:pointer}.photo:nth-child(3n+2){background:linear-gradient(135deg,#f4dd9d,#c8b3df)}.photo:nth-child(3n){background:linear-gradient(135deg,#b8e4d5,#92a6d7)}.settings-row{display:flex;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid #eee}.settings-ico{width:31px;height:31px;border-radius:8px;background:#8e8e93;color:white;display:grid;place-items:center}.map-placeholder{height:58vh;border-radius:18px;background:linear-gradient(30deg,#d5e6d5,#f0ead1 45%,#b9d5e9);position:relative;overflow:hidden}.map-placeholder:before,.map-placeholder:after{content:"";position:absolute;width:140%;height:30px;background:#fff8;transform:rotate(-35deg);top:25%;left:-20%}.map-placeholder:after{transform:rotate(25deg);top:60%}.map-pin{position:absolute;left:52%;top:42%;font-size:35px;z-index:1}
 @media(min-width:600px){#phone{width:min(430px,100%);height:min(900px,100dvh);margin:auto;border-radius:42px;border:7px solid #171717;box-shadow:0 20px 80px #0007}body{display:grid;place-items:center;background:#151515}#lock,#home,#appView{border-radius:35px;overflow:hidden}.app-grid{gap:24px 12px}.widgets{margin-top:18px}}
 @media(max-height:700px){.widgets .widget{height:100px}.app-grid{margin-top:17px;gap:13px 9px}.glyph{width:50px;height:50px;font-size:26px}.app-name{font-size:10px}.widgets{margin-top:8px}.weather-temp{font-size:27px}}
+
+/* ===== Japanese clean iOS polish layer ===== */
+:root{
+ --jp-cream:#f7f5f0;--jp-sage:#dce7dd;--jp-mint:#e7f0e8;
+ --jp-ink:#23332d;--jp-glass:rgba(255,255,255,.30);
+}
+html,body{background:#e9e8e2}
+body{background:
+ radial-gradient(ellipse at 18% 18%,rgba(255,255,255,.95),transparent 34%),
+ radial-gradient(ellipse at 82% 80%,rgba(193,211,194,.55),transparent 35%),
+ #e9e8e2}
+#phone{
+ background:#dce7dd;
+ color:#fff;
+ transition:background .35s ease;
+}
+.wallpaper{
+ background-image:
+  radial-gradient(ellipse at 50% 22%,rgba(255,255,255,.44),transparent 40%),
+  linear-gradient(155deg,rgba(27,54,43,.04),rgba(19,41,35,.24)),
+  var(--wallpaper);
+ background-size:cover;background-position:center;
+ transform:scale(1.015);
+ animation:wallpaperBreathe 18s ease-in-out infinite alternate;
+}
+.wallpaper:after{
+ background:
+  linear-gradient(180deg,rgba(12,25,21,.05),transparent 32%,rgba(12,25,21,.12)),
+  radial-gradient(ellipse at 50% 100%,rgba(10,20,16,.20),transparent 55%);
+}
+@keyframes wallpaperBreathe{from{transform:scale(1.015)}to{transform:scale(1.055)}}
+#lock{backdrop-filter:blur(0px);transition:opacity .32s ease,transform .42s cubic-bezier(.2,.8,.2,1)}
+#lock.active{animation:lockAppear .55s cubic-bezier(.2,.8,.2,1) both}
+@keyframes lockAppear{from{opacity:0;transform:scale(1.035)}to{opacity:1;transform:scale(1)}}
+.lock-time{font-variant-numeric:tabular-nums;letter-spacing:-.075em;text-shadow:0 4px 30px rgba(0,0,0,.14)}
+.lock-date{letter-spacing:.015em}
+.lock-small{letter-spacing:.12em}
+.lock-hint{padding:9px 15px;border:1px solid rgba(255,255,255,.26);background:rgba(255,255,255,.10);border-radius:999px;backdrop-filter:blur(18px);animation:hintFloat 2.8s ease-in-out infinite}
+@keyframes hintFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+.home-indicator{box-shadow:0 1px 4px rgba(0,0,0,.12);transition:width .2s ease,opacity .2s ease}
+.home-indicator:active{width:104px;opacity:.7}
+#home{gap:0}
+#home.active{animation:homeIn .48s cubic-bezier(.18,.82,.25,1) both}
+@keyframes homeIn{from{opacity:0;transform:translateY(18px) scale(.985)}to{opacity:1;transform:translateY(0) scale(1)}}
+.status{font-variant-numeric:tabular-nums}
+.widget,.widget-card,.home-widget,.calendar-widget,.weather-widget{
+ border:1px solid rgba(255,255,255,.25);
+ box-shadow:0 10px 30px rgba(18,38,29,.08),inset 0 1px 0 rgba(255,255,255,.22);
+ backdrop-filter:blur(24px) saturate(1.2);
+}
+#appView{background:#f7f7f5;color:#1e2421}
+#appView.active{animation:appIn .34s cubic-bezier(.2,.8,.2,1) both}
+@keyframes appIn{from{opacity:0;transform:translateY(14px) scale(.975);border-radius:34px}to{opacity:1;transform:translateY(0) scale(1);border-radius:0}}
+.app-header,.app-topbar,.app-nav{
+ backdrop-filter:blur(22px) saturate(1.4);
+}
+button{transition:transform .16s ease,filter .16s ease,opacity .16s ease}
+button:active{transform:scale(.965);filter:brightness(.96)}
+.app-icon{box-shadow:0 5px 12px rgba(0,0,0,.12),inset 0 1px 0 rgba(255,255,255,.26);transition:transform .22s cubic-bezier(.2,.8,.2,1),box-shadow .22s ease}
+.app-icon:active{transform:scale(.88);box-shadow:0 1px 4px rgba(0,0,0,.12)}
+#dock{border:1px solid rgba(255,255,255,.26);background:rgba(248,249,246,.24);box-shadow:0 10px 32px rgba(20,40,30,.12),inset 0 1px 0 rgba(255,255,255,.24);backdrop-filter:blur(26px) saturate(1.35)}
+#appView .home-indicator{background:#1f2522}
+#appHomebar{transition:opacity .2s ease}
+#appView input,#appView textarea{border-radius:12px}
+#appView button{touch-action:manipulation}
+.jp-toast{
+ position:absolute;z-index:90;top:calc(12px + var(--safe-top));left:14px;right:14px;
+ padding:13px 15px;border-radius:21px;background:rgba(250,250,248,.90);color:#202622;
+ border:1px solid rgba(255,255,255,.8);box-shadow:0 12px 34px rgba(0,0,0,.16);
+ backdrop-filter:blur(24px);display:flex;gap:11px;align-items:center;
+ animation:toastIn .38s cubic-bezier(.2,.8,.2,1) both;font-size:13px
+}
+.jp-toast .jp-toast-icon{width:34px;height:34px;border-radius:10px;background:#dfe9df;display:grid;place-items:center;font-size:17px;flex-shrink:0}
+@keyframes toastIn{from{opacity:0;transform:translateY(-24px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes toastOut{to{opacity:0;transform:translateY(-20px) scale(.98)}}
+@media (min-width:700px){
+ body{display:grid;place-items:center;padding:22px}
+ #phone{width:min(430px,100%);height:min(900px,calc(100dvh - 44px));border-radius:46px;border:7px solid #1b211f;box-shadow:0 32px 90px rgba(22,32,26,.28),0 0 0 1px rgba(255,255,255,.65);overflow:hidden}
+ #phone:before{content:"";position:absolute;z-index:100;top:9px;left:50%;transform:translateX(-50%);width:94px;height:25px;border-radius:999px;background:rgba(0,0,0,.78);pointer-events:none;opacity:.75}
+}
+@media (prefers-reduced-motion:reduce){
+ *,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}
+}
+
 </style>
 </head>
 <body>
@@ -279,6 +363,65 @@ $('#lock').addEventListener('pointerdown',e=>{mouseY=e.clientY});
 $('#lock').addEventListener('pointerup',e=>{if(mouseY!==null&&mouseY-e.clientY>35)unlock();mouseY=null});
 document.addEventListener('click',e=>{const b=e.target.closest('[data-app]');if(b)showApp(b.dataset.app)});
 wallpaperStyle();initHome();updateClock();setInterval(updateClock,1000);
+
+/* ===== Interaction polish: subtle app launch, toast notifications, keyboard/back gestures ===== */
+(function(){
+ const phone=document.querySelector('#phone');
+ if(!phone)return;
+ let toastTimer=null;
+ function toast(title,body,icon='✦'){
+   const old=document.querySelector('.jp-toast');
+   if(old){old.style.animation='toastOut .2s ease both';setTimeout(()=>old.remove(),180)}
+   const el=document.createElement('div');el.className='jp-toast';
+   el.innerHTML='<div class="jp-toast-icon">'+icon+'</div><div style="min-width:0;flex:1"><div style="font-weight:700;font-size:13px;margin-bottom:3px">'+safe(title)+'</div><div style="color:#69716b;line-height:1.35">'+safe(body)+'</div></div><div style="font-size:11px;color:#7b827d;align-self:flex-start">now</div>';
+   phone.appendChild(el);clearTimeout(toastTimer);toastTimer=setTimeout(()=>{el.style.animation='toastOut .3s ease both';setTimeout(()=>el.remove(),280)},3500);
+ }
+ function safe(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+ document.addEventListener('click',e=>{
+   const app=e.target.closest('[data-app]');
+   if(app){
+     const name=(app.getAttribute('aria-label')||app.dataset.app||'App').replace(/[-_]/g,' ');
+     app.classList.add('app-tap');
+     setTimeout(()=>app.classList.remove('app-tap'),260);
+   }
+ });
+ const home=document.querySelector('#appHomebar');
+ if(home){
+   let startY=0;
+   home.addEventListener('touchstart',e=>{startY=e.touches[0].clientY},{passive:true});
+   home.addEventListener('touchend',e=>{
+     const endY=e.changedTouches[0].clientY;
+     if(startY-endY>30){if(typeof goHome==='function')goHome()}
+   },{passive:true});
+ }
+ document.addEventListener('keydown',e=>{
+   if(e.key==='Escape'||e.key==='Backspace'){
+     const full=document.querySelector('#fullPlayer');
+     if(full){full.remove();return}
+     const active=document.querySelector('#appView.active');
+     if(active&&typeof goHome==='function'){goHome();return}
+   }
+ });
+ // Show a small welcoming notification only once per page load; it is purely decorative.
+ setTimeout(()=>{
+   if(document.querySelector('#lock.active'))toast('拾得物・お知らせ','スワイプしてロックを解除','⌁');
+ },2200);
+ // Enhance home gesture on the lock screen without overriding existing unlock handlers.
+ let sx=0,sy=0;
+ document.querySelectorAll('#home,#appView').forEach(surface=>{
+   surface.addEventListener('touchstart',e=>{sx=e.touches[0].clientX;sy=e.touches[0].clientY},{passive:true});
+   surface.addEventListener('touchend',e=>{
+     const dx=e.changedTouches[0].clientX-sx,dy=e.changedTouches[0].clientY-sy;
+     if(Math.abs(dx)>100&&Math.abs(dx)>Math.abs(dy)*1.4){
+       // Native-feeling edge gesture: left-to-right from an app returns to the home screen.
+       if(dx>0&&sx<32&&surface.id==='appView'&&typeof goHome==='function')goHome();
+     }
+   },{passive:true});
+ });
+ // Keep the app usable in standalone/full-screen Safari and desktop browsers.
+ document.documentElement.style.webkitTapHighlightColor='transparent';
+})();
+
 </script>
 </body>
 </html>
