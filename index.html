@@ -343,14 +343,110 @@ function initHome(){
  $('#appGrid').innerHTML=apps.slice(0,8).map(appButton).join('')+apps.slice(8).map(appButton).join('');
  $('#dock').innerHTML=[apps[0],apps[1],apps[2],apps[3]].map(appButton).join('');
 }
-let unlockInProgress=false;
-const PHONE_PASSCODE='0525';
-let enteredPasscode='';
-function openPasscode(){const screen=$('#passcodeScreen');if(!screen)return;enteredPasscode='';renderPasscodeDots();$('#passcodeError').textContent='';screen.classList.add('active');screen.setAttribute('aria-hidden','false');}
-function closePasscode(){const screen=$('#passcodeScreen');if(!screen)return;screen.classList.remove('active');screen.setAttribute('aria-hidden','true');enteredPasscode='';renderPasscodeDots();$('#passcodeError').textContent='';}
-function renderPasscodeDots(){const dots=$('#passcodeDots .passcode-dot');dots.forEach((dot,i)=>{const filled=i<enteredPasscode.length;dot.classList.toggle('filled',filled);dot.style.backgroundColor=filled?'#fff':'transparent';dot.style.borderColor='#fff';dot.style.opacity='1';});$('#passcodeDots').setAttribute('aria-label',`已輸入密碼 ${enteredPasscode.length} 位`);}
-function enterPasscodeDigit(digit){if(enteredPasscode.length>=4)return;enteredPasscode+=digit;renderPasscodeDots();if(enteredPasscode.length===4){if(enteredPasscode===PHONE_PASSCODE){$('#passcodeError').textContent='';closePasscode();unlock();}else{const dots=$('#passcodeDots .passcode-dot');dots.forEach(d=>d.animate([{transform:'translateX(0)'},{transform:'translateX(-5px)'},{transform:'translateX(5px)'},{transform:'translateX(0)'}],{duration:220}));$('#passcodeError').textContent='密碼錯誤，請再試一次';window.setTimeout(()=>{enteredPasscode='';renderPasscodeDots();},450);}}}
-function unlock(){const lock=$('#lock');if(unlockInProgress||!lock.classList.contains('active'))return;unlockInProgress=true;lock.classList.add('unlocking');const finish=()=>{lock.classList.remove('active','unlocking','dragging');lock.style.transform='';lock.style.opacity='';$('#home').classList.add('active');$('#appView').classList.remove('active');unlockInProgress=false;};if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){finish();return;}window.setTimeout(finish,260);}
+let unlockInProgress = false;
+const PHONE_PASSCODE = '0525';
+let enteredPasscode = '';
+let passcodeResetTimer = 0;
+
+function openPasscode() {
+  const screen = $('#passcodeScreen');
+  if (!screen || unlockInProgress) return;
+  window.clearTimeout(passcodeResetTimer);
+  enteredPasscode = '';
+  renderPasscodeDots();
+  const error = $('#passcodeError');
+  if (error) error.textContent = '';
+  screen.style.removeProperty('display');
+  screen.classList.add('active');
+  screen.setAttribute('aria-hidden', 'false');
+}
+
+function closePasscode() {
+  const screen = $('#passcodeScreen');
+  window.clearTimeout(passcodeResetTimer);
+  enteredPasscode = '';
+  renderPasscodeDots();
+  const error = $('#passcodeError');
+  if (error) error.textContent = '';
+  if (screen) {
+    screen.classList.remove('active');
+    screen.setAttribute('aria-hidden', 'true');
+    screen.style.removeProperty('display');
+  }
+}
+
+function renderPasscodeDots() {
+  const container = $('#passcodeDots');
+  if (!container) return;
+  const dots = container.querySelectorAll('.passcode-dot');
+  dots.forEach((dot, index) => {
+    const filled = index < enteredPasscode.length;
+    dot.classList.toggle('filled', filled);
+    dot.style.backgroundColor = filled ? '#fff' : 'transparent';
+    dot.style.borderColor = '#fff';
+    dot.style.opacity = '1';
+    dot.style.boxShadow = 'none';
+  });
+  container.setAttribute('aria-label', `已輸入密碼 ${enteredPasscode.length} 位`);
+}
+
+function enterPasscodeDigit(digit) {
+  if (!/^\\d$/.test(String(digit)) || enteredPasscode.length >= 4) return;
+  window.clearTimeout(passcodeResetTimer);
+  const error = $('#passcodeError');
+  if (error) error.textContent = '';
+  enteredPasscode += String(digit);
+  renderPasscodeDots();
+
+  if (enteredPasscode.length !== 4) return;
+
+  if (enteredPasscode === PHONE_PASSCODE) {
+    closePasscode();
+    unlock();
+    return;
+  }
+
+  const container = $('#passcodeDots');
+  if (container && typeof container.animate === 'function') {
+    try {
+      container.animate(
+        [{ transform: 'translateX(0)' }, { transform: 'translateX(-5px)' },
+         { transform: 'translateX(5px)' }, { transform: 'translateX(0)' }],
+        { duration: 240, easing: 'ease-out' }
+      );
+    } catch (_) {}
+  }
+  if (error) error.textContent = '密碼錯誤，請再試一次';
+  passcodeResetTimer = window.setTimeout(() => {
+    enteredPasscode = '';
+    renderPasscodeDots();
+  }, 650);
+}
+
+function unlock() {
+  const lock = $('#lock');
+  const home = $('#home');
+  const appView = $('#appView');
+  if (unlockInProgress || !lock || !home) return;
+  unlockInProgress = true;
+  window.clearTimeout(passcodeResetTimer);
+  lock.classList.add('unlocking');
+
+  const finish = () => {
+    lock.classList.remove('active', 'unlocking', 'dragging');
+    lock.style.transform = '';
+    lock.style.opacity = '';
+    home.classList.add('active');
+    if (appView) appView.classList.remove('active');
+    unlockInProgress = false;
+  };
+
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    finish();
+  } else {
+    window.setTimeout(finish, 260);
+  }
+}
 function showLock(){closeAudio();stopCall();$('#appView').classList.remove('active');$('#home').classList.remove('active');$('#lock').classList.add('active');}
 function showApp(id){
  if(id==="instagram"){startIncomingCall();return}
@@ -680,69 +776,6 @@ wallpaperStyle();initHome();updateClock();setInterval(updateClock,1000);
 })();;
 
 </script>
-<script>
-/* Reliable passcode entry fallback for touch and mouse. */
-(function(){
-  const lock=document.getElementById('lock');
-  const screen=document.getElementById('passcodeScreen');
-  if(!lock||!screen)return;
-  function showPasscode(){
-    if(!lock.classList.contains('active'))return;
-    if(typeof openPasscode==='function'){
-      try{openPasscode();}catch(_){}
-    }
-    screen.classList.add('active');
-    screen.style.removeProperty('display');
-    screen.style.zIndex='9999';
-    screen.style.position='absolute';
-    screen.style.inset='0';
-    screen.setAttribute('aria-hidden','false');
-  }
-  function hidePasscode(){
-    if(typeof closePasscode==='function'){
-      try{closePasscode();}catch(_){}
-    }
-    screen.classList.remove('active');
-    screen.style.removeProperty('display');
-    screen.setAttribute('aria-hidden','true');
-  }
-  // Capture taps before other handlers, so the lock screen always opens the keypad.
-  document.addEventListener('click',function(e){
-    const entry=e.target.closest('#lockBar,#unlockPrompt,.lock-time,.lock-date');
-    if(entry&&lock.classList.contains('active')){
-      e.preventDefault();
-      showPasscode();
-      return;
-    }
-    if(e.target.closest('#passcodeCancel')){
-      e.preventDefault();
-      hidePasscode();
-    }
-  },true);
-  // Upward swipe from the white home indicator; also allow a clear upward swipe anywhere on lock screen.
-  let start=null;
-  lock.addEventListener('touchstart',function(e){
-    if(!lock.classList.contains('active'))return;
-    const t=e.changedTouches[0];
-    start={x:t.clientX,y:t.clientY,target:e.target};
-  },{passive:true});
-  lock.addEventListener('touchend',function(e){
-    if(!start)return;
-    const t=e.changedTouches[0],dx=Math.abs(t.clientX-start.x),dy=start.y-t.clientY;
-    const fromBar=!!(start.target&&start.target.closest&&start.target.closest('#lockBar'));
-    start=null;
-    if(lock.classList.contains('active')&&dy>dx&&((fromBar&&dy>12)||dy>Math.max(45,window.innerHeight*.07)))showPasscode();
-  },{passive:true});
-  lock.addEventListener('touchcancel',function(){start=null;},{passive:true});
-  let pointerStart=null;
-  lock.addEventListener('pointerdown',function(e){if(lock.classList.contains('active'))pointerStart={x:e.clientX,y:e.clientY};},{passive:true});
-  lock.addEventListener('pointerup',function(e){
-    if(!pointerStart)return;
-    const dy=pointerStart.y-e.clientY,dx=Math.abs(pointerStart.x-e.clientX);pointerStart=null;
-    if(lock.classList.contains('active')&&dy>dx&&dy>Math.max(45,window.innerHeight*.07))showPasscode();
-  },{passive:true});
-  lock.addEventListener('pointercancel',function(){pointerStart=null;},{passive:true});
-})();
-</script>
+
 </body>
 </html>
