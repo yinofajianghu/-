@@ -681,48 +681,67 @@ wallpaperStyle();initHome();updateClock();setInterval(updateClock,1000);
 
 </script>
 <script>
-/* Independent unlock fallback: keeps the passcode screen reachable even if a prior handler fails. */
+/* Reliable passcode entry fallback for touch and mouse. */
 (function(){
   const lock=document.getElementById('lock');
   const screen=document.getElementById('passcodeScreen');
   if(!lock||!screen)return;
   function showPasscode(){
     if(!lock.classList.contains('active'))return;
+    if(typeof openPasscode==='function'){
+      try{openPasscode();}catch(_){}
+    }
+    screen.classList.add('active');
     screen.style.display='flex';
     screen.style.zIndex='9999';
     screen.style.position='absolute';
     screen.style.inset='0';
-    if(typeof openPasscode==='function'){
-      try{openPasscode();}catch(_){screen.classList.add('active');screen.setAttribute('aria-hidden','false');}
-    }else{
-      screen.classList.add('active');screen.setAttribute('aria-hidden','false');
-      const dots=document.querySelectorAll('#passcodeDots .passcode-dot');dots.forEach(d=>d.classList.remove('filled'));
-      const error=document.getElementById('passcodeError');if(error)error.textContent='';
-    }
-  function hidePasscode(){
-    screen.classList.remove('active');screen.style.display='none';screen.setAttribute('aria-hidden','true');
+    screen.setAttribute('aria-hidden','false');
   }
-  document.addEventListener('click',function(e){
-    if(e.target.closest('#lockBar,#unlockPrompt,.lock-time,.lock-date,#lockCameraButton,#flashlightButton')){
-      if(lock.classList.contains('active')){e.preventDefault();showPasscode();}
+  function hidePasscode(){
+    if(typeof closePasscode==='function'){
+      try{closePasscode();}catch(_){}
     }
-    if(e.target.closest('#passcodeCancel')){e.preventDefault();hidePasscode();}
+    screen.classList.remove('active');
+    screen.style.display='none';
+    screen.setAttribute('aria-hidden','true');
+  }
+  // Capture taps before other handlers, so the lock screen always opens the keypad.
+  document.addEventListener('click',function(e){
+    const entry=e.target.closest('#lockBar,#unlockPrompt,.lock-time,.lock-date');
+    if(entry&&lock.classList.contains('active')){
+      e.preventDefault();
+      showPasscode();
+      return;
+    }
+    if(e.target.closest('#passcodeCancel')){
+      e.preventDefault();
+      hidePasscode();
+    }
   },true);
-  let startY=null,startX=null,startTarget=null;
+  // Upward swipe from the white home indicator; also allow a clear upward swipe anywhere on lock screen.
+  let start=null;
   lock.addEventListener('touchstart',function(e){
     if(!lock.classList.contains('active'))return;
-    const t=e.changedTouches[0];startY=t.clientY;startX=t.clientX;startTarget=e.target;
+    const t=e.changedTouches[0];
+    start={x:t.clientX,y:t.clientY,target:e.target};
   },{passive:true});
   lock.addEventListener('touchend',function(e){
-    if(startY===null)return;
-    const t=e.changedTouches[0],dy=startY-t.clientY,dx=Math.abs(t.clientX-startX);
-    const fromIndicator=!!(startTarget&&startTarget.closest&&startTarget.closest('#lockBar'));
-    startY=null;startX=null;startTarget=null;
-    if(lock.classList.contains('active')&&dy>Math.max(18,window.innerHeight*.025)&&dy>dx&&(fromIndicator||dy>Math.max(45,window.innerHeight*.07)))showPasscode();
+    if(!start)return;
+    const t=e.changedTouches[0],dx=Math.abs(t.clientX-start.x),dy=start.y-t.clientY;
+    const fromBar=!!(start.target&&start.target.closest&&start.target.closest('#lockBar'));
+    start=null;
+    if(lock.classList.contains('active')&&dy>dx&&((fromBar&&dy>12)||dy>Math.max(45,window.innerHeight*.07)))showPasscode();
   },{passive:true});
-  let pointerY=null;
-  lock.addEventListener('pointerdown',e=>{if(lock.classList.contains('active'))pointerY=e.clientY;},{passive:true});
-  lock.addEventListener('pointerup',e=>{if(pointerY===null)return;const dy=pointerY-e.clientY;pointerY=null;if(lock.classList.contains('active')&&dy>Math.max(45,window.innerHeight*.07))showPasscode();},{passive:true});
+  lock.addEventListener('touchcancel',function(){start=null;},{passive:true});
+  let pointerStart=null;
+  lock.addEventListener('pointerdown',function(e){if(lock.classList.contains('active'))pointerStart={x:e.clientX,y:e.clientY};},{passive:true});
+  lock.addEventListener('pointerup',function(e){
+    if(!pointerStart)return;
+    const dy=pointerStart.y-e.clientY,dx=Math.abs(pointerStart.x-e.clientX);pointerStart=null;
+    if(lock.classList.contains('active')&&dy>dx&&dy>Math.max(45,window.innerHeight*.07))showPasscode();
+  },{passive:true});
+  lock.addEventListener('pointercancel',function(){pointerStart=null;},{passive:true});
 })();
 </script>
 </body>
