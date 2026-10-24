@@ -163,6 +163,48 @@ html,body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro 
 
 
 
+/* iOS 26-inspired Phone app screens */
+.phone26-app{min-height:100%;height:100%;display:flex;flex-direction:column;background:linear-gradient(180deg,#f7f7fa,#f1f1f6);color:#161619;padding:12px 18px 0;box-sizing:border-box}
+.phone26-top{position:relative;padding:10px 2px 12px;flex-shrink:0}
+.phone26-eyebrow{font-size:13px;color:#8b8b92;font-weight:600}
+.phone26-title{font-size:32px;letter-spacing:-.8px;font-weight:750;margin-top:3px}
+.phone26-filter{position:absolute;right:0;bottom:17px;border:1px solid #dedee5;border-radius:18px;padding:7px 12px;background:#ffffffb8;color:#007aff;font-size:13px}
+.phone26-body{flex:1;overflow:auto;padding-bottom:12px}
+.phone26-section,.phone26-heading{font-size:14px;color:#777780;font-weight:650;margin:14px 2px 7px}
+.phone26-row{display:flex;align-items:center;gap:11px;padding:12px 2px;border-bottom:1px solid #dedee6}
+.phone26-avatar{width:43px;height:43px;border-radius:50%;display:grid;place-items:center;flex-shrink:0;background:linear-gradient(145deg,#d9e4f2,#aabbd2);color:#fff;font-size:19px;font-weight:650}
+.phone26-main{flex:1;min-width:0}
+.phone26-name{font-size:16px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.phone26-name.missed{color:#ff3b30}
+.phone26-sub,.phone26-time{font-size:12px;color:#8a8a92;margin-top:4px}
+.phone26-time{margin:0 2px 0 0;white-space:nowrap}
+.phone26-call{width:34px;height:34px;border-radius:50%;background:#e4f7e8;color:#24a148;font-size:16px;flex-shrink:0}
+.phone26-tabs{display:flex;justify-content:space-around;align-items:center;gap:2px;margin:10px -8px 0;padding:10px 2px calc(8px + var(--safe-bottom));border:1px solid #ffffffb8;border-bottom:0;border-radius:23px 23px 0 0;background:#ffffffb8;backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);flex-shrink:0}
+.phone26-tab{display:flex;flex-direction:column;align-items:center;gap:4px;background:transparent;color:#777780;font-size:10px;min-width:0;flex:1}
+.phone26-tab span{font-size:21px;line-height:1.1}
+.phone26-tab.selected{color:#087cff}
+.phone26-search{display:flex;gap:8px;align-items:center;background:#e6e6eb;border-radius:12px;padding:9px 12px;margin:6px 0 10px;color:#777}
+.phone26-search input{flex:1;min-width:0;border:0;outline:0;background:transparent;font-size:15px;color:#222}
+.phone26-dial-display{height:68px;display:grid;place-items:center;font-size:27px;font-weight:400;letter-spacing:1px;color:#18181b}
+.phone26-keypad{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px 22px;max-width:300px;width:100%;margin:0 auto}
+.phone26-key{aspect-ratio:1;border-radius:50%;background:#e3e3e8;color:#1a1a1e;display:flex;flex-direction:column;justify-content:center;align-items:center;font-size:29px;font-weight:400;line-height:1}
+.phone26-key:active{background:#d0d0d7}
+.phone26-key small{font-size:9px;letter-spacing:2px;margin-top:5px;font-weight:650}
+.phone26-dial-actions{max-width:300px;width:100%;margin:14px auto 4px;display:grid;grid-template-columns:1fr 1fr 1fr;align-items:center;text-align:center}
+.phone26-delete{background:transparent;color:#777;font-size:22px}
+.phone26-call-main{width:62px;height:62px;border-radius:50%;background:#30c65a;color:white;font-size:25px;justify-self:center}
+.phone26-empty{min-height:180px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;color:#898992;font-size:14px;gap:12px}
+.phone26-voicemail-icon{font-size:34px;color:#9a9aa3}
+.phone26-call-screen{height:100%;min-height:78vh;display:flex;flex-direction:column;align-items:center;padding:8vh 24px calc(24px + var(--safe-bottom));box-sizing:border-box;background:radial-gradient(ellipse at 50% 20%,#dce8f6,#f4f4f8 60%,#e7e8ee);color:#17171a;text-align:center}
+.phone26-call-status{font-size:13px;color:#777;margin-bottom:auto}
+.phone26-call-avatar{width:112px;height:112px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(145deg,#b9cce5,#7e9bbd);color:#fff;font-size:42px;box-shadow:0 10px 30px #607a9b35}
+.phone26-call-person{font-size:29px;font-weight:650;margin-top:22px;overflow-wrap:anywhere}
+.phone26-call-state{font-size:14px;color:#777;margin-top:10px}
+.phone26-call-controls{display:flex;gap:14px;margin-top:auto;margin-bottom:34px}
+.phone26-call-controls button{background:#ffffffa8;border:1px solid #ffffffd1;border-radius:18px;padding:13px 10px;color:#333;font-size:12px;backdrop-filter:blur(15px)}
+.phone26-hangup{width:72px;height:72px;border-radius:50%;background:#ff453a;color:white;font-size:28px;transform:rotate(135deg);box-shadow:0 8px 20px #ff453a35}
+.phone26-call-caption{font-size:11px;color:#999;margin-top:18px}
+@media(max-height:700px){.phone26-keypad{gap:6px 18px;max-width:270px}.phone26-key{font-size:25px}.phone26-dial-display{height:48px}.phone26-top{padding-bottom:5px}.phone26-title{font-size:28px}}
 /* iPhone-style passcode entry */
 #passcodeScreen{position:absolute;z-index:60;inset:0;display:none;flex-direction:column;align-items:center;padding:calc(9vh + var(--safe-top)) 28px calc(28px + var(--safe-bottom));background:rgba(18,25,43,.28);backdrop-filter:blur(28px) saturate(1.3);color:#fff;text-align:center}
 #passcodeScreen.active{display:flex;animation:passcodeIn .22s ease both}
@@ -479,9 +521,28 @@ function showApp(id){
  if(id==="phone")renderPhone();else if(id==="line")renderLine();else if(id==="x")renderX();else if(id==="photos")renderPhotos();else if(id==="notes")renderNotes();else if(id==="maps")renderMaps();else if(id==="settings")renderSettings();
 }
 function goHome(){stopCall();closeAudio();$('#appView').classList.remove('active');$('#appView').classList.remove('dark');$('#home').classList.add('active');}
-function renderPhone(){
- const groups=(CONFIG.calls||[]).map(g=>`<div class="section-label">${escapeHTML(g.group)}</div>`+(g.items||[]).map(c=>{let missed=c.type==="未接";return `<div class="call-row"><div class="call-symbol ${missed?'missed':''}">${missed?'↙':c.type==="發"?'↗':'↙'}</div><div class="call-main"><div class="call-type ${missed?'missed':''}">${escapeHTML(c.name||CONFIG.contactName)}${c.count&&Number(c.count)>1?` (${escapeHTML(c.count)})`:''}</div><div class="call-sub">${missed?'未接來電':c.type==="發"?'撥出電話':'撥入電話'}</div></div><div class="call-time">${escapeHTML(c.time)}</div></div>`}).join('')).join('');
- $('#appContent').innerHTML=`<div class="page"><div class="nav"><span class="nav-title">通話記錄</span><button class="nav-button">編輯</button></div><div class="section-label">最近通話</div>${groups}<div class="tabs"><span>★ 常用</span><span>◷ 最近通話</span><span>♙ 聯絡人</span><span>▦ 鍵盤</span></div></div>`;
+let phoneTab='recent',phoneDigits='';
+function renderPhone(tab){
+ if(tab)phoneTab=tab;
+ const groups=(CONFIG.calls||[]).map(g=>`<div class="phone26-section">${escapeHTML(g.group)}</div>`+(g.items||[]).map(c=>{let missed=c.type==="未接";return `<div class="phone26-row"><div class="phone26-avatar">${escapeHTML((c.name||CONFIG.contactName||'?').slice(0,1))}</div><div class="phone26-main"><div class="phone26-name ${missed?'missed':''}">${escapeHTML(c.name||CONFIG.contactName)}${c.count&&Number(c.count)>1?` (${escapeHTML(c.count)})`:''}</div><div class="phone26-sub">${missed?'未接來電':c.type==="發"?'撥出電話':'撥入電話'}</div></div><div class="phone26-time">${escapeHTML(c.time)}</div><button class="phone26-call" data-call="${escapeHTML(c.name||CONFIG.contactName)}" aria-label="撥打電話">☎</button></div>`}).join('')).join('');
+ const contacts=[CONFIG.contactName,'ユイ','ソラ'].filter(Boolean);
+ let body='';
+ if(phoneTab==='recent')body=`<div class="phone26-heading">最近通話</div>${groups||'<div class="phone26-empty">尚無通話紀錄</div>'}`;
+ if(phoneTab==='contacts')body=`<div class="phone26-search"><span>⌕</span><input id="phoneContactSearch" placeholder="搜尋聯絡人"></div>${contacts.map(n=>`<div class="phone26-row phone26-contact"><div class="phone26-avatar">${escapeHTML(n.slice(0,1))}</div><div class="phone26-main"><div class="phone26-name">${escapeHTML(n)}</div><div class="phone26-sub">行動電話</div></div><button class="phone26-call" data-call="${escapeHTML(n)}">☎</button></div>`).join('')}`;
+ if(phoneTab==='keypad')body=`<div class="phone26-dial-display">${escapeHTML(phoneDigits||'輸入電話號碼')}</div><div class="phone26-keypad">${['1','2','3','4','5','6','7','8','9','*','0','#'].map((n,i)=>`<button class="phone26-key" data-digit="${n}">${n}${i>0&&i<9?`<small>${['','ABC','DEF','GHI','JKL','MNO','PQRS','TUV','WXYZ'][i]}</small>`:''}</button>`).join('')}</div><div class="phone26-dial-actions"><button id="phoneDelete" class="phone26-delete">⌫</button><button id="phoneCallNow" class="phone26-call-main">☎</button><span></span></div>`;
+ if(phoneTab==='voicemail')body=`<div class="phone26-heading">語音信箱</div><div class="phone26-empty"><div class="phone26-voicemail-icon">◉</div>沒有新的語音留言</div>`;
+ $('#appContent').innerHTML=`<div class="phone26-app"><div class="phone26-top"><div class="phone26-eyebrow">電話</div><div class="phone26-title">${({recent:'通話',contacts:'聯絡人',keypad:'鍵盤',voicemail:'語音信箱'})[phoneTab]}</div>${phoneTab==='recent'?'<button class="phone26-filter" id="phoneEdit">篩選　⌄</button>':''}</div><div class="phone26-body">${body}</div><div class="phone26-tabs">${[['recent','◷','通話'],['contacts','♙','聯絡人'],['keypad','▦','鍵盤'],['voicemail','◉','語音信箱']].map(([id,ico,label])=>`<button class="phone26-tab ${phoneTab===id?'selected':''}" data-phone-tab="${id}"><span>${ico}</span>${label}</button>`).join('')}</div></div>`;
+ $('#appContent').querySelectorAll('[data-phone-tab]').forEach(b=>b.onclick=()=>renderPhone(b.dataset.phoneTab));
+ $('#appContent').querySelectorAll('[data-digit]').forEach(b=>b.onclick=()=>{phoneDigits+=b.dataset.digit;renderPhone('keypad')});
+ const del=$('#phoneDelete');if(del)del.onclick=()=>{phoneDigits=phoneDigits.slice(0,-1);renderPhone('keypad')};
+ const callNow=$('#phoneCallNow');if(callNow)callNow.onclick=()=>renderPhoneCall(phoneDigits||CONFIG.contactName);
+ $('#appContent').querySelectorAll('[data-call]').forEach(b=>b.onclick=()=>renderPhoneCall(b.dataset.call));
+ const search=$('#phoneContactSearch');if(search)search.oninput=()=>{$('#appContent').querySelectorAll('.phone26-contact').forEach(row=>row.style.display=row.textContent.toLowerCase().includes(search.value.toLowerCase())?'flex':'none')};
+ const edit=$('#phoneEdit');if(edit)edit.onclick=()=>renderPhone('voicemail');
+}
+function renderPhoneCall(number){
+ $('#appContent').innerHTML=`<div class="phone26-call-screen"><div class="phone26-call-status">iPhone 電話</div><div class="phone26-call-avatar">${escapeHTML(String(number).slice(0,1))}</div><div class="phone26-call-person">${escapeHTML(number)}</div><div class="phone26-call-state" id="phoneCallState">正在撥號…</div><div class="phone26-call-controls"><button>＋ 聯絡人</button><button>⌨ 鍵盤</button><button>🔊 音訊</button></div><button class="phone26-hangup" id="phoneHangup">☎</button><div class="phone26-call-caption">通話介面模擬</div></div>`;
+ $('#phoneHangup').onclick=()=>{phoneDigits='';renderPhone('recent')};
 }
 function renderLine(){
  $('#appContent').innerHTML=`<div class="page"><div class="line-page"><div class="nav"><span style="font-size:20px;font-weight:800">LINE</span><span style="font-size:20px">⌕　＋</span></div><div class="line-title">ホーム</div><div class="line-profile" id="myProfile"><div class="avatar">${escapeHTML((CONFIG.userName||"M").slice(0,1))}</div><div><div class="profile-name">${escapeHTML(CONFIG.userName)}</div><div class="profile-sub">プロフィールを見てみよう</div></div><div class="chevron">›</div></div><div class="section-label">友だち</div>${[CONFIG.contactName,"ユイ","ソラ"].map((n,i)=>`<div class="friend" data-friend="${escapeHTML(n)}"><div class="avatar" style="${i===1?'background:linear-gradient(135deg,#8bc9d8,#6c7ab7)':i===2?'background:linear-gradient(135deg,#d9b9e8,#a66b8c)':''}">${escapeHTML(n.slice(0,1))}</div><div class="friend-info"><div class="profile-name">${escapeHTML(n)}</div><div class="friend-preview">${i===0?escapeHTML(CONFIG.chat.at(-1)?.text||"メッセージ"):i===1?"今日もおつかれさま！":"写真を送信しました"}</div></div><div class="friend-time">${i===0?"18:06":"昨日"}</div></div>`).join('')}</div></div>`;
