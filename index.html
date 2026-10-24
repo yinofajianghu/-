@@ -635,37 +635,49 @@ wallpaperStyle();initHome();updateClock();setInterval(updateClock,1000);
 
 </script>
 <script>
-/* Simple explicit unlock controls; no swipe detection required. */
+/* Passcode controls: self-contained state and direct button listeners. */
 (function(){
  const lock=document.getElementById('lock');
  const pass=document.getElementById('passcodeScreen');
- /* Ensure the entire passcode layer and its controls receive taps. */
- pass.style.pointerEvents='auto';
- pass.querySelectorAll('button').forEach(b=>{b.style.pointerEvents='auto';b.style.position='relative';b.style.zIndex='1001';b.type='button';});
- function handlePasscodeClick(e){
-   const cancel=e.target.closest('#passcodeCancel');
-   const digit=e.target.closest('#passcodePad [data-digit]');
-   const del=e.target.closest('#passcodeDelete');
-   if(cancel){e.preventDefault();e.stopPropagation();try{closePasscode()}catch(_){pass.classList.remove('active');pass.style.display='none';pass.setAttribute('aria-hidden','true')}return;}
-   if(!pass.classList.contains('active'))return;
-   if(digit){e.preventDefault();e.stopPropagation();try{enterPasscodeDigit(digit.dataset.digit)}catch(_){}return;}
-   if(del){e.preventDefault();e.stopPropagation();try{enteredPasscode=enteredPasscode.slice(0,-1);renderPasscodeDots();document.getElementById('passcodeError').textContent=''}catch(_){}}
- }
- document.addEventListener('click',handlePasscodeClick,true);
- function showCode(){
+ const dots=Array.from(document.querySelectorAll('#passcodeDots .passcode-dot'));
+ const error=document.getElementById('passcodeError');
+ const prompt=document.getElementById('unlockPrompt');
+ const bar=document.getElementById('lockBar');
+ let code='';
+ function paint(){dots.forEach((d,i)=>d.classList.toggle('filled',i<code.length));}
+ function showCode(e){
+   if(e){e.preventDefault();e.stopPropagation();}
    if(!lock||!pass||!lock.classList.contains('active'))return;
-   pass.classList.add('active');
-   pass.setAttribute('aria-hidden','false');
-   pass.style.display='flex';
-   pass.style.zIndex='999';
-   const dots=document.querySelectorAll('#passcodeDots .passcode-dot');
-   dots.forEach(d=>d.classList.remove('filled'));
-   const err=document.getElementById('passcodeError');if(err)err.textContent='';
+   code='';paint();if(error)error.textContent='';
+   pass.classList.add('active');pass.setAttribute('aria-hidden','false');
+   pass.style.display='flex';pass.style.visibility='visible';pass.style.pointerEvents='auto';pass.style.zIndex='9999';
  }
- document.getElementById('unlockPrompt')?.addEventListener('click',showCode);
- document.getElementById('lockBar')?.addEventListener('click',showCode);
- document.getElementById('unlockPrompt')?.addEventListener('touchend',showCode,{passive:true});
- document.getElementById('lockBar')?.addEventListener('touchend',showCode,{passive:true});
+ function hideCode(e){
+   if(e){e.preventDefault();e.stopPropagation();}
+   code='';paint();pass.classList.remove('active');pass.setAttribute('aria-hidden','true');
+   pass.style.display='none';pass.style.visibility='hidden';
+   if(error)error.textContent='';
+ }
+ function addDigit(d,e){
+   if(e){e.preventDefault();e.stopPropagation();}
+   if(!pass.classList.contains('active')||code.length>=4)return;
+   code+=String(d);paint();
+   if(code.length===4){
+     if(code==='0525'){
+       if(error)error.textContent='';
+       hideCode();
+       try{unlock()}catch(_){lock.classList.remove('active');document.getElementById('home')?.classList.add('active');}
+     }else{
+       if(error)error.textContent='密碼錯誤，請再試一次';
+       code='';window.setTimeout(paint,500);
+     }
+   }
+ }
+ function bind(el,fn){if(!el)return;el.addEventListener('click',fn);el.addEventListener('touchend',fn,{passive:false});}
+ bind(prompt,showCode);bind(bar,showCode);
+ bind(document.getElementById('passcodeCancel'),hideCode);
+ document.querySelectorAll('#passcodePad [data-digit]').forEach(btn=>bind(btn,e=>addDigit(btn.dataset.digit,e)));
+ bind(document.getElementById('passcodeDelete'),e=>{if(e){e.preventDefault();e.stopPropagation();}if(!pass.classList.contains('active'))return;code=code.slice(0,-1);paint();if(error)error.textContent='';});
 })();
 </script>
 </body>
