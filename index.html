@@ -337,7 +337,27 @@ function updateClock(){
  const now=new Date();$('#lockTime').textContent=now.toLocaleTimeString('ja-JP',{hour:'2-digit',minute:'2-digit',hour12:false});$('#statusTime').textContent=$('#lockTime').textContent;
  $('#lockDate').textContent=now.toLocaleDateString('ja-JP',{month:'long',day:'numeric',weekday:'long'});
 }
-function appButton(a){const glyph=a.id==="notes"?`<span class="glyph notes26-glyph" aria-hidden="true"><svg viewBox="0 0 64 64" focusable="false"><defs><linearGradient id="notesPaper" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#f5f5f7"/></linearGradient><linearGradient id="notesYellow" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe878"/><stop offset="1" stop-color="#ffbf32"/></linearGradient></defs><rect x="3" y="3" width="58" height="58" rx="12" fill="url(#notesPaper)"/><path d="M3 15a12 12 0 0 1 12-12h34a12 12 0 0 1 12 12v5H3z" fill="url(#notesYellow)"/><path d="M3 18h58" stroke="#e9b72e" stroke-width="1"/><g stroke="#d8d8dc" stroke-width="1.5" stroke-linecap="round"><path d="M12 29h40"/><path d="M12 37h40"/><path d="M12 45h40"/><path d="M12 53h28"/></g></svg></span>`:`<span class="glyph ${a.cls}" aria-hidden="true">${escapeHTML(a.icon)}</span>`;return `<button class="app-icon" data-app="${a.id}" aria-label="${a.name}">${glyph}<span class="app-name">${a.name}</span></button>`}
+function appButton(a){
+ const iconAssets={
+  phone:"com.apple.mobilephone-large.png",
+  messages:"com.apple.MobileSMS-large.png",
+  camera:"com.apple.camera-large.png",
+  x:"com.atebits.Tweetie2-large.png",
+  youtube:"com.google.ios.youtube-large.png",
+  spotify:"com.spotify.client-large.png",
+  instagram:"Instagram.png",
+  photos:"com.apple.mobileslideshow-large.png",
+  maps:"com.apple.Maps-large.png",
+  settings:"com.apple.Preferences-large.png"
+ };
+ const asset=iconAssets[a.id];
+ const glyph=a.id==="notes"
+ ? `<span class="glyph notes26-glyph" aria-hidden="true"><svg viewBox="0 0 64 64" focusable="false"><defs><linearGradient id="notesPaper" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#f5f5f7"/></linearGradient><linearGradient id="notesYellow" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe878"/><stop offset="1" stop-color="#ffbf32"/></linearGradient></defs><rect x="3" y="3" width="58" height="58" rx="12" fill="url(#notesPaper)"/><path d="M3 15a12 12 0 0 1 12-12h34a12 12 0 0 1 12 12v5H3z" fill="url(#notesYellow)"/><path d="M3 18h58" stroke="#e9b72e" stroke-width="1"/><g stroke="#d8d8dc" stroke-width="1.5" stroke-linecap="round"><path d="M12 29h40"/><path d="M12 37h40"/><path d="M12 45h40"/><path d="M12 53h28"/></g></svg></span>`
+ : asset
+ ? `<span class="glyph ios26-image-glyph" aria-hidden="true"><img src="https://raw.githubusercontent.com/kkkik/iOS26/main/${encodeURIComponent(asset).replace(/%2F/g,"/")}" alt="" loading="eager" onerror="this.parentElement.classList.add('asset-fallback');this.remove()"></span>`
+ : `<span class="glyph ${a.cls}" aria-hidden="true">${escapeHTML(a.icon)}</span>`;
+ return `<button class="app-icon" data-app="${a.id}" aria-label="${a.name}">${glyph}<span class="app-name">${a.name}</span></button>`
+}
 function initHome(){
  $('#weatherPlace').textContent=CONFIG.weather.place;$('#weatherTemp').textContent=CONFIG.weather.temp;$('#weatherDesc').textContent=CONFIG.weather.desc || `最高 ${CONFIG.weather.high} / 最低 ${CONFIG.weather.low}`;
  const ev=CONFIG.events||[];$('#event1').textContent=ev[0]?.title||"予定はありません";$('#eventTime1').textContent=ev[0]?.time||"";$('#event2').textContent=ev[1]?`${ev[1].time} · ${ev[1].title}`:"";
