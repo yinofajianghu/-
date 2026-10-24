@@ -478,10 +478,10 @@ document.addEventListener('keydown',e=>{if(!$('#passcodeScreen').classList.conta
 const lockScreen=$('#lock');let swipeStartY=null,swipePointerId=null,swipeMoved=false;
 lockScreen.addEventListener('pointerdown',e=>{if(!lockScreen.classList.contains('active')||unlockInProgress)return;if(e.pointerType==='mouse'&&e.button!==0)return;swipeStartY=e.clientY;swipePointerId=e.pointerId;swipeMoved=false;lockScreen.classList.add('dragging');try{lockScreen.setPointerCapture(e.pointerId)}catch(_){}},{passive:true});
 lockScreen.addEventListener('pointermove',e=>{if(swipeStartY===null||e.pointerId!==swipePointerId)return;const delta=Math.min(0,e.clientY-swipeStartY);if(Math.abs(delta)>3)swipeMoved=true;const progress=Math.min(1,Math.abs(delta)/Math.max(180,window.innerHeight*.24));lockScreen.style.transform=`translateY(${Math.max(-window.innerHeight*.22,delta)}px)`;lockScreen.style.opacity=String(1-progress*.45);},{passive:true});
-function finishLockSwipe(e){if(swipeStartY===null||(e&&e.pointerId!==swipePointerId))return;const delta=e?e.clientY-swipeStartY:0;const shouldUnlock=delta < -Math.max(72,window.innerHeight*.12);swipeStartY=null;swipePointerId=null;lockScreen.classList.remove('dragging');if(shouldUnlock){lockScreen.style.transform='';lockScreen.style.opacity='';openPasscode();return;}if(swipeMoved){lockScreen.style.transition='transform .24s cubic-bezier(.2,.8,.2,1),opacity .24s ease';requestAnimationFrame(()=>{lockScreen.style.transform='translateY(0)';lockScreen.style.opacity='1';window.setTimeout(()=>{lockScreen.style.transition='';lockScreen.style.transform='';lockScreen.style.opacity='';},260)});}else{lockScreen.style.transform='';lockScreen.style.opacity='';}}
+function finishLockSwipe(e){if(swipeStartY===null||(e&&e.pointerId!==swipePointerId))return;const delta=e?e.clientY-swipeStartY:0;const shouldUnlock=delta < -Math.max(34,window.innerHeight*.055);swipeStartY=null;swipePointerId=null;lockScreen.classList.remove('dragging');if(shouldUnlock){lockScreen.style.transform='';lockScreen.style.opacity='';openPasscode();return;}if(swipeMoved){lockScreen.style.transition='transform .24s cubic-bezier(.2,.8,.2,1),opacity .24s ease';requestAnimationFrame(()=>{lockScreen.style.transform='translateY(0)';lockScreen.style.opacity='1';window.setTimeout(()=>{lockScreen.style.transition='';lockScreen.style.transform='';lockScreen.style.opacity='';},260)});}else{lockScreen.style.transform='';lockScreen.style.opacity='';}}
 lockScreen.addEventListener('pointerup',finishLockSwipe);lockScreen.addEventListener('pointercancel',()=>finishLockSwipe(null));
 // Native touch fallback: preserve normal vertical touch handling while recognizing an upward unlock swipe.
-let nativeTouchStartY=null;lockScreen.addEventListener('touchstart',e=>{if(!lockScreen.classList.contains('active')||unlockInProgress)return;nativeTouchStartY=e.changedTouches[0]?.clientY??null;},{passive:true});lockScreen.addEventListener('touchend',e=>{if(nativeTouchStartY===null)return;const endY=e.changedTouches[0]?.clientY??nativeTouchStartY;const movedUp=nativeTouchStartY-endY;nativeTouchStartY=null;if(movedUp>Math.max(55,window.innerHeight*.08)&&!unlockInProgress)openPasscode();},{passive:true});lockScreen.addEventListener('touchcancel',()=>{nativeTouchStartY=null;},{passive:true});
+let nativeTouchStartY=null;lockScreen.addEventListener('touchstart',e=>{if(!lockScreen.classList.contains('active')||unlockInProgress)return;nativeTouchStartY=e.changedTouches[0]?.clientY??null;},{passive:true});lockScreen.addEventListener('touchend',e=>{if(nativeTouchStartY===null)return;const endY=e.changedTouches[0]?.clientY??nativeTouchStartY;const movedUp=nativeTouchStartY-endY;nativeTouchStartY=null;if(movedUp>Math.max(30,window.innerHeight*.045)&&!unlockInProgress)openPasscode();},{passive:true});lockScreen.addEventListener('touchcancel',()=>{nativeTouchStartY=null;},{passive:true});
 document.addEventListener('click',e=>{const b=e.target.closest('[data-app]');if(b)showApp(b.dataset.app)});
 wallpaperStyle();initHome();updateClock();setInterval(updateClock,1000);
 
@@ -539,6 +539,30 @@ wallpaperStyle();initHome();updateClock();setInterval(updateClock,1000);
      }
    },{passive:true});
  });
+ // Swipe down on the home screen to return to the lock screen without asking for a passcode.
+ const homeSurface=document.querySelector('#home');
+ if(homeSurface){
+   let homeSwipeStart=null;
+   homeSurface.addEventListener('touchstart',e=>{
+     homeSwipeStart=e.changedTouches[0]?.clientY ?? null;
+   },{passive:true});
+   homeSurface.addEventListener('touchend',e=>{
+     if(homeSwipeStart===null)return;
+     const end=e.changedTouches[0]?.clientY ?? homeSwipeStart;
+     const delta=end-homeSwipeStart;
+     homeSwipeStart=null;
+     if(delta>Math.max(35,window.innerHeight*.05) && typeof showLock==='function')showLock();
+   },{passive:true});
+   homeSurface.addEventListener('touchcancel',()=>{homeSwipeStart=null;},{passive:true});
+   let homePointerStart=null;
+   homeSurface.addEventListener('pointerdown',e=>{if(e.pointerType==='mouse'&&e.button!==0)return;homePointerStart=e.clientY;},{passive:true});
+   homeSurface.addEventListener('pointerup',e=>{
+     if(homePointerStart===null)return;
+     const delta=e.clientY-homePointerStart;homePointerStart=null;
+     if(delta>Math.max(35,window.innerHeight*.05)&&typeof showLock==='function')showLock();
+   },{passive:true});
+   homeSurface.addEventListener('pointercancel',()=>{homePointerStart=null;},{passive:true});
+ }
  // Keep the app usable in standalone/full-screen Safari and desktop browsers.
  document.documentElement.style.webkitTapHighlightColor='transparent';
 })();
