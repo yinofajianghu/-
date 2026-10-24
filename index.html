@@ -577,7 +577,7 @@ $('#appHomebar').addEventListener('click',goHome);
   });
 });
 $('#passcodeCancel').addEventListener('click',closePasscode);
-$('#passcodePad').addEventListener('click',e=>{const key=e.target.closest('[data-digit]');if(key)enterPasscodeDigit(key.dataset.digit)});
+document.querySelectorAll('#passcodePad [data-digit]').forEach(key=>{key.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();enterPasscodeDigit(this.getAttribute('data-digit'));},true);});
 $('#passcodeDelete').addEventListener('click',()=>{enteredPasscode=enteredPasscode.slice(0,-1);renderPasscodeDots();$('#passcodeError').textContent=''});
 document.addEventListener('keydown',e=>{if(!$('#passcodeScreen').classList.contains('active'))return;if(/^[0-9]$/.test(e.key))enterPasscodeDigit(e.key);else if(e.key==='Backspace'){enteredPasscode=enteredPasscode.slice(0,-1);renderPasscodeDots()}else if(e.key==='Escape')closePasscode()});
 // Unified swipe gesture for touch, pen, and mouse; move the lock screen with the finger.
