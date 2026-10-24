@@ -13,7 +13,7 @@
 .wallpaper:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.08),transparent 35%,rgba(0,0,0,.15))}
 #lock,#home,#appView{position:absolute;inset:0;display:none}
 #lock.active,#home.active,#appView.active{display:block}
-#lock{padding:calc(7vh + var(--safe-top)) 22px calc(22px + var(--safe-bottom));text-align:center;touch-action:pan-y}
+#lock{padding:calc(7vh + var(--safe-top)) 22px calc(22px + var(--safe-bottom));text-align:center;touch-action:pan-y;transform:translateY(0);opacity:1;transition:transform .28s cubic-bezier(.2,.8,.2,1),opacity .24s ease;will-change:transform,opacity}#lock.unlocking{transform:translateY(-18%);opacity:0;pointer-events:none}#lock.dragging{transition:none}
 .lock-small{font-size:14px;letter-spacing:.08em;text-shadow:0 2px 12px #0008}.lock-time{font-size:clamp(64px,17vw,100px);font-weight:200;letter-spacing:-.06em;line-height:1.12;margin-top:8px;text-shadow:0 2px 20px #0005}.lock-date{font-size:19px;font-weight:500;text-shadow:0 2px 12px #0008}
 .lock-bottom{position:absolute;bottom:calc(18px + var(--safe-bottom));left:0;right:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px}.lock-hint{font-size:13px;color:#ffffffd9;text-shadow:0 1px 8px #000}.home-indicator{width:134px;height:5px;border-radius:10px;background:#fff;display:block;cursor:pointer;flex-shrink:0}.lock-indicator{margin-top:5px}
 #home{padding:calc(12px + var(--safe-top)) 20px calc(18px + var(--safe-bottom));display:none}
@@ -236,7 +236,8 @@ function initHome(){
  $('#appGrid').innerHTML=apps.slice(0,8).map(appButton).join('')+apps.slice(8).map(appButton).join('');
  $('#dock').innerHTML=[apps[0],apps[1],apps[2],apps[3]].map(appButton).join('');
 }
-function unlock(){ $('#lock').classList.remove('active');$('#home').classList.add('active');$('#appView').classList.remove('active');}
+let unlockInProgress=false;
+function unlock(){const lock=$('#lock');if(unlockInProgress||!lock.classList.contains('active'))return;unlockInProgress=true;lock.classList.add('unlocking');const finish=()=>{lock.classList.remove('active','unlocking','dragging');lock.style.transform='';lock.style.opacity='';$('#home').classList.add('active');$('#appView').classList.remove('active');unlockInProgress=false;};if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){finish();return;}window.setTimeout(finish,260);}
 function showLock(){closeAudio();stopCall();$('#appView').classList.remove('active');$('#home').classList.remove('active');$('#lock').classList.add('active');}
 function showApp(id){
  if(id==="instagram"){startIncomingCall();return}
@@ -354,13 +355,13 @@ function openFullPlayer(){
  $('#appView').appendChild(overlay);$('#fullClose').onclick=()=>overlay.remove();$('#fullPlay').onclick=toggleSong;$('#fullPrev').onclick=()=>playSong((currentSong-1+(s.songs.length||1))%(s.songs.length||1));$('#fullNext').onclick=()=>playSong((currentSong+1)%(s.songs.length||1));$('#fullShuffle').onclick=()=>playSong(Math.floor(Math.random()*s.songs.length));$('#fullRepeat').onclick=e=>{e.currentTarget.style.color=e.currentTarget.style.color?'':'#1db954';if(audioEl)audioEl.loop=!audioEl.loop};$('#fullRange').oninput=e=>{songProgress=+e.target.value;if(audioEl)audioEl.currentTime=songProgress;updatePlayerProgress()};
 }
 $('#appHomebar').addEventListener('click',goHome);
-$('#lockBar').addEventListener('click',unlock);
-let touchStartY=null;
-$('#lock').addEventListener('touchstart',e=>{touchStartY=e.touches[0].clientY},{passive:true});
-$('#lock').addEventListener('touchend',e=>{if(touchStartY!==null&&touchStartY-e.changedTouches[0].clientY>35)unlock();touchStartY=null},{passive:true});
-let mouseY=null;
-$('#lock').addEventListener('pointerdown',e=>{mouseY=e.clientY});
-$('#lock').addEventListener('pointerup',e=>{if(mouseY!==null&&mouseY-e.clientY>35)unlock();mouseY=null});
+$('#lockBar').addEventListener('click',()=>{if(!unlockInProgress)unlock()});
+// Unified swipe gesture for touch, pen, and mouse; move the lock screen with the finger.
+const lockScreen=$('#lock');let swipeStartY=null,swipePointerId=null,swipeMoved=false;
+lockScreen.addEventListener('pointerdown',e=>{if(!lockScreen.classList.contains('active')||unlockInProgress)return;if(e.pointerType==='mouse'&&e.button!==0)return;swipeStartY=e.clientY;swipePointerId=e.pointerId;swipeMoved=false;lockScreen.classList.add('dragging');try{lockScreen.setPointerCapture(e.pointerId)}catch(_){}},{passive:true});
+lockScreen.addEventListener('pointermove',e=>{if(swipeStartY===null||e.pointerId!==swipePointerId)return;const delta=Math.min(0,e.clientY-swipeStartY);if(Math.abs(delta)>3)swipeMoved=true;const progress=Math.min(1,Math.abs(delta)/Math.max(180,window.innerHeight*.24));lockScreen.style.transform=`translateY(${Math.max(-window.innerHeight*.22,delta)}px)`;lockScreen.style.opacity=String(1-progress*.45);},{passive:true});
+function finishLockSwipe(e){if(swipeStartY===null||(e&&e.pointerId!==swipePointerId))return;const delta=e?e.clientY-swipeStartY:0;const shouldUnlock=delta < -Math.max(72,window.innerHeight*.12);swipeStartY=null;swipePointerId=null;lockScreen.classList.remove('dragging');lockScreen.style.transform='';lockScreen.style.opacity='';if(shouldUnlock){unlock();return;}if(swipeMoved){lockScreen.style.transition='transform .22s ease,opacity .22s ease';requestAnimationFrame(()=>{lockScreen.style.transform='translateY(0)';lockScreen.style.opacity='1';requestAnimationFrame(()=>{window.setTimeout(()=>{lockScreen.style.transition='';},240)})});}}
+lockScreen.addEventListener('pointerup',finishLockSwipe);lockScreen.addEventListener('pointercancel',()=>finishLockSwipe(null));
 document.addEventListener('click',e=>{const b=e.target.closest('[data-app]');if(b)showApp(b.dataset.app)});
 wallpaperStyle();initHome();updateClock();setInterval(updateClock,1000);
 
