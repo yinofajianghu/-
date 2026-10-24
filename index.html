@@ -681,7 +681,52 @@ wallpaperStyle();initHome();updateClock();setInterval(updateClock,1000);
 
 </script>
 <script>
-/* Passcode is handled by the primary click handlers above; avoid duplicate touch+click input. */
+/* Independent unlock fallback: keeps the passcode screen reachable even if a prior handler fails. */
+(function(){
+  const lock=document.getElementById('lock');
+  const screen=document.getElementById('passcodeScreen');
+  if(!lock||!screen)return;
+  function showPasscode(){
+    if(!lock.classList.contains('active'))return;
+    screen.style.display='flex';
+    screen.style.zIndex='9999';
+    screen.style.position='absolute';
+    screen.style.inset='0';
+    screen.classList.add('active');
+    screen.setAttribute('aria-hidden','false');
+    if(typeof closePasscode==='function')closePasscodeFallbackInit();
+  }
+  function closePasscodeFallbackInit(){
+    /* Keep any existing passcode state in sync without closing the screen. */
+    const dots=document.querySelectorAll('#passcodeDots .passcode-dot');
+    dots.forEach(d=>d.classList.remove('filled'));
+    const error=document.getElementById('passcodeError');if(error)error.textContent='';
+  }
+  function hidePasscode(){
+    screen.classList.remove('active');screen.style.display='none';screen.setAttribute('aria-hidden','true');
+  }
+  document.addEventListener('click',function(e){
+    if(e.target.closest('#lockBar,#unlockPrompt,.lock-time,.lock-date,#lockCameraButton,#flashlightButton')){
+      if(lock.classList.contains('active')){e.preventDefault();showPasscode();}
+    }
+    if(e.target.closest('#passcodeCancel')){e.preventDefault();hidePasscode();}
+  },true);
+  let startY=null,startX=null,startTarget=null;
+  lock.addEventListener('touchstart',function(e){
+    if(!lock.classList.contains('active'))return;
+    const t=e.changedTouches[0];startY=t.clientY;startX=t.clientX;startTarget=e.target;
+  },{passive:true});
+  lock.addEventListener('touchend',function(e){
+    if(startY===null)return;
+    const t=e.changedTouches[0],dy=startY-t.clientY,dx=Math.abs(t.clientX-startX);
+    const fromIndicator=!!(startTarget&&startTarget.closest&&startTarget.closest('#lockBar'));
+    startY=null;startX=null;startTarget=null;
+    if(lock.classList.contains('active')&&dy>Math.max(18,window.innerHeight*.025)&&dy>dx&&(fromIndicator||dy>Math.max(45,window.innerHeight*.07)))showPasscode();
+  },{passive:true});
+  let pointerY=null;
+  lock.addEventListener('pointerdown',e=>{if(lock.classList.contains('active'))pointerY=e.clientY;},{passive:true});
+  lock.addEventListener('pointerup',e=>{if(pointerY===null)return;const dy=pointerY-e.clientY;pointerY=null;if(lock.classList.contains('active')&&dy>Math.max(45,window.innerHeight*.07))showPasscode();},{passive:true});
+})();
 </script>
 </body>
 </html>
