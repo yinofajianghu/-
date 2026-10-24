@@ -184,7 +184,7 @@ html,body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro 
 @media(max-width:360px){#home{padding-left:14px;padding-right:14px}.widgets{gap:8px}.widget{padding:11px}.app-grid{column-gap:4px}.lock-controls{padding:0 24px}}
 
 
-#phone .wallpaper{filter:brightness(var(--screen-brightness,1))}\n#phone.flashlight-on .wallpaper{filter:brightness(2.8) saturate(.2)}
+#phone .wallpaper{filter:brightness(var(--screen-brightness,1))}\n#phone.flashlight-on .wallpaper{filter:brightness(calc(var(--screen-brightness,1) * 2.8)) saturate(.2)}
 #phone.flashlight-on .wallpaper:after{background:rgba(255,255,235,.88)}
 #phone.flashlight-on #lock{color:#252525;text-shadow:none}
 #phone.flashlight-on .lock-time,#phone.flashlight-on .lock-date,#phone.flashlight-on .lock-small{color:#252525;text-shadow:none}
@@ -556,19 +556,32 @@ wallpaperStyle();initHome();updateClock();setInterval(updateClock,1000);
   if (weather) weather.textContent = (CONFIG.weather?.desc || '晴朗') + ' · ' + (CONFIG.weather?.temp || '24°');
   if (event) event.textContent = CONFIG.events?.[0]?.title || '今天沒有其他安排';
 
-  let startY = 0, tracking = false;
+  // Face ID gesture: pull down from the top-right edge to open Control Center;
+  // swipe up from anywhere in Control Center to dismiss it.
+  let gestureStart = null;
   phone.addEventListener('pointerdown', (e) => {
-    if (e.clientY > 48 || cc.classList.contains('active')) return;
-    startY = e.clientY; tracking = true;
+    if (e.button !== undefined && e.button !== 0) return;
+    gestureStart = {
+      x: e.clientX,
+      y: e.clientY,
+      wasOpen: cc.classList.contains('active')
+    };
   }, {passive:true});
   phone.addEventListener('pointerup', (e) => {
-    if (!tracking) return;
-    tracking = false;
-    const dy = e.clientY - startY;
-    if (dy > 65 && startY < 48) openCC();
-    else if (dy < -65 && cc.classList.contains('active')) closeCC();
+    if (!gestureStart) return;
+    const start = gestureStart;
+    gestureStart = null;
+    const dx = e.clientX - start.x;
+    const dy = e.clientY - start.y;
+    const fromTopRight = start.y <= Math.max(64, window.innerHeight * 0.09)
+      && start.x >= window.innerWidth * 0.72;
+    if (start.wasOpen && dy < -55 && Math.abs(dy) > Math.abs(dx)) {
+      closeCC();
+    } else if (!start.wasOpen && fromTopRight && dy > 55 && Math.abs(dy) > Math.abs(dx)) {
+      openCC();
+    }
   }, {passive:true});
-  phone.addEventListener('pointercancel', () => { tracking = false; }, {passive:true});
+  phone.addEventListener('pointercancel', () => { gestureStart = null; }, {passive:true});
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && cc.classList.contains('active')) closeCC();
   });
