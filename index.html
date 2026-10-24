@@ -171,8 +171,8 @@ html,body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro 
 .passcode-title{font-size:22px;font-weight:500;margin-top:30px;text-shadow:0 1px 10px #0005}
 .passcode-subtitle{font-size:14px;margin-top:10px;color:#ffffffd9}
 .passcode-dots{display:flex;gap:17px;margin:28px 0 18px}
-.passcode-dot{width:12px;height:12px;border:1.5px solid #fff;border-radius:50%;background:transparent}
-.passcode-dot.filled{background:#fff}
+.passcode-dot{display:block;flex:0 0 12px;width:12px;height:12px;border:1.5px solid #fff;border-radius:50%;background:transparent;opacity:1;box-sizing:border-box}
+.passcode-dot.filled{background:#fff!important;border-color:#fff!important;opacity:1!important;box-shadow:inset 0 0 0 1px #fff}
 .passcode-error{height:20px;font-size:13px;color:#ffb7b7}
 .passcode-pad{width:min(100%,300px);display:grid;grid-template-columns:repeat(3,1fr);gap:12px 22px;margin-top:auto;margin-bottom:18px}
 .passcode-key{aspect-ratio:1;border-radius:50%;width:100%;max-width:76px;justify-self:center;background:rgba(255,255,255,.17);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(12px);font-size:30px;font-weight:300;color:white;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1}
@@ -348,7 +348,7 @@ const PHONE_PASSCODE='0525';
 let enteredPasscode='';
 function openPasscode(){const screen=$('#passcodeScreen');if(!screen)return;enteredPasscode='';renderPasscodeDots();$('#passcodeError').textContent='';screen.classList.add('active');screen.setAttribute('aria-hidden','false');}
 function closePasscode(){const screen=$('#passcodeScreen');if(!screen)return;screen.classList.remove('active');screen.setAttribute('aria-hidden','true');enteredPasscode='';renderPasscodeDots();$('#passcodeError').textContent='';}
-function renderPasscodeDots(){const dots=$('#passcodeDots .passcode-dot');dots.forEach((dot,i)=>dot.classList.toggle('filled',i<enteredPasscode.length));$('#passcodeDots').setAttribute('aria-label',`已輸入密碼 ${enteredPasscode.length} 位`);}
+function renderPasscodeDots(){const dots=$('#passcodeDots .passcode-dot');dots.forEach((dot,i)=>{const filled=i<enteredPasscode.length;dot.classList.toggle('filled',filled);dot.style.backgroundColor=filled?'#fff':'transparent';dot.style.borderColor='#fff';dot.style.opacity='1';});$('#passcodeDots').setAttribute('aria-label',`已輸入密碼 ${enteredPasscode.length} 位`);}
 function enterPasscodeDigit(digit){if(enteredPasscode.length>=4)return;enteredPasscode+=digit;renderPasscodeDots();if(enteredPasscode.length===4){if(enteredPasscode===PHONE_PASSCODE){$('#passcodeError').textContent='';closePasscode();unlock();}else{const dots=$('#passcodeDots .passcode-dot');dots.forEach(d=>d.animate([{transform:'translateX(0)'},{transform:'translateX(-5px)'},{transform:'translateX(5px)'},{transform:'translateX(0)'}],{duration:220}));$('#passcodeError').textContent='密碼錯誤，請再試一次';window.setTimeout(()=>{enteredPasscode='';renderPasscodeDots();},450);}}}
 function unlock(){const lock=$('#lock');if(unlockInProgress||!lock.classList.contains('active'))return;unlockInProgress=true;lock.classList.add('unlocking');const finish=()=>{lock.classList.remove('active','unlocking','dragging');lock.style.transform='';lock.style.opacity='';$('#home').classList.add('active');$('#appView').classList.remove('active');unlockInProgress=false;};if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){finish();return;}window.setTimeout(finish,260);}
 function showLock(){closeAudio();stopCall();$('#appView').classList.remove('active');$('#home').classList.remove('active');$('#lock').classList.add('active');}
