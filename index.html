@@ -634,5 +634,29 @@ wallpaperStyle();initHome();updateClock();setInterval(updateClock,1000);
 })();;
 
 </script>
+<script>
+/* Reliable lock-screen fallback handlers, isolated from the main initialization. */
+(function(){
+ const lock=document.getElementById('lock');
+ const hint=document.querySelector('.lock-hint');
+ const bar=document.getElementById('lockBar');
+ const pass=document.getElementById('passcodeScreen');
+ if(!lock||!pass)return;
+ function showCode(){
+   if(!lock.classList.contains('active')||window.__phoneUnlocking)return;
+   pass.style.display='flex';
+   pass.style.zIndex='999';
+   pass.classList.add('active');
+   pass.setAttribute('aria-hidden','false');
+   try{openPasscode()}catch(e){}
+ }
+ if(hint){hint.style.cursor='pointer';hint.style.pointerEvents='auto';hint.addEventListener('click',showCode);hint.addEventListener('touchend',function(e){e.preventDefault();showCode()},{passive:false});}
+ if(bar){bar.style.pointerEvents='auto';bar.addEventListener('click',showCode);bar.addEventListener('touchend',function(e){e.preventDefault();showCode()},{passive:false});}
+ let startY=null;
+ lock.addEventListener('touchstart',function(e){if(!lock.classList.contains('active'))return;startY=e.changedTouches[0].clientY;},{passive:true});
+ lock.addEventListener('touchend',function(e){if(startY===null)return;const endY=e.changedTouches[0].clientY;const delta=startY-endY;startY=null;if(delta>35)showCode();},{passive:true});
+ lock.addEventListener('click',function(e){if(e.target.closest('.lock-control'))return;if(e.target.closest('.lock-hint,#lockBar'))showCode();});
+})();
+</script>
 </body>
 </html>
