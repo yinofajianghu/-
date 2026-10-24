@@ -171,8 +171,9 @@ html,body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro 
 .passcode-title{font-size:22px;font-weight:500;margin-top:30px;text-shadow:0 1px 10px #0005}
 .passcode-subtitle{font-size:14px;margin-top:10px;color:#ffffffd9}
 .passcode-dots{display:flex;gap:17px;margin:28px 0 18px}
-.passcode-dot{display:block;flex:0 0 12px;width:12px;height:12px;border:1.5px solid #fff;border-radius:50%;background:transparent;opacity:1;box-sizing:border-box}
-.passcode-dot.filled{background:#fff!important;border-color:#fff!important;opacity:1!important;box-shadow:inset 0 0 0 1px #fff}
+.passcode-dot{position:relative;display:block;flex:0 0 12px;width:12px;height:12px;padding:0;border:1.5px solid #fff;border-radius:50%;background:transparent!important;opacity:1;box-sizing:border-box;overflow:hidden}
+.passcode-dot.filled{background:transparent!important;border-color:#fff!important;opacity:1!important;box-shadow:none!important}
+.passcode-dot.filled::after{content:"";position:absolute;inset:0;background:#fff!important;border-radius:50%;display:block}
 .passcode-error{height:20px;font-size:13px;color:#ffb7b7}
 .passcode-pad{width:min(100%,300px);display:grid;grid-template-columns:repeat(3,1fr);gap:12px 22px;margin-top:auto;margin-bottom:18px}
 .passcode-key{aspect-ratio:1;border-radius:50%;width:100%;max-width:76px;justify-self:center;background:rgba(255,255,255,.17);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(12px);font-size:30px;font-weight:300;color:white;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1}
@@ -382,7 +383,9 @@ function renderPasscodeDots() {
   dots.forEach((dot, index) => {
     const filled = index < enteredPasscode.length;
     dot.classList.toggle('filled', filled);
-    dot.style.backgroundColor = filled ? '#fff' : 'transparent';
+    // Fill via ::after instead of background-color, so global button/input styles cannot override it.
+    dot.style.setProperty('--passcode-dot-filled', filled ? '1' : '0');
+    dot.style.removeProperty('background-color');
     dot.style.borderColor = '#fff';
     dot.style.opacity = '1';
     dot.style.boxShadow = 'none';
