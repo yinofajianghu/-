@@ -692,7 +692,7 @@ wallpaperStyle();initHome();updateClock();setInterval(updateClock,1000);
       try{openPasscode();}catch(_){}
     }
     screen.classList.add('active');
-    screen.style.display='flex';
+    screen.style.removeProperty('display');
     screen.style.zIndex='9999';
     screen.style.position='absolute';
     screen.style.inset='0';
@@ -703,7 +703,7 @@ wallpaperStyle();initHome();updateClock();setInterval(updateClock,1000);
       try{closePasscode();}catch(_){}
     }
     screen.classList.remove('active');
-    screen.style.display='none';
+    screen.style.removeProperty('display');
     screen.setAttribute('aria-hidden','true');
   }
   // Capture taps before other handlers, so the lock screen always opens the keypad.
