@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#111827">
+<title>撿到的手機</title>
+<style>
+:root{--ink:#fff;--muted:rgba(255,255,255,.7);--glass:rgba(255,255,255,.18);--line:rgba(255,255,255,.2);--blue:#0a84ff;--safe-top:env(safe-area-inset-top,0px);--safe-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#111;color:white;overscroll-behavior:none}button,input,textarea{font:inherit}button{cursor:pointer;color:inherit;border:0}button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid #fff;outline-offset:3px}
+#phone{position:relative;width:100%;height:100dvh;overflow:hidden;background:#17233e;isolation:isolate}
+.wallpaper{position:absolute;inset:0;background-image:linear-gradient(145deg,rgba(8,17,40,.15),rgba(10,8,35,.35)),var(--wallpaper);background-size:cover;background-position:center;z-index:-2}
+.wallpaper:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.08),transparent 35%,rgba(0,0,0,.15))}
+#lock,#home,#appView{position:absolute;inset:0;display:none}
+#lock.active,#home.active,#appView.active{display:block}
+#lock{padding:calc(7vh + var(--safe-top)) 22px calc(22px + var(--safe-bottom));text-align:center;touch-action:pan-y}
+.lock-small{font-size:14px;letter-spacing:.08em;text-shadow:0 2px 12px #0008}.lock-time{font-size:clamp(64px,17vw,100px);font-weight:200;letter-spacing:-.06em;line-height:1.12;margin-top:8px;text-shadow:0 2px 20px #0005}.lock-date{font-size:19px;font-weight:500;text-shadow:0 2px 12px #0008}
+.lock-bottom{position:absolute;bottom:calc(18px + var(--safe-bottom));left:0;right:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px}.lock-hint{font-size:13px;color:#ffffffd9;text-shadow:0 1px 8px #000}.home-indicator{width:134px;height:5px;border-radius:10px;background:#fff;display:block;cursor:pointer;flex-shrink:0}.lock-indicator{margin-top:5px}
+#home{padding:calc(12px + var(--safe-top)) 20px calc(18px + var(--safe-bottom));display:none}
+#home.active{display:flex;flex-direction:column}
+.status{height:25px;display:flex;align-items:center;justify-content:space-between;padding:0 8px;font-size:12px;font-weight:700;text-shadow:0 1px 8px #0006;flex-shrink:0}
+.status-right{display:flex;gap:5px;align-items:center}.signal{font-size:13px;letter-spacing:-3px}.battery{width:19px;height:10px;border:1.5px solid white;border-radius:3px;position:relative}.battery:before{content:"";position:absolute;left:2px;top:2px;bottom:2px;width:70%;background:white;border-radius:1px}.battery:after{content:"";position:absolute;right:-3px;top:2px;width:2px;height:4px;background:white;border-radius:0 2px 2px 0}
+.widgets{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px;flex-shrink:0}.widget{height:clamp(104px,27vw,140px);border:1px solid #ffffff25;background:rgba(255,255,255,.19);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);border-radius:23px;padding:14px;box-shadow:0 10px 28px #0001;overflow:hidden}.widget-label{font-size:11px;letter-spacing:.06em;color:#ffffffe0}.weather-place{font-size:14px;font-weight:600;margin-top:8px}.weather-temp{font-size:32px;font-weight:300;line-height:1.1;margin-top:2px}.weather-desc{font-size:11px;margin-top:5px;color:#ffffffd9}.event-title{font-size:14px;font-weight:650;margin-top:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.event-row{font-size:11px;margin-top:7px;color:#ffffffe0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.app-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(15px,4vh,29px) 9px;margin:clamp(23px,5vh,43px) 0 20px;align-content:start;flex:1;min-height:0}
+.app-icon{background:transparent;padding:0;display:flex;align-items:center;flex-direction:column;gap:6px;min-width:0;text-shadow:0 1px 5px #0006;user-select:none}.app-icon:active .glyph{transform:scale(.9)}.glyph{width:clamp(52px,14vw,70px);height:clamp(52px,14vw,70px);border-radius:22%;display:grid;place-items:center;font-size:clamp(26px,7vw,36px);box-shadow:0 5px 13px #0002;transition:transform .12s;position:relative;overflow:hidden}.app-name{font-size:11px;white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis}
+.g-phone{background:linear-gradient(145deg,#70e58e,#0a9b51)}.g-line{background:linear-gradient(145deg,#bcff5a,#72d83c);color:#fff}.g-message{background:linear-gradient(145deg,#71d9ff,#0787f9)}.g-camera{background:linear-gradient(145deg,#e8e8ec,#9296a0);color:#333}.g-x{background:#080808;border:1px solid #ffffff35}.g-yt{background:#ff1d22}.g-spotify{background:#1db954;color:#092b17}.g-ig{background:radial-gradient(circle at 30% 100%,#ffd776 0%,#ff5c65 42%,#c135a8 70%,#5557d9 100%)}.g-photos{background:rgba(255,255,255,.94);color:#fff}.g-notes{background:linear-gradient(#fff 0 28%,#ffdb58 28%);color:#8c7736}.g-maps{background:linear-gradient(135deg,#8fe0a6,#f8e6a2 50%,#6fb8ef);color:#1687d1}.g-settings{background:linear-gradient(145deg,#c7cbd3,#656b76)}
+.dock{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding:12px;border-radius:28px;background:rgba(255,255,255,.24);backdrop-filter:blur(25px);-webkit-backdrop-filter:blur(25px);border:1px solid #ffffff20;flex-shrink:0;margin-top:auto}.dock .app-name{display:none}.dock .glyph{width:100%;max-width:64px;height:auto;aspect-ratio:1;border-radius:23%;font-size:clamp(25px,7vw,35px);box-shadow:none}
+#appView{background:rgba(247,248,252,.98);color:#15161a;padding-top:var(--safe-top)}#appView.dark{background:#080808;color:#fff}#appContent{position:absolute;inset:var(--safe-top) 0 calc(25px + var(--safe-bottom));overflow:auto;overscroll-behavior:contain}#appContent::-webkit-scrollbar{display:none}.app-homebar-wrap{position:absolute;bottom:var(--safe-bottom);height:25px;left:0;right:0;display:grid;place-items:center;background:inherit;z-index:20}.app-homebar-wrap .home-indicator{background:#151515}.dark .app-homebar-wrap .home-indicator{background:#fff}
+.page{min-height:100%;padding:12px 20px 26px}.nav{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 0 18px;font-size:14px}.nav-title{font-size:22px;font-weight:750}.nav-button{background:transparent;color:var(--blue);font-size:15px;padding:6px 0}.muted{color:#888}.section-label{font-size:13px;color:#85858b;font-weight:600;margin:20px 0 8px}
+.profile-row{display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid #e7e7eb}.avatar{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#f6c7a8,#a96e88);color:white;font-weight:700;flex-shrink:0;object-fit:cover}.profile-name{font-weight:700}.profile-sub{font-size:13px;color:#85858b;margin-top:4px}.call-row{display:flex;gap:12px;align-items:center;padding:13px 0;border-bottom:1px solid #e7e7eb}.call-symbol{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;background:#edf7ef;color:#2cb45c}.call-symbol.missed{background:#fff0f0;color:#ff3b30}.call-main{flex:1;min-width:0}.call-type{font-size:15px;font-weight:600}.call-type.missed{color:#ff3b30}.call-sub{font-size:12px;color:#888;margin-top:4px}.call-time{text-align:right;color:#888;font-size:12px}
+.tabs{display:flex;justify-content:space-around;position:sticky;bottom:0;background:#fafafd;border-top:1px solid #e8e8ed;padding:12px 0 5px;margin:20px -20px -26px;color:#777;font-size:11px}.tabs span:first-child{color:var(--blue)}
+.line-page{background:#fff;min-height:100%;margin:-12px -20px;padding:12px 20px 25px}.line-title{font-size:25px;font-weight:800;margin:13px 0 15px}.line-profile{display:flex;align-items:center;gap:12px;padding:13px;background:#f5f5f6;border-radius:14px;margin-bottom:22px;cursor:pointer}.line-profile .avatar{width:55px;height:55px}.line-profile .chevron{margin-left:auto;color:#aaa;font-size:24px}.friend{display:flex;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid #f0f0f0;cursor:pointer}.friend .avatar{width:49px;height:49px}.friend-info{flex:1;min-width:0}.friend-preview{font-size:13px;color:#8b8b91;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:5px}.friend-time{font-size:11px;color:#aaa}
+.chat-page{display:flex;flex-direction:column;height:calc(100% + 0px);margin:-12px -20px}.chat-header{display:flex;align-items:center;gap:12px;padding:10px 18px 14px;border-bottom:1px solid #eee;background:#fff;flex-shrink:0}.chat-header .avatar{width:38px;height:38px}.chat-scroll{flex:1;overflow:auto;background:#8da0ad;padding:18px 14px;display:flex;flex-direction:column;gap:10px;background-image:radial-gradient(#ffffff12 1px,transparent 1px);background-size:14px 14px}.bubble-row{display:flex;flex-direction:column;max-width:84%;align-self:flex-start}.bubble-row.mine{align-self:flex-end;align-items:flex-end}.bubble{padding:10px 13px;border-radius:16px;background:#fff;color:#202020;font-size:14px;line-height:1.45;overflow-wrap:anywhere;box-shadow:0 1px 2px #0001}.mine .bubble{background:#a7f36b;border-top-right-radius:5px}.bubble-row:not(.mine) .bubble{border-top-left-radius:5px}.bubble-meta{font-size:10px;color:#ffffffd9;margin-top:4px;text-shadow:0 1px 2px #3335}.chat-compose{display:flex;gap:8px;align-items:center;padding:10px 12px;background:#f8f8fa;border-top:1px solid #e5e5e5;flex-shrink:0}.chat-compose input{min-width:0;flex:1;border:1px solid #ddd;border-radius:22px;padding:10px 14px;background:#fff;color:#222;outline:none}.send-btn{background:#06c755;border-radius:50%;width:38px;height:38px;font-size:18px;flex-shrink:0}
+.profile-full{background:#fff;min-height:100%;margin:-12px -20px;padding:12px 20px}.profile-hero{text-align:center;padding:30px 0}.profile-hero .avatar{width:90px;height:90px;font-size:30px;margin:0 auto 15px}.profile-bio{color:#777;font-size:14px;line-height:1.6;margin-top:12px}.profile-stats{display:flex;justify-content:center;gap:30px;margin-top:20px;font-size:13px}
+.dark .page{background:#080808}.x-profile{background:linear-gradient(135deg,#293647,#111);border-radius:15px;padding:20px;margin:0 -2px 15px}.x-head{display:flex;align-items:center;gap:12px}.x-head .avatar{width:62px;height:62px;background:#414141}.x-name{font-size:20px;font-weight:800}.x-handle{color:#aaa;font-size:13px;margin-top:4px}.lock-tag{font-size:13px;margin-left:4px}.x-bio{color:#ddd;font-size:13px;margin-top:15px;line-height:1.5}.tweet{display:flex;gap:11px;padding:17px 0;border-bottom:1px solid #252525}.tweet .avatar{width:43px;height:43px;background:#414141}.tweet-body{flex:1;min-width:0}.tweet-meta{font-size:12px;color:#929292;margin-bottom:8px}.tweet-meta strong{color:#fff;font-size:13px}.tweet-text{font-size:14px;line-height:1.55;white-space:pre-wrap;overflow-wrap:anywhere}.tweet-stats{display:flex;justify-content:space-between;color:#888;font-size:11px;margin-top:14px;max-width:330px}
+.simple-card{border-radius:18px;background:#fff;padding:18px;margin:12px 0;box-shadow:0 3px 15px #00008}.note-card{background:#fff9ce;border-radius:12px;padding:18px;color:#333;margin:12px 0;min-height:120px;white-space:pre-wrap}.photo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:4px}.photo{aspect-ratio:1;border-radius:8px;display:grid;place-items:center;font-size:34px;background:linear-gradient(135deg,#f4c9bd,#b4cbe2);cursor:pointer}.photo:nth-child(3n+2){background:linear-gradient(135deg,#f4dd9d,#c8b3df)}.photo:nth-child(3n){background:linear-gradient(135deg,#b8e4d5,#92a6d7)}.settings-row{display:flex;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid #eee}.settings-ico{width:31px;height:31px;border-radius:8px;background:#8e8e93;color:white;display:grid;place-items:center}.map-placeholder{height:58vh;border-radius:18px;background:linear-gradient(30deg,#d5e6d5,#f0ead1 45%,#b9d5e9);position:relative;overflow:hidden}.map-placeholder:before,.map-placeholder:after{content:"";position:absolute;width:140%;height:30px;background:#fff8;transform:rotate(-35deg);top:25%;left:-20%}.map-placeholder:after{transform:rotate(25deg);top:60%}.map-pin{position:absolute;left:52%;top:42%;font-size:35px;z-index:1}
+@media(min-width:600px){#phone{width:min(430px,100%);height:min(900px,100dvh);margin:auto;border-radius:42px;border:7px solid #171717;box-shadow:0 20px 80px #0007}body{display:grid;place-items:center;background:#151515}#lock,#home,#appView{border-radius:35px;overflow:hidden}.app-grid{gap:24px 12px}.widgets{margin-top:18px}}
+@media(max-height:700px){.widgets .widget{height:100px}.app-grid{margin-top:17px;gap:13px 9px}.glyph{width:50px;height:50px;font-size:26px}.app-name{font-size:10px}.widgets{margin-top:8px}.weather-temp{font-size:27px}}
+</style>
+</head>
+<body>
+<div id="phone">
+  <div class="wallpaper" id="wallpaper"></div>
+  <section id="lock" class="active" aria-label="鎖定畫面">
+    <div class="lock-small">●　攥在手裡的秘密</div>
+    <div id="lockTime" class="lock-time">9:41</div><div id="lockDate" class="lock-date">星期日，10月25日</div>
+    <div class="lock-bottom"><div class="lock-hint">向上滑動以解鎖</div><div id="lockBar" class="home-indicator lock-indicator" aria-label="解鎖"></div></div>
+  </section>
+  <section id="home" aria-label="主畫面">
+    <div class="status"><span id="statusTime">9:41</span><span class="status-right"><span class="signal">▂▄▆</span><span>Wi-Fi</span><span class="battery"></span></span></div>
+    <div class="widgets">
+      <div class="widget"><div class="widget-label">☀ 天氣</div><div class="weather-place" id="weatherPlace"></div><div class="weather-temp" id="weatherTemp"></div><div class="weather-desc" id="weatherDesc"></div></div>
+      <div class="widget"><div class="widget-label">▦ 即將到來</div><div class="event-title" id="event1"></div><div class="event-row" id="eventTime1"></div><div class="event-row" id="event2"></div></div>
+    </div>
+    <div class="app-grid" id="appGrid"></div>
+    <div class="dock" id="dock"></div>
+  </section>
+  <section id="appView"><div id="appContent"></div><div class="app-homebar-wrap"><span id="appHomebar" class="home-indicator" aria-label="返回桌面"></span></div></section>
+</div>
+<script>
+/* ===================== 只需要修改這裡的 CONFIG ===================== */
+const CONFIG = {
+  wallpaper: "", // 可填圖片網址，或 data:image/...;base64,...；留空使用漸層壁紙
+  userName: "ミオ",
+  contactName: "ハル",
+  twitterHandle: "mio_days",
+  weather: { place: "東京", temp: "18°", desc: "晴れ ☀ 最高 21° / 最低 14°", high: "21°", low: "14°" },
+  events: [
+    { time: "今日 18:30", title: "ハルと待ち合わせ" },
+    { time: "明日 09:00", title: "大切な約束" }
+  ],
+  calls: [
+    { group: "今日", items: [
+      { name: "ハル", type: "收", time: "16:42", count: "2" },
+      { name: "ハル", type: "未接", time: "15:08", count: "1" }
+    ]},
+    { group: "昨日", items: [
+      { name: "ユイ", type: "發", time: "20:14", count: "1" },
+      { name: "ハル", type: "收", time: "18:33", count: "3" }
+    ]}
+  ],
+  chat: [
+    { from: "them", time: "18:02", text: "今どこにいるの？" },
+    { from: "me", time: "18:03", text: "駅の近く。どうしたの？" },
+    { from: "them", time: "18:04", text: "実は、伝えたいことがあるんだ。" },
+    { from: "me", time: "18:05", text: "なに？ちょっと緊張する…" },
+    { from: "them", time: "18:06", text: "会ってから話すね。待ってて。" }
+  ],
+  tweets: [
+    "なんでもない一日が、あとから一番大切な思い出になるのかもしれない。",
+    "通知が来るたび、少しだけ期待してしまう。",
+    "言葉にできないことほど、ちゃんと伝えたい。"
+  ],
+  instagram: {
+    callerName: "haru__",
+    avatar: "",
+    video: "",
+    myVideo: "",
+    messages: [
+      { from: "對方", text: "やっと声が聞けた。", delay: 3 },
+      { from: "我", text: "会いたかったよ。", delay: 7 },
+      { from: "對方", text: "次は直接会おうね。", delay: 12 }
+    ]
+  },
+  spotify: {
+    cover: "",
+    playlistName: "ふたりのプレイリスト",
+    creator: "ミオ",
+    songs: [
+      { title: "夜に駆ける", artist: "YOASOBI", audio: "" },
+      { title: "恋", artist: "星野源", audio: "" },
+      { title: "ただ君に晴れ", artist: "ヨルシカ", audio: "" }
+    ]
+  },
+  notes: [
+    { title: "忘れないこと", body: "18:30 駅前で待ち合わせ\nちゃんと伝える。\n今度こそ、素直に。" },
+    { title: "買いもの", body: "コーヒー\nノート\nハルへのプレゼント" }
+  ],
+  photos: ["🌅","🌷","☕","🌙","🎟️","🐈","🌊","🎧","✨"]
+};
+/* =================== CONFIG 結束；以下是互動功能 =================== */
+const $ = s => document.querySelector(s);
+const escapeHTML = s => String(s ?? "").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const apps = [
+  {id:"phone",name:"電話",icon:"☎",cls:"g-phone"},
+  {id:"line",name:"LINE",icon:"LINE",cls:"g-line"},
+  {id:"messages",name:"訊息",icon:"●",cls:"g-message"},
+  {id:"camera",name:"相機",icon:"📷",cls:"g-camera"},
+  {id:"x",name:"X",icon:"𝕏",cls:"g-x"},
+  {id:"youtube",name:"YouTube",icon:"▶",cls:"g-yt"},
+  {id:"spotify",name:"Spotify",icon:"≋",cls:"g-spotify"},
+  {id:"instagram",name:"Instagram",icon:"◎",cls:"g-ig"},
+  {id:"photos",name:"相簿",icon:"🌈",cls:"g-photos"},
+  {id:"notes",name:"備忘錄",icon:"▤",cls:"g-notes"},
+  {id:"maps",name:"地圖",icon:"➤",cls:"g-maps"},
+  {id:"settings",name:"設定",icon:"⚙",cls:"g-settings"}
+];
+let currentFriend = CONFIG.contactName, viewBeforeProfile = "line", currentSong = -1, songPlaying = false, songProgress = 0, songTimer = null, audioEl = null, callTimer = null, callSeconds = 0, callMessageTimers = [], callMode = false;
+function wallpaperStyle(){
+ const fallback='radial-gradient(ellipse at 18% 15%,#8fc8e6 0%,transparent 35%),radial-gradient(ellipse at 80% 35%,#6f79bd 0%,transparent 35%),linear-gradient(145deg,#344f71,#4c4778 55%,#19283f)';
+ $('#wallpaper').style.setProperty('--wallpaper',CONFIG.wallpaper ? `url("${CONFIG.wallpaper.replace(/"/g,'\\"')}")` : fallback);
+}
+function timeNow(){return new Date().toLocaleTimeString('ja-JP',{hour:'2-digit',minute:'2-digit',hour12:false})}
+function updateClock(){
+ const now=new Date();$('#lockTime').textContent=now.toLocaleTimeString('ja-JP',{hour:'2-digit',minute:'2-digit',hour12:false});$('#statusTime').textContent=$('#lockTime').textContent;
+ $('#lockDate').textContent=now.toLocaleDateString('ja-JP',{month:'long',day:'numeric',weekday:'long'});
+}
+function appButton(a){return `<button class="app-icon" data-app="${a.id}" aria-label="${a.name}"><span class="glyph ${a.cls}">${a.icon}</span><span class="app-name">${a.name}</span></button>`}
+function initHome(){
+ $('#weatherPlace').textContent=CONFIG.weather.place;$('#weatherTemp').textContent=CONFIG.weather.temp;$('#weatherDesc').textContent=CONFIG.weather.desc || `最高 ${CONFIG.weather.high} / 最低 ${CONFIG.weather.low}`;
+ const ev=CONFIG.events||[];$('#event1').textContent=ev[0]?.title||"予定はありません";$('#eventTime1').textContent=ev[0]?.time||"";$('#event2').textContent=ev[1]?`${ev[1].time} · ${ev[1].title}`:"";
+ $('#appGrid').innerHTML=apps.slice(0,8).map(appButton).join('')+apps.slice(8).map(appButton).join('');
+ $('#dock').innerHTML=[apps[0],apps[1],apps[2],apps[3]].map(appButton).join('');
+}
+function unlock(){ $('#lock').classList.remove('active');$('#home').classList.add('active');$('#appView').classList.remove('active');}
+function showLock(){closeAudio();stopCall();$('#appView').classList.remove('active');$('#home').classList.remove('active');$('#lock').classList.add('active');}
+function showApp(id){
+ if(id==="instagram"){startIncomingCall();return}
+ if(id==="camera"||id==="youtube"||id==="messages"){renderSimple(id);return}
+ if(id==="spotify"){renderSpotify();return}
+ $('#home').classList.remove('active');$('#lock').classList.remove('active');$('#appView').classList.add('active');$('#appView').classList.toggle('dark',id==="x");
+ if(id==="phone")renderPhone();else if(id==="line")renderLine();else if(id==="x")renderX();else if(id==="photos")renderPhotos();else if(id==="notes")renderNotes();else if(id==="maps")renderMaps();else if(id==="settings")renderSettings();
+}
+function goHome(){stopCall();closeAudio();$('#appView').classList.remove('active');$('#appView').classList.remove('dark');$('#home').classList.add('active');}
+function renderPhone(){
+ const groups=(CONFIG.calls||[]).map(g=>`<div class="section-label">${escapeHTML(g.group)}</div>`+(g.items||[]).map(c=>{let missed=c.type==="未接";return `<div class="call-row"><div class="call-symbol ${missed?'missed':''}">${missed?'↙':c.type==="發"?'↗':'↙'}</div><div class="call-main"><div class="call-type ${missed?'missed':''}">${escapeHTML(c.name||CONFIG.contactName)}${c.count&&Number(c.count)>1?` (${escapeHTML(c.count)})`:''}</div><div class="call-sub">${missed?'未接來電':c.type==="發"?'撥出電話':'撥入電話'}</div></div><div class="call-time">${escapeHTML(c.time)}</div></div>`}).join('')).join('');
+ $('#appContent').innerHTML=`<div class="page"><div class="nav"><span class="nav-title">通話記錄</span><button class="nav-button">編輯</button></div><div class="section-label">最近通話</div>${groups}<div class="tabs"><span>★ 常用</span><span>◷ 最近通話</span><span>♙ 聯絡人</span><span>▦ 鍵盤</span></div></div>`;
+}
+function renderLine(){
+ $('#appContent').innerHTML=`<div class="page"><div class="line-page"><div class="nav"><span style="font-size:20px;font-weight:800">LINE</span><span style="font-size:20px">⌕　＋</span></div><div class="line-title">ホーム</div><div class="line-profile" id="myProfile"><div class="avatar">${escapeHTML((CONFIG.userName||"M").slice(0,1))}</div><div><div class="profile-name">${escapeHTML(CONFIG.userName)}</div><div class="profile-sub">プロフィールを見てみよう</div></div><div class="chevron">›</div></div><div class="section-label">友だち</div>${[CONFIG.contactName,"ユイ","ソラ"].map((n,i)=>`<div class="friend" data-friend="${escapeHTML(n)}"><div class="avatar" style="${i===1?'background:linear-gradient(135deg,#8bc9d8,#6c7ab7)':i===2?'background:linear-gradient(135deg,#d9b9e8,#a66b8c)':''}">${escapeHTML(n.slice(0,1))}</div><div class="friend-info"><div class="profile-name">${escapeHTML(n)}</div><div class="friend-preview">${i===0?escapeHTML(CONFIG.chat.at(-1)?.text||"メッセージ"):i===1?"今日もおつかれさま！":"写真を送信しました"}</div></div><div class="friend-time">${i===0?"18:06":"昨日"}</div></div>`).join('')}</div></div>`;
+ $('#myProfile').addEventListener('click',renderProfile);
+ document.querySelectorAll('[data-friend]').forEach(el=>el.addEventListener('click',()=>{currentFriend=el.dataset.friend;renderChat()}));
+}
+function renderProfile(){
+ viewBeforeProfile="line";$('#appContent').innerHTML=`<div class="page"><div class="profile-full"><div class="nav"><button class="nav-button" id="profileBack">‹ 戻る</button><strong>プロフィール</strong><span></span></div><div class="profile-hero"><div class="avatar">${escapeHTML((CONFIG.userName||"M").slice(0,1))}</div><div style="font-size:23px;font-weight:800">${escapeHTML(CONFIG.userName)}</div><div class="profile-bio">大切な人との思い出を、ここに。</div><div class="profile-stats"><span><b>24</b><br>投稿</span><span><b>128</b><br>友だち</span><span><b>18</b><br>写真</span></div></div><div class="settings-row">🎂　誕生日 <span style="margin-left:auto;color:#888">非公開</span></div><div class="settings-row">📍　ステータス <span style="margin-left:auto;color:#888">元気です</span></div></div></div>`;
+ $('#profileBack').onclick=renderLine;
+}
+function renderChat(){
+ $('#appContent').innerHTML=`<div class="page"><div class="chat-page"><div class="chat-header"><button class="nav-button" id="chatBack">‹</button><div class="avatar">${escapeHTML((currentFriend||"H").slice(0,1))}</div><div><div class="profile-name">${escapeHTML(currentFriend)}</div><div class="profile-sub">オンライン</div></div><div style="margin-left:auto;color:#777">☎　▣</div></div><div class="chat-scroll" id="chatScroll"></div><form class="chat-compose" id="chatForm"><input id="chatInput" placeholder="メッセージを入力" autocomplete="off" aria-label="訊息內容"><button class="send-btn" type="submit" aria-label="送出">➤</button></form></div></div>`;
+ $('#chatBack').onclick=renderLine;
+ const msgs=(CONFIG.chat||[]).map(m=>({...m,from:m.from||"them"}));
+ if(currentFriend!==CONFIG.contactName){msgs.push({from:"them",time:"昨日",text:"また話そうね！"})}
+ const scroll=$('#chatScroll');
+ function addMessage(m){const mine=m.from==="me"||m.from==="我";const row=document.createElement('div');row.className='bubble-row '+(mine?'mine':'');row.innerHTML=`<div class="bubble">${escapeHTML(m.text)}</div><div class="bubble-meta">${escapeHTML(m.time||timeNow())}${mine?'　既読':''}</div>`;scroll.appendChild(row);scroll.scrollTop=scroll.scrollHeight}
+ msgs.forEach(addMessage);
+ $('#chatForm').addEventListener('submit',e=>{e.preventDefault();const inp=$('#chatInput');const text=inp.value.trim();if(!text)return;addMessage({from:"me",text,time:timeNow()});inp.value='';inp.focus()});
+}
+function renderX(){
+ const handle=(CONFIG.twitterHandle||"user").replace(/^@/,'');
+ $('#appContent').innerHTML=`<div class="page"><div class="nav"><span style="font-size:22px;font-weight:800">𝕏</span><span>⌕　•••</span></div><div class="x-profile"><div class="x-head"><div class="avatar">${escapeHTML((CONFIG.userName||"M").slice(0,1))}</div><div><div class="x-name">${escapeHTML(CONFIG.userName)} <span class="lock-tag">🔒</span></div><div class="x-handle">@${escapeHTML(handle)}</div></div></div><div class="x-bio">日々の記録。大切なことは、ここだけに。</div><div style="font-size:12px;color:#aaa;margin-top:12px">🔒 非公開アカウント　 ·　 フォロー 128</div></div><div style="display:flex;gap:25px;border-bottom:1px solid #333;padding:10px 0;font-size:13px"><b>ポスト</b><span style="color:#888">返信</span><span style="color:#888">メディア</span></div>${(CONFIG.tweets||[]).map((t,i)=>`<div class="tweet"><div class="avatar">${escapeHTML((CONFIG.userName||"M").slice(0,1))}</div><div class="tweet-body"><div class="tweet-meta"><strong>${escapeHTML(CONFIG.userName)}</strong>　@${escapeHTML(handle)}　·　${i===0?'2時間前':i===1?'昨日':'10月20日'}</div><div class="tweet-text">${escapeHTML(t)}</div><div class="tweet-stats"><span>♡ ${[12,8,24][i%3]}</span><span>↻ ${[3,2,5][i%3]}</span><span>◯ ${[120,87,214][i%3]}</span><span>↗</span></div></div></div>`).join('')}</div>`;
+}
+function renderPhotos(){
+ $('#appContent').innerHTML=`<div class="page"><div class="nav"><span class="nav-title">相簿</span><span style="color:var(--blue)">選取</span></div><div style="font-size:27px;font-weight:800;margin:8px 0 20px">最近項目</div><div class="photo-grid">${(CONFIG.photos||[]).map((p,i)=>`<button class="photo" data-photo="${i}" aria-label="照片 ${i+1}">${escapeHTML(p)}</button>`).join('')}</div><div class="section-label">回憶</div><div class="simple-card">🌇　最近的回憶<br><span class="muted">9 張照片 · 東京</span></div></div>`;
+ document.querySelectorAll('[data-photo]').forEach(el=>el.onclick=()=>{const p=CONFIG.photos[+el.dataset.photo];const overlay=document.createElement('div');overlay.style.cssText='position:absolute;inset:0;background:#101010f5;z-index:30;display:grid;place-items:center;font-size:100px';overlay.textContent=p;overlay.onclick=()=>overlay.remove();$('#appView').appendChild(overlay)});
+}
+function renderNotes(){
+ $('#appContent').innerHTML=`<div class="page"><div class="nav"><span class="nav-title">備忘錄</span><span style="color:var(--blue)">⋯</span></div><input id="noteSearch" placeholder="搜尋" style="width:100%;padding:12px;border:0;border-radius:12px;background:#e9e9ed;color:#222;margin:5px 0 15px"><div id="notesList">${(CONFIG.notes||[]).map((n,i)=>`<div class="note-card" data-note="${i}"><strong>${escapeHTML(n.title)}</strong><div style="margin-top:10px;font-size:14px">${escapeHTML(n.body)}</div></div>`).join('')}</div></div>`;
+ $('#noteSearch').addEventListener('input',e=>{const q=e.target.value.toLowerCase();document.querySelectorAll('[data-note]').forEach(el=>el.style.display=el.textContent.toLowerCase().includes(q)?'block':'none')});
+}
+function renderMaps(){
+ $('#appContent').innerHTML=`<div class="page"><div class="nav"><span class="nav-title">地圖</span><span>◉</span></div><div style="display:flex;gap:8px;margin-bottom:12px"><input placeholder="搜尋地點" style="flex:1;min-width:0;padding:12px 15px;border:0;border-radius:22px;background:#f0f0f3;color:#222"><button style="background:#e7e7eb;color:#333;border-radius:50%;width:42px">⌖</button></div><div class="map-placeholder"><div class="map-pin">📍</div></div><div class="simple-card">📍　東京駅<br><span class="muted">東京都千代田区</span></div></div>`;
+}
+function renderSettings(){
+ $('#appContent').innerHTML=`<div class="page"><div class="nav"><span class="nav-title">設定</span></div><div class="simple-card" style="display:flex;align-items:center;gap:12px"><div class="avatar">${escapeHTML((CONFIG.userName||"M").slice(0,1))}</div><div><b>${escapeHTML(CONFIG.userName)}</b><div class="muted" style="font-size:12px;margin-top:4px">Apple Account</div></div><span style="margin-left:auto;color:#aaa">›</span></div>${["飛行模式","Wi-Fi","Bluetooth","通知","一般","プライバシーとセキュリティ"].map((x,i)=>`<div class="settings-row"><div class="settings-ico" style="background:${['#ff9500','#0a84ff','#0a84ff','#ff3b30','#8e8e93','#34c759'][i]}">${['✈','⌁','ᛒ','◉','⚙','◈'][i]}</div><span>${x}</span><span style="margin-left:auto;color:#aaa">›</span></div>`).join('')}</div>`;
+}
+function renderSimple(id){
+ $('#home').classList.remove('active');$('#lock').classList.remove('active');$('#appView').classList.add('active');$('#appView').classList.remove('dark');
+ const data={
+  camera:['相機','<div style="height:65vh;background:#202025;border-radius:25px;display:grid;place-items:center;color:#aaa;font-size:44px">◉</div><div style="text-align:center;margin-top:25px">●　　◉　　●</div>'],
+  youtube:['YouTube','<div style="background:#111;color:#fff;border-radius:15px;padding:35px 15px;text-align:center;font-size:45px">▶</div><div class="simple-card">おすすめの動画<br><span class="muted">このスマートフォンの持ち主</span></div>'],
+  messages:['訊息',`<div class="simple-card">💬　${escapeHTML(CONFIG.contactName)}<br><span class="muted">今どこにいるの？</span></div>`]
+ };
+ $('#appContent').innerHTML=`<div class="page"><div class="nav"><button class="nav-button" id="simpleBack">‹ 返回</button><span class="nav-title">${data[id][0]}</span><span></span></div>${data[id][1]}</div>`;$('#simpleBack').onclick=goHome;
+}
+function startIncomingCall(){
+ $('#home').classList.remove('active');$('#lock').classList.remove('active');$('#appView').classList.add('active');$('#appView').classList.add('dark');
+ const caller=CONFIG.instagram?.callerName||"unknown";
+ const avatar=CONFIG.instagram?.avatar;
+ $('#appContent').innerHTML=`<div style="height:100%;min-height:80vh;background:radial-gradient(ellipse at 50% 35%,#262626,#050505 65%);color:white;display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:12vh 20px 7vh;text-align:center"><div style="color:#aaa;font-size:13px">Instagram</div><div><div id="callerAvatar" style="width:112px;height:112px;border-radius:50%;margin:0 auto 22px;background:${avatar?'center/cover url("'+avatar.replace(/"/g,'')+'")':'linear-gradient(135deg,#dba4b8,#8e6b9d)'};display:grid;place-items:center;font-size:38px;font-weight:700;box-shadow:0 0 0 7px #ffffff10;animation:breathe 2s ease-in-out infinite">${avatar?'':escapeHTML(caller.slice(0,1).toUpperCase())}</div><div style="font-size:26px;font-weight:650">${escapeHTML(caller)}</div><div style="color:#aaa;margin-top:10px">Instagram 視訊通話</div><div style="color:#aaa;margin-top:12px;font-size:13px">來電中…</div></div><div style="display:flex;justify-content:space-around;width:100%;max-width:290px"><button id="declineCall" style="width:68px;height:68px;border-radius:50%;background:#ff3b30;font-size:27px">✕</button><button id="acceptCall" style="width:68px;height:68px;border-radius:50%;background:#30d158;font-size:27px">☎</button></div></div><style>@keyframes breathe{0%,100%{transform:scale(1);box-shadow:0 0 0 7px #ffffff10}50%{transform:scale(1.06);box-shadow:0 0 0 14px #ffffff08}}</style>`;
+ $('#declineCall').onclick=goHome;$('#acceptCall').onclick=startVideoCall;
+}
+function startVideoCall(){
+ callMode=true;callSeconds=0;callMessageTimers.forEach(clearTimeout);callMessageTimers=[];
+ const caller=CONFIG.instagram?.callerName||"unknown",video=CONFIG.instagram?.video||"",myVideo=CONFIG.instagram?.myVideo||"";
+ const videoMarkup=video?`<video id="callVideo" src="${escapeHTML(video)}" autoplay loop muted playsinline style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:#161616"></video>`:`<div style="position:absolute;inset:0;background:radial-gradient(ellipse at 40% 20%,#7b7b87,#262630 45%,#111);display:grid;place-items:center;font-size:70px">🌙</div>`;
+ $('#appContent').innerHTML=`<div id="videoCall" style="position:absolute;inset:0;background:#111;color:white;overflow:hidden">${videoMarkup}<div style="position:absolute;top:20px;left:0;right:0;text-align:center;text-shadow:0 2px 8px #000;font-size:15px;font-weight:600">${escapeHTML(caller)}<div id="callDuration" style="font-size:12px;font-weight:400;margin-top:5px">00:00</div></div><div id="myVideoBox" style="position:absolute;right:14px;top:62px;width:clamp(82px,25vw,115px);height:150px;border-radius:18px;overflow:hidden;background:linear-gradient(145deg,#8a9aa8,#3d4352);border:1px solid #ffffff66;box-shadow:0 5px 20px #0005;touch-action:none;display:grid;place-items:center;font-size:26px">${myVideo?`<video src="${escapeHTML(myVideo)}" autoplay loop muted playsinline style="width:100%;height:100%;object-fit:cover"></video>`:'☺'}</div><div id="callMessages" style="position:absolute;left:15px;bottom:125px;right:20px;display:flex;flex-direction:column;gap:7px;pointer-events:none;text-align:left;text-shadow:0 2px 5px #000;font-size:14px"></div><form id="callChatForm" style="position:absolute;bottom:calc(80px + var(--safe-bottom));left:12px;right:12px;display:flex;gap:8px"><input id="callChatInput" placeholder="メッセージ…" style="flex:1;min-width:0;border:1px solid #ffffff44;border-radius:22px;padding:11px 15px;background:#0006;color:#fff;backdrop-filter:blur(10px)"><button style="background:#fff;color:#222;border-radius:50%;width:40px;height:40px">➤</button></form><div style="position:absolute;bottom:calc(15px + var(--safe-bottom));left:0;right:0;display:flex;justify-content:center;gap:clamp(14px,5vw,24px)"><button class="call-control" id="flipBtn">↻</button><button class="call-control" id="micBtn">🎙</button><button class="call-control" id="camBtn">▣</button><button class="call-control" id="hangupBtn" style="background:#ff3b30">☎</button></div><div id="tapSound" style="position:absolute;inset:0;z-index:0;pointer-events:none"></div></div><style>.call-control{width:54px;height:54px;border-radius:50%;background:#555b;color:white;font-size:21px;box-shadow:0 4px 14px #0003}#callMessages .msg{animation:msgIn .25s ease;transition:opacity 1s}#callMessages .msg.fade{opacity:0}@keyframes msgIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}</style>`;
+ const v=$('#callVideo');if(v){v.play().catch(()=>{});$('#videoCall').addEventListener('click',()=>{v.muted=false;v.play().catch(()=>{});},{once:true})}
+ callTimer=setInterval(()=>{callSeconds++;$('#callDuration').textContent=String(Math.floor(callSeconds/60)).padStart(2,'0')+':'+String(callSeconds%60).padStart(2,'0')},1000);
+ const box=$('#myVideoBox');let dragging=false,startX=0,startY=0,left0=0,top0=0;
+ box.addEventListener('pointerdown',e=>{dragging=true;box.setPointerCapture(e.pointerId);startX=e.clientX;startY=e.clientY;const r=box.getBoundingClientRect();left0=r.left;top0=r.top});
+ box.addEventListener('pointermove',e=>{if(!dragging)return;box.style.left=(left0+e.clientX-startX)+'px';box.style.top=(top0+e.clientY-startY)+'px';box.style.right='auto'});
+ box.addEventListener('pointerup',()=>dragging=false);
+ $('#hangupBtn').onclick=goHome;
+ $('#micBtn').onclick=e=>{e.currentTarget.style.background=e.currentTarget.style.background.includes('255, 59, 48')?'#555b':'#ff3b30'};
+ $('#camBtn').onclick=()=>{if(v)v.style.filter=v.style.filter?'':'brightness(.45)'};
+ $('#flipBtn').onclick=()=>{if(v)v.style.transform=v.style.transform?'':'scaleX(-1)'};
+ $('#callChatForm').addEventListener('submit',e=>{e.preventDefault();const inp=$('#callChatInput');if(!inp.value.trim())return;showCallMessage('我',inp.value.trim());inp.value=''});
+ (CONFIG.instagram?.messages||[]).forEach(m=>{const timer=setTimeout(()=>showCallMessage(m.from,m.text),Math.max(0,Number(m.delay)||0)*1000);callMessageTimers.push(timer)});
+}
+function showCallMessage(from,text){const area=$('#callMessages');if(!area)return;const d=document.createElement('div');d.className='msg';d.textContent=`${from}: ${text}`;area.appendChild(d);while(area.children.length>4)area.firstChild.remove();setTimeout(()=>d.classList.add('fade'),4200);setTimeout(()=>d.remove(),5400)}
+function stopCall(){if(callTimer)clearInterval(callTimer);callTimer=null;callMessageTimers.forEach(clearTimeout);callMessageTimers=[];callMode=false}
+function renderSpotify(){
+ $('#home').classList.remove('active');$('#lock').classList.remove('active');$('#appView').classList.add('active');$('#appView').classList.add('dark');
+ const s=CONFIG.spotify||{},songs=s.songs||[];
+ $('#appContent').innerHTML=`<div class="page" style="background:linear-gradient(180deg,#1d5138,#101010 360px,#080808);margin:0"><div class="nav"><button class="nav-button" id="spotifyBack" style="color:white">⌄</button><span style="font-size:13px;font-weight:700">プレイリスト</span><span>•••</span></div><div style="display:flex;flex-direction:column;align-items:center;padding:14px 0 25px;text-align:center"><div id="playlistCover" style="width:min(62vw,235px);aspect-ratio:1;background:${s.cover?'center/cover url("'+s.cover.replace(/"/g,'')+'")':'linear-gradient(145deg,#355c4c,#101b17)'};display:grid;place-items:center;box-shadow:0 10px 28px #0005;font-size:60px">${s.cover?'':'♫'}</div><div style="font-size:24px;font-weight:800;margin-top:23px">${escapeHTML(s.playlistName||"プレイリスト")}</div><div style="font-size:12px;color:#c1c1c1;margin-top:8px">${escapeHTML(s.creator||CONFIG.userName)} · ${songs.length}곡</div></div><div style="display:flex;align-items:center;gap:18px;margin:0 0 16px;color:#b8b8b8;font-size:20px"><span>⇩</span><span>↗</span><span>•••</span><button id="spotifyShuffle" style="margin-left:auto;background:transparent;color:#1db954;font-size:20px">🔀</button><button id="spotifyPlayAll" style="width:54px;height:54px;border-radius:50%;background:#1db954;color:#111;font-size:24px">▶</button></div><div id="songList">${songs.map((song,i)=>`<button data-song="${i}" style="display:flex;text-align:left;align-items:center;gap:12px;width:100%;padding:10px 0;background:transparent"><span style="width:20px;color:#aaa;text-align:center">${i+1}</span><span style="flex:1;min-width:0"><span class="song-title" style="display:block;color:white;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escapeHTML(song.title)}</span><span style="display:block;color:#aaa;font-size:12px;margin-top:5px">${escapeHTML(song.artist)}</span></span><span style="color:#aaa">•••</span></button>`).join('')}</div><div id="miniPlayer" style="display:none;position:sticky;bottom:0;margin:15px -10px -20px;background:#292929;border-radius:9px;padding:9px;align-items:center;gap:10px;cursor:pointer"><div id="miniCover" style="width:38px;height:38px;background:#355c4c;display:grid;place-items:center">♫</div><div style="flex:1;min-width:0"><div id="miniTitle" style="font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"></div><div id="miniArtist" style="font-size:11px;color:#aaa;margin-top:3px"></div></div><button id="miniToggle" style="background:transparent;font-size:21px">▶</button><div style="height:2px;position:absolute;bottom:0;left:0;background:#1db954;width:0" id="miniProgress"></div></div></div>`;
+ $('#spotifyBack').onclick=goHome;
+ document.querySelectorAll('[data-song]').forEach(el=>el.onclick=()=>playSong(+el.dataset.song));
+ $('#spotifyPlayAll').onclick=()=>playSong(currentSong<0?0:(currentSong+1)%songs.length);
+ $('#spotifyShuffle').onclick=()=>playSong(Math.floor(Math.random()*Math.max(1,songs.length)));
+ $('#miniPlayer').onclick=e=>{if(e.target.id!=='miniToggle')openFullPlayer()};
+ $('#miniToggle').onclick=e=>{e.stopPropagation();toggleSong()};
+}
+function playSong(i){
+ const songs=CONFIG.spotify?.songs||[];if(!songs.length)return;closeAudio();currentSong=(i+songs.length)%songs.length;songProgress=0;songPlaying=true;
+ const song=songs[currentSong];if(song.audio){audioEl=new Audio(song.audio);audioEl.loop=false;audioEl.addEventListener('timeupdate',()=>{if(audioEl){songProgress=audioEl.currentTime;updatePlayerProgress()}});audioEl.addEventListener('ended',()=>playSong((currentSong+1)%songs.length));audioEl.play().catch(()=>{});}
+ else startFakeProgress();
+ const mini=$('#miniPlayer');if(mini){mini.style.display='flex';$('#miniTitle').textContent=song.title;$('#miniArtist').textContent=song.artist;$('#miniCover').style.background=CONFIG.spotify.cover?`center/cover url("${CONFIG.spotify.cover}")`:'linear-gradient(145deg,#355c4c,#101b17)';$('#miniToggle').textContent='Ⅱ';}
+ document.querySelectorAll('[data-song]').forEach((el,idx)=>{const title=el.querySelector('.song-title');if(title){title.style.color=idx===currentSong?'#1db954':'white';title.textContent=(idx===currentSong?'♫ ':'')+songs[idx].title}});
+ updatePlayerProgress();
+}
+function startFakeProgress(){if(songTimer)clearInterval(songTimer);songTimer=setInterval(()=>{if(!songPlaying||audioEl)return;songProgress+=1;if(songProgress>=180){playSong((currentSong+1)%(CONFIG.spotify?.songs.length||1));return}updatePlayerProgress()},1000)}
+function toggleSong(){if(currentSong<0){playSong(0);return}songPlaying=!songPlaying;if(audioEl){songPlaying?audioEl.play().catch(()=>{}):audioEl.pause()}else if(!songTimer)startFakeProgress();const b=$('#miniToggle');if(b)b.textContent=songPlaying?'Ⅱ':'▶';const full=$('#fullPlay');if(full)full.textContent=songPlaying?'Ⅱ':'▶'}
+function closeAudio(){if(songTimer)clearInterval(songTimer);songTimer=null;if(audioEl){audioEl.pause();audioEl=null}songPlaying=false}
+function updatePlayerProgress(){const duration=audioEl&&Number.isFinite(audioEl.duration)?audioEl.duration:180;const p=Math.min(100,songProgress/duration*100);const mini=$('#miniProgress');if(mini)mini.style.width=p+'%';const range=$('#fullRange');if(range){range.max=duration;range.value=songProgress}const cur=$('#fullCurrent');if(cur)cur.textContent=formatTime(songProgress);const total=$('#fullTotal');if(total)total.textContent=formatTime(duration)}
+function formatTime(n){n=Math.floor(Number(n)||0);return Math.floor(n/60)+':'+String(n%60).padStart(2,'0')}
+function openFullPlayer(){
+ if(currentSong<0)return;const s=CONFIG.spotify,song=s.songs[currentSong];
+ const overlay=document.createElement('div');overlay.id='fullPlayer';overlay.style.cssText='position:absolute;inset:0;z-index:30;background:linear-gradient(160deg,#244c3a,#101010 60%);color:white;padding:calc(18px + var(--safe-top)) 24px calc(28px + var(--safe-bottom));display:flex;flex-direction:column;justify-content:space-between';
+ overlay.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center"><button id="fullClose" style="background:transparent;font-size:24px">⌄</button><div style="font-size:11px;letter-spacing:.1em">NOW PLAYING</div><span>•••</span></div><div><div id="fullCover" style="width:100%;max-width:330px;aspect-ratio:1;margin:0 auto;background:${s.cover?'center/cover url("'+s.cover.replace(/"/g,'')+'")':'linear-gradient(145deg,#355c4c,#101b17)'};display:grid;place-items:center;font-size:70px;box-shadow:0 15px 40px #0005">${s.cover?'':'♫'}</div><div style="display:flex;align-items:center;gap:12px;margin-top:28px"><div style="flex:1;min-width:0"><div id="fullSongTitle" style="font-size:23px;font-weight:800">${escapeHTML(song.title)}</div><div id="fullSongArtist" style="font-size:15px;color:#bbb;margin-top:8px">${escapeHTML(song.artist)}</div></div><span>♡</span></div><input id="fullRange" type="range" min="0" max="180" value="${songProgress}" style="width:100%;accent-color:#fff;margin-top:25px"><div style="display:flex;justify-content:space-between;color:#aaa;font-size:11px"><span id="fullCurrent">${formatTime(songProgress)}</span><span id="fullTotal">${formatTime(audioEl?.duration||180)}</span></div></div><div><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;font-size:20px"><button id="fullShuffle" style="background:transparent">🔀</button><button id="fullPrev" style="background:transparent;font-size:28px">⏮</button><button id="fullPlay" style="width:66px;height:66px;border-radius:50%;background:white;color:#111;font-size:25px">${songPlaying?'Ⅱ':'▶'}</button><button id="fullNext" style="background:transparent;font-size:28px">⏭</button><button id="fullRepeat" style="background:transparent">↻</button></div><div style="text-align:center;color:#aaa;font-size:12px">Spotify</div></div>`;
+ $('#appView').appendChild(overlay);$('#fullClose').onclick=()=>overlay.remove();$('#fullPlay').onclick=toggleSong;$('#fullPrev').onclick=()=>playSong((currentSong-1+(s.songs.length||1))%(s.songs.length||1));$('#fullNext').onclick=()=>playSong((currentSong+1)%(s.songs.length||1));$('#fullShuffle').onclick=()=>playSong(Math.floor(Math.random()*s.songs.length));$('#fullRepeat').onclick=e=>{e.currentTarget.style.color=e.currentTarget.style.color?'':'#1db954';if(audioEl)audioEl.loop=!audioEl.loop};$('#fullRange').oninput=e=>{songProgress=+e.target.value;if(audioEl)audioEl.currentTime=songProgress;updatePlayerProgress()};
+}
+$('#appHomebar').addEventListener('click',goHome);
+$('#lockBar').addEventListener('click',unlock);
+let touchStartY=null;
+$('#lock').addEventListener('touchstart',e=>{touchStartY=e.touches[0].clientY},{passive:true});
+$('#lock').addEventListener('touchend',e=>{if(touchStartY!==null&&touchStartY-e.changedTouches[0].clientY>35)unlock();touchStartY=null},{passive:true});
+let mouseY=null;
+$('#lock').addEventListener('pointerdown',e=>{mouseY=e.clientY});
+$('#lock').addEventListener('pointerup',e=>{if(mouseY!==null&&mouseY-e.clientY>35)unlock();mouseY=null});
+document.addEventListener('click',e=>{const b=e.target.closest('[data-app]');if(b)showApp(b.dataset.app)});
+wallpaperStyle();initHome();updateClock();setInterval(updateClock,1000);
+</script>
+</body>
+</html>
