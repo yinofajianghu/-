@@ -555,7 +555,7 @@ function showLock(){
   outgoing.classList.remove('leaving-to-lock');
   void outgoing.offsetWidth;
   outgoing.classList.add('leaving-to-lock');
-  const finish=()=>{outgoing.classList.remove('active','leaving-to-lock');outgoing.removeEventListener('animationend',finish);};
+  const finish=(event)=>{if(event&&event.target!==outgoing)return;outgoing.classList.remove('active','leaving-to-lock');outgoing.removeEventListener('animationend',finish);};
   outgoing.addEventListener('animationend',finish);
   window.setTimeout(finish,420);
  }
