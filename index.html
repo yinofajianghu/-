@@ -1440,6 +1440,41 @@ function startVideoCall(){
 #controlCenter .cc-page[data-cc-page="2"] .cc-native-tool-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
 #controlCenter .cc-page[data-cc-page="2"] .cc-native-tool{min-height:88px;padding:10px 5px;border-radius:22px!important;flex-direction:column;justify-content:center;gap:7px;text-align:center}
 #controlCenter .cc-page[data-cc-page="2"] .cc-native-tool b{font-size:10px;line-height:1.2}
+/* Control Center spacing + reference-scale controls */
+#controlCenter .cc-page{gap:16px!important}
+#controlCenter .cc-concept-top{gap:14px!important}
+#controlCenter .cc-connectivity{padding:16px!important;gap:12px!important;grid-template-columns:repeat(2,minmax(0,1fr))!important}
+#controlCenter .cc-native-connect{width:100%!important;min-width:0!important;height:54px!important;min-height:54px!important;border-radius:19px!important}
+#controlCenter .cc-native-connect .cc-glyph svg{width:25px!important;height:25px!important}
+#controlCenter .cc-adjustments{gap:12px!important}
+#controlCenter .cc-native-control-row.cc-concept-shortcuts{
+ display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;
+ gap:18px!important;padding:0 4px!important;margin-top:16px!important;
+}
+#controlCenter .cc-concept-shortcuts .cc-native-round{
+ width:100%!important;height:auto!important;aspect-ratio:1/1!important;min-width:0!important;
+ border-radius:50%!important;justify-self:stretch!important;
+}
+#controlCenter .cc-native-round .cc-glyph svg{width:27px!important;height:27px!important}
+#controlCenter .cc-native-control-row:not(.cc-concept-shortcuts){gap:14px!important;margin-top:15px!important}
+#controlCenter .cc-native-wide{min-width:0!important;min-height:58px!important;padding:10px 13px!important;gap:12px!important;border-radius:22px!important}
+#controlCenter .cc-native-media{padding:18px!important;margin:2px 0 4px!important}
+#controlCenter .cc-media-buttons{gap:24px!important;margin-top:15px!important}
+#controlCenter .cc-media-buttons button{width:48px!important;height:48px!important;min-width:48px!important;border-radius:50%!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;cursor:pointer!important}
+#controlCenter .cc-native-tool-grid{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:16px!important;padding:4px!important}
+#controlCenter .cc-page[data-cc-page="2"] .cc-native-tool{min-width:0!important;min-height:108px!important;padding:14px 6px!important;gap:12px!important;border-radius:23px!important}
+#controlCenter .cc-page[data-cc-page="2"] .cc-native-tool>span{width:48px!important;height:48px!important;flex:0 0 48px!important;font-size:25px!important}
+#controlCenter .cc-page[data-cc-page="2"] .cc-native-tool b{font-size:11px!important;line-height:1.25!important}
+#controlCenter [data-toggle],#controlCenter .cc-media-buttons button,#controlCenter #ccPageIndicator button,#controlCenter #ccClose{touch-action:manipulation;cursor:pointer}
+#controlCenter [data-toggle]:active,#controlCenter .cc-media-buttons button:active{transform:scale(.94)}
+#controlCenter .cc-native-connect:focus-visible,#controlCenter .cc-native-round:focus-visible,#controlCenter .cc-native-wide:focus-visible,#controlCenter .cc-native-tool:focus-visible,#controlCenter .cc-media-buttons button:focus-visible{outline:2px solid rgba(255,255,255,.9)!important;outline-offset:3px}
+@media(max-width:390px){
+ #controlCenter .cc-native-control-row.cc-concept-shortcuts{gap:14px!important}
+ #controlCenter .cc-native-connect{height:48px!important;min-height:48px!important}
+ #controlCenter .cc-page[data-cc-page="2"] .cc-native-tool-grid{gap:11px!important}
+ #controlCenter .cc-page[data-cc-page="2"] .cc-native-tool{min-height:96px!important}
+}
+
 </style>`;
  const v=$('#callVideo');if(v){v.play().catch(()=>{});$('#videoCall').addEventListener('click',()=>{v.muted=false;v.play().catch(()=>{});},{once:true})}
  callTimer=setInterval(()=>{callSeconds++;$('#callDuration').textContent=String(Math.floor(callSeconds/60)).padStart(2,'0')+':'+String(callSeconds%60).padStart(2,'0')},1000);
@@ -1862,6 +1897,17 @@ wallpaperStyle();initHome();updateClock();setInterval(updateClock,1000);
   }
   const play=$('#ccPlay');if(play)play.addEventListener('click',()=>{const playing=play.textContent==='Ⅱ';play.textContent=playing?'▶':'Ⅱ';const track=$('.cc-track small');if(track)track.textContent=playing?'選擇音樂以開始播放':'播放介面示範中'});
   const play2=$('#ccPlay2');if(play2)play2.addEventListener('click',()=>{const playing=play2.textContent==='Ⅱ';play2.textContent=playing?'▶':'Ⅱ';const track=$('.cc-track small');if(track)track.textContent=playing?'iPhone 上的音樂':'播放介面示範中'});
+  // Media transport controls are interactive even though they are not toggle tiles.
+  const mediaButtons=document.querySelectorAll('#controlCenter .cc-media-buttons button');
+  mediaButtons.forEach((button,index)=>button.addEventListener('click',()=>{
+    const track=document.querySelector('#controlCenter .cc-track b');
+    const artist=document.querySelector('#controlCenter .cc-track small');
+    if(index===0){if(track)track.textContent='上一首歌曲';if(artist)artist.textContent='播放佇列已切換'}
+    if(index===2){if(track)track.textContent='下一首歌曲';if(artist)artist.textContent='播放佇列已切換'}
+    if(index===1){const playButton=document.querySelector('#ccPlay2');if(playButton){const playing=playButton.textContent==='Ⅱ';playButton.textContent=playing?'▶':'Ⅱ';if(artist)artist.textContent=playing?'播放已暫停':'正在播放'}}
+  }));
+  const outputButton=document.querySelector('[data-toggle="volumeoutput"]');
+  if(outputButton){outputButton.setAttribute('aria-label','切換音訊輸出');outputButton.setAttribute('aria-pressed','false')}
   const cameraTool=document.querySelector('[data-toggle="camera"]');if(cameraTool)cameraTool.addEventListener('click',()=>{closeCC();showApp('camera')});
   const notesTool=document.querySelector('[data-toggle="notes"]');if(notesTool)notesTool.addEventListener('click',()=>{closeCC();showApp('notes')});
 
