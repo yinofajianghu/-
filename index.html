@@ -12,7 +12,7 @@
 .wallpaper{position:absolute;inset:0;background-image:linear-gradient(145deg,rgba(8,17,40,.15),rgba(10,8,35,.35)),var(--wallpaper);background-size:cover;background-position:center;z-index:-2}
 .wallpaper:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.08),transparent 35%,rgba(0,0,0,.15))}
 #lock,#home,#appView{position:absolute;inset:0;display:none}
-#lock.active,#home.active,#appView.active{display:block}
+#lock.active,#home.active,#appView.active{display:block}\n#lock.active{z-index:20}#home.active,#appView.active{z-index:1}
 #lock{padding:calc(7vh + var(--safe-top)) 22px calc(22px + var(--safe-bottom));text-align:center;touch-action:pan-y;-webkit-user-select:none;user-select:none;transform:translateY(0);opacity:1;transition:transform .28s cubic-bezier(.2,.8,.2,1),opacity .24s ease;will-change:transform,opacity}#lock.unlocking{transform:translateY(-18%);opacity:0;pointer-events:none}#lock.dragging{transition:none}
 .lock-small{font-size:14px;letter-spacing:.08em;text-shadow:0 2px 12px #0008}.lock-time{font-size:clamp(64px,17vw,100px);font-weight:200;letter-spacing:-.06em;line-height:1.12;margin-top:8px;text-shadow:0 2px 20px #0005}.lock-date{font-size:19px;font-weight:500;text-shadow:0 2px 12px #0008}
 .lock-bottom{position:absolute;bottom:calc(18px + var(--safe-bottom));left:0;right:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px}.lock-hint{font-size:13px;color:#ffffffd9;text-shadow:0 1px 8px #000}.home-indicator{width:134px;height:5px;border:0;padding:0;border-radius:10px;background:#fff;display:block;cursor:pointer;flex-shrink:0}.lock-indicator{margin-top:5px}
@@ -545,11 +545,13 @@ function unlock() {
   }
 }
 let recentAppReturnAt = 0;
+let recentScreenTarget = 'app';
 function showLock(){
  const app=$('#appView'), home=$('#home'), lock=$('#lock');
  if(lock.classList.contains('active')) return;
  const outgoing=app.classList.contains('active')?app:(home.classList.contains('active')?home:null);
- recentAppReturnAt=outgoing===app?Date.now():0;
+ recentScreenTarget=outgoing===home?'home':'app';
+ recentAppReturnAt=outgoing?Date.now():0;
  closeAudio();stopCall();
  if(outgoing){
   outgoing.classList.remove('leaving-to-lock');
@@ -562,15 +564,20 @@ function showLock(){
  lock.classList.add('active');
 }
 function returnToRecentApp(){
- const lock=$('#lock'), app=$('#appView');
- if(!lock?.classList.contains('active') || app?.classList.contains('active')) return false;
+ const lock=$('#lock'), app=$('#appView'), home=$('#home');
+ if(!lock?.classList.contains('active') || app?.classList.contains('active') || home?.classList.contains('active')) return false;
  if(!recentAppReturnAt || Date.now()-recentAppReturnAt>10000) return false;
  recentAppReturnAt=0;
  lock.classList.remove('active','dragging');
  lock.style.transform='';lock.style.opacity='';lock.style.transition='';
  $('#passcodeScreen').classList.remove('active');
- $('#home').classList.remove('active');
- app.classList.add('active');
+ if(recentScreenTarget==='home'){
+  app.classList.remove('active');
+  home.classList.add('active');
+ }else{
+  home.classList.remove('active');
+  app.classList.add('active');
+ }
  return true;
 }
 function showApp(id){
@@ -931,64 +938,93 @@ wallpaperStyle();initHome();updateClock();setInterval(updateClock,1000);
      }
    },{passive:true});
  });
- // Swipe down on the home screen to return to the lock screen without asking for a passcode.
- const homeSurface=document.querySelector('#home');
- if(homeSurface){
-   let homeSwipeStart=null;
-   homeSurface.addEventListener('touchstart',e=>{
-     homeSwipeStart=e.changedTouches[0]?.clientY ?? null;
-   },{passive:true});
-   homeSurface.addEventListener('touchend',e=>{
-     if(homeSwipeStart===null)return;
-     const end=e.changedTouches[0]?.clientY ?? homeSwipeStart;
-     const delta=end-homeSwipeStart;
-     homeSwipeStart=null;
-     if(delta>Math.max(35,window.innerHeight*.05) && typeof showLock==='function')showLock();
-   },{passive:true});
-   homeSurface.addEventListener('touchcancel',()=>{homeSwipeStart=null;},{passive:true});
-   let homePointerStart=null;
-   homeSurface.addEventListener('pointerdown',e=>{if(e.pointerType==='mouse'&&e.button!==0)return;homePointerStart=e.clientY;},{passive:true});
-   homeSurface.addEventListener('pointerup',e=>{
-     if(homePointerStart===null)return;
-     const delta=e.clientY-homePointerStart;homePointerStart=null;
-     if(delta>Math.max(35,window.innerHeight*.05)&&typeof showLock==='function')showLock();
-   },{passive:true});
-   homeSurface.addEventListener('pointercancel',()=>{homePointerStart=null;},{passive:true});
- }
- // Capture swipe-down gestures at document level so app-internal handlers cannot swallow them.
- let appSwipeStart=null;
- const appIsVisible=()=>document.querySelector('#appView')?.classList.contains('active')
-   && !document.querySelector('#lock')?.classList.contains('active')
-   && !document.querySelector('#home')?.classList.contains('active')
-   && !document.querySelector('#passcodeScreen')?.classList.contains('active')
-   && !document.querySelector('#controlCenter')?.classList.contains('active');
- document.addEventListener('touchstart',e=>{
-   if(!appIsVisible()){appSwipeStart=null;return;}
-   const t=e.changedTouches[0];
-   appSwipeStart=t?{y:t.clientY,x:t.clientX}:null;
- },{passive:true,capture:true});
- document.addEventListener('touchend',e=>{
-   if(!appSwipeStart||!appIsVisible())return;
-   const t=e.changedTouches[0];
-   const dy=(t?t.clientY:appSwipeStart.y)-appSwipeStart.y;
-   const dx=Math.abs((t?t.clientX:appSwipeStart.x)-appSwipeStart.x);
-   appSwipeStart=null;
-   if(dy>Math.max(40,window.innerHeight*.045)&&dy>dx*1.15&&appIsVisible())showLock();
- },{passive:true,capture:true});
- document.addEventListener('touchcancel',()=>{appSwipeStart=null;},{passive:true,capture:true});
- let appPointerStart=null;
+ // Pull the lock screen down with the finger from Home or any open app.
+ // The lock surface tracks the pointer 1:1 and springs back if the pull is too short.
+ let lockPull = null;
+ const lockSurface = document.querySelector('#lock');
+ const mainSurface = () => {
+   if(document.querySelector('#passcodeScreen')?.classList.contains('active') ||
+      document.querySelector('#controlCenter')?.classList.contains('active') ||
+      lockSurface?.classList.contains('active')) return null;
+   if(document.querySelector('#appView')?.classList.contains('active')) return 'app';
+   if(document.querySelector('#home')?.classList.contains('active')) return 'home';
+   return null;
+ };
+ const resetPulledLock = (commit, source) => {
+   if(!lockPull) return;
+   const drag=lockPull;
+   lockPull=null;
+   if(!lockSurface) return;
+   lockSurface.classList.remove('dragging');
+   if(commit){
+     recentScreenTarget=source;
+     recentAppReturnAt=Date.now();
+     closeAudio();stopCall();
+     const outgoing=document.querySelector(source==='app'?'#appView':'#home');
+     lockSurface.style.transition='transform .42s cubic-bezier(.2,.85,.2,1),opacity .3s ease,filter .3s ease';
+     lockSurface.style.transform='translateY(0) scale(1)';
+     lockSurface.style.opacity='1';
+     lockSurface.style.filter='blur(0)';
+     window.setTimeout(()=>{
+       if(outgoing)outgoing.classList.remove('active','leaving-to-lock');
+       lockSurface.style.transition='';
+       lockSurface.style.transform='';
+       lockSurface.style.opacity='';
+       lockSurface.style.filter='';
+     },440);
+   }else{
+     lockSurface.style.transition='transform .34s cubic-bezier(.2,.8,.2,1),opacity .28s ease,filter .28s ease';
+     lockSurface.style.transform='translateY(-102%) scale(.985)';
+     lockSurface.style.opacity='.65';
+     lockSurface.style.filter='blur(3px)';
+     window.setTimeout(()=>{
+       lockSurface.classList.remove('active','dragging');
+       lockSurface.style.transition='';
+       lockSurface.style.transform='';
+       lockSurface.style.opacity='';
+       lockSurface.style.filter='';
+     },360);
+   }
+ };
  document.addEventListener('pointerdown',e=>{
-   if(e.pointerType==='mouse'&&e.button!==0)return;
-   if(!appIsVisible()){appPointerStart=null;return;}
-   appPointerStart={y:e.clientY,x:e.clientX};
+   const source=mainSurface();
+   if(!source || (e.pointerType==='mouse'&&e.button!==0))return;
+   // Start from anywhere on the visible main surface; horizontal movement is ignored later.
+   lockPull={id:e.pointerId,y:e.clientY,x:e.clientX,source,active:false};
+ },{passive:true,capture:true});
+ document.addEventListener('pointermove',e=>{
+   if(!lockPull||e.pointerId!==lockPull.id)return;
+   const dy=e.clientY-lockPull.y,dx=e.clientX-lockPull.x;
+   if(!lockPull.active){
+     if(Math.abs(dx)>Math.abs(dy)*1.2 && Math.abs(dx)>10){lockPull=null;return;}
+     if(dy<5)return;
+     if(dy<12)return;
+     lockPull.active=true;
+     lockSurface.classList.add('active','dragging');
+     lockSurface.style.transform='translateY(-102%) scale(.985)';
+     lockSurface.style.opacity='.62';
+     lockSurface.style.filter='blur(3px)';
+     lockSurface.style.transition='none';
+   }
+   const distance=Math.max(0,Math.min(window.innerHeight,dy));
+   const progress=distance/Math.max(1,window.innerHeight);
+   lockSurface.style.transform=`translateY(${-window.innerHeight+distance}px) scale(${.985+.015*progress})`;
+   lockSurface.style.opacity=String(.62+.38*progress);
+   lockSurface.style.filter=`blur(${Math.max(0,3*(1-progress))}px)`;
  },{passive:true,capture:true});
  document.addEventListener('pointerup',e=>{
-   if(!appPointerStart||!appIsVisible())return;
-   const dy=e.clientY-appPointerStart.y,dx=Math.abs(e.clientX-appPointerStart.x);
-   appPointerStart=null;
-   if(dy>Math.max(40,window.innerHeight*.045)&&dy>dx*1.15&&appIsVisible())showLock();
+   if(!lockPull||e.pointerId!==lockPull.id)return;
+   const drag=lockPull,dy=e.clientY-drag.y,dx=Math.abs(e.clientX-drag.x);
+   if(!drag.active){lockPull=null;return;}
+   const commit=dy>Math.max(120,window.innerHeight*.22) && dy>dx*1.15;
+   resetPulledLock(commit,drag.source);
  },{passive:true,capture:true});
- document.addEventListener('pointercancel',()=>{appPointerStart=null;},{passive:true,capture:true});
+ document.addEventListener('pointercancel',e=>{
+   if(lockPull&&e.pointerId===lockPull.id){
+     if(lockPull.active)resetPulledLock(false,lockPull.source);
+     else lockPull=null;
+   }
+ },{passive:true,capture:true});
  // Keep the app usable in standalone/full-screen Safari and desktop browsers.
  document.documentElement.style.webkitTapHighlightColor='transparent';
 })();
