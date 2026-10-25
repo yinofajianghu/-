@@ -2092,12 +2092,16 @@ wallpaperStyle();initHome();updateClock();setInterval(updateClock,1000);
    },{passive:true});
  }
  document.addEventListener('keydown',e=>{
-   if(e.key==='Escape'||e.key==='Backspace'){
-     const full=document.querySelector('#fullPlayer');
-     if(full){full.remove();return}
-     const active=document.querySelector('#appView.active');
-     if(active&&typeof goHome==='function'){goHome();return}
-   }
+   // Backspace is an editing key, not a navigation shortcut. Never exit an app
+   // when the user is deleting text in a profile field, search box, or message.
+   if(e.key!=='Escape')return;
+   const full=document.querySelector('#fullPlayer');
+   if(full){full.remove();return}
+   const target=e.target;
+   const editing=target&&(target.isContentEditable||/^(INPUT|TEXTAREA|SELECT)$/.test(target.tagName));
+   if(editing)return;
+   const active=document.querySelector('#appView.active');
+   if(active&&typeof goHome==='function'){goHome();return}
  });
  // Show a small welcoming notification only once per page load; it is purely decorative.
  setTimeout(()=>{
