@@ -1599,8 +1599,8 @@ function startVideoCall(){
 #controlCenter .cc-connectivity .cc-native-wide[data-toggle="focus"]{
  grid-column:1/-1!important;
  width:100%!important;
- min-height:60px!important;
- height:60px!important;
+ min-height:76px!important;
+ height:76px!important;
  position:relative!important;
  display:flex!important;
  align-items:center!important;
@@ -1616,7 +1616,7 @@ function startVideoCall(){
  transform:translateY(-50%)!important;margin:0!important;
 }
 @media(max-height:740px){
- #controlCenter .cc-connectivity .cc-native-wide[data-toggle="focus"]{min-height:54px!important;height:54px!important}
+ #controlCenter .cc-connectivity .cc-native-wide[data-toggle="focus"]{min-height:66px!important;height:66px!important}
 }
 </style>`;
  const v=$('#callVideo');if(v){v.play().catch(()=>{});$('#videoCall').addEventListener('click',()=>{v.muted=false;v.play().catch(()=>{});},{once:true})}
