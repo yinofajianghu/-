@@ -1597,48 +1597,36 @@ function startVideoCall(){
  #controlCenter .cc-native-tool-grid{column-gap:20px!important;row-gap:22px!important}
 }
 
-/* Strong separation between control families and individual controls */
-#controlCenter .cc-page{gap:40px!important;padding:28px 24px 38px!important}
-#controlCenter .cc-concept-top{gap:32px!important;margin-bottom:8px!important}
-#controlCenter .cc-connectivity{gap:24px!important;padding:24px!important}
-#controlCenter .cc-connectivity .cc-native-connect{margin:0 2px!important}
-#controlCenter .cc-adjustments{gap:28px!important;padding:0 3px!important}
-#controlCenter .cc-native-control-row{gap:28px!important;margin-top:22px!important;padding:0 4px!important}
-#controlCenter .cc-native-control-row.cc-concept-shortcuts{column-gap:28px!important;row-gap:30px!important;margin-top:22px!important;padding:0 8px!important}
-#controlCenter .cc-native-control-row:not(.cc-concept-shortcuts){column-gap:26px!important;row-gap:28px!important;margin-top:22px!important;padding:0 6px!important}
-#controlCenter .cc-native-control-row.cc-concept-shortcuts .cc-native-round{width:min(100%,64px)!important;max-width:64px!important;justify-self:center!important}
-#controlCenter .cc-native-tool-grid{column-gap:28px!important;row-gap:30px!important;padding:4px!important}
-#controlCenter .cc-native-tool{padding:16px!important;gap:12px!important}
-#controlCenter .cc-native-tool>span{margin-bottom:4px!important}
-#controlCenter .cc-native-wide{gap:14px!important;padding:0 18px!important}
-#controlCenter .cc-native-slider{touch-action:none!important}
-#controlCenter .cc-native-slider input[type="range"]{touch-action:none!important;opacity:0!important;z-index:8!important;cursor:ns-resize!important}
+/* Control Center layout: consistent touch handling, roomy controls, responsive geometry */
+#controlCenter .cc-page{gap:clamp(20px,3.6vh,34px)!important;padding:clamp(14px,2.5vh,24px) clamp(14px,4vw,22px) calc(24px + var(--safe-bottom))!important}
+#controlCenter .cc-pages{padding:14px 14px 12px!important;gap:16px!important}
+#controlCenter .cc-page[data-cc-page="0"] .cc-concept-top{display:grid!important;grid-template-columns:minmax(0,1.12fr) minmax(112px,.88fr)!important;gap:clamp(14px,4vw,22px)!important;align-items:stretch!important}
+#controlCenter .cc-connectivity{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;grid-template-rows:repeat(3,minmax(42px,1fr)) 54px!important;gap:clamp(9px,2.8vw,14px)!important;padding:clamp(12px,3vw,17px)!important;min-width:0!important}
+#controlCenter .cc-connectivity .cc-native-wide[data-toggle="focus"]{grid-column:1/-1!important;width:100%!important;min-height:54px!important;justify-content:flex-start!important;padding-inline:18px!important}
+#controlCenter .cc-adjustments{display:flex!important;gap:clamp(12px,3.5vw,20px)!important;height:clamp(235px,34vh,310px)!important;min-height:220px!important;min-width:0!important}
+#controlCenter .cc-native-slider{position:relative!important;flex:1 1 0!important;min-width:0!important;height:100%!important;min-height:220px!important;border-radius:30px!important;overflow:hidden!important;touch-action:none!important}
+#controlCenter .cc-native-slider input[type="range"]{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;opacity:0!important;z-index:8!important;cursor:ns-resize!important;touch-action:none!important;pointer-events:none!important}
+#controlCenter .cc-native-slider:before,#controlCenter .cc-native-slider:after{height:var(--cc-fill,65%)!important;pointer-events:none!important;transition:height .12s linear!important}
+#controlCenter .cc-native-slider output{z-index:9!important;pointer-events:none!important}
+#controlCenter .cc-native-control-row.cc-concept-shortcuts{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:clamp(14px,4vw,24px)!important;margin-top:0!important;padding:0!important}
+#controlCenter .cc-native-control-row.cc-concept-shortcuts .cc-native-round{width:100%!important;max-width:68px!important;aspect-ratio:1!important;height:auto!important;justify-self:center!important;border-radius:50%!important}
+#controlCenter .cc-native-control-row:not(.cc-concept-shortcuts){display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;column-gap:clamp(14px,4vw,24px)!important;row-gap:clamp(16px,3vh,24px)!important;margin-top:0!important}
+#controlCenter .cc-native-tool-grid{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;column-gap:clamp(14px,4vw,24px)!important;row-gap:clamp(18px,3vh,26px)!important;grid-auto-rows:minmax(112px,auto)!important}
+#controlCenter .cc-page[data-cc-page="2"] .cc-native-tool{min-height:112px!important;padding:15px 12px!important;gap:10px!important}
+#controlCenter .cc-native-tool>span{margin-bottom:5px!important}
+#controlCenter .cc-native-wide{gap:12px!important;padding:10px 14px!important}
 @media(max-height:740px){
- #controlCenter .cc-page{gap:30px!important;padding:18px 18px 28px!important}
- #controlCenter .cc-concept-top{gap:22px!important}
- #controlCenter .cc-connectivity{gap:17px!important;padding:17px!important}
- #controlCenter .cc-adjustments{gap:18px!important}
- #controlCenter .cc-native-control-row.cc-concept-shortcuts{column-gap:18px!important;row-gap:22px!important;margin-top:16px!important}
- #controlCenter .cc-native-control-row:not(.cc-concept-shortcuts){column-gap:18px!important;row-gap:22px!important;margin-top:16px!important}
- #controlCenter .cc-native-tool-grid{column-gap:20px!important;row-gap:22px!important;padding:2px!important}
- #controlCenter .cc-native-tool{padding:12px!important;gap:8px!important}
+ #controlCenter .cc-page{gap:20px!important;padding:14px 14px calc(20px + var(--safe-bottom))!important}
+ #controlCenter .cc-adjustments{height:clamp(205px,30vh,250px)!important;min-height:200px!important;gap:12px!important}
+ #controlCenter .cc-connectivity{grid-template-rows:repeat(3,minmax(38px,1fr)) 48px!important;gap:9px!important;padding:12px!important}
+ #controlCenter .cc-connectivity .cc-native-wide[data-toggle="focus"]{min-height:48px!important}
+ #controlCenter .cc-native-tool-grid{grid-auto-rows:minmax(100px,auto)!important;row-gap:16px!important}
+ #controlCenter .cc-page[data-cc-page="2"] .cc-native-tool{min-height:100px!important;padding:12px 10px!important}
 }
-
-/* Requested geometry: taller sliders/cards and a wider Focus tile */
-#controlCenter .cc-native-slider{height:clamp(230px,32vh,310px)!important;min-height:230px!important}
-#controlCenter .cc-page[data-cc-page="0"] .cc-concept-top{grid-template-columns:minmax(0,1.16fr) minmax(94px,.84fr)!important;gap:22px!important}
-#controlCenter .cc-connectivity{grid-template-columns:repeat(2,minmax(0,1fr))!important;grid-template-rows:repeat(3,48px) 52px!important;gap:12px!important;padding:16px!important}
-#controlCenter .cc-connectivity .cc-native-wide[data-toggle="focus"]{grid-column:1/-1!important;width:100%!important;min-height:52px!important;justify-content:flex-start!important;padding-inline:20px!important}
-#controlCenter .cc-adjustments{gap:18px!important}
-#controlCenter .cc-native-tool-grid{grid-auto-rows:minmax(120px,auto)!important;row-gap:26px!important;column-gap:24px!important}
-#controlCenter .cc-page[data-cc-page="2"] .cc-native-tool{min-height:120px!important;padding:16px 14px!important}
-#controlCenter .cc-native-control-row.cc-concept-shortcuts{column-gap:24px!important;row-gap:26px!important}
-#controlCenter .cc-native-control-row.cc-concept-shortcuts .cc-native-round{max-width:70px!important}
-@media(max-height:740px){
- #controlCenter .cc-native-slider{height:clamp(205px,30vh,255px)!important;min-height:205px!important}
- #controlCenter .cc-connectivity{grid-template-rows:repeat(3,42px) 48px!important}
- #controlCenter .cc-native-tool-grid{grid-auto-rows:minmax(108px,auto)!important;row-gap:20px!important}
- #controlCenter .cc-page[data-cc-page="2"] .cc-native-tool{min-height:108px!important}
+@media(max-width:360px){
+ #controlCenter .cc-page[data-cc-page="0"] .cc-concept-top{grid-template-columns:minmax(0,1fr) minmax(104px,.86fr)!important;gap:10px!important}
+ #controlCenter .cc-connectivity{gap:8px!important;padding:10px!important}
+ #controlCenter .cc-native-control-row.cc-concept-shortcuts{gap:12px!important}
 }
 </style>`;
  const v=$('#callVideo');if(v){v.play().catch(()=>{});$('#videoCall').addEventListener('click',()=>{v.muted=false;v.play().catch(()=>{});},{once:true})}
@@ -2065,23 +2053,23 @@ wallpaperStyle();initHome();updateClock();setInterval(updateClock,1000);
         brightness.value = String(Math.round(min + ratio * (max - min)));
         applyBrightness();
       };
-      brightness.addEventListener('pointerdown', (event) => {
+      // Track-level pointer handling avoids native range hit-testing conflicts on touch screens.
+      brightnessTrack.addEventListener('pointerdown', (event) => {
+        if (event.pointerType === 'mouse' && event.button !== 0) return;
         draggingBrightness = true;
         event.preventDefault();
-        if (brightness.setPointerCapture) {
-          try { brightness.setPointerCapture(event.pointerId); } catch (_) {}
-        }
+        try { brightnessTrack.setPointerCapture(event.pointerId); } catch (_) {}
         setBrightnessFromY(event.clientY);
       });
-      brightness.addEventListener('pointermove', (event) => {
+      brightnessTrack.addEventListener('pointermove', (event) => {
         if (!draggingBrightness) return;
         event.preventDefault();
         setBrightnessFromY(event.clientY);
       });
       const stopBrightnessDrag = () => { draggingBrightness = false; };
-      brightness.addEventListener('pointerup', stopBrightnessDrag);
-      brightness.addEventListener('pointercancel', stopBrightnessDrag);
-      brightness.addEventListener('lostpointercapture', stopBrightnessDrag);
+      brightnessTrack.addEventListener('pointerup', stopBrightnessDrag);
+      brightnessTrack.addEventListener('pointercancel', stopBrightnessDrag);
+      brightnessTrack.addEventListener('lostpointercapture', stopBrightnessDrag);
     }
     applyBrightness();
   }
