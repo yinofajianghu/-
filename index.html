@@ -1726,6 +1726,7 @@ function renderPhotos(){
    else if(album.smart==="live")arr=arr.filter(p=>(p.title+" "+p.place).toLowerCase().includes("實況")||p.kind==="live");
    else if(album.smart==="portraits")arr=arr.filter(p=>(p.title+" "+p.place).toLowerCase().includes("人像")||p.title.toLowerCase().includes("portrait"));
    else if(album.smart==="all")arr=arr;
+   else if(album.smart==="people")arr=arr.filter(p=>(p.title+" "+p.place).toLowerCase().includes("人像")||(p.title+" "+p.place).toLowerCase().includes("人物")||(p.title+" "+p.place).toLowerCase().includes("寵物")||p.title.toLowerCase().includes("portrait"));
    else arr=arr.filter(p=>(album.items||[]).includes(p.id));
   }
   if(state.filter==="favorites")arr=arr.filter(p=>isFav(p.id));
@@ -1848,6 +1849,9 @@ function doImport(files){
    state.activeTab="collections";state.albumId=al.id;state.openAlbumView=al.id;state.search="";save();render();return
   }
   if(a==="reorder"||a==="mediaMore"){modal("收藏集選項",'<p class="ph-note">選擇下方收藏集即可開啟照片；分類會依匯入照片的名稱與資訊整理。</p><button class="ph-wide-action" data-act="special" data-smart="favorites">最愛</button><button class="ph-wide-action" data-act="special" data-smart="videos">影片</button><button class="ph-wide-action" data-act="import">匯入照片</button>');return}
+  if(a==="people"||a==="memories"||a==="mediaMore"){
+   const configs={people:{smart:"people",name:"人物與寵物"},memories:{smart:"recent",name:"回憶"},mediaMore:{smart:"all",name:"媒體類型"}};const cfg=configs[a];let al=state.albums.find(x=>x.smart===cfg.smart);if(!al){al={id:"a-"+cfg.smart,name:cfg.name,smart:cfg.smart};state.albums.push(al)}state.activeTab="collections";state.albumId=al.id;state.openAlbumView=al.id;state.search="";save();render();return
+  }
   if(a==="mediaType"){
    const sm=b.dataset.smart;const names={videos:"影片",selfies:"自拍",live:"實況照片",portraits:"人像",screenshots:"截圖"};
    let al=state.albums.find(x=>x.smart===sm);
