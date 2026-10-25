@@ -642,44 +642,10 @@ html,body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro 
         <button class="cc-native-round" data-toggle="hotspot" aria-label="個人熱點"><span class="cc-glyph">⌁</span></button>
       </div>
     </div>
-    <div class="cc-page" data-cc-page="1">
-      <div class="cc-native-page-title">媒體控制</div>
-      <div class="cc-native-media cc-media cc-concept-player">
-        <div class="cc-media-top"><span class="cc-album">♫</span><div class="cc-track"><b>Better Together</b><small>Jack Johnson</small></div><span class="cc-output-icon">◉</span></div>
-        <div class="cc-native-progress"><i></i></div>
-        <div class="cc-media-time"><span>1:24</span><span>−2:43</span></div>
-        <div class="cc-media-buttons"><button aria-label="上一首">|◀</button><button id="ccPlay2" aria-label="播放或暫停">Ⅱ</button><button aria-label="下一首">▶|</button></div>
-      </div>
-      <div class="cc-native-control-row">
-        <button class="cc-native-wide" data-toggle="darkmode"><span class="cc-native-control-icon">◐</span><span>深色模式</span><span class="cc-chevron">⌄</span></button>
-        <button class="cc-native-wide" data-toggle="hearing"><span class="cc-native-control-icon">耳</span><span>聽力</span></button>
-      </div>
-      <div class="cc-native-control-row">
-        <button class="cc-native-wide" data-toggle="speaker"><span class="cc-native-control-icon">▣</span><span>接續播放</span><small>iPhone</small></button>
-        <button class="cc-native-round" data-toggle="volumeoutput" aria-label="音訊輸出"><span class="cc-glyph">◖))</span></button>
-      </div>
-      <div class="cc-native-control-row cc-concept-shortcuts">
-        <button class="cc-native-round" data-toggle="soundrecognition" aria-label="聲音辨識"><span class="cc-glyph">≋</span></button>
-        <button class="cc-native-round" data-toggle="shazam" aria-label="音樂辨識"><span class="cc-glyph">◎</span></button>
-        <button class="cc-native-round" data-toggle="music" aria-label="音樂"><span class="cc-glyph">♫</span></button>
-      </div>
-    </div>
-    <div class="cc-page" data-cc-page="2">
-      <div class="cc-native-page-title">快速工具</div>
-      <div class="cc-native-tool-grid">
-        <button class="cc-native-tool" data-toggle="flashlight"><span>♜</span><b>手電筒</b></button>
-        <button class="cc-native-tool" data-toggle="timer"><span>◷</span><b>計時器</b></button>
-        <button class="cc-native-tool" data-toggle="calculator"><span>▦</span><b>計算機</b></button>
-        <button class="cc-native-tool" data-toggle="camera"><span>▣</span><b>相機</b></button>
-        <button class="cc-native-tool" data-toggle="screenrecord"><span>⦿</span><b>螢幕錄製</b></button>
-        <button class="cc-native-tool" data-toggle="lowpower"><span>▰</span><b>低耗電模式</b></button>
-        <button class="cc-native-tool" data-toggle="notes"><span>▤</span><b>備忘錄</b></button>
-        <button class="cc-native-tool" data-toggle="hearing"><span>耳</span><b>聽力</b></button>
-      </div>
-      <button class="cc-native-wide cc-home-control" data-toggle="home"><span class="cc-native-control-icon">⌂</span><span>家庭</span><small>我的家</small><span class="cc-chevron">›</span></button>
-    </div>
+    
+    
   </div>
-  <div class="cc-page-indicator" id="ccPageIndicator" aria-label="控制中心頁面"><button class="active" data-page="0" aria-label="第一頁"></button><button data-page="1" aria-label="第二頁"></button><button data-page="2" aria-label="第三頁"></button></div>
+  <div class="cc-page-indicator" id="ccPageIndicator" aria-label="控制中心頁面"><button class="active" data-page="0" aria-label="第一頁"></button></div>
   <div class="cc-close" id="ccClose"><span></span></div>
 </section>
 </div>
@@ -2078,7 +2044,7 @@ wallpaperStyle();initHome();updateClock();setInterval(updateClock,1000);
   volumeInputs.forEach(el=>{el.addEventListener('input',()=>syncVolume(el));el.addEventListener('change',()=>syncVolume(el))});
   const ccPages=$('#ccPages'),ccIndicators=Array.from(document.querySelectorAll('#ccPageIndicator [data-page]'));
   if(ccPages){
-    ccPages.addEventListener('scroll',()=>{const index=Math.max(0,Math.min(2,Math.round(ccPages.scrollLeft/Math.max(1,ccPages.clientWidth))));ccIndicators.forEach((b,i)=>b.classList.toggle('active',i===index))},{passive:true});
+    ccPages.addEventListener('scroll',()=>{const index=0;ccIndicators.forEach((b,i)=>b.classList.toggle('active',i===index))},{passive:true});
     ccIndicators.forEach(b=>b.addEventListener('click',()=>{ccPages.scrollTo({left:Number(b.dataset.page)*ccPages.clientWidth,behavior:'smooth'})}));
   }
   const play=$('#ccPlay');if(play)play.addEventListener('click',()=>{const playing=play.textContent==='Ⅱ';play.textContent=playing?'▶':'Ⅱ';const track=$('.cc-track small');if(track)track.textContent=playing?'選擇音樂以開始播放':'播放介面示範中'});
