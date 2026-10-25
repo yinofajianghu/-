@@ -593,6 +593,7 @@ html,body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro 
 .x2-top button{background:transparent;color:#E7E9EA}
 .x2-avatar-button{justify-self:start;padding:0;border-radius:50%}
 .x2-avatar{width:42px;height:42px;flex:0 0 42px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(145deg,#1D9BF0,#7856FF);color:#fff;font-size:17px;font-weight:750}
+.x2-avatar img{width:100%;height:100%;display:block;object-fit:cover;border-radius:inherit}.x2-avatar-upload{display:flex;align-items:center;gap:12px;padding:16px;border-bottom:1px solid #2F3336}.x2-avatar-upload button{background:#202327;color:#E7E9EA;border-radius:999px;padding:10px 14px;font-size:14px;font-weight:700}.x2-avatar-upload input{font-size:16px;max-width:100%;color:#E7E9EA}
 .x2-logo{justify-self:center;font-size:29px;font-weight:750;line-height:1}
 .x2-top-more{justify-self:end;letter-spacing:2px;font-weight:800}
 .x2-main{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:none;padding-bottom:68px}
@@ -817,6 +818,7 @@ try {
     if (typeof savedXProfile.name === "string") CONFIG.userName = savedXProfile.name;
     if (typeof savedXProfile.bio === "string") CONFIG.twitterBio = savedXProfile.bio;
     if (typeof savedXProfile.handle === "string") CONFIG.twitterHandle = savedXProfile.handle;
+    if (typeof savedXProfile.avatar === "string") CONFIG.twitterAvatar = savedXProfile.avatar;
   }
 } catch (error) {
   console.warn("無法讀取已儲存的 X 個人資料", error);
@@ -1193,7 +1195,7 @@ function renderX(){
  const icon=(name)=>({home:"⌂",search:"⌕",notifications:"♧",messages:"✉",profile:"◉"}[name]||"•");
  const navItems=[["home","首頁"],["search","搜尋"],["notifications","通知"],["messages","私訊"],["profile","個人資料"]];
  const esc=(v)=>escapeHTML(String(v==null?"":v));
- const avatar=(letter,cls="")=>'<div class="x2-avatar '+cls+'">'+esc(letter||me.slice(0,1))+'</div>';
+ const avatar=(letter,cls="")=>'<div class="x2-avatar '+cls+'">'+(CONFIG.twitterAvatar?'<img src="'+esc(CONFIG.twitterAvatar)+'" alt="個人頭像">':esc(letter||me.slice(0,1)))+'</div>';
  function nav(){
   return '<header class="x2-top"><button class="x2-avatar-button" data-action="profile" aria-label="開啟個人資料">'+avatar(me.slice(0,1))+'</button><button class="x2-logo" data-action="home" aria-label="X 首頁">𝕏</button><button class="x2-top-more" data-action="settings" aria-label="更多選項">•••</button></header>';
  }
@@ -1227,12 +1229,38 @@ function renderX(){
   }
   return '';
  }
+ // Avatar uploads are handled once for the X interface and compressed before local storage.
+ if(!document.documentElement.dataset.xAvatarHandler){
+  document.documentElement.dataset.xAvatarHandler="1";
+  document.addEventListener('change',e=>{
+   const input=e.target;
+   if(!input||input.id!=="x2AvatarFile"||!input.files||!input.files[0])return;
+   const file=input.files[0];
+   if(!file.type.startsWith("image/")){notify("請選擇圖片檔案");input.value="";return}
+   const reader=new FileReader();
+   reader.onload=()=>{
+    const img=new Image();
+    img.onload=()=>{
+     const canvas=document.createElement("canvas"),max=512,scale=Math.min(1,max/Math.max(img.width,img.height));
+     canvas.width=Math.max(1,Math.round(img.width*scale));canvas.height=Math.max(1,Math.round(img.height*scale));
+     const ctx=canvas.getContext("2d");ctx.drawImage(img,0,0,canvas.width,canvas.height);
+     CONFIG.twitterAvatar=canvas.toDataURL("image/jpeg",0.82);
+     try{const saved=JSON.parse(localStorage.getItem(X_PROFILE_STORAGE_KEY)||"{}");saved.avatar=CONFIG.twitterAvatar;localStorage.setItem(X_PROFILE_STORAGE_KEY,JSON.stringify(saved));render();notify("頭像已更新");}
+     catch(error){console.error("頭像儲存失敗",error);notify("頭像儲存失敗，請換一張較小的圖片");}
+    };
+    img.onerror=()=>notify("無法讀取這張圖片，請換一張試試");
+    img.src=reader.result;
+   };
+   reader.onerror=()=>notify("讀取圖片失敗，請重試");
+   reader.readAsDataURL(file);
+  });
+ }
  function render(){
   $('#appContent').innerHTML='<div class="x2-app">'+nav()+'<main class="x2-main" id="x2Main">'+pageContent()+'</main>'+(activeTab==="home"?'<button class="x2-fab" data-action="compose" aria-label="發佈貼文">＋</button>':'')+bottomNav()+(modal?modalMarkup():'')+'</div>';
  }
  function modalMarkup(){
   if(modal==="compose") return '<div class="x2-modal-backdrop" data-action="close-modal"><section class="x2-modal" role="dialog" aria-modal="true" aria-label="撰寫貼文" data-modal><header><button data-action="close-modal">取消</button><b>新增貼文</b><button class="x2-modal-post" data-action="publish" '+(!draft.trim()?'disabled':'')+'>發佈</button></header><div class="x2-modal-editor">'+avatar(me.slice(0,1))+'<textarea id="x2Draft" placeholder="有什麼新鮮事？" maxlength="280">'+esc(draft)+'</textarea></div><footer>◉　任何人都可以回覆　·　<small id="x2DraftCount">'+draft.length+'/280</small></footer></section></div>';
-  if(modal==="edit") return '<div class="x2-modal-backdrop" data-action="close-modal"><section class="x2-modal" role="dialog" aria-modal="true" aria-label="編輯個人資料" data-modal><header><button data-action="close-modal">取消</button><b>編輯個人資料</b><button class="x2-modal-post" data-action="save-profile">儲存</button></header><label class="x2-edit-field">名稱<input id="x2EditName" maxlength="40" value="'+esc(editName)+'"></label><label class="x2-edit-field">使用者名稱（@）<input id="x2EditHandle" maxlength="15" autocomplete="off" autocapitalize="none" spellcheck="false" value="'+esc(editHandle)+'"><small>限英文字母、數字與底線，最多 15 個字元</small></label><label class="x2-edit-field">自我介紹<textarea id="x2EditBio" maxlength="160">'+esc(editBio)+'</textarea></label></section></div>';
+  if(modal==="edit") return '<div class="x2-modal-backdrop" data-action="close-modal"><section class="x2-modal" role="dialog" aria-modal="true" aria-label="編輯個人資料" data-modal><header><button data-action="close-modal">取消</button><b>編輯個人資料</b><button class="x2-modal-post" data-action="save-profile">儲存</button></header><div class="x2-avatar-upload">'+avatar(editName.slice(0,1))+'<div><b>個人頭像</b><p style="margin:5px 0 8px;color:#71767B;font-size:12px">選擇一張照片作為你的頭像</p><input id="x2AvatarFile" type="file" accept="image/*" aria-label="選擇頭像照片"></div></div><label class="x2-edit-field">名稱<input id="x2EditName" maxlength="40" value="'+esc(editName)+'"></label><label class="x2-edit-field">使用者名稱（@）<input id="x2EditHandle" maxlength="15" autocomplete="off" autocapitalize="none" spellcheck="false" value="'+esc(editHandle)+'"><small>限英文字母、數字與底線，最多 15 個字元</small></label><label class="x2-edit-field">自我介紹<textarea id="x2EditBio" maxlength="160">'+esc(editBio)+'</textarea></label></section></div>';
   if(modal==="reply") return '<div class="x2-modal-backdrop" data-action="close-modal"><section class="x2-modal" role="dialog" aria-modal="true" aria-label="回覆貼文" data-modal><header><button data-action="close-modal">取消</button><b>回覆</b><button class="x2-modal-post" data-action="send-reply" data-id="'+esc(draft)+'">回覆</button></header><textarea class="x2-reply-text" id="x2ReplyText" placeholder="發佈你的回覆"></textarea></section></div>';
   return '';
  }
@@ -1266,7 +1294,7 @@ function renderX(){
   if(action==="postmore"){modal="";const id=b.dataset.id;saved[id]=!saved[id];render();notify(saved[id]?"已加入書籤":"已移除書籤");return}
   if(action==="settings"||action==="profile-menu"){notify("帳號設定：通知、隱私與顯示選項");return}
   if(action==="edit-profile"){modal="edit";render();return}
-  if(action==="save-profile"){editName=$('#x2EditName')?.value.trim()||me;editHandle=($('#x2EditHandle')?.value||handle).trim().replace(/^@/,"");editBio=$('#x2EditBio')?.value.trim()||"";if(!/^[A-Za-z0-9_]{1,15}$/.test(editHandle)){notify("使用者名稱只能包含英文字母、數字和底線，最多 15 個字元");return}me=editName;handle=editHandle;CONFIG.userName=editName;CONFIG.twitterHandle=editHandle;CONFIG.twitterBio=editBio;try{localStorage.setItem(X_PROFILE_STORAGE_KEY,JSON.stringify({name:editName,handle:editHandle,bio:editBio}));}catch(error){console.error("無法儲存 X 個人資料",error);modal="";render();notify("儲存失敗：瀏覽器可能禁止本機儲存");return}modal="";render();notify("個人資料已儲存");return}
+  if(action==="save-profile"){editName=$('#x2EditName')?.value.trim()||me;editHandle=($('#x2EditHandle')?.value||handle).trim().replace(/^@/,"");editBio=$('#x2EditBio')?.value.trim()||"";if(!/^[A-Za-z0-9_]{1,15}$/.test(editHandle)){notify("使用者名稱只能包含英文字母、數字和底線，最多 15 個字元");return}me=editName;handle=editHandle;CONFIG.userName=editName;CONFIG.twitterHandle=editHandle;CONFIG.twitterBio=editBio;try{localStorage.setItem(X_PROFILE_STORAGE_KEY,JSON.stringify({name:editName,handle:editHandle,bio:editBio,avatar:CONFIG.twitterAvatar||""}));}catch(error){console.error("無法儲存 X 個人資料",error);modal="";render();notify("儲存失敗：瀏覽器可能禁止本機儲存");return}modal="";render();notify("個人資料已儲存");return}
   if(action==="clear-notifications"){notifications=[];render();notify("通知已清除");return}
   if(action==="notification"){notify("已開啟通知");return}
   if(action==="notiftab"){notify("已切換通知分類");return}
