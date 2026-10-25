@@ -1524,18 +1524,18 @@ function startVideoCall(){
 #controlCenter .cc-page[data-cc-page="2"] .cc-native-tool{margin:0!important}
 #controlCenter .cc-native-slider{position:relative!important;overflow:hidden!important;isolation:isolate!important;transition:background-color .28s ease,box-shadow .28s ease!important}
 #controlCenter .cc-native-slider:before{
- height:var(--fill,65%)!important;
- transition:height .22s cubic-bezier(.2,.75,.25,1),background .28s ease,box-shadow .28s ease!important;
+ height:var(--cc-fill,65%)!important;
+ transition:height .32s cubic-bezier(.22,.8,.25,1),background .28s ease,box-shadow .28s ease!important;
  will-change:height;
 }
 #controlCenter .cc-native-slider input[type="range"]{
  z-index:3!important;cursor:ns-resize!important;touch-action:pan-x!important;
 }
 #controlCenter .cc-native-slider:after{
- content:"";position:absolute;left:5px;right:5px;bottom:5px;height:var(--fill,65%);
+ content:"";position:absolute;left:5px;right:5px;bottom:5px;height:var(--cc-fill,65%);
  border-radius:24px;pointer-events:none;z-index:0;
  background:linear-gradient(180deg,rgba(255,255,255,.15),rgba(255,255,255,0));
- opacity:.7;transition:height .22s cubic-bezier(.2,.75,.25,1),opacity .25s ease;
+ opacity:.7;transition:height .32s cubic-bezier(.22,.8,.25,1),opacity .25s ease;
 }
 #controlCenter .cc-native-slider .cc-slider-symbol,
 #controlCenter .cc-native-slider output{z-index:4!important;transition:transform .22s ease,opacity .22s ease!important}
@@ -1953,7 +1953,7 @@ wallpaperStyle();initHome();updateClock();setInterval(updateClock,1000);
   const brightness = $('#brightnessControl');
   if (brightness) {
     const applyBrightness = () => {
-      const fill = document.querySelector('#controlCenter .cc-brightness'); if(fill) fill.style.setProperty('--fill', (Number(brightness.value)||100)+'%');
+      const fill = document.querySelector('#controlCenter .cc-brightness'); if(fill) fill.style.setProperty('--cc-fill', (Number(brightness.value)||100)+'%');
       const value = Math.max(35, Math.min(100, Number(brightness.value) || 100));
       phone.style.setProperty('--screen-brightness', String(value / 100));
       brightness.setAttribute('aria-valuenow', String(value));
@@ -1964,7 +1964,7 @@ wallpaperStyle();initHome();updateClock();setInterval(updateClock,1000);
     applyBrightness();
   }
   const volumeInputs=Array.from(document.querySelectorAll('#volumeControl,#volumeControl2'));
-  function syncVolume(source){const slider=document.querySelector('#controlCenter .cc-volume');if(slider)slider.style.setProperty('--fill',source.value+'%');volumeInputs.forEach(el=>{if(el!==source)el.value=source.value});['#volumeValue','#volumeValue2'].forEach(sel=>{const o=$(sel);if(o)o.textContent=source.value+'%'})}
+  function syncVolume(source){const slider=document.querySelector('#controlCenter .cc-volume');if(slider)slider.style.setProperty('--cc-fill',source.value+'%');volumeInputs.forEach(el=>{if(el!==source)el.value=source.value});['#volumeValue','#volumeValue2'].forEach(sel=>{const o=$(sel);if(o)o.textContent=source.value+'%'})}
   volumeInputs.forEach(el=>{el.addEventListener('input',()=>syncVolume(el));el.addEventListener('change',()=>syncVolume(el))});
   const ccPages=$('#ccPages'),ccIndicators=Array.from(document.querySelectorAll('#ccPageIndicator [data-page]'));
   if(ccPages){
