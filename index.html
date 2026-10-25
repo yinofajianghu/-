@@ -2070,7 +2070,7 @@ function renderSpotify(){
  $('#appContent').querySelectorAll('[data-sp]').forEach(el=>el.addEventListener('click',e=>{
   const a=el.dataset.sp,i=Number(el.dataset.i||0),v=el.dataset.value;
   if(a==='tab'){page=v;spotifyUIPage=page;persist();renderSpotify();return}
-  if(a==='filter'){filter=v;spotifyUIFilter=filter;if(v==='Podcast'){page='podcast';spotifyUIPage=page}persist();toast('已切換至「'+v+'」');renderSpotify();return}
+  if(a==='filter'){filter=v;spotifyUIFilter=filter;if(v==='Podcast')page='podcast';else if(page==='podcast')page='home';spotifyUIPage=page;persist();toast('已切換至「'+v+'」');renderSpotify();return}
   if(a==='play'){playSong(i);openFullPlayer();return}
   if(a==='mini'){openFullPlayer();return}
   if(a==='toggle'){e.stopPropagation();toggleSong();el.textContent=songPlaying?'Ⅱ':'▶';return}
