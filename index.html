@@ -641,6 +641,13 @@ html,body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro 
 .x2-conversation{width:100%;display:flex;align-items:center;gap:10px;padding:13px;background:#000;color:#E7E9EA;text-align:left;border-bottom:1px solid #2F3336}
 .x2-conversation-body{display:flex;flex-direction:column;gap:5px;flex:1;min-width:0}.x2-conversation-body b{font-size:14px}.x2-conversation-body small,.x2-conversation time{color:#71767B;font-size:11px;font-weight:400}.x2-conversation-body>span{font-size:13px;color:#71767B;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.x2-conversation i{width:8px;height:8px;background:#1D9BF0;border-radius:50%}
 .x2-chat-head{height:58px;display:flex;align-items:center;gap:12px;padding:8px 14px;border-bottom:1px solid #2F3336}.x2-chat-head>button{background:transparent;color:#E7E9EA;font-size:20px}.x2-chat-head>span{display:flex;flex-direction:column;gap:3px;flex:1}.x2-chat-head small{font-size:12px;color:#71767B}
+.x2-main-chat{display:flex;flex-direction:column;overflow:hidden;padding-bottom:0!important;min-height:0}
+.x2-main-chat .x2-chat-head{flex:0 0 58px}
+.x2-main-chat .x2-chat-scroll{padding:16px;display:flex;flex:1 1 auto;flex-direction:column;gap:10px;min-height:0;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:none}
+.x2-main-chat .x2-chat-scroll::-webkit-scrollbar{display:none}
+.x2-main-chat .x2-chat-form{position:relative;bottom:auto;flex:0 0 auto;display:flex;gap:8px;padding:10px 12px calc(10px + var(--safe-bottom));background:#000;border-top:1px solid #2F3336}
+.x2-main-chat .x2-chat-form input{font-size:16px;line-height:1.35}
+.x2-main-chat .x2-chat-form button{flex:0 0 42px}
 .x2-chat-scroll{padding:16px;display:flex;flex-direction:column;gap:10px;min-height:220px}.x2-chat-intro{display:flex;flex-direction:column;align-items:center;gap:7px;padding:30px 0;color:#71767B;font-size:13px}.x2-chat-intro b{color:#E7E9EA}.x2-chat-bubble{align-self:flex-start;max-width:82%;padding:11px 14px;border-radius:18px 18px 18px 5px;background:#202327;color:#E7E9EA;font-size:14px;overflow-wrap:anywhere}.x2-chat-bubble.mine{align-self:flex-end;background:#1D9BF0;color:white;border-radius:18px 18px 5px 18px}
 .x2-chat-form{position:sticky;bottom:0;display:flex;gap:8px;padding:12px;background:#000;border-top:1px solid #2F3336}.x2-chat-form input{flex:1;min-width:0;border:0;border-radius:999px;padding:12px 15px;background:#202327;color:#E7E9EA}.x2-chat-form button{width:42px;border-radius:50%;background:#1D9BF0;color:#fff;font-size:20px}
 .x2-profile-cover{height:112px;background:linear-gradient(120deg,#12334B,#1D9BF0 55%,#6B4EFF)}
@@ -1232,11 +1239,11 @@ function renderX(){
   {icon:"✓",title:"歡迎來到 X",detail:"追蹤感興趣的帳號，開始探索動態",time:"昨天"}
  ];
  let conversations=[
-  {name:"小晴",handle:"@haru_days",text:"最近過得怎麼樣？",time:"10:42",unread:true,avatar:"晴"},
-  {name:"設計日常",handle:"@design_note",text:"分享一個有趣的介面參考給你",time:"昨天",unread:false,avatar:"D"},
-  {name:"旅行筆記",handle:"@trip_log",text:"下次一起去看海吧！",time:"週一",unread:false,avatar:"旅"}
+  {name:"小晴",handle:"@haru_days",text:"最近過得怎麼樣？",time:"10:42",unread:true,avatar:"晴",messages:[{text:"嗨！最近過得怎麼樣？",mine:false,time:"10:41"}]},
+  {name:"設計日常",handle:"@design_note",text:"分享一個有趣的介面參考給你",time:"昨天",unread:false,avatar:"D",messages:[{text:"分享一個有趣的介面參考給你",mine:false,time:"昨天"}]},
+  {name:"旅行筆記",handle:"@trip_log",text:"下次一起去看海吧！",time:"週一",unread:false,avatar:"旅",messages:[{text:"下次一起去看海吧！",mine:false,time:"週一"}]}
  ];
- let currentChat=-1, chatMessages=[];
+ let currentChat=-1;
  const icon=(name)=>({home:"⌂",search:"⌕",notifications:"♧",messages:"✉",profile:"◉"}[name]||"•");
  const navItems=[["home","首頁"],["search","搜尋"],["notifications","通知"],["messages","私訊"],["profile","個人資料"]];
  const esc=(v)=>escapeHTML(String(v==null?"":v));
@@ -1265,9 +1272,9 @@ function renderX(){
   if(activeTab==="messages"){
    if(currentChat>=0){
     const c=conversations[currentChat];
-    return '<div class="x2-chat-head"><button data-action="chat-back" aria-label="返回私訊">←</button>'+avatar(c.avatar)+'<span><b>'+esc(c.name)+'</b><small>'+esc(c.handle)+'</small></span><button data-action="chat-info" aria-label="對話資訊">•••</button></div><div class="x2-chat-scroll" id="x2ChatScroll">'+(chatMessages.length?chatMessages.map(m=>'<div class="x2-chat-bubble '+(m.mine?'mine':'')+'">'+esc(m.text)+'</div>').join(''):'<div class="x2-chat-intro">'+avatar(c.avatar)+'<b>'+esc(c.name)+'</b><span>'+esc(c.handle)+'</span><p>你們的對話從這裡開始。</p></div>')+'</div><form class="x2-chat-form" id="x2ChatForm"><input id="x2ChatInput" placeholder="開始新訊息" aria-label="輸入訊息" required><button type="submit" aria-label="傳送訊息">↑</button></form>';
+    return '<div class="x2-chat-head"><button data-action="chat-back" aria-label="返回私訊">←</button>'+avatar(c.avatar)+'<span><b>'+esc(c.name)+'</b><small>'+esc(c.handle)+'</small></span><button data-action="chat-info" aria-label="對話資訊">•••</button></div><div class="x2-chat-scroll" id="x2ChatScroll">'+(c.messages.length?c.messages.map(m=>'<div class="x2-chat-bubble '+(m.mine?'mine':'')+'">'+esc(m.text)+'</div>').join(''):'<div class="x2-chat-intro">'+avatar(c.avatar)+'<b>'+esc(c.name)+'</b><span>'+esc(c.handle)+'</span><p>你們的對話從這裡開始。</p></div>')+'</div><form class="x2-chat-form" id="x2ChatForm"><input id="x2ChatInput" placeholder="開始新訊息" aria-label="輸入訊息" required><button type="submit" aria-label="傳送訊息">↑</button></form>';
    }
-   return '<div class="x2-page-title">私訊 <button data-action="new-message" aria-label="新增訊息">✉＋</button></div><label class="x2-searchbar"><span>⌕</span><input id="x2MessageSearch" placeholder="搜尋私訊" aria-label="搜尋私訊"></label><div id="x2Conversations">'+conversations.map((c,i)=>'<button class="x2-conversation" data-action="open-chat" data-index="'+i+'">'+avatar(c.avatar)+'<span class="x2-conversation-body"><b>'+esc(c.name)+' <small>'+esc(c.handle)+'</small></b><span>'+esc(c.text)+'</span></span><time>'+esc(c.time)+'</time>'+(c.unread?'<i></i>':'')+'</button>').join('')+'</div>';
+   return '<div class="x2-page-title">私訊 <button data-action="new-message" aria-label="新增訊息">✉＋</button></div><label class="x2-searchbar"><span>⌕</span><input id="x2MessageSearch" placeholder="搜尋私訊" aria-label="搜尋私訊"></label><div id="x2Conversations">'+conversations.map((c,i)=>'<button class="x2-conversation" data-action="open-chat" data-index="'+i+'">'+avatar(c.avatar)+'<span class="x2-conversation-body"><b>'+esc(c.name)+' <small>'+esc(c.handle)+'</small></b><span>'+esc(c.messages.length?c.messages[c.messages.length-1].text:c.text)+'</span></span><time>'+esc(c.time)+'</time>'+(c.unread?'<i></i>':'')+'</button>').join('')+'</div>';
   }
   if(activeTab==="profile"){
    return '<div class="x2-profile-cover"></div><div class="x2-profile-actions"><button data-action="profile-menu" aria-label="個人資料選項">•••</button><button class="x2-edit-profile" data-action="edit-profile">編輯個人資料</button></div><div class="x2-profile-info">'+avatar(me.slice(0,1),'x2-profile-avatar',true)+'<h2>'+esc(editName)+' <span class="x2-verified">✓</span></h2><p>@'+esc(handle)+'</p><div class="x2-profile-bio">'+esc(editBio)+'</div><div class="x2-profile-stats"><b>128 <small>追蹤中</small></b><b>36 <small>追蹤者</small></b></div></div><div class="x2-feed-tabs"><button class="active" data-action="profile-posts">貼文</button><button data-action="profile-posts">回覆</button><button data-action="profile-posts">媒體</button><button data-action="profile-posts">喜歡</button></div>'+posts.map(postCard).join('');
@@ -1301,7 +1308,7 @@ function renderX(){
   });
  }
  function render(){
-  $('#appContent').innerHTML='<div class="x2-app">'+nav()+'<main class="x2-main" id="x2Main">'+pageContent()+'</main>'+(activeTab==="home"?'<button class="x2-fab" data-action="compose" aria-label="發佈貼文">＋</button>':'')+bottomNav()+(modal?modalMarkup():'')+'</div>';
+  $('#appContent').innerHTML='<div class="x2-app">'+nav()+'<main class="x2-main '+(activeTab==="messages"&&currentChat>=0?'x2-main-chat':'')+'" id="x2Main">'+pageContent()+'</main>'+(activeTab==="home"?'<button class="x2-fab" data-action="compose" aria-label="發佈貼文">＋</button>':'')+bottomNav()+(modal?modalMarkup():'')+'</div>';
  }
  function modalMarkup(){
   if(modal==="compose") return '<div class="x2-modal-backdrop" data-action="close-modal"><section class="x2-modal" role="dialog" aria-modal="true" aria-label="撰寫貼文" data-modal><header><button data-action="close-modal">取消</button><b>新增貼文</b><button class="x2-modal-post" data-action="publish" '+(!draft.trim()?'disabled':'')+'>發佈</button></header><div class="x2-modal-editor">'+avatar(me.slice(0,1),"",true)+'<textarea id="x2Draft" placeholder="有什麼新鮮事？" maxlength="280">'+esc(draft)+'</textarea></div><footer>◉　任何人都可以回覆　·　<small id="x2DraftCount">'+draft.length+'/280</small></footer></section></div>';
@@ -1320,7 +1327,7 @@ function renderX(){
   if(e.target.id==="x2MessageSearch"){const q=e.target.value.toLowerCase();document.querySelectorAll('.x2-conversation').forEach(el=>el.style.display=el.textContent.toLowerCase().includes(q)?'flex':'none')}
  });
  $('#appContent').addEventListener('submit',function(e){
-  if(e.target.id==="x2ChatForm"){e.preventDefault();const input=$('#x2ChatInput'),text=input.value.trim();if(!text)return;chatMessages.push({text,mine:true});conversations[currentChat].text=text;render();const sc=$('#x2ChatScroll');if(sc)sc.scrollTop=sc.scrollHeight}
+  if(e.target.id==="x2ChatForm"){e.preventDefault();const input=$('#x2ChatInput'),text=input.value.trim();if(!text||currentChat<0)return;const c=conversations[currentChat];c.messages.push({text,mine:true,time:"現在"});c.text=text;c.time="現在";render();const sc=$('#x2ChatScroll');if(sc)sc.scrollTop=sc.scrollHeight;const nextInput=$('#x2ChatInput');if(nextInput)nextInput.focus()}
  });
  $('#appContent').addEventListener('click',function(e){
   const b=e.target.closest('button,[data-action="trend"]');if(!b)return;
@@ -1346,7 +1353,7 @@ function renderX(){
   if(action==="feed"){notify("已切換動態牆分類");return}
   if(action==="profile-posts"){notify("顯示個人貼文分類");return}
   if(action==="trend"){searchTerm=b.textContent.trim();activeTab="search";render();return}
-  if(action==="open-chat"){currentChat=Number(b.dataset.index);conversations[currentChat].unread=false;chatMessages=[];render();return}
+  if(action==="open-chat"){currentChat=Number(b.dataset.index);conversations[currentChat].unread=false;render();const sc=$('#x2ChatScroll');if(sc)sc.scrollTop=sc.scrollHeight;return}
   if(action==="chat-back"){currentChat=-1;render();return}
   if(action==="chat-info"){notify("對話設定與參與者資訊");return}
   if(action==="new-message"){notify("選擇一位聯絡人即可開始新對話");return}
