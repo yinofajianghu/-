@@ -248,7 +248,7 @@ html,body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro 
 .passcode-dot{position:relative;display:block;flex:0 0 12px;width:12px;height:12px;padding:0;border:1.5px solid #fff;border-radius:50%;background:transparent!important;opacity:1;box-sizing:border-box;overflow:hidden}
 .passcode-dot.filled{background:transparent!important;border-color:#fff!important;opacity:1!important;box-shadow:none!important}
 .passcode-dot.filled::after{content:"";position:absolute;inset:0;background:#fff!important;border-radius:50%;display:block}
-.passcode-error{height:22px;min-height:22px;font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",sans-serif;font-size:17px;line-height:22px;font-weight:400;letter-spacing:-.2px;color:#fff;text-align:center;text-shadow:0 1px 8px #0003}.passcode-error:not(:empty){animation:passcodeErrorIn .18s ease-out both}@keyframes passcodeErrorIn{from{opacity:0;transform:translateY(2px)}to{opacity:1;transform:translateY(0)}}
+.passcode-error{height:0;min-height:0;overflow:hidden;font-size:0;line-height:0}
 .passcode-pad{width:min(100%,300px);display:grid;grid-template-columns:repeat(3,1fr);gap:12px 22px;margin-top:4px;margin-bottom:auto}
 .passcode-key{aspect-ratio:1;border-radius:50%;width:100%;max-width:76px;justify-self:center;background:rgba(255,255,255,.17);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(12px);font-size:30px;font-weight:300;color:white;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1}
 .passcode-key small{font-size:9px;letter-spacing:2px;margin-top:4px;font-weight:600}
@@ -1176,13 +1176,19 @@ function enterPasscodeDigit(digit) {
     if (container && typeof container.animate === 'function') {
       try {
         container.animate(
-          [{ transform: 'translateX(0)' }, { transform: 'translateX(-5px)' },
-           { transform: 'translateX(5px)' }, { transform: 'translateX(0)' }],
-          { duration: 240, easing: 'ease-out' }
+          [
+            { transform: 'translateX(0) scale(1, 1)' },
+            { transform: 'translateX(-8px) scale(1.12, .9)' },
+            { transform: 'translateX(7px) scale(.9, 1.12)' },
+            { transform: 'translateX(-5px) scale(1.07, .95)' },
+            { transform: 'translateX(3px) scale(.97, 1.04)' },
+            { transform: 'translateX(0) scale(1, 1)' }
+          ],
+          { duration: 520, easing: 'cubic-bezier(.36,.07,.19,.97)', iterations: 1 }
         );
       } catch (_) {}
     }
-    if (error) error.textContent = '密碼不正確';
+    if (error) error.textContent = '';
     passcodeResetTimer = window.setTimeout(() => {
       enteredPasscode = '';
       renderPasscodeDots();
