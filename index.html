@@ -2400,6 +2400,14 @@ function renderSpotify(){
 .ig-app:has(.ig-reels-page) .ig-main{height:100%;flex:1 1 0;min-height:0}
 .ig-app:has(.ig-reels-page) .ig-bottom-nav{position:absolute;left:0;right:0;bottom:0;z-index:6;background:linear-gradient(180deg,transparent,rgba(0,0,0,.55));color:#fff;border-top-color:#ffffff22}
 .ig-app:has(.ig-reels-page) .ig-bottom-nav button{color:#fff}
+
+/* Pin Instagram navigation to the physical bottom of the simulated iPhone.
+   The navigation background continues behind the home-indicator area. */
+#appContent:has(.ig-app){inset:var(--safe-top) 0 0 0!important}
+.ig-app .ig-bottom-nav{flex:0 0 calc(53px + 25px + var(--safe-bottom));height:calc(53px + 25px + var(--safe-bottom));min-height:calc(53px + 25px + var(--safe-bottom));align-items:flex-start;padding:0!important}
+.ig-app .ig-bottom-nav button{height:53px;min-height:53px;flex:0 0 20%}
+#appView:has(.ig-app) .app-homebar-wrap{background:#fff;z-index:21}
+#appView:has(.ig-app.ig-dark) .app-homebar-wrap{background:#000}
 </style><div class="sp-app">`+top+body+`</div>`+mini+nav;
  const input=$('#spQuery');if(input)input.addEventListener('input',e=>{const p=e.target.selectionStart;query=e.target.value;spotifyUIQuery=query;spotifyUIPage=page;renderSpotify();const n=$('#spQuery');if(n){n.focus();n.setSelectionRange(p,p)}});
  const form=$('#spSearchForm');if(form)form.onsubmit=e=>{e.preventDefault();query=$('#spQuery').value;spotifyUIQuery=query;renderSpotify()};
