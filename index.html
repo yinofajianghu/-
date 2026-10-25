@@ -850,7 +850,7 @@ html body #controlCenter .cc-native-slider output{
     <div class="lock-bottom"><button type="button" id="unlockPrompt" class="lock-hint" aria-label="輸入密碼解鎖">點此輸入密碼</button><button type="button" id="lockBar" class="home-indicator lock-indicator" aria-label="輸入密碼解鎖"></button></div>
   </section>
     <div id="passcodeScreen" aria-label="輸入密碼" aria-hidden="true">
-      <button class="passcode-back" id="passcodeCancel" aria-label="返回鎖定畫面">取消</button>
+      <button type="button" class="passcode-back" id="passcodeCancel" aria-label="返回鎖定畫面" onclick="event.preventDefault(); event.stopPropagation(); if (typeof closePasscode === 'function') closePasscode(); else { const s=document.getElementById('passcodeScreen'); if(s){s.classList.remove('active');s.setAttribute('aria-hidden','true');} }">取消</button>
       <div class="passcode-title">輸入密碼</div>
       <div class="passcode-subtitle">輸入密碼以解鎖 iPhone</div>
       <div class="passcode-dots" id="passcodeDots" aria-label="已輸入密碼 0 位">
@@ -2372,6 +2372,9 @@ function renderSpotify(){
   #lock,#home,#appView{border-radius:0}
   #passcodeScreen{z-index:120;pointer-events:auto}
   #passcodeScreen button{pointer-events:auto;touch-action:manipulation}
+  #passcodeCancel{position:relative;z-index:9999;align-self:flex-start;min-width:64px;min-height:44px;padding:10px 12px;margin:-4px 0 0 -12px;touch-action:manipulation;pointer-events:auto;cursor:pointer}
+  #passcodeScreen{pointer-events:auto}
+  #passcodeScreen:before,#passcodeScreen:after{pointer-events:none}
 }
 
 /* Liquid glass LCD Control Center */
