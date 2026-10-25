@@ -1541,8 +1541,11 @@ wallpaperStyle();initHome();updateClock();setInterval(updateClock,1000);
     if (e.target.closest('#ccDone, #ccClose')) { e.preventDefault(); closeCC(); return; }
     const tile = e.target.closest('[data-toggle]');
     if (tile) {
-      const enabled = tile.classList.toggle('on');
-      tile.setAttribute('aria-pressed', String(enabled));
+      const enabled = !tile.classList.contains('on');
+      document.querySelectorAll('[data-toggle="' + tile.dataset.toggle + '"]').forEach((button) => {
+        button.classList.toggle('on', enabled);
+        button.setAttribute('aria-pressed', String(enabled));
+      });
       if (tile.dataset.toggle === 'flashlight') setFlashlight(enabled);
       return;
     }
@@ -1585,6 +1588,7 @@ wallpaperStyle();initHome();updateClock();setInterval(updateClock,1000);
     ccIndicators.forEach(b=>b.addEventListener('click',()=>{ccPages.scrollTo({left:Number(b.dataset.page)*ccPages.clientWidth,behavior:'smooth'})}));
   }
   const play=$('#ccPlay');if(play)play.addEventListener('click',()=>{const playing=play.textContent==='Ⅱ';play.textContent=playing?'▶':'Ⅱ';const track=$('.cc-track small');if(track)track.textContent=playing?'選擇音樂以開始播放':'播放介面示範中'});
+  const play2=$('#ccPlay2');if(play2)play2.addEventListener('click',()=>{const playing=play2.textContent==='Ⅱ';play2.textContent=playing?'▶':'Ⅱ';const track=$('.cc-track small');if(track)track.textContent=playing?'iPhone 上的音樂':'播放介面示範中'});
   const cameraTool=document.querySelector('[data-toggle="camera"]');if(cameraTool)cameraTool.addEventListener('click',()=>{closeCC();showApp('camera')});
   const notesTool=document.querySelector('[data-toggle="notes"]');if(notesTool)notesTool.addEventListener('click',()=>{closeCC();showApp('notes')});
 
