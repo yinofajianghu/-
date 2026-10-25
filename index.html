@@ -1315,6 +1315,15 @@ function startVideoCall(){
 #controlCenter .cc-native-wide{background:rgba(42,46,55,.42)!important;border-color:rgba(255,255,255,.22)!important;box-shadow:inset 0 1px 0 #ffffff25!important}
 #controlCenter .cc-native-page-title{font-size:22px;margin-bottom:14px}
 
+
+/* Screenshot-based iOS 26 Control Center alignment */
+#controlCenter{padding:calc(14px + var(--safe-top)) 16px calc(14px + var(--safe-bottom))!important;background:rgba(20,23,31,.22)!important;-webkit-backdrop-filter:blur(34px) saturate(1.55)!important;backdrop-filter:blur(34px) saturate(1.55)!important}
+#controlCenter .cc-page[data-cc-page="0"] .cc-concept-top{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px}
+#controlCenter .cc-page[data-cc-page="0"] .cc-connectivity{padding:12px 9px;gap:8px;border-radius:28px;background:rgba(245,247,252,.15)!important}
+#controlCenter .cc-page[data-cc-page="0"] .cc-adjustments{height:clamp(170px,27vh,220px);gap:10px}
+#controlCenter .cc-page[data-cc-page="2"] .cc-native-tool-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+#controlCenter .cc-page[data-cc-page="2"] .cc-native-tool{min-height:88px;padding:10px 5px;border-radius:22px!important;flex-direction:column;justify-content:center;gap:7px;text-align:center}
+#controlCenter .cc-page[data-cc-page="2"] .cc-native-tool b{font-size:10px;line-height:1.2}
 </style>`;
  const v=$('#callVideo');if(v){v.play().catch(()=>{});$('#videoCall').addEventListener('click',()=>{v.muted=false;v.play().catch(()=>{});},{once:true})}
  callTimer=setInterval(()=>{callSeconds++;$('#callDuration').textContent=String(Math.floor(callSeconds/60)).padStart(2,'0')+':'+String(callSeconds%60).padStart(2,'0')},1000);
