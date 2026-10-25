@@ -2514,6 +2514,22 @@ function renderSpotify(){
 .ig-app .ig-addstory .ig-addstory-ring:after{content:"+"!important;position:absolute!important;right:-1px!important;bottom:-1px!important;width:22px!important;height:22px!important;border-radius:50%!important;display:flex!important;align-items:center!important;justify-content:center!important;background:#1685f8!important;color:#fff!important;border:2px solid var(--ig-bg,#fff)!important;font-size:18px!important;font-weight:700!important;line-height:1!important;z-index:99!important}
 .ig-app .ig-addstory-plus{display:none!important}
 #appView:has(.ig-app) .app-homebar-wrap{z-index:5!important;pointer-events:none!important}
+
+/* Lift the entire Instagram bottom tab strip as one independent layer. */
+.ig-app .ig-bottom-nav{
+  transform:translate3d(0,-18px,0)!important;
+  margin-bottom:18px!important;
+  position:relative!important;
+  z-index:100!important;
+  isolation:isolate!important;
+  background:var(--ig-panel,#fff)!important;
+  box-shadow:0 0 0 1px var(--ig-line,#ddd)!important;
+}
+.ig-app .ig-bottom-nav button{
+  transform:translateZ(0);
+  position:relative!important;
+  z-index:101!important;
+}
 </style><div class="sp-app">`+top+body+`</div>`+mini+nav;
  const input=$('#spQuery');if(input)input.addEventListener('input',e=>{const p=e.target.selectionStart;query=e.target.value;spotifyUIQuery=query;spotifyUIPage=page;renderSpotify();const n=$('#spQuery');if(n){n.focus();n.setSelectionRange(p,p)}});
  const form=$('#spSearchForm');if(form)form.onsubmit=e=>{e.preventDefault();query=$('#spQuery').value;spotifyUIQuery=query;renderSpotify()};
