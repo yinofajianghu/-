@@ -2104,6 +2104,15 @@ function renderSpotify(){
 #appView .yt-app select{background:#212121!important;color:#f1f1f1!important;border-color:#3f3f3f!important}
 #appView .yt-app input::placeholder,
 #appView .yt-app textarea::placeholder{color:#aaa!important}
+
+/* Mobile viewport recovery: keep the simulated phone fitted to the actual viewport. */
+@media(max-width:599px){
+  html,body{width:100%;height:100%;min-height:100%;overflow:hidden}
+  #phone{width:100%;height:100dvh;min-height:100dvh;max-height:none;margin:0;border:0;border-radius:0;box-shadow:none}
+  #lock,#home,#appView{border-radius:0}
+  #passcodeScreen{z-index:120;pointer-events:auto}
+  #passcodeScreen button{pointer-events:auto;touch-action:manipulation}
+}
 </style><div class="sp-app">'+top+body+'</div>'+mini+nav;
  const input=$('#spQuery');if(input)input.addEventListener('input',e=>{const p=e.target.selectionStart;query=e.target.value;spotifyUIQuery=query;spotifyUIPage=page;renderSpotify();const n=$('#spQuery');if(n){n.focus();n.setSelectionRange(p,p)}});
  const form=$('#spSearchForm');if(form)form.onsubmit=e=>{e.preventDefault();query=$('#spQuery').value;spotifyUIQuery=query;renderSpotify()};
@@ -2645,7 +2654,7 @@ setupWallpaperPicker();initHome();updateClock();setInterval(updateClock,1000);
 
 // Recovery bootstrap: keep the clock, wallpaper, and lock-screen entry usable
 // even if another initialization block fails before completing.
-window.__phoneMainReady = true;
+window.__phoneMainReady = false;
 </script>
 <script>
 (function phoneRecoveryBootstrap(){
@@ -2698,21 +2707,38 @@ window.__phoneMainReady = true;
     const unlockTarget = event.target.closest && event.target.closest('#unlockPrompt,#lockBar,.lock-time,.lock-date');
     if(unlockTarget && byId('lock')?.classList.contains('active')){
       event.preventDefault(); event.stopPropagation();
-      if(!byId('passcodeScreen')?.classList.contains('active')) showPasscode();
+      if(!byId('passcodeScreen')?.classList.contains('active')) { fallbackDigits=''; showPasscode(); }
+      return;
+    }
+    const cancelTarget = event.target.closest && event.target.closest('#passcodeCancel');
+    if(cancelTarget && byId('passcodeScreen')?.classList.contains('active')){
+      event.preventDefault(); event.stopPropagation(); fallbackDigits='';
+      if(typeof window.closePasscode==='function') window.closePasscode();
+      else {const screen=byId('passcodeScreen');if(screen){screen.classList.remove('active');screen.setAttribute('aria-hidden','true');}}
+      return;
+    }
+    const deleteTarget = event.target.closest && event.target.closest('#passcodeDelete');
+    if(deleteTarget && byId('passcodeScreen')?.classList.contains('active')){
+      event.preventDefault(); event.stopPropagation(); fallbackDigits=fallbackDigits.slice(0,-1);
+      if(typeof window.enterPasscodeDigit!=='function'){
+        const dots=byId('passcodeDots');if(dots)dots.querySelectorAll('.passcode-dot').forEach((dot,index)=>dot.classList.toggle('filled',index<fallbackDigits.length));
+      }
       return;
     }
     const digitTarget = event.target.closest && event.target.closest('#passcodePad [data-digit]');
     if(digitTarget && byId('passcodeScreen')?.classList.contains('active')){
       event.preventDefault(); event.stopPropagation();
       const digit = digitTarget.getAttribute('data-digit');
-      if(typeof window.enterPasscodeDigit === 'function') { window.enterPasscodeDigit(digit); return; }
       if(!/^[0-9]$/.test(String(digit)) || fallbackDigits.length>=4) return;
       fallbackDigits += String(digit);
-      const dots=byId('passcodeDots');
-      if(dots){dots.querySelectorAll('.passcode-dot').forEach((dot,index)=>dot.classList.toggle('filled',index<fallbackDigits.length));}
+      if(typeof window.enterPasscodeDigit === 'function') window.enterPasscodeDigit(digit);
+      else {
+        const dots=byId('passcodeDots');
+        if(dots){dots.querySelectorAll('.passcode-dot').forEach((dot,index)=>dot.classList.toggle('filled',index<fallbackDigits.length));}
+      }
       if(fallbackDigits.length===4){
-        if(fallbackDigits==='0525') unlockFallback();
-        else { fallbackDigits=''; window.setTimeout(()=>{const d=byId('passcodeDots');if(d)d.querySelectorAll('.passcode-dot').forEach(dot=>dot.classList.remove('filled'));},200); }
+        if(fallbackDigits==='0525') window.setTimeout(unlockFallback,350);
+        else { fallbackDigits=''; }
       }
     }
   },true);
