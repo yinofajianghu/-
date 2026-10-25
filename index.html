@@ -262,18 +262,59 @@ html,body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro 
 .lock-widget strong{display:block;font-size:15px;margin-bottom:4px}
 .lock-controls{position:absolute;bottom:calc(52px + var(--safe-bottom));left:0;right:0;display:flex;justify-content:space-between;padding:0 28px;pointer-events:none}
 .lock-control{pointer-events:auto;width:48px;height:48px;border-radius:50%;background:rgba(20,24,30,.32);border:1px solid rgba(255,255,255,.24);backdrop-filter:blur(18px);display:grid;place-items:center;font-size:22px;color:white}
-#controlCenter{position:absolute;z-index:80;inset:0;padding:calc(54px + var(--safe-top)) 18px calc(30px + var(--safe-bottom));background:rgba(238,241,247,.9);color:#1c1c1e;backdrop-filter:blur(36px) saturate(1.5);display:none;overflow:auto}
-#controlCenter.active{display:block;animation:ccIn .22s ease both}
-@keyframes ccIn{from{opacity:0;transform:translateY(-16px)}to{opacity:1;transform:translateY(0)}}
-.cc-top{display:flex;align-items:center;justify-content:space-between;font-size:14px;font-weight:700;margin-bottom:16px}
-.cc-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.cc-tile{border-radius:22px;background:rgba(255,255,255,.8);padding:14px;min-height:76px;color:#1c1c1e;text-align:left;display:flex;align-items:center;gap:10px;font-size:13px}
-.cc-symbol{width:36px;height:36px;border-radius:50%;background:#dfe2e8;display:grid;place-items:center;font-size:18px;flex-shrink:0}
-.cc-tile.on .cc-symbol{background:#087cff;color:white}
-.cc-slider{margin-top:14px;border-radius:20px;background:rgba(255,255,255,.8);padding:16px}
-.cc-slider input{width:100%;accent-color:#087cff}
-.cc-close{position:absolute;bottom:calc(10px + var(--safe-bottom));left:50%;width:135px;height:5px;border-radius:8px;background:#202124}
+#controlCenter{position:absolute;z-index:80;inset:0;padding:calc(54px + var(--safe-top)) 16px calc(34px + var(--safe-bottom));background:linear-gradient(145deg,rgba(236,240,248,.72),rgba(190,201,219,.57));color:#17191f;backdrop-filter:blur(48px) saturate(1.85);-webkit-backdrop-filter:blur(48px) saturate(1.85);display:none;overflow:hidden;isolation:isolate}
+#controlCenter:before{content:"";position:absolute;inset:0;z-index:-1;background:radial-gradient(ellipse at 15% 5%,#fff9,transparent 45%),radial-gradient(ellipse at 95% 40%,#b8c7e988,transparent 48%);pointer-events:none}
+#controlCenter.active{display:flex;flex-direction:column;animation:ccIn .24s cubic-bezier(.2,.8,.2,1) both}
+@keyframes ccIn{from{opacity:0;transform:translateY(-18px) scale(.99)}to{opacity:1;transform:translateY(0) scale(1)}}
+.cc-top{display:flex;align-items:center;justify-content:space-between;flex-shrink:0;margin-bottom:18px}
+.cc-eyebrow{font-size:10px;letter-spacing:1.8px;text-transform:uppercase;color:#4c5260;margin-bottom:4px;font-weight:700}
+.cc-heading{font-size:27px;letter-spacing:-.8px;font-weight:750}
+.cc-done{border:1px solid #ffffffa8;border-radius:999px;padding:9px 15px;background:#ffffff65;color:#222632;font-size:13px;font-weight:650;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);box-shadow:0 4px 14px #27344b12}
+.cc-pages{display:flex;flex:1;min-height:0;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;scroll-behavior:smooth;overscroll-behavior-x:contain;scrollbar-width:none;margin:0 -2px}
+.cc-pages::-webkit-scrollbar{display:none}
+.cc-page{flex:0 0 100%;width:100%;min-width:0;overflow-y:auto;overscroll-behavior:contain;scroll-snap-align:start;padding:0 2px 14px;scrollbar-width:none}
+.cc-page::-webkit-scrollbar{display:none}
+.cc-connectivity{padding:10px;border-radius:29px;background:linear-gradient(145deg,#ffffff9c,#ffffff55);border:1px solid #ffffffb5;box-shadow:0 10px 35px #27344b12,inset 0 1px #ffffffc9;backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px)}
+.cc-connect-main{display:flex;align-items:center;gap:10px;width:100%;padding:9px 8px;border:0;border-radius:20px;background:transparent;color:#252936;text-align:left;min-height:60px}
+.cc-connect-main+.cc-connect-main{border-top:1px solid #7e87951c}
+.cc-big-symbol{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;flex-shrink:0;background:#dce3ef;color:#333c4e;font-size:24px}
+.cc-connect-main.on .cc-big-symbol{background:linear-gradient(145deg,#3296ff,#0877ed);color:#fff;box-shadow:0 3px 10px #0877ed35}
+.cc-connect-main b,.cc-feature b,.cc-tool b{display:block;font-size:13px;font-weight:700}
+.cc-connect-main small,.cc-feature small{display:block;font-size:10px;color:#6b7180;margin-top:3px}
+.cc-state{margin-left:auto;font-size:10px;color:#737b8b}
+.cc-mini-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:8px}
+.cc-round{min-width:0;min-height:67px;border:1px solid #ffffffa0;border-radius:19px;background:#ffffff65;color:#303646;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px}
+.cc-round span{font-size:20px}
+.cc-round small{font-size:9px;white-space:nowrap}
+.cc-round.on{background:#e3efff;color:#0879ed;border-color:#c6e0ff}
+.cc-slider{margin-top:12px;padding:14px 16px;border-radius:23px;background:linear-gradient(145deg,#ffffffb8,#ffffff69);border:1px solid #ffffffc7;box-shadow:0 6px 20px #27344b0b,inset 0 1px #ffffffd9;backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px)}
+.cc-slider-label{display:flex;align-items:center;gap:8px;font-size:13px;margin-bottom:9px}
+.cc-slider-label>span{font-size:18px;color:#4c5567}.cc-slider-label b{font-weight:700}.cc-slider-label output{margin-left:auto;font-size:11px;color:#697181;font-variant-numeric:tabular-nums}
+.cc-slider input{width:100%;margin:0;accent-color:#087cff;display:block}
+.cc-two-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.cc-feature{min-height:91px;padding:13px;border:1px solid #ffffffad;border-radius:23px;background:linear-gradient(145deg,#ffffffb5,#ffffff62);color:#252936;text-align:left;box-shadow:0 6px 20px #27344b0b}
+.cc-feature>span{display:block;font-size:21px;margin-bottom:8px}.cc-feature small{line-height:1.4}
+.cc-feature.on,.cc-tool.on{background:linear-gradient(145deg,#d9eaff,#ffffffa0);border-color:#a7ceff;color:#086fe5}
+.cc-section-title{font-size:15px;font-weight:750;margin:3px 2px 12px}
+.cc-media{display:flex;gap:14px;align-items:center;padding:16px;border:1px solid #ffffffb5;border-radius:27px;background:linear-gradient(145deg,#ffffffba,#ffffff6b);box-shadow:0 10px 30px #27344b12}
+.cc-album{width:94px;height:94px;flex-shrink:0;border-radius:20px;background:linear-gradient(145deg,#b6c9ef,#6e83b5 48%,#2d3857);display:grid;place-items:center;color:#fff;font-size:38px;box-shadow:inset 0 1px #ffffff7a}
+.cc-track{min-width:0;flex:1}.cc-track b,.cc-track small{display:block}.cc-track b{font-size:13px}.cc-track small{font-size:10px;color:#737b89;margin-top:4px}
+.cc-progress{height:3px;border-radius:4px;background:#7e87952e;margin:12px 0 10px}.cc-progress i{display:block;width:27%;height:100%;background:#687c9e;border-radius:4px}
+.cc-media-buttons{display:flex;align-items:center;justify-content:space-between}.cc-media-buttons button{border:0;background:transparent;color:#343a47;font-size:15px;padding:4px}.cc-media-buttons #ccPlay{width:31px;height:31px;border-radius:50%;background:#252b37;color:white}
+.cc-tool-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.cc-tool{min-height:91px;border:1px solid #ffffffb0;border-radius:23px;background:linear-gradient(145deg,#ffffffb5,#ffffff65);color:#292f3d;display:flex;align-items:center;gap:12px;padding:14px;text-align:left;box-shadow:0 6px 20px #27344b0b}
+.cc-tool span{width:38px;height:38px;border-radius:14px;background:#e5eaf2;display:grid;place-items:center;font-size:20px;flex-shrink:0}
+.cc-tool.on span{background:#087cff;color:#fff}
+.cc-note{font-size:10px;line-height:1.5;color:#697181;text-align:center;margin:14px 8px}
+.cc-page-indicator{display:flex;align-items:center;justify-content:center;gap:7px;padding:12px 0 14px;flex-shrink:0}
+.cc-page-indicator button{width:6px;height:6px;padding:0;border:0;border-radius:50%;background:#5f687955;transition:all .2s}
+.cc-page-indicator button.active{width:19px;border-radius:8px;background:#3b465c}
+.cc-close{position:absolute;bottom:calc(10px + var(--safe-bottom));left:50%;transform:translateX(-50%);width:135px;height:5px;border-radius:8px;background:#30354380;z-index:5}
+.cc-close span{display:block;width:100%;height:100%}
 .status{cursor:pointer}
+@media(max-height:700px){#controlCenter{padding-top:calc(40px + var(--safe-top));padding-bottom:calc(28px + var(--safe-bottom))}.cc-top{margin-bottom:11px}.cc-heading{font-size:24px}.cc-connect-main{min-height:52px}.cc-big-symbol{width:36px;height:36px}.cc-round{min-height:57px}.cc-slider{margin-top:9px;padding:11px 14px}.cc-two-grid{margin-top:9px}.cc-feature{min-height:78px;padding:10px}.cc-album{width:76px;height:76px}.cc-tool{min-height:76px;padding:10px}}
+@media(prefers-color-scheme:dark){#controlCenter{background:linear-gradient(145deg,#242833e8,#11141ce8);color:#f5f6fb}#controlCenter:before{background:radial-gradient(ellipse at 15% 5%,#ffffff20,transparent 45%),radial-gradient(ellipse at 95% 40%,#6078aa36,transparent 48%)}.cc-eyebrow,.cc-connect-main small,.cc-state,.cc-slider-label output,.cc-track small,.cc-note{color:#b6bdcc}.cc-done,.cc-connectivity,.cc-slider,.cc-feature,.cc-media,.cc-tool{background:linear-gradient(145deg,#ffffff22,#ffffff0c);border-color:#ffffff26;color:#f5f6fb}.cc-connect-main,.cc-round,.cc-media-buttons button,.cc-tool{color:#f5f6fb}.cc-big-symbol,.cc-round,.cc-tool span{background:#ffffff1c;color:#f5f6fb}.cc-connect-main.on .cc-big-symbol,.cc-tool.on span{background:#087cff;color:#fff}.cc-round.on,.cc-feature.on,.cc-tool.on{background:#17385f;border-color:#315e91;color:#a9d0ff}.cc-media-buttons #ccPlay{background:#f5f6fb;color:#242833}.cc-progress{background:#ffffff28}.cc-progress i{background:#d5dced}.cc-page-indicator button{background:#ffffff40}.cc-page-indicator button.active{background:#f5f6fb}.cc-close{background:#ffffff8a}}
+
 @media(max-height:760px){.lock-widgets{margin-top:16px}.lock-widget{min-height:50px;padding:8px 10px}.lock-time{font-size:clamp(66px,17vw,84px)}.app-grid{margin-top:14px;gap:12px 8px}}
 @media(max-width:360px){#home{padding-left:14px;padding-right:14px}.widgets{gap:8px}.widget{padding:11px}.app-grid{column-gap:4px}.lock-controls{padding:0 24px}}
 
@@ -446,7 +487,48 @@ html,body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro 
     <div class="dock" id="dock"></div>
   </section>
   <section id="appView"><div id="appContent"></div><div class="app-homebar-wrap"><span id="appHomebar" class="home-indicator" aria-label="返回桌面"></span></div></section>
-  <section id="controlCenter" aria-label="控制中心"><div class="cc-top"><span>控制中心</span><button id="ccDone" class="nav-button">完成</button></div><div class="cc-grid"><button class="cc-tile on" data-toggle="airplane"><span class="cc-symbol">✈</span><span>飛航模式</span></button><button class="cc-tile on" data-toggle="wifi"><span class="cc-symbol">⌁</span><span>Wi-Fi</span></button><button class="cc-tile" data-toggle="bluetooth"><span class="cc-symbol">ᛒ</span><span>Bluetooth</span></button><button class="cc-tile" data-toggle="focus"><span class="cc-symbol">☾</span><span>專注模式</span></button><button class="cc-tile" data-toggle="flashlight"><span class="cc-symbol">☼</span><span>手電筒</span></button><button class="cc-tile" data-toggle="rotation"><span class="cc-symbol">↻</span><span>方向鎖定</span></button></div><div class="cc-slider"><div>☼　亮度</div><input id="brightnessControl" type="range" min="35" max="100" value="100" aria-label="螢幕亮度"></div><div class="cc-slider"><div>🔊　音量</div><input type="range" min="0" max="100" value="65" aria-label="音量"></div><div class="cc-close" id="ccClose"></div></section>
+  <section id="controlCenter" aria-label="控制中心" aria-hidden="true">
+  <div class="cc-top"><div><div class="cc-eyebrow">江湖 · 控制中心</div><span class="cc-heading">控制中心</span></div><button id="ccDone" class="cc-done" aria-label="關閉控制中心">完成</button></div>
+  <div class="cc-pages" id="ccPages">
+    <div class="cc-page" data-cc-page="0">
+      <div class="cc-connectivity">
+        <button class="cc-connect-main on" data-toggle="wifi"><span class="cc-big-symbol">⌁</span><span><b>Wi-Fi</b><small>無線網路</small></span><span class="cc-state">開啟</span></button>
+        <button class="cc-connect-main on" data-toggle="bluetooth"><span class="cc-big-symbol">ᛒ</span><span><b>藍牙</b><small>連接配件</small></span><span class="cc-state">開啟</span></button>
+        <div class="cc-mini-grid">
+          <button class="cc-round on" data-toggle="airplane"><span>✈</span><small>飛航模式</small></button>
+          <button class="cc-round" data-toggle="airdrop"><span>◉</span><small>AirDrop</small></button>
+          <button class="cc-round" data-toggle="cellular"><span>▥</span><small>行動網路</small></button>
+          <button class="cc-round" data-toggle="hotspot"><span>⌁</span><small>個人熱點</small></button>
+        </div>
+      </div>
+      <div class="cc-slider cc-brightness"><div class="cc-slider-label"><span>☼</span><b>亮度</b><output id="brightnessValue">100%</output></div><input id="brightnessControl" type="range" min="35" max="100" value="100" aria-label="螢幕亮度"></div>
+      <div class="cc-slider"><div class="cc-slider-label"><span>◖</span><b>音量</b><output id="volumeValue">65%</output></div><input id="volumeControl" type="range" min="0" max="100" value="65" aria-label="音量"></div>
+      <div class="cc-two-grid"><button class="cc-feature" data-toggle="focus"><span>☾</span><b>專注模式</b><small>勿擾與專注</small></button><button class="cc-feature" data-toggle="rotation"><span>↻</span><b>方向鎖定</b><small>直向螢幕</small></button></div>
+    </div>
+    <div class="cc-page" data-cc-page="1">
+      <div class="cc-section-title">媒體與播放</div>
+      <div class="cc-media"><div class="cc-album">♫</div><div class="cc-track"><b>正在播放</b><small>選擇音樂以開始播放</small><div class="cc-progress"><i></i></div><div class="cc-media-buttons"><button aria-label="上一首">|◀</button><button id="ccPlay" aria-label="播放或暫停">▶</button><button aria-label="下一首">▶|</button></div></div></div>
+      <div class="cc-two-grid"><button class="cc-feature" data-toggle="silent"><span>🔕</span><b>靜音模式</b><small>鈴聲與提示</small></button><button class="cc-feature" data-toggle="darkmode"><span>◐</span><b>深色外觀</b><small>顯示效果</small></button></div>
+      <div class="cc-slider"><div class="cc-slider-label"><span>◖</span><b>音量</b><output id="volumeValue2">65%</output></div><input id="volumeControl2" type="range" min="0" max="100" value="65" aria-label="媒體音量"></div>
+    </div>
+    <div class="cc-page" data-cc-page="2">
+      <div class="cc-section-title">快速工具</div>
+      <div class="cc-tool-grid">
+        <button class="cc-tool" data-toggle="flashlight"><span>☼</span><b>手電筒</b></button>
+        <button class="cc-tool" data-toggle="timer"><span>◷</span><b>計時器</b></button>
+        <button class="cc-tool" data-toggle="calculator"><span>＋</span><b>計算機</b></button>
+        <button class="cc-tool" data-toggle="screenrecord"><span>⦿</span><b>螢幕錄製</b></button>
+        <button class="cc-tool" data-toggle="lowpower"><span>▰</span><b>低耗電模式</b></button>
+        <button class="cc-tool" data-toggle="hearing"><span>♫</span><b>聽力</b></button>
+        <button class="cc-tool" data-toggle="camera"><span>▣</span><b>相機</b></button>
+        <button class="cc-tool" data-toggle="notes"><span>▤</span><b>備忘錄</b></button>
+      </div>
+      <div class="cc-note">點選控制項即可切換狀態。部分控制項為網站介面模擬。</div>
+    </div>
+  </div>
+  <div class="cc-page-indicator" id="ccPageIndicator" aria-label="控制中心頁面"><button class="active" data-page="0" aria-label="第一頁"></button><button data-page="1" aria-label="第二頁"></button><button data-page="2" aria-label="第三頁"></button></div>
+  <div class="cc-close" id="ccClose"><span></span></div>
+</section>
 </div>
 <script>
 /* ===================== 只需要修改這裡的 CONFIG ===================== */
@@ -1386,11 +1468,23 @@ wallpaperStyle();initHome();updateClock();setInterval(updateClock,1000);
       const value = Math.max(35, Math.min(100, Number(brightness.value) || 100));
       phone.style.setProperty('--screen-brightness', String(value / 100));
       brightness.setAttribute('aria-valuenow', String(value));
+      const output=$('#brightnessValue');if(output)output.textContent=value+'%';
     };
     brightness.addEventListener('input', applyBrightness);
     brightness.addEventListener('change', applyBrightness);
     applyBrightness();
   }
+  const volumeInputs=Array.from(document.querySelectorAll('#volumeControl,#volumeControl2'));
+  function syncVolume(source){volumeInputs.forEach(el=>{if(el!==source)el.value=source.value});['#volumeValue','#volumeValue2'].forEach(sel=>{const o=$(sel);if(o)o.textContent=source.value+'%'})}
+  volumeInputs.forEach(el=>{el.addEventListener('input',()=>syncVolume(el));el.addEventListener('change',()=>syncVolume(el))});
+  const ccPages=$('#ccPages'),ccIndicators=Array.from(document.querySelectorAll('#ccPageIndicator [data-page]'));
+  if(ccPages){
+    ccPages.addEventListener('scroll',()=>{const index=Math.max(0,Math.min(2,Math.round(ccPages.scrollLeft/Math.max(1,ccPages.clientWidth))));ccIndicators.forEach((b,i)=>b.classList.toggle('active',i===index))},{passive:true});
+    ccIndicators.forEach(b=>b.addEventListener('click',()=>{ccPages.scrollTo({left:Number(b.dataset.page)*ccPages.clientWidth,behavior:'smooth'})}));
+  }
+  const play=$('#ccPlay');if(play)play.addEventListener('click',()=>{const playing=play.textContent==='Ⅱ';play.textContent=playing?'▶':'Ⅱ';const track=$('.cc-track small');if(track)track.textContent=playing?'選擇音樂以開始播放':'播放介面示範中'});
+  const cameraTool=document.querySelector('[data-toggle="camera"]');if(cameraTool)cameraTool.addEventListener('click',()=>{closeCC();showApp('camera')});
+  const notesTool=document.querySelector('[data-toggle="notes"]');if(notesTool)notesTool.addEventListener('click',()=>{closeCC();showApp('notes')});
 
   const weather = $('#lockWeather'), event = $('#lockEvent');
   if (weather) weather.textContent = (CONFIG.weather?.desc || '晴朗') + ' · ' + (CONFIG.weather?.temp || '24°');
