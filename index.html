@@ -1128,6 +1128,7 @@ function openPasscode() {
 function closePasscode() {
   const screen = $('#passcodeScreen');
   window.clearTimeout(passcodeResetTimer);
+  passcodeSuccessAction = null;
   enteredPasscode = '';
   renderPasscodeDots();
   const error = $('#passcodeError');
