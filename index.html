@@ -1721,7 +1721,10 @@ function renderPhotos(){
    if(album.smart==="favorites")arr=arr.filter(p=>isFav(p.id));
    else if(album.smart==="recent")arr=arr.filter(p=>Date.now()-new Date(p.date).getTime()<30*86400000);
    else if(album.smart==="videos")arr=arr.filter(p=>p.kind==="video");
-   else if(album.smart==="screenshots")arr=arr.filter(p=>p.title.toLowerCase().includes("截圖"));
+   else if(album.smart==="screenshots")arr=arr.filter(p=>(p.title+" "+p.place).toLowerCase().includes("截圖"));
+   else if(album.smart==="selfies")arr=arr.filter(p=>(p.title+" "+p.place).toLowerCase().includes("自拍"));
+   else if(album.smart==="live")arr=arr.filter(p=>(p.title+" "+p.place).toLowerCase().includes("實況")||p.kind==="live");
+   else if(album.smart==="portraits")arr=arr.filter(p=>(p.title+" "+p.place).toLowerCase().includes("人像")||p.title.toLowerCase().includes("portrait"));
    else if(album.smart==="all")arr=arr;
    else arr=arr.filter(p=>(album.items||[]).includes(p.id));
   }
@@ -1838,8 +1841,19 @@ function doImport(files){
   if(a==="sortNewest"||a==="sortOldest"){state.sort=a==="sortNewest"?"newest":"oldest";root.querySelector("#phModalhost").innerHTML="";save();render();toast("排序已更新");return}
   if(a==="filterFavorites"){state.filter="favorites";root.querySelector("#phModalhost").innerHTML="";save();render();return}
   if(a==="filterAll"){state.filter="all";root.querySelector("#phModalhost").innerHTML="";save();render();return}
-  if(a==="people"||a==="memories"||a==="reorder"||a==="mediaMore"){modal(a==="people"?"人物與寵物":a==="memories"?"回憶":"收藏集選項",'<p class="ph-note">這是網頁版模擬介面；此分類會依你匯入的照片資料逐步建立。</p><button class="ph-wide-action" data-act="import">匯入照片</button>');return}
-  if(a==="mediaType"){const sm=b.dataset.smart;state.filter=sm==="videos"?"videos":"all";state.activeTab="library";if(sm==="screenshots")state.search="截圖";else if(sm==="selfies")state.search="自拍";else state.search="";save();render();return}
+  if(a==="people"||a==="memories"){
+   const sm=a==="people"?"portraits":"recent";
+   let al=state.albums.find(x=>x.smart===sm);
+   if(!al){al={id:"a-"+sm,name:a==="people"?"人物與寵物":"回憶",smart:sm};state.albums.push(al)}
+   state.activeTab="collections";state.albumId=al.id;state.openAlbumView=al.id;state.search="";save();render();return
+  }
+  if(a==="reorder"||a==="mediaMore"){modal("收藏集選項",'<p class="ph-note">選擇下方收藏集即可開啟照片；分類會依匯入照片的名稱與資訊整理。</p><button class="ph-wide-action" data-act="special" data-smart="favorites">最愛</button><button class="ph-wide-action" data-act="special" data-smart="videos">影片</button><button class="ph-wide-action" data-act="import">匯入照片</button>');return}
+  if(a==="mediaType"){
+   const sm=b.dataset.smart;const names={videos:"影片",selfies:"自拍",live:"實況照片",portraits:"人像",screenshots:"截圖"};
+   let al=state.albums.find(x=>x.smart===sm);
+   if(!al){al={id:"a-"+sm,name:names[sm]||"媒體類型",smart:sm};state.albums.push(al)}
+   state.activeTab="collections";state.albumId=al.id;state.openAlbumView=al.id;state.search="";save();render();return
+  }
   if(a==="addToAlbum"){if(!state.selected.length){state.selectMode=true;state.selected=[];render();toast("請先選取照片，再按加入相簿");return}const customs=state.albums.filter(x=>x.smart==="custom");modal("加入相簿",customs.length?customs.map(x=>'<button class="ph-album-choice" data-act="putInAlbum" data-id="'+x.id+'">▤ '+esc(x.name)+'</button>').join(""):'<p>還沒有自訂相簿，請先建立一個。</p><button class="ph-primary" data-act="newAlbum">建立相簿</button>');return}
   if(a==="putInAlbum"){const al=state.albums.find(x=>x.id===id);if(al){al.items=Array.from(new Set((al.items||[]).concat(state.selected)));save();state.selected=[];state.selectMode=false;root.querySelector("#phModalhost").innerHTML="";render();toast("已加入「"+al.name+"」")}return}
   if(a==="showPhotoDetails"){const v=root.querySelector(".ph-viewer");if(v){const panel=v.querySelector(".ph-viewer-details");panel.hidden=!panel.hidden;v.classList.toggle("details-open",!panel.hidden);v.classList.remove("controls-hidden")}return}
