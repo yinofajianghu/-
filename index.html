@@ -624,7 +624,13 @@ html,body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro 
 .x2-page-title{padding:15px 16px;font-size:20px;font-weight:800;border-bottom:1px solid #2F3336;display:flex;align-items:center;justify-content:space-between}
 .x2-page-title button{background:transparent;color:#E7E9EA;font-size:22px}
 .x2-search-page{padding-bottom:16px}.x2-searchbar{margin:10px 14px 16px;height:42px;border-radius:999px;background:#202327;display:flex;align-items:center;gap:8px;padding:0 14px;color:#71767B}
-.x2-searchbar span{font-size:22px}.x2-searchbar input{flex:1;min-width:0;border:0;outline:0;background:transparent;color:#E7E9EA;font-size:14px}
+.x2-searchbar span{font-size:22px}.x2-searchbar input{flex:1;min-width:0;border:0;outline:0;background:transparent;color:#E7E9EA;font-size:16px}
+#appView.dark .x2-app input,#appView.dark .x2-app textarea{font-size:16px}
+#appView.dark .x2-app{width:100%;height:100%;min-width:0;min-height:0;overflow:hidden}
+#appView.dark #appContent{inset:var(--safe-top) 0 calc(25px + var(--safe-bottom));overflow:hidden;min-width:0;min-height:0}
+#appView.dark .x2-main{width:100%;min-width:0;min-height:0;overscroll-behavior-y:contain;-webkit-overflow-scrolling:touch}
+#appView.dark .x2-modal-backdrop{overflow-y:auto;-webkit-overflow-scrolling:touch}
+
 .x2-search-page h2{font-size:19px;margin:20px 16px 12px}
 .x2-trend{position:relative;display:flex;flex-direction:column;gap:5px;padding:13px 16px;border-bottom:1px solid #2F3336;cursor:pointer}
 .x2-trend small,.x2-trend span{font-size:12px;color:#71767B}.x2-trend b{font-size:15px}.x2-trend button{position:absolute;right:14px;top:14px;background:transparent;color:#71767B}
@@ -1181,7 +1187,7 @@ function renderX(){
    return '<div class="x2-feed-tabs"><button class="active" data-action="feed">為你推薦</button><button data-action="feed">正在追蹤</button></div><div class="x2-compose-entry">'+avatar(me.slice(0,1))+'<button data-action="compose" class="x2-compose-placeholder">有什麼新鮮事？</button><button data-action="compose" class="x2-mini-post">發文</button></div>'+ (filtered.length?filtered.map(postCard).join(''):'<div class="x2-empty">找不到符合的貼文</div>');
   }
   if(activeTab==="search"){
-   return '<section class="x2-search-page"><label class="x2-searchbar"><span>⌕</span><input id="x2SearchInput" value="'+esc(searchTerm)+'" placeholder="搜尋 X" aria-label="搜尋 X"></label><h2>正在發生</h2><div class="x2-trend" data-action="trend"><small>熱門 · 趨勢</small><b>#日常生活</b><span>1,284 篇貼文</span><button aria-label="趨勢選項">•••</button></div><div class="x2-trend" data-action="trend"><small>設計 · 熱門</small><b>介面設計</b><span>2,410 篇貼文</span><button aria-label="趨勢選項">•••</button></div><div class="x2-trend" data-action="trend"><small>今日話題</small><b>週末計畫</b><span>856 篇貼文</span><button aria-label="趨勢選項">•••</button></div><h2>搜尋結果</h2>'+posts.filter(p=>!searchTerm||p.text.toLowerCase().includes(searchTerm.toLowerCase())).map(postCard).join('')+'</section>';
+   return '<section class="x2-search-page"><label class="x2-searchbar"><span>⌕</span><input id="x2SearchInput" value="'+esc(searchTerm)+'" placeholder="搜尋 X" aria-label="搜尋 X"></label><h2>正在發生</h2><div class="x2-trend" data-action="trend"><small>熱門 · 趨勢</small><b>#日常生活</b><span>1,284 篇貼文</span><button aria-label="趨勢選項">•••</button></div><div class="x2-trend" data-action="trend"><small>設計 · 熱門</small><b>介面設計</b><span>2,410 篇貼文</span><button aria-label="趨勢選項">•••</button></div><div class="x2-trend" data-action="trend"><small>今日話題</small><b>週末計畫</b><span>856 篇貼文</span><button aria-label="趨勢選項">•••</button></div><h2>搜尋結果</h2><div id="x2SearchResults">'+posts.filter(p=>!searchTerm||p.text.toLowerCase().includes(searchTerm.toLowerCase())).map(postCard).join('')+'</div></section>';
   }
   if(activeTab==="notifications"){
    return '<div class="x2-page-title">通知</div><div class="x2-feed-tabs"><button class="active" data-action="notiftab">全部</button><button data-action="notiftab">已驗證</button><button data-action="notiftab">提及</button></div>'+notifications.map(n=>'<button class="x2-notification" data-action="notification">'+avatar(n.icon,'x2-notif-avatar')+'<span><b>'+esc(n.title)+'</b><p>'+esc(n.detail)+'</p><small>'+esc(n.time)+'前</small></span></button>').join('')+'<button class="x2-clear-notifications" data-action="clear-notifications">清除通知</button>';
@@ -1213,7 +1219,7 @@ function renderX(){
  }
  render();
  $('#appContent').addEventListener('input',function(e){
-  if(e.target.id==="x2SearchInput"){searchTerm=e.target.value;const pos=e.target.selectionStart;render();const input=$('#x2SearchInput');if(input){input.focus();input.setSelectionRange(pos,pos)}}
+  if(e.target.id==="x2SearchInput"){searchTerm=e.target.value;const results=$('#x2SearchResults');if(results)results.innerHTML=posts.filter(p=>!searchTerm||p.text.toLowerCase().includes(searchTerm.toLowerCase())).map(postCard).join('')}
   if(e.target.id==="x2Draft"){draft=e.target.value;const count=$('#x2DraftCount');if(count)count.textContent=draft.length+'/280';const postButton=$('.x2-modal-post');if(postButton&&modal==="compose")postButton.disabled=!draft.trim()}
   if(e.target.id==="x2MessageSearch"){const q=e.target.value.toLowerCase();document.querySelectorAll('.x2-conversation').forEach(el=>el.style.display=el.textContent.toLowerCase().includes(q)?'flex':'none')}
  });
