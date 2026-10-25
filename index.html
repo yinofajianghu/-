@@ -861,7 +861,7 @@ html body #controlCenter .cc-native-slider output{
         <button class="passcode-key" data-digit="1">1</button><button class="passcode-key" data-digit="2">2<small>ABC</small></button><button class="passcode-key" data-digit="3">3<small>DEF</small></button>
         <button class="passcode-key" data-digit="4">4<small>GHI</small></button><button class="passcode-key" data-digit="5">5<small>JKL</small></button><button class="passcode-key" data-digit="6">6<small>MNO</small></button>
         <button class="passcode-key" data-digit="7">7<small>PQRS</small></button><button class="passcode-key" data-digit="8">8<small>TUV</small></button><button class="passcode-key" data-digit="9">9<small>WXYZ</small></button>
-        <span></span><button class="passcode-key" data-digit="0">0</button><button class="passcode-key utility" id="passcodeDelete" aria-label="刪除">⌫</button>
+        <button type="button" class="passcode-key utility" id="passcodeConfirm" aria-label="確認解鎖">確認</button><button type="button" class="passcode-key" data-digit="0">0</button><button type="button" class="passcode-key utility" id="passcodeDelete" aria-label="刪除">⌫</button>
       </div>
     </div>
   <section id="home" aria-label="主畫面">
@@ -1162,8 +1162,16 @@ function enterPasscodeDigit(digit) {
   if (error) error.textContent = '';
   enteredPasscode += String(digit);
   renderPasscodeDots();
+}
 
-  if (enteredPasscode.length !== 4) return;
+function submitPasscode() {
+  if (!$('#passcodeScreen')?.classList.contains('active') || unlockInProgress) return;
+  window.clearTimeout(passcodeResetTimer);
+  const error = $('#passcodeError');
+  if (enteredPasscode.length !== 4) {
+    if (error) error.textContent = '請輸入 4 位密碼';
+    return;
+  }
 
   if (enteredPasscode === PHONE_PASSCODE) {
     closePasscode();
@@ -2614,8 +2622,9 @@ $('#appHomebar').addEventListener('click',goHome);
 });
 $('#passcodeCancel').addEventListener('click',closePasscode);
 document.querySelectorAll('#passcodePad [data-digit]').forEach(key=>{key.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();enterPasscodeDigit(this.getAttribute('data-digit'));},true);});
-$('#passcodeDelete').addEventListener('click',e=>{e.preventDefault();e.stopPropagation();if(!$('#passcodeScreen').classList.contains('active'))return;enteredPasscode=enteredPasscode.slice(0,-1);renderPasscodeDots();$('#passcodeError').textContent='';},true);
-document.addEventListener('keydown',e=>{if(!$('#passcodeScreen').classList.contains('active'))return;if(/^[0-9]$/.test(e.key))enterPasscodeDigit(e.key);else if(e.key==='Backspace'){enteredPasscode=enteredPasscode.slice(0,-1);renderPasscodeDots()}else if(e.key==='Escape')closePasscode()});
+$('#passcodeDelete').addEventListener('click',e=>{e.preventDefault();e.stopPropagation();if(!$('#passcodeScreen').classList.contains('active'))return;window.clearTimeout(passcodeResetTimer);enteredPasscode=enteredPasscode.slice(0,-1);renderPasscodeDots();$('#passcodeError').textContent='';},true);
+$('#passcodeConfirm').addEventListener('click',e=>{e.preventDefault();e.stopPropagation();submitPasscode();},true);
+document.addEventListener('keydown',e=>{if(!$('#passcodeScreen').classList.contains('active'))return;if(/^[0-9]$/.test(e.key)){e.preventDefault();enterPasscodeDigit(e.key)}else if(e.key==='Enter'||e.key==='NumpadEnter'){e.preventDefault();submitPasscode()}else if(e.key==='Backspace'){window.clearTimeout(passcodeResetTimer);enteredPasscode=enteredPasscode.slice(0,-1);renderPasscodeDots();$('#passcodeError').textContent=''}else if(e.key==='Escape')closePasscode()});
 // Unified swipe gesture for touch, pen, and mouse; move the lock screen with the finger.
 const lockScreen=$('#lock');let swipeStartY=null,swipePointerId=null,swipeMoved=false;
 lockScreen.addEventListener('pointerdown',e=>{if(!lockScreen.classList.contains('active')||unlockInProgress)return;if(e.target.closest('#controlCenter, .status, #lockCameraButton, #flashlightButton, .lock-controls'))return;if(e.pointerType==='mouse'&&e.button!==0)return;swipeStartY=e.clientY;swipePointerId=e.pointerId;swipeMoved=false;lockScreen.classList.add('dragging');try{lockScreen.setPointerCapture(e.pointerId)}catch(_){}},{passive:true});
