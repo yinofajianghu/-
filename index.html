@@ -2020,7 +2020,7 @@ let spotifyAllTracks=null,spotifyUIPage='home',spotifyUIQuery='',spotifyUIFilter
 try{const z=JSON.parse(localStorage.getItem('yin_spotify_ui_v2')||'{}');if(z&&typeof z==='object'){spotifyUILiked=Array.isArray(z.liked)?z.liked.filter(x=>typeof x==='string'):[];spotifyUISaved=Array.isArray(z.saved)?z.saved.filter(x=>typeof x==='string'):[];spotifyUIPlaylists=Array.isArray(z.playlists)?z.playlists.filter(p=>p&&typeof p.name==='string').map(p=>({name:p.name,tracks:Array.isArray(p.tracks)?p.tracks.filter(x=>typeof x==='string'):[]})):[];spotifyUIFollowed=Array.isArray(z.followed)?z.followed.filter(x=>typeof x==='string'):[]}}catch(e){spotifyUILiked=[];spotifyUISaved=[];spotifyUIPlaylists=[];spotifyUIFollowed=[]}
 function renderSpotify(){
  $('#home').classList.remove('active');$('#lock').classList.remove('active');$('#appView').classList.add('active');$('#appView').classList.add('dark');
- const songs=CONFIG.spotify?.songs||[];
+ const songs=Array.isArray(CONFIG.spotify?.songs)?CONFIG.spotify.songs:[];
  let page=spotifyUIPage,query=spotifyUIQuery,filter=spotifyUIFilter,liked=spotifyUILiked,saved=spotifyUISaved,playlists=spotifyUIPlaylists,sort=spotifyUISort,followed=spotifyUIFollowed,activePlaylist=spotifyUIActivePlaylist,activeTrack=spotifyUIActiveTrack;
  const extra=[
  {title:'Blinding Lights',artist:'The Weeknd',album:'After Hours',emoji:'🌃',color:'#69234b'},
@@ -2082,10 +2082,10 @@ function renderSpotify(){
   if(a==='saved'){page='saved';spotifyUIPage=page;persist();renderSpotify();return}
   if(a==='create'){const n=prompt('播放清單名稱');if(n&&n.trim()){playlists.push({name:n.trim(),tracks:[]});activePlaylist=playlists.length-1;spotifyUIActivePlaylist=activePlaylist;persist();page='playlist';spotifyUIPage=page;renderSpotify()}return}
   if(a==='playlist'){activePlaylist=i;spotifyUIActivePlaylist=activePlaylist;page='playlist';spotifyUIPage=page;persist();renderSpotify();return}
-  if(a==='playlistplay'){const arr=page==='liked'?tracks.filter(t=>liked.includes(t.title)):page==='saved'?tracks.filter(t=>saved.includes(t.title)):(playlists[activePlaylist]?.tracks||[]).map(n=>tracks.find(t=>t.title===n)).filter(Boolean);if(arr.length){playSong(tracks.indexOf(arr[0]));openFullPlayer()}else toast('這個清單還沒有歌曲');return}
+  if(a==='playlistplay'){const arr=page==='liked'?tracks.filter(t=>liked.includes(t.title)):page==='saved'?tracks.filter(t=>saved.includes(t.title)):page==='all'?tracks:(playlists[activePlaylist]?.tracks||[]).map(n=>tracks.find(t=>t.title===n)).filter(Boolean);if(arr.length){playSong(tracks.indexOf(arr[0]));openFullPlayer()}else toast('這個清單還沒有歌曲');return}
   if(a==='back'){page='home';spotifyUIPage=page;persist();renderSpotify();return}
   if(a==='all'){page='all';spotifyUIPage=page;persist();renderSpotify();return}
-  if(a==='sort'){sort=sort==='最近播放'?'依字母排序':'最近播放';toast('排序方式：'+sort);renderSpotify();return}
+  if(a==='sort'){sort=sort==='最近播放'?'依字母排序':'最近播放';spotifyUISort=sort;persist();toast('排序方式：'+sort);renderSpotify();return}
   if(a==='clear'){query='';spotifyUIQuery='';renderSpotify();return}
   if(a==='genre'){query=v;page='search';spotifyUIQuery=query;spotifyUIPage=page;persist();renderSpotify();return}
   if(a==='setting'){toast(v+'：此項為介面示範設定');return}
@@ -2099,8 +2099,8 @@ function renderSpotify(){
  }));
 }
 function playSong(i){
- const songs=spotifyAllTracks||CONFIG.spotify?.songs||[];if(!songs.length)return;closeAudio();currentSong=(i+songs.length)%songs.length;songProgress=0;songPlaying=true;
- const song=songs[currentSong];if(song.audio){audioEl=new Audio(song.audio);audioEl.loop=false;audioEl.addEventListener('timeupdate',()=>{if(audioEl){songProgress=audioEl.currentTime;updatePlayerProgress()}});audioEl.addEventListener('ended',()=>{playSong((currentSong+1)%songs.length);if($('#fullPlayer'))openFullPlayer()});audioEl.play().catch(()=>{});}
+ const songs=Array.isArray(spotifyAllTracks)?spotifyAllTracks:(Array.isArray(CONFIG.spotify?.songs)?CONFIG.spotify.songs:[]);if(!songs.length)return;closeAudio();currentSong=(i+songs.length)%songs.length;songProgress=0;songPlaying=true;
+ const song=songs[currentSong];if(song.audio){audioEl=new Audio(song.audio);audioEl.loop=false;audioEl.addEventListener('timeupdate',()=>{if(audioEl){songProgress=audioEl.currentTime;updatePlayerProgress()}});audioEl.addEventListener('ended',()=>{playSong((currentSong+1)%songs.length);if($('#fullPlayer'))openFullPlayer()});audioEl.addEventListener('error',()=>{if(audioEl){audioEl=null;startFakeProgress()}});audioEl.play().catch(()=>{if(audioEl){audioEl=null;startFakeProgress()}});}
  else startFakeProgress();
  const mini=$('#miniPlayer');if(mini){mini.style.display='flex';$('#miniTitle').textContent=song.title;$('#miniArtist').textContent=song.artist;$('#miniCover').style.background=CONFIG.spotify.cover?`center/cover url("${CONFIG.spotify.cover}")`:'linear-gradient(145deg,#355c4c,#101b17)';$('#miniToggle').textContent='Ⅱ';}
  document.querySelectorAll('[data-song]').forEach((el,idx)=>{const title=el.querySelector('.song-title');if(title){title.style.color=idx===currentSong?'#1db954':'white';title.textContent=(idx===currentSong?'♫ ':'')+songs[idx].title}});
