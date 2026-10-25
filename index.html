@@ -2437,7 +2437,7 @@ function renderSpotify(){
 /* Pin Instagram navigation to the physical bottom of the simulated iPhone.
    The navigation background continues behind the home-indicator area. */
 #appContent:has(.ig-app){inset:var(--safe-top) 0 0 0!important}
-.ig-app .ig-bottom-nav{flex:0 0 calc(53px + 25px + var(--safe-bottom));height:calc(53px + 25px + var(--safe-bottom));min-height:calc(53px + 25px + var(--safe-bottom));align-items:flex-start;padding:0!important}
+.ig-app .ig-bottom-nav{flex:0 0 calc(53px + var(--safe-bottom));height:calc(53px + var(--safe-bottom));min-height:calc(53px + var(--safe-bottom));align-items:flex-start;padding:0!important}
 .ig-app .ig-bottom-nav button{height:53px;min-height:53px;flex:0 0 20%}
 #appView:has(.ig-app) .app-homebar-wrap{background:#fff;z-index:21}
 #appView:has(.ig-app.ig-dark) .app-homebar-wrap{background:#000}
