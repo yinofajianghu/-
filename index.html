@@ -1596,6 +1596,33 @@ function startVideoCall(){
  #controlCenter .cc-native-control-row:not(.cc-concept-shortcuts){column-gap:18px!important;row-gap:22px!important;margin-top:14px!important}
  #controlCenter .cc-native-tool-grid{column-gap:20px!important;row-gap:22px!important}
 }
+
+/* Strong separation between control families and individual controls */
+#controlCenter .cc-page{gap:40px!important;padding:28px 24px 38px!important}
+#controlCenter .cc-concept-top{gap:32px!important;margin-bottom:8px!important}
+#controlCenter .cc-connectivity{gap:24px!important;padding:24px!important}
+#controlCenter .cc-connectivity .cc-native-connect{margin:0 2px!important}
+#controlCenter .cc-adjustments{gap:28px!important;padding:0 3px!important}
+#controlCenter .cc-native-control-row{gap:28px!important;margin-top:22px!important;padding:0 4px!important}
+#controlCenter .cc-native-control-row.cc-concept-shortcuts{column-gap:28px!important;row-gap:30px!important;margin-top:22px!important;padding:0 8px!important}
+#controlCenter .cc-native-control-row:not(.cc-concept-shortcuts){column-gap:26px!important;row-gap:28px!important;margin-top:22px!important;padding:0 6px!important}
+#controlCenter .cc-native-control-row.cc-concept-shortcuts .cc-native-round{width:min(100%,64px)!important;max-width:64px!important;justify-self:center!important}
+#controlCenter .cc-native-tool-grid{column-gap:28px!important;row-gap:30px!important;padding:4px!important}
+#controlCenter .cc-native-tool{padding:16px!important;gap:12px!important}
+#controlCenter .cc-native-tool>span{margin-bottom:4px!important}
+#controlCenter .cc-native-wide{gap:14px!important;padding:0 18px!important}
+#controlCenter .cc-native-slider{touch-action:none!important}
+#controlCenter .cc-native-slider input[type="range"]{touch-action:none!important;opacity:0!important;z-index:8!important;cursor:ns-resize!important}
+@media(max-height:740px){
+ #controlCenter .cc-page{gap:30px!important;padding:18px 18px 28px!important}
+ #controlCenter .cc-concept-top{gap:22px!important}
+ #controlCenter .cc-connectivity{gap:17px!important;padding:17px!important}
+ #controlCenter .cc-adjustments{gap:18px!important}
+ #controlCenter .cc-native-control-row.cc-concept-shortcuts{column-gap:18px!important;row-gap:22px!important;margin-top:16px!important}
+ #controlCenter .cc-native-control-row:not(.cc-concept-shortcuts){column-gap:18px!important;row-gap:22px!important;margin-top:16px!important}
+ #controlCenter .cc-native-tool-grid{column-gap:20px!important;row-gap:22px!important;padding:2px!important}
+ #controlCenter .cc-native-tool{padding:12px!important;gap:8px!important}
+}
 </style>`;
  const v=$('#callVideo');if(v){v.play().catch(()=>{});$('#videoCall').addEventListener('click',()=>{v.muted=false;v.play().catch(()=>{});},{once:true})}
  callTimer=setInterval(()=>{callSeconds++;$('#callDuration').textContent=String(Math.floor(callSeconds/60)).padStart(2,'0')+':'+String(callSeconds%60).padStart(2,'0')},1000);
@@ -2007,6 +2034,38 @@ wallpaperStyle();initHome();updateClock();setInterval(updateClock,1000);
     };
     brightness.addEventListener('input', applyBrightness);
     brightness.addEventListener('change', applyBrightness);
+    // Reliable touch drag for vertical brightness slider on mobile browsers.
+    const brightnessTrack = document.querySelector('#controlCenter .cc-brightness');
+    if (brightnessTrack && !brightness.dataset.verticalDragReady) {
+      brightness.dataset.verticalDragReady = '1';
+      let draggingBrightness = false;
+      const setBrightnessFromY = (clientY) => {
+        const rect = brightnessTrack.getBoundingClientRect();
+        if (!rect.height) return;
+        const ratio = Math.max(0, Math.min(1, (rect.bottom - clientY) / rect.height));
+        const min = Number(brightness.min) || 0;
+        const max = Number(brightness.max) || 100;
+        brightness.value = String(Math.round(min + ratio * (max - min)));
+        applyBrightness();
+      };
+      brightness.addEventListener('pointerdown', (event) => {
+        draggingBrightness = true;
+        event.preventDefault();
+        if (brightness.setPointerCapture) {
+          try { brightness.setPointerCapture(event.pointerId); } catch (_) {}
+        }
+        setBrightnessFromY(event.clientY);
+      });
+      brightness.addEventListener('pointermove', (event) => {
+        if (!draggingBrightness) return;
+        event.preventDefault();
+        setBrightnessFromY(event.clientY);
+      });
+      const stopBrightnessDrag = () => { draggingBrightness = false; };
+      brightness.addEventListener('pointerup', stopBrightnessDrag);
+      brightness.addEventListener('pointercancel', stopBrightnessDrag);
+      brightness.addEventListener('lostpointercapture', stopBrightnessDrag);
+    }
     applyBrightness();
   }
   const volumeInputs=Array.from(document.querySelectorAll('#volumeControl,#volumeControl2'));
