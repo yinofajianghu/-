@@ -2742,6 +2742,34 @@ window.__phoneMainReady = false;
       }
     }
   },true);
+  // Accept an upward swipe anywhere on the active lock screen, not only on the home indicator.
+  let recoverySwipeStart = null;
+  document.addEventListener('touchstart', function(event) {
+    if (!byId('lock')?.classList.contains('active') || byId('passcodeScreen')?.classList.contains('active')) {
+      recoverySwipeStart = null; return;
+    }
+    const touch = event.changedTouches[0];
+    recoverySwipeStart = touch ? {x: touch.clientX, y: touch.clientY} : null;
+  }, {capture:true, passive:true});
+  document.addEventListener('touchend', function(event) {
+    if (!recoverySwipeStart || !byId('lock')?.classList.contains('active') || byId('passcodeScreen')?.classList.contains('active')) {
+      recoverySwipeStart = null; return;
+    }
+    const touch = event.changedTouches[0];
+    const dx = Math.abs((touch?.clientX ?? recoverySwipeStart.x) - recoverySwipeStart.x);
+    const dy = recoverySwipeStart.y - (touch?.clientY ?? recoverySwipeStart.y);
+    recoverySwipeStart = null;
+    if (dy > Math.max(35, window.innerHeight * 0.04) && dy > dx * 1.15) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      if (typeof window.openPasscode === 'function') window.openPasscode();
+      else {
+        const screen = byId('passcodeScreen');
+        if (screen) { screen.classList.add('active'); screen.setAttribute('aria-hidden', 'false'); }
+      }
+    }
+  }, {capture:true, passive:false});
+  document.addEventListener('touchcancel', function() { recoverySwipeStart = null; }, {capture:true, passive:true});
   document.addEventListener('keydown',function(event){
     if(event.key==='Escape' && byId('passcodeScreen')?.classList.contains('active')){
       if(typeof window.closePasscode==='function') window.closePasscode();
