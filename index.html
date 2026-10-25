@@ -1164,8 +1164,8 @@ function renderChat(){
 }
 function renderX(){
  const handle=(CONFIG.twitterHandle||"user").replace(/^@/,'');
- const me=CONFIG.userName||"使用者";
- let activeTab="home", searchTerm="", modal="", draft="", editName=me, editBio="日常紀錄・想法與喜歡的事。";
+ let me=CONFIG.userName||"使用者";
+ let activeTab="home", searchTerm="", modal="", draft="", editName=me, editBio=CONFIG.twitterBio??"日常紀錄・想法與喜歡的事。";
  let following=false, liked={}, reposted={}, saved={}, posts=(CONFIG.tweets||["今天也要記得留一點時間給自己。","記錄生活裡微小但值得珍惜的瞬間。","慢慢來，也是一種前進。"]).map((text,i)=>({id:i+1,text,when:["2 小時","昨天","10月20日"][i%3],likes:[12,8,24][i%3],replies:[3,2,5][i%3],reposts:[1,2,4][i%3]}));
  let notifications=[
   {icon:"♡",title:"有人喜歡你的貼文",detail:"你的貼文獲得了新的喜歡",time:"現在"},
@@ -1254,7 +1254,7 @@ function renderX(){
   if(action==="postmore"){modal="";const id=b.dataset.id;saved[id]=!saved[id];render();notify(saved[id]?"已加入書籤":"已移除書籤");return}
   if(action==="settings"||action==="profile-menu"){notify("帳號設定：通知、隱私與顯示選項");return}
   if(action==="edit-profile"){modal="edit";render();return}
-  if(action==="save-profile"){editName=$('#x2EditName')?.value.trim()||me;editBio=$('#x2EditBio')?.value.trim()||"";modal="";render();notify("個人資料已更新");return}
+  if(action==="save-profile"){editName=$('#x2EditName')?.value.trim()||me;editBio=$('#x2EditBio')?.value.trim()||"";me=editName;CONFIG.userName=editName;CONFIG.twitterBio=editBio;modal="";render();notify("個人資料已更新");return}
   if(action==="clear-notifications"){notifications=[];render();notify("通知已清除");return}
   if(action==="notification"){notify("已開啟通知");return}
   if(action==="notiftab"){notify("已切換通知分類");return}
