@@ -565,6 +565,25 @@ html,body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro 
 #controlCenter .cc-native-wide .cc-native-control-icon{display:inline-flex!important;align-items:center!important;justify-content:center!important;flex:0 0 28px!important;width:28px!important;height:28px!important}
 #controlCenter .cc-native-wide>span:not(.cc-native-control-icon){min-width:0!important}
 
+
+/* X-inspired Control Center theme: black canvas, neutral surfaces, blue only for active states. */
+#controlCenter{color:#E7E9EA!important;background:rgba(0,0,0,.94)!important;-webkit-backdrop-filter:blur(34px) saturate(1.15)!important;backdrop-filter:blur(34px) saturate(1.15)!important;border:1px solid rgba(255,255,255,.1)!important;box-shadow:0 22px 70px rgba(0,0,0,.42)!important;font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif!important}
+#controlCenter:before{background:radial-gradient(ellipse at 50% 0%,rgba(29,155,240,.12),transparent 46%)!important}
+#controlCenter .cc-grabber{background:#71767B!important;width:38px!important;height:5px!important;border-radius:999px!important}
+#controlCenter .cc-statusline{color:#E7E9EA!important;font-size:13px!important;font-weight:650!important;letter-spacing:.15px!important}
+#controlCenter .cc-native-connect{background:#16181C!important;color:#E7E9EA!important;border:1px solid #2F3336!important;box-shadow:none!important}
+#controlCenter .cc-native-connect.on{background:#1D9BF0!important;color:#fff!important;border-color:#1D9BF0!important}
+#controlCenter .cc-native-round{background:#16181C!important;color:#E7E9EA!important;border:1px solid #2F3336!important;box-shadow:none!important;transition:background .16s ease,transform .16s ease!important}
+#controlCenter .cc-native-round.on,#controlCenter .cc-native-round[aria-pressed="true"]{background:#1D9BF0!important;color:#fff!important;border-color:#1D9BF0!important}
+#controlCenter .cc-native-connect,#controlCenter .cc-media-buttons button{transition:background .16s ease,transform .16s ease!important}
+#controlCenter .cc-native-connect:active,#controlCenter .cc-native-round:active,#controlCenter .cc-media-buttons button:active{transform:scale(.95)!important}
+#controlCenter .cc-native-slider,#controlCenter .cc-native-media{background:#16181C!important;border:1px solid #2F3336!important;box-shadow:none!important}
+#controlCenter .cc-native-slider:before{background:linear-gradient(180deg,#E7E9EA,#AAB0B6)!important}
+#controlCenter .cc-slider-symbol,#controlCenter .cc-native-slider output{color:#0F1419!important}
+#controlCenter .cc-media-buttons button{background:#202327!important;color:#E7E9EA!important;border:1px solid #2F3336!important}
+#controlCenter button:focus-visible,#controlCenter input:focus-visible{outline:2px solid #1D9BF0!important;outline-offset:3px!important}
+#controlCenter #ccDone,#controlCenter #ccClose{background:#E7E9EA!important;color:#0F1419!important;border:0!important;border-radius:999px!important;font-weight:750!important}
+
 </style>
 </head>
 <body>
