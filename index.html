@@ -348,6 +348,19 @@ html,body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro 
 .utility-app .simple-action{margin-top:12px;padding:12px 16px;border-radius:12px;background:#0a84ff;color:#fff}
 @media(max-height:700px){#home .app-grid{margin-top:12px}#home .home-app-page{gap:12px 8px}#home .home-page-dots{height:18px}}
 
+/* iOS-style long-press edit and icon rearranging */
+#home.editing .app-icon{animation:homeIconWiggle .22s ease-in-out infinite alternate;touch-action:none;cursor:grab}
+#home.editing .app-icon:nth-child(2n){animation-delay:-.11s}
+#home.editing .app-icon .glyph{transition:transform .15s,filter .15s}
+#home.editing .app-icon.dragging-app{animation:none;z-index:30;position:relative;transform:scale(1.12);opacity:.88;filter:drop-shadow(0 10px 12px #0004);cursor:grabbing}
+#home.editing .app-icon.drop-target .glyph{transform:scale(.88);filter:brightness(1.12)}
+#home.editing .app-icon{ -webkit-user-select:none;user-select:none}
+#home.editing .app-icon .app-name{pointer-events:none}
+#homePageDots{position:relative}
+#homePageDots .home-edit-done{position:absolute;right:0;top:0;padding:4px 10px;border-radius:14px;background:#0a84ff;color:#fff;font-size:12px;font-weight:650;box-shadow:0 2px 8px #0002}
+@keyframes homeIconWiggle{from{transform:rotate(-1.5deg)}to{transform:rotate(1.5deg)}}
+@media(prefers-reduced-motion:reduce){#home.editing .app-icon{animation:none}}
+
 /* Light appearance: keep primary text dark and legible on light surfaces. */
 #appView:not(.dark) #appContent .page{color:#111}
 #appView:not(.dark) #appContent .page .nav-title,
@@ -1047,6 +1060,99 @@ lockScreen.addEventListener('pointerup',finishLockSwipe);lockScreen.addEventList
 let nativeTouchStartY=null;lockScreen.addEventListener('touchstart',e=>{if(!lockScreen.classList.contains('active')||unlockInProgress)return;if(e.target.closest('#lockCameraButton, #flashlightButton, .lock-controls')){nativeTouchStartY=null;return;}nativeTouchStartY=e.changedTouches[0]?.clientY??null;},{passive:true});lockScreen.addEventListener('touchend',e=>{if(nativeTouchStartY===null)return;const endY=e.changedTouches[0]?.clientY??nativeTouchStartY;const movedUp=nativeTouchStartY-endY;nativeTouchStartY=null;if(movedUp>Math.max(20,window.innerHeight*.03)&&!unlockInProgress&&$('#lock').classList.contains('active')&&!returnToRecentApp())openPasscode();},{passive:true});lockScreen.addEventListener('touchcancel',()=>{nativeTouchStartY=null;},{passive:true});
 document.addEventListener('click',e=>{const b=e.target.closest('[data-app]');if(b)showApp(b.dataset.app)});
 wallpaperStyle();initHome();updateClock();setInterval(updateClock,1000);
+
+// iPhone-style home screen edit mode: long-press, drag, and persist icon order.
+(function(){
+ const home=document.querySelector('#home'), grid=document.querySelector('#appGrid'), dots=document.querySelector('#homePageDots');
+ if(!home||!grid||!dots)return;
+ const STORAGE_KEY='jianghu.home.appOrder.v1';
+ let editMode=false, pressTimer=null, pressedIcon=null, draggedIcon=null, startX=0, startY=0, dragging=false, moved=false;
+ const icons=()=>Array.from(grid.querySelectorAll('.app-icon'));
+ function saveOrder(){
+  try{localStorage.setItem(STORAGE_KEY,JSON.stringify(icons().map(el=>el.dataset.app)))}catch(e){}
+ }
+ function restoreOrder(){
+  let order=[];try{order=JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]')}catch(e){}
+  if(!Array.isArray(order)||!order.length)return;
+  const byId=new Map(icons().map(el=>[el.dataset.app,el]));
+  const sorted=order.map(id=>byId.get(id)).filter(Boolean);
+  icons().forEach(el=>{if(!sorted.includes(el))sorted.push(el)});
+  const pages=Array.from(grid.querySelectorAll('.home-app-page'));
+  sorted.forEach((el,i)=>pages[i<12?0:1].appendChild(el));
+ }
+ function updateDots(){
+  const page=Math.round(grid.scrollLeft/Math.max(1,grid.clientWidth));
+  dots.querySelectorAll('.home-page-dot').forEach((d,i)=>d.classList.toggle('active',i===page));
+ }
+ function setEditMode(on){
+  editMode=on;home.classList.toggle('editing',on);
+  let done=dots.querySelector('.home-edit-done');
+  if(on&&!done){done=document.createElement('button');done.className='home-edit-done';done.type='button';done.textContent='完成';done.onclick=()=>setEditMode(false);dots.appendChild(done)}
+  if(!on&&done)done.remove();
+  if(!on){saveOrder();icons().forEach(el=>el.classList.remove('dragging-app','drop-target'))}
+ }
+ function moveToPoint(x,y){
+  if(!draggedIcon)return;
+  const target=document.elementFromPoint(x,y);
+  const targetIcon=target&&target.closest?target.closest('#appGrid .app-icon'):null;
+  const targetPage=target&&target.closest?target.closest('#appGrid .home-app-page'):null;
+  if(targetIcon&&targetIcon!==draggedIcon){
+   targetIcon.classList.add('drop-target');
+   icons().forEach(el=>{if(el!==targetIcon)el.classList.remove('drop-target')});
+   const r=targetIcon.getBoundingClientRect();
+   const before=(y<r.top+r.height/2)||(Math.abs(y-(r.top+r.height/2))<r.height*.2&&x<r.left+r.width/2);
+   targetIcon.parentElement.insertBefore(draggedIcon,before?targetIcon:targetIcon.nextSibling);
+  }else if(targetPage&&!targetIcon){
+   icons().forEach(el=>el.classList.remove('drop-target'));
+   const r=targetPage.getBoundingClientRect();
+   if(y>r.bottom-35)targetPage.appendChild(draggedIcon);
+   else if(y<r.top+35)targetPage.insertBefore(draggedIcon,targetPage.firstChild);
+  }
+  const page=draggedIcon.closest('.home-app-page');
+  if(page){const pageIndex=Number(page.dataset.homePage)||0;const edge=24;if(x<edge&&pageIndex>0)grid.scrollTo({left:0,behavior:'smooth'});else if(x>innerWidth-edge&&pageIndex===0)grid.scrollTo({left:grid.clientWidth,behavior:'smooth'});}
+ }
+ function clearPress(){if(pressTimer){clearTimeout(pressTimer);pressTimer=null}}
+ document.addEventListener('pointerdown',e=>{
+  if(!home.classList.contains('active'))return;
+  const icon=e.target.closest&&e.target.closest('#appGrid .app-icon');
+  if(!icon)return;
+  if(e.pointerType==='mouse'&&e.button!==0)return;
+  pressedIcon=icon;startX=e.clientX;startY=e.clientY;moved=false;dragging=false;
+  clearPress();
+  pressTimer=setTimeout(()=>{
+   setEditMode(true);draggedIcon=pressedIcon;dragging=true;
+   draggedIcon.classList.add('dragging-app');
+   if(navigator.vibrate)navigator.vibrate(18);
+  },480);
+ },{capture:true});
+ document.addEventListener('pointermove',e=>{
+  if(!pressedIcon)return;
+  const dx=e.clientX-startX,dy=e.clientY-startY;
+  if(Math.abs(dx)>9||Math.abs(dy)>9)moved=true;
+  if(!dragging&&moved)clearPress();
+  if(dragging&&draggedIcon){
+   if(e.cancelable)e.preventDefault();
+   moveToPoint(e.clientX,e.clientY);
+  }
+ },{capture:true,passive:false});
+ function endPointer(){
+  clearPress();
+  if(dragging&&draggedIcon){draggedIcon.classList.remove('dragging-app','drop-target');icons().forEach(el=>el.classList.remove('drop-target'));saveOrder();updateDots()}
+  pressedIcon=null;draggedIcon=null;dragging=false;
+ }
+ document.addEventListener('pointerup',endPointer,{capture:true});
+ document.addEventListener('pointercancel',endPointer,{capture:true});
+ document.addEventListener('contextmenu',e=>{if(e.target.closest&&e.target.closest('#appGrid .app-icon'))e.preventDefault()});
+ document.addEventListener('click',e=>{
+  const icon=e.target.closest&&e.target.closest('#appGrid .app-icon');
+  if(icon&&editMode){e.preventDefault();e.stopImmediatePropagation();return}
+ },true);
+ const originalInit=window.initHome;
+ grid.addEventListener('scroll',updateDots,{passive:true});
+ // initHome is called before this script; restore once and save any future rearrangement.
+ restoreOrder();
+})();
+
 
 /* ===== Interaction polish: subtle app launch, toast notifications, keyboard/back gestures ===== */
 (function(){
