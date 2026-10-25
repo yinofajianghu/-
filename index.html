@@ -1512,6 +1512,27 @@ function startVideoCall(){
  #controlCenter .cc-native-wide{padding:9px!important;font-size:12px!important}
 }
 
+/* Spacious iOS-sized control layout: deliberately widen the gaps */
+#controlCenter .cc-page{gap:30px!important;padding:22px 20px 28px!important}
+#controlCenter .cc-concept-top{gap:24px!important;align-items:stretch!important}
+#controlCenter .cc-connectivity{gap:18px!important;padding:20px!important}
+#controlCenter .cc-adjustments{gap:20px!important}
+#controlCenter .cc-native-control-row{gap:22px!important;margin-top:12px!important}
+#controlCenter .cc-native-control-row.cc-concept-shortcuts{column-gap:22px!important;row-gap:22px!important;margin-top:12px!important}
+#controlCenter .cc-native-control-row:not(.cc-concept-shortcuts){column-gap:22px!important;row-gap:22px!important;margin-top:12px!important}
+#controlCenter .cc-native-tool-grid{column-gap:22px!important;row-gap:22px!important}
+#controlCenter .cc-native-round{transform:translateZ(0);}
+#controlCenter .cc-native-control-row.cc-concept-shortcuts .cc-native-round{width:100%!important;max-width:72px!important;justify-self:center!important}
+#controlCenter .cc-native-tool{min-width:0!important}
+@media(max-height:740px){
+ #controlCenter .cc-page{gap:22px!important;padding:16px 18px 24px!important}
+ #controlCenter .cc-concept-top{gap:18px!important}
+ #controlCenter .cc-connectivity{gap:14px!important;padding:16px!important}
+ #controlCenter .cc-adjustments{gap:14px!important}
+ #controlCenter .cc-native-control-row.cc-concept-shortcuts{column-gap:16px!important;row-gap:18px!important}
+ #controlCenter .cc-native-tool-grid{column-gap:18px!important;row-gap:18px!important}
+}
+
 /* More air between every control + animated liquid slider fill */
 #controlCenter .cc-page{gap:22px!important}
 #controlCenter .cc-concept-top{gap:18px!important}
