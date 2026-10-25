@@ -1399,8 +1399,28 @@ function lineSimplePage(title,desc,items){
  $('#appContent').querySelectorAll('[data-line-simple-item]').forEach(b=>b.onclick=()=>{const res=$('#lineSimpleResult');if(res)res.textContent='已開啟「'+b.dataset.lineSimpleItem+'」模擬功能。'});
 }
 function renderProfile(){
- viewBeforeProfile="line";$('#appContent').innerHTML=`<div class="page"><div class="profile-full"><div class="nav"><button class="nav-button" id="profileBack">‹ 返回</button><strong>個人檔案</strong><span></span></div><div class="profile-hero"><div class="avatar">${escapeHTML((CONFIG.userName||"M").slice(0,1))}</div><div style="font-size:23px;font-weight:800">${escapeHTML(CONFIG.userName)}</div><div class="profile-bio">把與重要好友的回憶留在這裡。</div><div class="profile-stats"><span><b>24</b><br>投稿</span><span><b>128</b><br>友だち</span><span><b>18</b><br>写真</span></div></div><div class="settings-row">🎂　生日 <span style="margin-left:auto;color:#888">不公開</span></div><div class="settings-row">📍　狀態 <span style="margin-left:auto;color:#888">今天也很有精神</span></div></div></div>`;
- $('#profileBack').onclick=renderLine;
+ viewBeforeProfile="line";
+ let saved={};try{saved=JSON.parse(localStorage.getItem("yinofajianghu_line_profile_v1")||"{}")||{}}catch(e){}
+ const status=typeof saved.status==="string"?saved.status:"今天也很有精神";
+ const birthday=typeof saved.birthday==="string"?saved.birthday:"不公開";
+ $('#appContent').innerHTML=`<div class="page"><div class="profile-full"><div class="nav"><button class="nav-button" id="profileBack">‹ 返回</button><strong>個人檔案</strong><span></span></div><div class="profile-hero"><div class="avatar">${escapeHTML((CONFIG.userName||"M").slice(0,1))}</div><div style="font-size:23px;font-weight:800">${escapeHTML(CONFIG.userName)}</div><div class="profile-bio">把與重要好友的回憶留在這裡。</div><div class="profile-stats"><span><b>24</b><br>投稿</span><span><b>128</b><br>好友</span><span><b>18</b><br>照片</span></div><button type="button" id="lineEditProfile" style="margin-top:18px;width:100%;padding:12px 16px;border-radius:10px;background:#06c755;color:#fff;font-weight:700">✎ 修改個人檔案</button></div><div class="settings-row">🎂　生日 <span style="margin-left:auto;color:#888">${escapeHTML(birthday)}</span></div><div class="settings-row">📍　狀態 <span style="margin-left:auto;color:#888">${escapeHTML(status)}</span></div></div></div>`;
+ $('#profileBack').onclick=()=>renderLine('home');
+ $('#lineEditProfile').onclick=renderLineProfileEditor;
+}
+function renderLineProfileEditor(){
+ let saved={};try{saved=JSON.parse(localStorage.getItem("yinofajianghu_line_profile_v1")||"{}")||{}}catch(e){}
+ const status=typeof saved.status==="string"?saved.status:"今天也很有精神";
+ const birthday=typeof saved.birthday==="string"?saved.birthday:"不公開";
+ $('#appContent').innerHTML=`<div class="page"><div class="profile-full"><div class="nav"><button class="nav-button" id="lineProfileCancel">‹ 取消</button><strong>修改個人檔案</strong><button class="nav-button" id="lineProfileSave">儲存</button></div><div style="display:flex;justify-content:center;padding:24px 0 18px"><div class="avatar" style="width:82px;height:82px;font-size:28px">${escapeHTML((CONFIG.userName||"M").slice(0,1))}</div></div><label for="lineProfileName" style="display:block;margin:12px 0 6px;font-size:13px;color:#777">顯示名稱</label><input id="lineProfileName" maxlength="40" value="${escapeHTML(CONFIG.userName||"")}" placeholder="輸入你的名稱" style="width:100%;padding:13px 12px;border:1px solid #ddd;border-radius:10px;background:#fff;color:#222;font-size:16px"><label for="lineProfileStatus" style="display:block;margin:18px 0 6px;font-size:13px;color:#777">狀態訊息</label><input id="lineProfileStatus" maxlength="80" value="${escapeHTML(status)}" placeholder="分享你現在的心情" style="width:100%;padding:13px 12px;border:1px solid #ddd;border-radius:10px;background:#fff;color:#222;font-size:16px"><label for="lineProfileBirthday" style="display:block;margin:18px 0 6px;font-size:13px;color:#777">生日／顯示方式</label><input id="lineProfileBirthday" maxlength="40" value="${escapeHTML(birthday)}" placeholder="例如：不公開" style="width:100%;padding:13px 12px;border:1px solid #ddd;border-radius:10px;background:#fff;color:#222;font-size:16px"><p style="font-size:12px;color:#888;line-height:1.5;margin-top:14px">修改內容會儲存在這台模擬手機的瀏覽器中。</p><div id="lineProfileMessage" role="status" style="font-size:13px;color:#d33;margin-top:8px"></div><button type="button" id="lineProfileSaveBottom" style="width:100%;margin-top:18px;padding:13px;border-radius:10px;background:#06c755;color:#fff;font-weight:700">儲存變更</button></div></div>`;
+ const cancel=()=>renderProfile();
+ const save=()=>{
+  const name=$('#lineProfileName').value.trim(),nextStatus=$('#lineProfileStatus').value.trim(),nextBirthday=$('#lineProfileBirthday').value.trim();
+  if(!name){$('#lineProfileMessage').textContent='請輸入顯示名稱。';$('#lineProfileName').focus();return}
+  CONFIG.userName=name;
+  try{localStorage.setItem("yinofajianghu_line_profile_v1",JSON.stringify({name,status:nextStatus,birthday:nextBirthday}));}catch(e){$('#lineProfileMessage').textContent='無法儲存，請確認瀏覽器允許本機儲存。';return}
+  renderProfile();
+ };
+ $('#lineProfileCancel').onclick=cancel;$('#lineProfileSave').onclick=save;$('#lineProfileSaveBottom').onclick=save;
 }
 function showChatOverlay(type,callState='outgoing'){
  const existing=document.getElementById('chatActionOverlay');if(existing)existing.remove();
