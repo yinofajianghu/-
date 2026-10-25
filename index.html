@@ -1718,7 +1718,8 @@ function renderPhotos(){
   let arr=state.photos.filter(p=>!state.hidden.some(h=>h.id===p.id));
   const album=activeAlbum();
   if(state.activeTab==="collections"&&album){
-   if(album.smart==="favorites")arr=arr.filter(p=>isFav(p.id));
+   if(album.smart==="deleted")arr=state.deleted.slice();
+   else if(album.smart==="favorites")arr=arr.filter(p=>isFav(p.id));
    else if(album.smart==="recent")arr=arr.filter(p=>Date.now()-new Date(p.date).getTime()<30*86400000);
    else if(album.smart==="videos")arr=arr.filter(p=>p.kind==="video");
    else if(album.smart==="screenshots")arr=arr.filter(p=>(p.title+" "+p.place).toLowerCase().includes("截圖"));
@@ -1755,7 +1756,9 @@ function renderPhotos(){
    if(opened){
     title=opened.name;
     const arr=visiblePhotos();
-    body='<div class="ph-album-detail"><div class="ph-section-row"><button data-act="backCollections">‹ 收藏集</button><span>'+arr.length+' 張照片</span><button data-act="albumMenu" data-id="'+esc(opened.id)+'">•••</button></div>'+photoGrid(arr)+'<button class="ph-wide-action" data-act="addToAlbum">＋ 加入照片</button></div>';
+    const deletedEmpty=opened.smart==="deleted"&&!arr.length;
+    const albumContent=deletedEmpty?'<div class="ph-deleted-empty"><div class="ph-deleted-icon">▤</div><b>最近刪除</b><p>最近刪除的照片和影片會保留 30 天，之後將永久刪除。</p></div>':photoGrid(arr);
+    body='<div class="ph-album-detail"><div class="ph-section-row"><button data-act="backCollections">‹ 收藏集</button><span>'+arr.length+' 張照片</span><button data-act="albumMenu" data-id="'+esc(opened.id)+'">•••</button></div>'+albumContent+(deletedEmpty?'':'<button class="ph-wide-action" data-act="addToAlbum">＋ 加入照片</button>')+'</div>';
    }else{
    title="收藏集";
    const recent=state.photos.slice().sort((a,b)=>b.date.localeCompare(a.date)).slice(0,6);
@@ -1837,7 +1840,7 @@ function doImport(files){
   if(a==="createAlbum"){const name=root.querySelector("#phAlbumName")?.value.trim();if(!name){toast("請輸入相簿名稱");return}state.albums.push({id:"a"+Date.now(),name:name,smart:"custom",items:state.selected.slice()});state.selected=[];state.selectMode=false;state.activeTab="collections";state.albumId=state.albums[state.albums.length-1].id;save();render();toast("相簿已建立");return}
   if(a==="openAlbum"){state.albumId=id;state.openAlbumView=id;state.activeTab="collections";state.search="";save();render();return}
   if(a==="backCollections"){state.openAlbumView=null;state.albumId="a-recent";save();render();return}
-  if(a==="special"){const s=b.dataset.smart;state.activeTab="collections";state.search="";if(s==="hidden"){modal("已隱藏",state.hidden.length?'<div class="ph-grid">'+state.hidden.map(p=>'<button class="ph-tile" data-act="unhide" data-id="'+p.id+'"><img src="'+esc(p.src)+'"><span class="ph-check">顯示</span></button>').join("")+'</div>':'<p class="ph-empty">沒有已隱藏的照片</p>');return}if(s==="deleted"){modal("最近刪除",state.deleted.length?'<p class="ph-note">選取照片可復原；也可以清空最近刪除。</p><div class="ph-grid">'+state.deleted.map(p=>'<button class="ph-tile" data-act="restore" data-id="'+p.id+'"><img src="'+esc(p.src)+'"><span class="ph-check">復原</span></button>').join("")+'</div><button class="ph-wide-action danger" data-act="emptyDeleted">永久刪除全部項目</button>':'<p class="ph-empty">最近刪除中沒有項目</p>');return}const map={all:"a-recent",favorites:"a-fav",recent:"a-recent",videos:"a-video"};let al=state.albums.find(x=>x.smart===s);if(!al){al={id:"a-"+s,name:b.textContent.trim(),smart:s};state.albums.push(al)}state.albumId=al.id;state.openAlbumView=al.id;save();render();return}
+  if(a==="special"){const s=b.dataset.smart;state.activeTab="collections";state.search="";if(s==="hidden"){modal("已隱藏",state.hidden.length?'<div class="ph-grid">'+state.hidden.map(p=>'<button class="ph-tile" data-act="unhide" data-id="'+p.id+'"><img src="'+esc(p.src)+'"><span class="ph-check">顯示</span></button>').join("")+'</div>':'<p class="ph-empty">沒有已隱藏的照片</p>');return}if(s==="deleted"){let al=state.albums.find(x=>x.smart==="deleted");if(!al){al={id:"a-deleted",name:"最近刪除",smart:"deleted"};state.albums.push(al)}state.albumId=al.id;state.openAlbumView=al.id;save();render();return}const map={all:"a-recent",favorites:"a-fav",recent:"a-recent",videos:"a-video"};let al=state.albums.find(x=>x.smart===s);if(!al){al={id:"a-"+s,name:b.textContent.trim(),smart:s};state.albums.push(al)}state.albumId=al.id;state.openAlbumView=al.id;save();render();return}
   if(a==="sort"){modal("排序與篩選",'<button class="ph-wide-action" data-act="sortNewest">日期由新到舊　✓</button><button class="ph-wide-action" data-act="sortOldest">日期由舊到新</button><button class="ph-wide-action" data-act="filterFavorites">只顯示最愛</button><button class="ph-wide-action" data-act="filterAll">顯示所有項目</button><button class="ph-wide-action" data-act="import">匯入照片</button>');return}
   if(a==="sortNewest"||a==="sortOldest"){state.sort=a==="sortNewest"?"newest":"oldest";root.querySelector("#phModalhost").innerHTML="";save();render();toast("排序已更新");return}
   if(a==="filterFavorites"){state.filter="favorites";root.querySelector("#phModalhost").innerHTML="";save();render();return}
@@ -1871,9 +1874,9 @@ function doImport(files){
   if(a==="morePhoto"){modal("更多選項",'<button class="ph-wide-action" data-act="toggleHideOne">◉ 隱藏照片</button><button class="ph-wide-action danger" data-act="deleteOne">⌫ 移至最近刪除</button>');return}
   if(a==="toggleHideOne"){const p=photoById(state.viewer);if(p){state.hidden.push(p);state.photos=state.photos.filter(x=>x.id!==p.id);state.viewer=null;save();render();root.querySelector("#phModalhost").innerHTML="";toast("照片已隱藏")}return}
   if(a==="deleteOne"){const p=photoById(state.viewer);if(p){state.deleted.push(p);state.photos=state.photos.filter(x=>x.id!==p.id);state.favorites=state.favorites.filter(x=>x!==p.id);state.viewer=null;save();render();root.querySelector("#phModalhost").innerHTML="";toast("已移至最近刪除")}return}
-  if(a==="restore"){const p=state.deleted.find(x=>x.id===id);if(p){state.photos.push(p);state.deleted=state.deleted.filter(x=>x.id!==id);save();render();modal("最近刪除",state.deleted.length?'<div class="ph-grid">'+state.deleted.map(x=>'<button class="ph-tile" data-act="restore" data-id="'+x.id+'"><img src="'+esc(x.src)+'"><span class="ph-check">復原</span></button>').join("")+'</div><button class="ph-wide-action danger" data-act="emptyDeleted">永久刪除全部項目</button>':'<p class="ph-empty">最近刪除中沒有項目</p>');toast("照片已復原")}return}
+  if(a==="restore"){const p=state.deleted.find(x=>x.id===id);if(p){state.photos.push(p);state.deleted=state.deleted.filter(x=>x.id!==id);save();render();toast("照片已復原")}return}
   if(a==="unhide"){const p=state.hidden.find(x=>x.id===id);if(p){state.photos.push(p);state.hidden=state.hidden.filter(x=>x.id!==id);save();render();toast("照片已顯示")}return}
-  if(a==="emptyDeleted"){state.deleted=[];save();modal("最近刪除",'<p class="ph-empty">最近刪除已清空</p>');toast("已永久刪除項目");return}
+  if(a==="emptyDeleted"){state.deleted=[];save();render();toast("已永久刪除項目");return}
   if(a==="albumMenu"){modal("相簿選項",'<button class="ph-wide-action" data-act="renameAlbum" data-id="'+id+'">重新命名</button><button class="ph-wide-action danger" data-act="deleteAlbum" data-id="'+id+'">刪除相簿</button>');return}
   if(a==="renameAlbum"){const al=state.albums.find(x=>x.id===id);if(al){modal("重新命名",'<label class="ph-field">相簿名稱<input id="phRename" value="'+esc(al.name)+'"></label>');root.querySelector("[data-act=modalDone]").dataset.act="saveAlbumName";root.querySelector("[data-act=modalDone]").dataset.id=id}return}
   if(a==="saveAlbumName"){const al=state.albums.find(x=>x.id===b.dataset.id);const n=root.querySelector("#phRename")?.value.trim();if(al&&n){al.name=n;save();root.querySelector("#phModalhost").innerHTML="";render();toast("相簿名稱已更新")}return}
@@ -3559,7 +3562,7 @@ window.__phoneMainReady = false;
 .ios26-photos .ph-memory-card img{width:85px;height:85px;object-fit:cover;border-radius:10px}
 .ios26-photos .ph-memory-card span{display:flex;flex-direction:column;gap:5px}.ios26-photos .ph-memory-card b{font-size:14px}.ios26-photos .ph-memory-card small{font-size:12px;color:#777}
 .ios26-photos .ph-album-list{border-radius:0;background:transparent}.ios26-photos .ph-album-row{background:transparent;padding:10px 0;border-bottom:1px solid #eee}
-.ios26-photos .ph-album-cover{border-radius:8px;width:64px;height:64px}.ios26-photos .ph-empty{grid-column:1/-1;padding:55px 20px}
+.ios26-photos .ph-album-cover{border-radius:8px;width:64px;height:64px}.ios26-photos .ph-empty{grid-column:1/-1;padding:55px 20px}.ios26-photos .ph-deleted-empty{min-height:56vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:28px 30px;text-align:center;color:#777}.ios26-photos .ph-deleted-icon{width:76px;height:76px;display:grid;place-items:center;border-radius:50%;background:#f2f2f7;color:#a4a4ad;font-size:38px;margin-bottom:20px}.ios26-photos .ph-deleted-empty b{font-size:20px;color:#333;font-weight:650}.ios26-photos .ph-deleted-empty p{max-width:280px;margin:9px 0 0;font-size:14px;line-height:1.5;color:#85858c}
 .ios26-photos .ph-search-page{padding:12px 14px}.ios26-photos .ph-search-hero{text-align:left;padding:20px 2px 12px}.ios26-photos .ph-search-hero>div{font-size:30px}.ios26-photos .ph-search-hero h2{font-size:28px;color:#111;margin:8px 0}.ios26-photos .ph-search-hero p{font-size:14px}
 .ios26-photos .ph-suggestions{gap:8px}.ios26-photos .ph-suggestions button{background:#f0f0f4;border:0;border-radius:20px;padding:10px 14px;font-size:13px}
 .ios26-photos .ph-viewer{position:fixed;inset:0;z-index:15;padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}
