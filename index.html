@@ -1065,20 +1065,23 @@ wallpaperStyle();initHome();updateClock();setInterval(updateClock,1000);
 (function(){
  const home=document.querySelector('#home'), grid=document.querySelector('#appGrid'), dots=document.querySelector('#homePageDots');
  if(!home||!grid||!dots)return;
- const STORAGE_KEY='jianghu.home.appOrder.v1';
+ const STORAGE_KEY='jianghu.home.appOrder.v2';
  let editMode=false, pressTimer=null, pressedIcon=null, draggedIcon=null, startX=0, startY=0, dragging=false, moved=false;
  const icons=()=>Array.from(grid.querySelectorAll('.app-icon'));
  function saveOrder(){
-  try{localStorage.setItem(STORAGE_KEY,JSON.stringify(icons().map(el=>el.dataset.app)))}catch(e){}
+  try{localStorage.setItem(STORAGE_KEY,JSON.stringify(Array.from(grid.querySelectorAll('.home-app-page')).map(page=>Array.from(page.querySelectorAll('.app-icon')).map(el=>el.dataset.app))))}catch(e){}
  }
  function restoreOrder(){
   let order=[];try{order=JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]')}catch(e){}
   if(!Array.isArray(order)||!order.length)return;
   const byId=new Map(icons().map(el=>[el.dataset.app,el]));
-  const sorted=order.map(id=>byId.get(id)).filter(Boolean);
-  icons().forEach(el=>{if(!sorted.includes(el))sorted.push(el)});
   const pages=Array.from(grid.querySelectorAll('.home-app-page'));
-  sorted.forEach((el,i)=>pages[i<12?0:1].appendChild(el));
+  const used=new Set();
+  order.forEach((pageOrder,pageIndex)=>{
+   if(!Array.isArray(pageOrder)||!pages[pageIndex])return;
+   pageOrder.forEach(id=>{const el=byId.get(id);if(el&&!used.has(id)){pages[pageIndex].appendChild(el);used.add(id)}});
+  });
+  icons().forEach(el=>{if(!used.has(el.dataset.app)){const page=pages.find(p=>p.children.length<12)||pages[pages.length-1];page.appendChild(el)}});
  }
  function updateDots(){
   const page=Math.round(grid.scrollLeft/Math.max(1,grid.clientWidth));
@@ -1128,7 +1131,7 @@ wallpaperStyle();initHome();updateClock();setInterval(updateClock,1000);
  document.addEventListener('pointermove',e=>{
   if(!pressedIcon)return;
   const dx=e.clientX-startX,dy=e.clientY-startY;
-  if(Math.abs(dx)>9||Math.abs(dy)>9)moved=true;
+  if(Math.abs(dx)>14||Math.abs(dy)>14)moved=true;
   if(!dragging&&moved)clearPress();
   if(dragging&&draggedIcon){
    if(e.cancelable)e.preventDefault();
