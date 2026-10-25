@@ -2797,12 +2797,12 @@ setupWallpaperPicker();initHome();updateClock();setInterval(updateClock,1000);
    && !document.querySelector('#home')?.classList.contains('active')
    && !document.querySelector('#passcodeScreen')?.classList.contains('active')
    && !document.querySelector('#controlCenter')?.classList.contains('active');
- const lockPullTop=()=>Math.max(24,window.innerHeight*.025);
+ const appLockPullTop=()=>Math.max(24,window.innerHeight*.025);
  document.addEventListener('touchstart',e=>{
    if(!appIsVisible()){appSwipeStart=null;return;}
    const t=e.changedTouches[0];
    // Normal scrolls start lower down and must never trigger lock-screen navigation.
-   appSwipeStart=t&&t.clientY<=lockPullTop()&&!e.target.closest('#controlCenter, .status, input, textarea, select, [contenteditable="true"]')?{y:t.clientY,x:t.clientX}:null;
+   appSwipeStart=t&&t.clientY<=appLockPullTop()&&!e.target.closest('#controlCenter, .status, input, textarea, select, [contenteditable="true"]')?{y:t.clientY,x:t.clientX}:null;
  },{passive:true,capture:true});
  document.addEventListener('touchend',e=>{
    if(!appSwipeStart||!appIsVisible()){appSwipeStart=null;return;}
@@ -2817,7 +2817,7 @@ setupWallpaperPicker();initHome();updateClock();setInterval(updateClock,1000);
  document.addEventListener('pointerdown',e=>{
    if(e.pointerType==='mouse'&&e.button!==0)return;
    if(!appIsVisible()){appPointerStart=null;return;}
-   appPointerStart=e.clientY<=lockPullTop()&&!e.target.closest('#controlCenter, .status, input, textarea, select, [contenteditable="true"]')?{y:e.clientY,x:e.clientX}:null;
+   appPointerStart=e.clientY<=appLockPullTop()&&!e.target.closest('#controlCenter, .status, input, textarea, select, [contenteditable="true"]')?{y:e.clientY,x:e.clientX}:null;
  },{passive:true,capture:true});
  document.addEventListener('pointerup',e=>{
    if(!appPointerStart||!appIsVisible()){appPointerStart=null;return;}
