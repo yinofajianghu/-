@@ -364,7 +364,10 @@ html,body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro 
 #home.editing .app-icon{ -webkit-user-select:none;user-select:none}
 #home.editing .app-icon .app-name{pointer-events:none}
 #homePageDots{position:relative}
-#homePageDots .home-edit-done{position:absolute;right:0;top:0;padding:4px 10px;border-radius:14px;background:#0a84ff;color:#fff;font-size:12px;font-weight:650;box-shadow:0 2px 8px #0002}
+#homePageDots .home-edit-done{position:fixed;z-index:10000;top:max(14px,env(safe-area-inset-top));right:16px;padding:9px 15px;border:1px solid #ffffff70;border-radius:999px;background:#ffffff22;color:inherit;font-size:14px;font-weight:650;letter-spacing:.1px;backdrop-filter:blur(22px) saturate(180%);-webkit-backdrop-filter:blur(22px) saturate(180%);box-shadow:0 4px 18px #00000012;transition:background .18s,transform .18s;cursor:pointer}
+#home.editing #homePageDots .home-edit-done:active{background:#ffffff40;transform:scale(.96)}
+#home.editing #homePageDots .home-edit-done{color:#fff;text-shadow:0 1px 4px #0005}
+@media(prefers-color-scheme:light){#home.editing #homePageDots .home-edit-done{color:#171717;text-shadow:none;border-color:#00000016;background:#ffffff58;box-shadow:0 4px 18px #0000000c}}
 @keyframes homeIconWiggle{from{transform:rotate(-1.5deg)}to{transform:rotate(1.5deg)}}
 @media(prefers-reduced-motion:reduce){#home.editing .app-icon{animation:none}}
 
@@ -1198,9 +1201,12 @@ wallpaperStyle();initHome();updateClock();setInterval(updateClock,1000);
  document.addEventListener('pointercancel',endPointer,{capture:true});
  document.addEventListener('contextmenu',e=>{if(e.target.closest&&e.target.closest('#home'))e.preventDefault()});
  document.addEventListener('click',e=>{
+  if(!editMode)return;
+  if(e.target.closest&&e.target.closest('.home-edit-done'))return;
   const icon=e.target.closest&&e.target.closest('#appGrid .app-icon');
-  if(icon&&editMode){e.preventDefault();e.stopImmediatePropagation();return}
-  if(editMode&&e.target===home){setEditMode(false)}
+  if(icon){e.preventDefault();e.stopImmediatePropagation();return}
+  // In iOS edit mode, tapping any blank area exits rearrangement.
+  if(!e.target.closest||!e.target.closest('#appGrid .app-icon'))setEditMode(false);
  },true);
  grid.addEventListener('scroll',updateDots,{passive:true});
  restoreOrder();
