@@ -104,7 +104,9 @@ body{background:
 }
 #appView{background:#f7f7f5;color:#1e2421}
 #appView.active{animation:appIn .34s cubic-bezier(.2,.8,.2,1) both}
-@keyframes appIn{from{opacity:0;transform:translateY(14px) scale(.975);border-radius:34px}to{opacity:1;transform:translateY(0) scale(1);border-radius:0}}
+#appView.leaving-to-lock,#home.leaving-to-lock{pointer-events:none;animation:appToLock .36s cubic-bezier(.22,.72,.25,1) both;will-change:transform,opacity}
+@keyframes appToLock{from{opacity:1;transform:translateY(0) scale(1);filter:blur(0)}to{opacity:0;transform:translateY(82%) scale(.985);filter:blur(2px)}}
+@keyframes appIn{from{opacity:0;transform:translateY(52px) scale(.985);filter:blur(1px);border-radius:34px}to{opacity:1;transform:translateY(0) scale(1);filter:blur(0);border-radius:0}}
 .app-header,.app-topbar,.app-nav{
  backdrop-filter:blur(22px) saturate(1.4);
 }
@@ -544,10 +546,20 @@ function unlock() {
 }
 let recentAppReturnAt = 0;
 function showLock(){
- const app=$('#appView'), home=$('#home');
- if(app?.classList.contains('active')) recentAppReturnAt=Date.now();
- else recentAppReturnAt=0;
- closeAudio();stopCall();app.classList.remove('active');home.classList.remove('active');$('#lock').classList.add('active');
+ const app=$('#appView'), home=$('#home'), lock=$('#lock');
+ if(lock.classList.contains('active')) return;
+ const outgoing=app.classList.contains('active')?app:(home.classList.contains('active')?home:null);
+ recentAppReturnAt=outgoing===app?Date.now():0;
+ closeAudio();stopCall();
+ if(outgoing){
+  outgoing.classList.remove('leaving-to-lock');
+  void outgoing.offsetWidth;
+  outgoing.classList.add('leaving-to-lock');
+  const finish=()=>{outgoing.classList.remove('active','leaving-to-lock');outgoing.removeEventListener('animationend',finish);};
+  outgoing.addEventListener('animationend',finish);
+  window.setTimeout(finish,420);
+ }
+ lock.classList.add('active');
 }
 function returnToRecentApp(){
  const lock=$('#lock'), app=$('#appView');
