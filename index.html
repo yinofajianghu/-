@@ -3154,15 +3154,17 @@ window.__phoneMainReady = false;
     }
     const deleteTarget = event.target.closest && event.target.closest('#passcodeDelete');
     if(deleteTarget && byId('passcodeScreen')?.classList.contains('active')){
+      // Let the main passcode handler process this control when it is available.
+      if(typeof window.enterPasscodeDigit==='function') return;
       event.preventDefault(); event.stopPropagation();
-      if(typeof window.enterPasscodeDigit!=='function'){
-        fallbackDigits=fallbackDigits.slice(0,-1);
-        const dots=byId('passcodeDots');if(dots)dots.querySelectorAll('.passcode-dot').forEach((dot,index)=>dot.classList.toggle('filled',index<fallbackDigits.length));
-      }
+      fallbackDigits=fallbackDigits.slice(0,-1);
+      const dots=byId('passcodeDots');if(dots)dots.querySelectorAll('.passcode-dot').forEach((dot,index)=>dot.classList.toggle('filled',index<fallbackDigits.length));
       return;
     }
     const digitTarget = event.target.closest && event.target.closest('#passcodePad [data-digit]');
     if(digitTarget && byId('passcodeScreen')?.classList.contains('active')){
+      // Do not shadow or duplicate the main keypad handler and its confirmation flow.
+      if(typeof window.enterPasscodeDigit==='function') return;
       event.preventDefault(); event.stopPropagation();
       const digit = digitTarget.getAttribute('data-digit');
       if(!/^[0-9]$/.test(String(digit)) || fallbackDigits.length>=4) return;
