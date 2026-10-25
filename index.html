@@ -2643,6 +2643,86 @@ setupWallpaperPicker();initHome();updateClock();setInterval(updateClock,1000);
   });
 })();;
 
+// Recovery bootstrap: keep the clock, wallpaper, and lock-screen entry usable
+// even if another initialization block fails before completing.
+window.__phoneMainReady = true;
+</script>
+<script>
+(function phoneRecoveryBootstrap(){
+  'use strict';
+  const byId = id => document.getElementById(id);
+  const wallpaperUrl = 'https://raw.githubusercontent.com/yinofajianghu/-/main/image/Toya-background.png';
+  const fallbackBackground = 'url("' + wallpaperUrl + '"), radial-gradient(ellipse at 18% 15%,#8fc8e6 0%,transparent 35%), radial-gradient(ellipse at 80% 35%,#6f79bd 0%,transparent 35%), linear-gradient(145deg,#344f71,#4c4778 55%,#19283f)';
+  function paintBackground(){
+    const wall = byId('wallpaper');
+    if (wall) wall.style.setProperty('--wallpaper', fallbackBackground);
+  }
+  function paintClock(){
+    const now = new Date();
+    const time = now.toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit',hour12:false});
+    const date = now.toLocaleDateString('zh-TW',{month:'long',day:'numeric',weekday:'long'});
+    const lockTime = byId('lockTime'), statusTime = byId('statusTime'), lockDate = byId('lockDate');
+    if (lockTime) lockTime.textContent = time;
+    if (statusTime) statusTime.textContent = time;
+    if (lockDate) lockDate.textContent = date;
+  }
+  paintBackground();
+  paintClock();
+  window.setInterval(paintClock,1000);
+
+  if (window.__phoneMainReady) return;
+
+  // If the main initializer stopped early, rebuild the home icons when possible.
+  try {
+    const grid = byId('appGrid');
+    if (grid && !grid.querySelector('.app-icon') && typeof window.initHome === 'function') window.initHome();
+  } catch (error) { console.error('Home recovery failed',error); }
+
+  let fallbackDigits = '';
+  function showPasscode(){
+    const screen = byId('passcodeScreen');
+    if (typeof window.openPasscode === 'function') { window.openPasscode(); return; }
+    if (screen) { screen.classList.add('active'); screen.setAttribute('aria-hidden','false'); }
+  }
+  function unlockFallback(){
+    const lock=byId('lock'), home=byId('home'), app=byId('appView'), screen=byId('passcodeScreen');
+    if(screen){screen.classList.remove('active');screen.setAttribute('aria-hidden','true');}
+    if(typeof window.unlock === 'function') window.unlock();
+    window.setTimeout(()=>{
+      if(lock) lock.classList.remove('active','unlocking','dragging');
+      if(home) home.classList.add('active');
+      if(app) app.classList.remove('active');
+    },350);
+  }
+  document.addEventListener('click',function(event){
+    const unlockTarget = event.target.closest && event.target.closest('#unlockPrompt,#lockBar,.lock-time,.lock-date');
+    if(unlockTarget && byId('lock')?.classList.contains('active')){
+      event.preventDefault(); event.stopPropagation();
+      if(!byId('passcodeScreen')?.classList.contains('active')) showPasscode();
+      return;
+    }
+    const digitTarget = event.target.closest && event.target.closest('#passcodePad [data-digit]');
+    if(digitTarget && byId('passcodeScreen')?.classList.contains('active')){
+      event.preventDefault(); event.stopPropagation();
+      const digit = digitTarget.getAttribute('data-digit');
+      if(typeof window.enterPasscodeDigit === 'function') { window.enterPasscodeDigit(digit); return; }
+      if(!/^[0-9]$/.test(String(digit)) || fallbackDigits.length>=4) return;
+      fallbackDigits += String(digit);
+      const dots=byId('passcodeDots');
+      if(dots){dots.querySelectorAll('.passcode-dot').forEach((dot,index)=>dot.classList.toggle('filled',index<fallbackDigits.length));}
+      if(fallbackDigits.length===4){
+        if(fallbackDigits==='0525') unlockFallback();
+        else { fallbackDigits=''; window.setTimeout(()=>{const d=byId('passcodeDots');if(d)d.querySelectorAll('.passcode-dot').forEach(dot=>dot.classList.remove('filled'));},200); }
+      }
+    }
+  },true);
+  document.addEventListener('keydown',function(event){
+    if(event.key==='Escape' && byId('passcodeScreen')?.classList.contains('active')){
+      if(typeof window.closePasscode==='function') window.closePasscode();
+      else {const screen=byId('passcodeScreen');screen.classList.remove('active');screen.setAttribute('aria-hidden','true');}
+    }
+  },true);
+})();
 </script>
 
 </body>
