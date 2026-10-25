@@ -342,15 +342,14 @@ html,body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro 
 #appView:not(.dark) #appContent .page .simple-card{color:#111}
 
 
-/* Main home screen text follows the device's light appearance. */
-@media(prefers-color-scheme:light){
+/* Main screen labels and status indicators use dark ink on the light home screen. */
 #home .status,#home .status *,
 #home .widget,#home .widget *,
 #home .app-icon,#home .app-name{color:#171717;text-shadow:none}
 #home .battery{border-color:#171717}
 #home .battery:before,#home .battery:after{background:#171717}
 #home .widget-label,#home .weather-desc,#home .event-row{color:#454545}
-}
+#home .weather-place,#home .weather-temp,#home .event-title{color:#171717}
 
 </style>
 </head>
