@@ -1594,6 +1594,30 @@ function startVideoCall(){
  #controlCenter .cc-connectivity{gap:8px!important;padding:10px!important}
  #controlCenter .cc-native-control-row.cc-concept-shortcuts{gap:12px!important}
 }
+
+/* Focus tile: wider/taller than the other rectangular controls, with centered icon and label */
+#controlCenter .cc-connectivity .cc-native-wide[data-toggle="focus"]{
+ grid-column:1/-1!important;
+ width:100%!important;
+ min-height:60px!important;
+ height:60px!important;
+ position:relative!important;
+ display:flex!important;
+ align-items:center!important;
+ justify-content:center!important;
+ gap:10px!important;
+ padding:10px 42px!important;
+ text-align:center!important;
+}
+#controlCenter .cc-connectivity .cc-native-wide[data-toggle="focus"] .cc-native-control-icon,
+#controlCenter .cc-connectivity .cc-native-wide[data-toggle="focus"]>span:not(.cc-chevron){flex:0 0 auto!important}
+#controlCenter .cc-connectivity .cc-native-wide[data-toggle="focus"] .cc-chevron{
+ position:absolute!important;right:16px!important;top:50%!important;
+ transform:translateY(-50%)!important;margin:0!important;
+}
+@media(max-height:740px){
+ #controlCenter .cc-connectivity .cc-native-wide[data-toggle="focus"]{min-height:54px!important;height:54px!important}
+}
 </style>`;
  const v=$('#callVideo');if(v){v.play().catch(()=>{});$('#videoCall').addEventListener('click',()=>{v.muted=false;v.play().catch(()=>{});},{once:true})}
  callTimer=setInterval(()=>{callSeconds++;$('#callDuration').textContent=String(Math.floor(callSeconds/60)).padStart(2,'0')+':'+String(callSeconds%60).padStart(2,'0')},1000);
