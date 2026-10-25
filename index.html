@@ -364,10 +364,9 @@ html,body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro 
 #home.editing .app-icon{ -webkit-user-select:none;user-select:none}
 #home.editing .app-icon .app-name{pointer-events:none}
 #homePageDots{position:relative}
-#homePageDots .home-edit-done{position:fixed;z-index:10000;top:max(14px,env(safe-area-inset-top));right:16px;padding:9px 15px;border:1px solid #ffffff70;border-radius:999px;background:#ffffff22;color:inherit;font-size:14px;font-weight:650;letter-spacing:.1px;backdrop-filter:blur(22px) saturate(180%);-webkit-backdrop-filter:blur(22px) saturate(180%);box-shadow:0 4px 18px #00000012;transition:background .18s,transform .18s;cursor:pointer}
-#home.editing #homePageDots .home-edit-done:active{background:#ffffff40;transform:scale(.96)}
-#home.editing #homePageDots .home-edit-done{color:#fff;text-shadow:0 1px 4px #0005}
-@media(prefers-color-scheme:light){#home.editing #homePageDots .home-edit-done{color:#171717;text-shadow:none;border-color:#00000016;background:#ffffff58;box-shadow:0 4px 18px #0000000c}}
+.home-edit-done{position:fixed!important;z-index:2147483000!important;top:max(14px,env(safe-area-inset-top))!important;right:16px!important;padding:9px 15px!important;border:1px solid #ffffff70!important;border-radius:999px!important;background:#ffffff22!important;color:#fff!important;font:600 14px/1.2 -apple-system,BlinkMacSystemFont,"SF Pro Text",sans-serif!important;letter-spacing:.1px;backdrop-filter:blur(22px) saturate(180%);-webkit-backdrop-filter:blur(22px) saturate(180%);box-shadow:0 4px 18px #00000012;transition:background .18s,transform .18s;cursor:pointer}
+.home-edit-done:active{background:#ffffff40!important;transform:scale(.96)}
+@media(prefers-color-scheme:light){.home-edit-done{color:#171717!important;text-shadow:none;border-color:#00000016!important;background:#ffffff58!important;box-shadow:0 4px 18px #0000000c}}
 @keyframes homeIconWiggle{from{transform:rotate(-1.5deg)}to{transform:rotate(1.5deg)}}
 @media(prefers-reduced-motion:reduce){#home.editing .app-icon{animation:none}}
 
@@ -1099,11 +1098,11 @@ wallpaperStyle();initHome();updateClock();setInterval(updateClock,1000);
  }
  function setEditMode(on){
   editMode=on;home.classList.toggle('editing',on);
-  let done=dots.querySelector('.home-edit-done');
+  let done=document.querySelector('body > .home-edit-done');
   if(on&&!done){
    done=document.createElement('button');done.className='home-edit-done';done.type='button';done.textContent='完成';done.setAttribute('aria-label','完成編輯主畫面');
-   done.addEventListener('click',e=>{e.stopPropagation();setEditMode(false)});
-   dots.appendChild(done);
+   done.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();setEditMode(false)});
+   document.body.appendChild(done);
   }
   if(!on&&done)done.remove();
   if(!on){finishDrag();saveOrder()}
@@ -1172,7 +1171,12 @@ wallpaperStyle();initHome();updateClock();setInterval(updateClock,1000);
   const icon=e.target.closest&&e.target.closest('#appGrid .app-icon');
   const insideHome=home.contains(e.target);
   if(!insideHome)return;
-  if(editMode&&!icon&&!e.target.closest('#homePageDots'))return;
+  // End edit mode on the first tap anywhere except a Home Screen app or Done.
+  if(editMode&&!icon&&!(e.target.closest&&e.target.closest('.home-edit-done'))){
+   setEditMode(false);
+   pressedIcon=null;clearPress();
+   return;
+  }
   pressedIcon=icon;startX=e.clientX;startY=e.clientY;moved=false;
   clearPress();
   if(icon){
@@ -1205,8 +1209,7 @@ wallpaperStyle();initHome();updateClock();setInterval(updateClock,1000);
   if(e.target.closest&&e.target.closest('.home-edit-done'))return;
   const icon=e.target.closest&&e.target.closest('#appGrid .app-icon');
   if(icon){e.preventDefault();e.stopImmediatePropagation();return}
-  // In iOS edit mode, tapping any blank area exits rearrangement.
-  if(!e.target.closest||!e.target.closest('#appGrid .app-icon'))setEditMode(false);
+  setEditMode(false);
  },true);
  grid.addEventListener('scroll',updateDots,{passive:true});
  restoreOrder();
