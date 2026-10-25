@@ -2614,7 +2614,7 @@ $('#appHomebar').addEventListener('click',goHome);
 });
 $('#passcodeCancel').addEventListener('click',closePasscode);
 document.querySelectorAll('#passcodePad [data-digit]').forEach(key=>{key.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();enterPasscodeDigit(this.getAttribute('data-digit'));},true);});
-$('#passcodeDelete').addEventListener('click',()=>{enteredPasscode=enteredPasscode.slice(0,-1);renderPasscodeDots();$('#passcodeError').textContent=''});
+$('#passcodeDelete').addEventListener('click',e=>{e.preventDefault();e.stopPropagation();if(!$('#passcodeScreen').classList.contains('active'))return;enteredPasscode=enteredPasscode.slice(0,-1);renderPasscodeDots();$('#passcodeError').textContent='';},true);
 document.addEventListener('keydown',e=>{if(!$('#passcodeScreen').classList.contains('active'))return;if(/^[0-9]$/.test(e.key))enterPasscodeDigit(e.key);else if(e.key==='Backspace'){enteredPasscode=enteredPasscode.slice(0,-1);renderPasscodeDots()}else if(e.key==='Escape')closePasscode()});
 // Unified swipe gesture for touch, pen, and mouse; move the lock screen with the finger.
 const lockScreen=$('#lock');let swipeStartY=null,swipePointerId=null,swipeMoved=false;
@@ -3145,8 +3145,9 @@ window.__phoneMainReady = false;
     }
     const deleteTarget = event.target.closest && event.target.closest('#passcodeDelete');
     if(deleteTarget && byId('passcodeScreen')?.classList.contains('active')){
-      event.preventDefault(); event.stopPropagation(); fallbackDigits=fallbackDigits.slice(0,-1);
+      event.preventDefault(); event.stopPropagation();
       if(typeof window.enterPasscodeDigit!=='function'){
+        fallbackDigits=fallbackDigits.slice(0,-1);
         const dots=byId('passcodeDots');if(dots)dots.querySelectorAll('.passcode-dot').forEach((dot,index)=>dot.classList.toggle('filled',index<fallbackDigits.length));
       }
       return;
