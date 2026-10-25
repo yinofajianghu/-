@@ -584,6 +584,69 @@ html,body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro 
 #controlCenter button:focus-visible,#controlCenter input:focus-visible{outline:2px solid #1D9BF0!important;outline-offset:3px!important}
 #controlCenter #ccDone,#controlCenter #ccClose{background:#E7E9EA!important;color:#0F1419!important;border:0!important;border-radius:999px!important;font-weight:750!important}
 
+
+/* Complete X app UI */
+#appView.dark{background:#000!important;color:#E7E9EA!important}
+#appView.dark #appContent{background:#000!important;color:#E7E9EA!important}
+#appView.dark .x2-app{position:absolute;inset:0;background:#000;color:#E7E9EA;display:flex;flex-direction:column;font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+.x2-top{height:54px;flex:0 0 54px;display:grid;grid-template-columns:1fr 1fr 1fr;align-items:center;padding:0 14px;border-bottom:1px solid #2F3336;background:#000;z-index:2}
+.x2-top button{background:transparent;color:#E7E9EA}
+.x2-avatar-button{justify-self:start;padding:0;border-radius:50%}
+.x2-avatar{width:42px;height:42px;flex:0 0 42px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(145deg,#1D9BF0,#7856FF);color:#fff;font-size:17px;font-weight:750}
+.x2-logo{justify-self:center;font-size:29px;font-weight:750;line-height:1}
+.x2-top-more{justify-self:end;letter-spacing:2px;font-weight:800}
+.x2-main{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:none;padding-bottom:68px}
+.x2-main::-webkit-scrollbar{display:none}
+.x2-feed-tabs{height:50px;display:flex;border-bottom:1px solid #2F3336;position:sticky;top:0;background:#000e;backdrop-filter:blur(16px);z-index:1}
+.x2-feed-tabs button{flex:1;background:transparent;color:#71767B;font-size:14px;font-weight:650;position:relative}
+.x2-feed-tabs button.active{color:#E7E9EA}
+.x2-feed-tabs button.active:after{content:"";position:absolute;bottom:0;left:30%;right:30%;height:4px;border-radius:4px;background:#1D9BF0}
+.x2-compose-entry{display:flex;align-items:center;gap:11px;padding:14px;border-bottom:1px solid #2F3336}
+.x2-compose-placeholder{flex:1;text-align:left;background:transparent;color:#71767B;padding:12px 0}
+.x2-mini-post,.x2-fab{background:#1D9BF0;color:#fff;border-radius:999px;font-weight:750}
+.x2-mini-post{padding:9px 15px;font-size:13px}
+.x2-post{display:flex;gap:10px;padding:14px 13px 10px;border-bottom:1px solid #2F3336}
+.x2-post-content{min-width:0;flex:1}
+.x2-post-meta{display:flex;align-items:center;gap:5px;min-width:0;color:#71767B;font-size:12px;white-space:nowrap}
+.x2-name{background:none;color:#E7E9EA;font-weight:750;padding:0;max-width:40%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.x2-verified{display:inline-grid;place-items:center;width:14px;height:14px;border-radius:50%;background:#1D9BF0;color:#fff;font-size:9px;font-weight:800;flex-shrink:0}
+.x2-post-more{margin-left:auto;background:transparent;color:#71767B;letter-spacing:1px;padding:4px}
+.x2-post-text{font-size:14px;line-height:1.55;margin:8px 0 14px;white-space:pre-wrap;overflow-wrap:anywhere}
+.x2-post-actions{display:flex;justify-content:space-between;gap:3px;color:#71767B}
+.x2-post-actions button{display:flex;align-items:center;gap:4px;background:transparent;color:inherit;font-size:12px;padding:4px 1px;min-width:22px}
+.x2-post-actions button.active{color:#00BA7C}.x2-post-actions button.liked{color:#F91880}
+.x2-post-actions button:active{transform:scale(.93)}
+.x2-bottom-nav{position:absolute;bottom:0;left:0;right:0;height:calc(59px + var(--safe-bottom));padding-bottom:var(--safe-bottom);background:#000;border-top:1px solid #2F3336;display:flex;justify-content:space-around;align-items:center;z-index:4}
+.x2-bottom-nav button{position:relative;flex:1;height:58px;background:transparent;color:#E7E9EA;font-size:27px;display:grid;place-items:center}
+.x2-bottom-nav button.selected{font-weight:800}
+.x2-bottom-nav button i{position:absolute;top:10px;left:calc(50% + 7px);width:7px;height:7px;background:#1D9BF0;border-radius:50%}
+.x2-fab{position:absolute;right:18px;bottom:calc(78px + var(--safe-bottom));width:54px;height:54px;font-size:29px;box-shadow:0 6px 20px #0008;z-index:3}
+.x2-page-title{padding:15px 16px;font-size:20px;font-weight:800;border-bottom:1px solid #2F3336;display:flex;align-items:center;justify-content:space-between}
+.x2-page-title button{background:transparent;color:#E7E9EA;font-size:22px}
+.x2-search-page{padding-bottom:16px}.x2-searchbar{margin:10px 14px 16px;height:42px;border-radius:999px;background:#202327;display:flex;align-items:center;gap:8px;padding:0 14px;color:#71767B}
+.x2-searchbar span{font-size:22px}.x2-searchbar input{flex:1;min-width:0;border:0;outline:0;background:transparent;color:#E7E9EA;font-size:14px}
+.x2-search-page h2{font-size:19px;margin:20px 16px 12px}
+.x2-trend{position:relative;display:flex;flex-direction:column;gap:5px;padding:13px 16px;border-bottom:1px solid #2F3336;cursor:pointer}
+.x2-trend small,.x2-trend span{font-size:12px;color:#71767B}.x2-trend b{font-size:15px}.x2-trend button{position:absolute;right:14px;top:14px;background:transparent;color:#71767B}
+.x2-notification{width:100%;display:flex;gap:12px;text-align:left;padding:17px 15px;background:#000;color:#E7E9EA;border-bottom:1px solid #2F3336}
+.x2-notification>span{font-size:14px;line-height:1.4}.x2-notification p{margin:5px 0;color:#E7E9EA}.x2-notification small{color:#71767B}.x2-notif-avatar{background:#1D9BF0;font-size:18px}
+.x2-clear-notifications{display:block;margin:18px auto;background:transparent;color:#1D9BF0;padding:10px}
+.x2-conversation{width:100%;display:flex;align-items:center;gap:10px;padding:13px;background:#000;color:#E7E9EA;text-align:left;border-bottom:1px solid #2F3336}
+.x2-conversation-body{display:flex;flex-direction:column;gap:5px;flex:1;min-width:0}.x2-conversation-body b{font-size:14px}.x2-conversation-body small,.x2-conversation time{color:#71767B;font-size:11px;font-weight:400}.x2-conversation-body>span{font-size:13px;color:#71767B;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.x2-conversation i{width:8px;height:8px;background:#1D9BF0;border-radius:50%}
+.x2-chat-head{height:58px;display:flex;align-items:center;gap:12px;padding:8px 14px;border-bottom:1px solid #2F3336}.x2-chat-head>button{background:transparent;color:#E7E9EA;font-size:20px}.x2-chat-head>span{display:flex;flex-direction:column;gap:3px;flex:1}.x2-chat-head small{font-size:12px;color:#71767B}
+.x2-chat-scroll{padding:16px;display:flex;flex-direction:column;gap:10px;min-height:220px}.x2-chat-intro{display:flex;flex-direction:column;align-items:center;gap:7px;padding:30px 0;color:#71767B;font-size:13px}.x2-chat-intro b{color:#E7E9EA}.x2-chat-bubble{align-self:flex-start;max-width:82%;padding:11px 14px;border-radius:18px 18px 18px 5px;background:#202327;color:#E7E9EA;font-size:14px;overflow-wrap:anywhere}.x2-chat-bubble.mine{align-self:flex-end;background:#1D9BF0;color:white;border-radius:18px 18px 5px 18px}
+.x2-chat-form{position:sticky;bottom:0;display:flex;gap:8px;padding:12px;background:#000;border-top:1px solid #2F3336}.x2-chat-form input{flex:1;min-width:0;border:0;border-radius:999px;padding:12px 15px;background:#202327;color:#E7E9EA}.x2-chat-form button{width:42px;border-radius:50%;background:#1D9BF0;color:#fff;font-size:20px}
+.x2-profile-cover{height:112px;background:linear-gradient(120deg,#12334B,#1D9BF0 55%,#6B4EFF)}
+.x2-profile-actions{display:flex;justify-content:flex-end;gap:10px;padding:10px 14px}.x2-profile-actions button{border:1px solid #536471;background:#000;color:#E7E9EA;border-radius:999px;padding:8px 12px;font-size:13px;font-weight:700}.x2-profile-actions .x2-edit-profile{background:#E7E9EA;color:#0F1419;border-color:#E7E9EA}
+.x2-profile-info{padding:0 15px 15px}.x2-profile-avatar{width:76px;height:76px;border:4px solid #000;margin-top:-48px;position:relative}.x2-profile-info h2{margin:12px 0 2px;font-size:20px}.x2-profile-info>p{margin:0 0 12px;color:#71767B;font-size:13px}.x2-profile-bio{font-size:14px;line-height:1.45}.x2-profile-stats{display:flex;gap:18px;margin-top:12px;font-size:13px}.x2-profile-stats small{font-weight:400;color:#71767B}
+.x2-modal-backdrop{position:absolute;inset:0;z-index:10;background:#0009;display:flex;align-items:flex-start;justify-content:center;padding:9vh 10px 20px}
+.x2-modal{width:100%;max-width:480px;border:1px solid #2F3336;border-radius:18px;background:#000;color:#E7E9EA;box-shadow:0 15px 55px #000a;overflow:hidden}
+.x2-modal header{height:54px;display:flex;align-items:center;justify-content:space-between;padding:0 14px;border-bottom:1px solid #2F3336;font-size:14px}.x2-modal header button{background:transparent;color:#E7E9EA;padding:7px}.x2-modal header .x2-modal-post{background:#E7E9EA;color:#0F1419;border-radius:999px;font-weight:800;padding:8px 14px}.x2-modal header .x2-modal-post:disabled{opacity:.45}
+.x2-modal-editor{display:flex;gap:12px;padding:18px 14px;min-height:170px}.x2-modal-editor textarea,.x2-reply-text{flex:1;min-width:0;resize:vertical;min-height:135px;background:transparent;border:0;outline:0;color:#E7E9EA;font-size:17px;line-height:1.5}.x2-modal footer{padding:12px 15px;border-top:1px solid #2F3336;color:#1D9BF0;font-size:12px}.x2-modal footer small{color:#71767B}.x2-reply-text{box-sizing:border-box;width:100%;padding:18px}.x2-edit-field{display:flex;flex-direction:column;gap:8px;padding:14px;font-size:13px;color:#71767B}.x2-edit-field input,.x2-edit-field textarea{background:#16181C;border:1px solid #2F3336;border-radius:10px;padding:12px;color:#E7E9EA;resize:vertical}
+.x2-toast{position:absolute;left:50%;bottom:calc(72px + var(--safe-bottom));transform:translateX(-50%);z-index:15;background:#E7E9EA;color:#0F1419;border-radius:999px;padding:10px 15px;font-size:13px;font-weight:650;max-width:90%;opacity:0;pointer-events:none;transition:opacity .2s}.x2-toast.show{opacity:1}
+.x2-empty{padding:32px 18px;text-align:center;color:#71767B}
+@media(min-width:500px){#appView.dark .x2-app{max-width:430px;left:50%;transform:translateX(-50%);border-left:1px solid #2F3336;border-right:1px solid #2F3336}.x2-top{height:58px}}
+
 </style>
 </head>
 <body>
@@ -1084,7 +1147,108 @@ function renderChat(){
 }
 function renderX(){
  const handle=(CONFIG.twitterHandle||"user").replace(/^@/,'');
- $('#appContent').innerHTML=`<div class="page"><div class="nav"><span style="font-size:22px;font-weight:800">𝕏</span><span>⌕　•••</span></div><div class="x-profile"><div class="x-head"><div class="avatar">${escapeHTML((CONFIG.userName||"M").slice(0,1))}</div><div><div class="x-name">${escapeHTML(CONFIG.userName)} <span class="lock-tag">🔒</span></div><div class="x-handle">@${escapeHTML(handle)}</div></div></div><div class="x-bio">日々の記録。大切なことは、ここだけに。</div><div style="font-size:12px;color:#aaa;margin-top:12px">🔒 非公開アカウント　 ·　 フォロー 128</div></div><div style="display:flex;gap:25px;border-bottom:1px solid #333;padding:10px 0;font-size:13px"><b>ポスト</b><span style="color:#888">返信</span><span style="color:#888">メディア</span></div>${(CONFIG.tweets||[]).map((t,i)=>`<div class="tweet"><div class="avatar">${escapeHTML((CONFIG.userName||"M").slice(0,1))}</div><div class="tweet-body"><div class="tweet-meta"><strong>${escapeHTML(CONFIG.userName)}</strong>　@${escapeHTML(handle)}　·　${i===0?'2時間前':i===1?'昨日':'10月20日'}</div><div class="tweet-text">${escapeHTML(t)}</div><div class="tweet-stats"><span>♡ ${[12,8,24][i%3]}</span><span>↻ ${[3,2,5][i%3]}</span><span>◯ ${[120,87,214][i%3]}</span><span>↗</span></div></div></div>`).join('')}</div>`;
+ const me=CONFIG.userName||"使用者";
+ let activeTab="home", searchTerm="", modal="", draft="", editName=me, editBio="日常紀錄・想法與喜歡的事。";
+ let following=false, liked={}, reposted={}, saved={}, posts=(CONFIG.tweets||["今天也要記得留一點時間給自己。","記錄生活裡微小但值得珍惜的瞬間。","慢慢來，也是一種前進。"]).map((text,i)=>({id:i+1,text,when:["2 小時","昨天","10月20日"][i%3],likes:[12,8,24][i%3],replies:[3,2,5][i%3],reposts:[1,2,4][i%3]}));
+ let notifications=[
+  {icon:"♡",title:"有人喜歡你的貼文",detail:"你的貼文獲得了新的喜歡",time:"現在"},
+  {icon:"↻",title:"有人轉發了你的貼文",detail:"你的想法正在被更多人看見",time:"1 小時"},
+  {icon:"✓",title:"歡迎來到 X",detail:"追蹤感興趣的帳號，開始探索動態",time:"昨天"}
+ ];
+ let conversations=[
+  {name:"小晴",handle:"@haru_days",text:"最近過得怎麼樣？",time:"10:42",unread:true,avatar:"晴"},
+  {name:"設計日常",handle:"@design_note",text:"分享一個有趣的介面參考給你",time:"昨天",unread:false,avatar:"D"},
+  {name:"旅行筆記",handle:"@trip_log",text:"下次一起去看海吧！",time:"週一",unread:false,avatar:"旅"}
+ ];
+ let currentChat=-1, chatMessages=[];
+ const icon=(name)=>({home:"⌂",search:"⌕",notifications:"♧",messages:"✉",profile:"◉"}[name]||"•");
+ const navItems=[["home","首頁"],["search","搜尋"],["notifications","通知"],["messages","私訊"],["profile","個人資料"]];
+ const esc=(v)=>escapeHTML(String(v==null?"":v));
+ const avatar=(letter,cls="")=>'<div class="x2-avatar '+cls+'">'+esc(letter||me.slice(0,1))+'</div>';
+ function nav(){
+  return '<header class="x2-top"><button class="x2-avatar-button" data-action="profile" aria-label="開啟個人資料">'+avatar(me.slice(0,1))+'</button><button class="x2-logo" data-action="home" aria-label="X 首頁">𝕏</button><button class="x2-top-more" data-action="settings" aria-label="更多選項">•••</button></header>';
+ }
+ function bottomNav(){
+  return '<nav class="x2-bottom-nav" aria-label="主要導覽">'+navItems.map(([id,label])=>'<button class="'+(activeTab===id?'selected':'')+'" data-action="tab" data-tab="'+id+'" aria-label="'+label+'" aria-current="'+(activeTab===id?'page':'false')+'"><span>'+icon(id)+'</span>'+(id==="notifications"&&notifications.length?'<i></i>':'')+'</button>').join('')+'</nav>';
+ }
+ function postCard(p){
+  const isLiked=!!liked[p.id],isReposted=!!reposted[p.id],isSaved=!!saved[p.id];
+  return '<article class="x2-post" data-post="'+p.id+'">'+avatar(me.slice(0,1))+'<div class="x2-post-content"><div class="x2-post-meta"><button class="x2-name" data-action="profile">'+esc(me)+'</button><span class="x2-verified">✓</span><span>@'+esc(handle)+'</span><span>· '+esc(p.when)+'</span><button class="x2-post-more" data-action="postmore" data-id="'+p.id+'" aria-label="貼文選項">•••</button></div><p class="x2-post-text">'+esc(p.text)+'</p><div class="x2-post-actions"><button data-action="reply" data-id="'+p.id+'" aria-label="回覆">▢ <span>'+p.replies+'</span></button><button class="'+(isReposted?'active':'')+'" data-action="repost" data-id="'+p.id+'" aria-label="轉發">↻ <span>'+(p.reposts+(isReposted?1:0))+'</span></button><button class="'+(isLiked?'liked':'')+'" data-action="like" data-id="'+p.id+'" aria-label="喜歡">♡ <span>'+(p.likes+(isLiked?1:0))+'</span></button><button data-action="views" data-id="'+p.id+'" aria-label="瀏覽次數">▥ <span>'+([120,87,214][p.id%3])+'</span></button><button class="'+(isSaved?'active':'')+'" data-action="save" data-id="'+p.id+'" aria-label="收藏">♧</button><button data-action="share" data-id="'+p.id+'" aria-label="分享">↗</button></div></div></article>';
+ }
+ function pageContent(){
+  if(activeTab==="home"){
+   const filtered=posts.filter(p=>p.text.toLowerCase().includes(searchTerm.toLowerCase()));
+   return '<div class="x2-feed-tabs"><button class="active" data-action="feed">為你推薦</button><button data-action="feed">正在追蹤</button></div><div class="x2-compose-entry">'+avatar(me.slice(0,1))+'<button data-action="compose" class="x2-compose-placeholder">有什麼新鮮事？</button><button data-action="compose" class="x2-mini-post">發文</button></div>'+ (filtered.length?filtered.map(postCard).join(''):'<div class="x2-empty">找不到符合的貼文</div>');
+  }
+  if(activeTab==="search"){
+   return '<section class="x2-search-page"><label class="x2-searchbar"><span>⌕</span><input id="x2SearchInput" value="'+esc(searchTerm)+'" placeholder="搜尋 X" aria-label="搜尋 X"></label><h2>正在發生</h2><div class="x2-trend" data-action="trend"><small>熱門 · 趨勢</small><b>#日常生活</b><span>1,284 篇貼文</span><button aria-label="趨勢選項">•••</button></div><div class="x2-trend" data-action="trend"><small>設計 · 熱門</small><b>介面設計</b><span>2,410 篇貼文</span><button aria-label="趨勢選項">•••</button></div><div class="x2-trend" data-action="trend"><small>今日話題</small><b>週末計畫</b><span>856 篇貼文</span><button aria-label="趨勢選項">•••</button></div><h2>搜尋結果</h2>'+posts.filter(p=>!searchTerm||p.text.toLowerCase().includes(searchTerm.toLowerCase())).map(postCard).join('')+'</section>';
+  }
+  if(activeTab==="notifications"){
+   return '<div class="x2-page-title">通知</div><div class="x2-feed-tabs"><button class="active" data-action="notiftab">全部</button><button data-action="notiftab">已驗證</button><button data-action="notiftab">提及</button></div>'+notifications.map(n=>'<button class="x2-notification" data-action="notification">'+avatar(n.icon,'x2-notif-avatar')+'<span><b>'+esc(n.title)+'</b><p>'+esc(n.detail)+'</p><small>'+esc(n.time)+'前</small></span></button>').join('')+'<button class="x2-clear-notifications" data-action="clear-notifications">清除通知</button>';
+  }
+  if(activeTab==="messages"){
+   if(currentChat>=0){
+    const c=conversations[currentChat];
+    return '<div class="x2-chat-head"><button data-action="chat-back" aria-label="返回私訊">←</button>'+avatar(c.avatar)+'<span><b>'+esc(c.name)+'</b><small>'+esc(c.handle)+'</small></span><button data-action="chat-info" aria-label="對話資訊">•••</button></div><div class="x2-chat-scroll" id="x2ChatScroll">'+(chatMessages.length?chatMessages.map(m=>'<div class="x2-chat-bubble '+(m.mine?'mine':'')+'">'+esc(m.text)+'</div>').join(''):'<div class="x2-chat-intro">'+avatar(c.avatar)+'<b>'+esc(c.name)+'</b><span>'+esc(c.handle)+'</span><p>你們的對話從這裡開始。</p></div>')+'</div><form class="x2-chat-form" id="x2ChatForm"><input id="x2ChatInput" placeholder="開始新訊息" aria-label="輸入訊息" required><button type="submit" aria-label="傳送訊息">↑</button></form>';
+   }
+   return '<div class="x2-page-title">私訊 <button data-action="new-message" aria-label="新增訊息">✉＋</button></div><label class="x2-searchbar"><span>⌕</span><input id="x2MessageSearch" placeholder="搜尋私訊" aria-label="搜尋私訊"></label><div id="x2Conversations">'+conversations.map((c,i)=>'<button class="x2-conversation" data-action="open-chat" data-index="'+i+'">'+avatar(c.avatar)+'<span class="x2-conversation-body"><b>'+esc(c.name)+' <small>'+esc(c.handle)+'</small></b><span>'+esc(c.text)+'</span></span><time>'+esc(c.time)+'</time>'+(c.unread?'<i></i>':'')+'</button>').join('')+'</div>';
+  }
+  if(activeTab==="profile"){
+   return '<div class="x2-profile-cover"></div><div class="x2-profile-actions"><button data-action="profile-menu" aria-label="個人資料選項">•••</button><button class="x2-edit-profile" data-action="edit-profile">編輯個人資料</button></div><div class="x2-profile-info">'+avatar(me.slice(0,1),'x2-profile-avatar')+'<h2>'+esc(editName)+' <span class="x2-verified">✓</span></h2><p>@'+esc(handle)+'</p><div class="x2-profile-bio">'+esc(editBio)+'</div><div class="x2-profile-stats"><b>128 <small>追蹤中</small></b><b>36 <small>追蹤者</small></b></div></div><div class="x2-feed-tabs"><button class="active" data-action="profile-posts">貼文</button><button data-action="profile-posts">回覆</button><button data-action="profile-posts">媒體</button><button data-action="profile-posts">喜歡</button></div>'+posts.map(postCard).join('');
+  }
+  return '';
+ }
+ function render(){
+  $('#appContent').innerHTML='<div class="x2-app">'+nav()+'<main class="x2-main" id="x2Main">'+pageContent()+'</main>'+(activeTab==="home"?'<button class="x2-fab" data-action="compose" aria-label="發佈貼文">＋</button>':'')+bottomNav()+(modal?modalMarkup():'')+'</div>';
+ }
+ function modalMarkup(){
+  if(modal==="compose") return '<div class="x2-modal-backdrop" data-action="close-modal"><section class="x2-modal" role="dialog" aria-modal="true" aria-label="撰寫貼文" data-modal><header><button data-action="close-modal">取消</button><b>新增貼文</b><button class="x2-modal-post" data-action="publish" '+(!draft.trim()?'disabled':'')+'>發佈</button></header><div class="x2-modal-editor">'+avatar(me.slice(0,1))+'<textarea id="x2Draft" placeholder="有什麼新鮮事？" maxlength="280">'+esc(draft)+'</textarea></div><footer>◉　任何人都可以回覆　·　<small id="x2DraftCount">'+draft.length+'/280</small></footer></section></div>';
+  if(modal==="edit") return '<div class="x2-modal-backdrop" data-action="close-modal"><section class="x2-modal" role="dialog" aria-modal="true" aria-label="編輯個人資料" data-modal><header><button data-action="close-modal">取消</button><b>編輯個人資料</b><button class="x2-modal-post" data-action="save-profile">儲存</button></header><label class="x2-edit-field">名稱<input id="x2EditName" maxlength="40" value="'+esc(editName)+'"></label><label class="x2-edit-field">自我介紹<textarea id="x2EditBio" maxlength="160">'+esc(editBio)+'</textarea></label></section></div>';
+  if(modal==="reply") return '<div class="x2-modal-backdrop" data-action="close-modal"><section class="x2-modal" role="dialog" aria-modal="true" aria-label="回覆貼文" data-modal><header><button data-action="close-modal">取消</button><b>回覆</b><button class="x2-modal-post" data-action="send-reply" data-id="'+esc(draft)+'">回覆</button></header><textarea class="x2-reply-text" id="x2ReplyText" placeholder="發佈你的回覆"></textarea></section></div>';
+  return '';
+ }
+ function notify(message){
+  let el=$('#x2Toast'); if(!el){el=document.createElement('div');el.id='x2Toast';el.className='x2-toast';$('#appContent').appendChild(el)}
+  el.textContent=message;el.classList.add('show');clearTimeout(notify.timer);notify.timer=setTimeout(()=>el.classList.remove('show'),1800);
+ }
+ render();
+ $('#appContent').addEventListener('input',function(e){
+  if(e.target.id==="x2SearchInput"){searchTerm=e.target.value;const pos=e.target.selectionStart;render();const input=$('#x2SearchInput');if(input){input.focus();input.setSelectionRange(pos,pos)}}
+  if(e.target.id==="x2Draft"){draft=e.target.value;const count=$('#x2DraftCount');if(count)count.textContent=draft.length+'/280';const postButton=$('.x2-modal-post');if(postButton&&modal==="compose")postButton.disabled=!draft.trim()}
+  if(e.target.id==="x2MessageSearch"){const q=e.target.value.toLowerCase();document.querySelectorAll('.x2-conversation').forEach(el=>el.style.display=el.textContent.toLowerCase().includes(q)?'flex':'none')}
+ });
+ $('#appContent').addEventListener('submit',function(e){
+  if(e.target.id==="x2ChatForm"){e.preventDefault();const input=$('#x2ChatInput'),text=input.value.trim();if(!text)return;chatMessages.push({text,mine:true});conversations[currentChat].text=text;render();const sc=$('#x2ChatScroll');if(sc)sc.scrollTop=sc.scrollHeight}
+ });
+ $('#appContent').addEventListener('click',function(e){
+  const b=e.target.closest('button,[data-action="trend"]');if(!b)return;
+  const action=b.dataset.action;
+  if(action==="tab"||["home","search","notifications","messages","profile"].includes(action)){activeTab=action==="tab"?b.dataset.tab:action;currentChat=-1;render();return}
+  if(action==="compose"){modal="compose";draft="";render();$('#x2Draft')?.focus();return}
+  if(action==="close-modal"){if(e.target.closest('[data-modal]')&&!e.target.closest('button'))return;modal="";render();return}
+  if(action==="publish"){if(!draft.trim())return;posts.unshift({id:Date.now(),text:draft.trim(),when:"現在",likes:0,replies:0,reposts:0});modal="";activeTab="home";searchTerm="";render();notify("貼文已發佈");return}
+  if(action==="like"){const id=b.dataset.id;liked[id]=!liked[id];render();return}
+  if(action==="repost"){const id=b.dataset.id;reposted[id]=!reposted[id];render();notify(reposted[id]?"已轉發貼文":"已取消轉發");return}
+  if(action==="save"){const id=b.dataset.id;saved[id]=!saved[id];render();notify(saved[id]?"已加入書籤":"已移除書籤");return}
+  if(action==="reply"){modal="reply";draft=b.dataset.id;render();$('#x2ReplyText')?.focus();return}
+  if(action==="send-reply"){const text=$('#x2ReplyText')?.value.trim();if(!text){notify("請先輸入回覆");return}const p=posts.find(p=>String(p.id)===String(draft));if(p)p.replies++;posts.unshift({id:Date.now(),text:"↳ "+text,when:"現在",likes:0,replies:0,reposts:0});modal="";activeTab="home";render();notify("回覆已送出");return}
+  if(action==="share"){const p=posts.find(p=>String(p.id)===String(b.dataset.id));if(p&&navigator.clipboard?.writeText)navigator.clipboard.writeText(p.text).then(()=>notify("貼文內容已複製")).catch(()=>notify(p.text));else notify(p?p.text:"分享");return}
+  if(action==="views"){notify("此貼文的瀏覽次數："+([120,87,214][Number(b.dataset.id)%3]||0));return}
+  if(action==="postmore"){modal="";const id=b.dataset.id;saved[id]=!saved[id];render();notify(saved[id]?"已加入書籤":"已移除書籤");return}
+  if(action==="settings"||action==="profile-menu"){notify("帳號設定：通知、隱私與顯示選項");return}
+  if(action==="edit-profile"){modal="edit";render();return}
+  if(action==="save-profile"){editName=$('#x2EditName')?.value.trim()||me;editBio=$('#x2EditBio')?.value.trim()||"";modal="";render();notify("個人資料已更新");return}
+  if(action==="clear-notifications"){notifications=[];render();notify("通知已清除");return}
+  if(action==="notification"){notify("已開啟通知");return}
+  if(action==="notiftab"){notify("已切換通知分類");return}
+  if(action==="feed"){notify("已切換動態牆分類");return}
+  if(action==="profile-posts"){notify("顯示個人貼文分類");return}
+  if(action==="trend"){searchTerm=b.textContent.trim();activeTab="search";render();return}
+  if(action==="open-chat"){currentChat=Number(b.dataset.index);conversations[currentChat].unread=false;chatMessages=[];render();return}
+  if(action==="chat-back"){currentChat=-1;render();return}
+  if(action==="chat-info"){notify("對話設定與參與者資訊");return}
+  if(action==="new-message"){notify("選擇一位聯絡人即可開始新對話");return}
+ });
 }
 function renderPhotos(){
  $('#appContent').innerHTML=`<div class="page"><div class="nav"><span class="nav-title">相簿</span><span style="color:var(--blue)">選取</span></div><div style="font-size:27px;font-weight:800;margin:8px 0 20px">最近項目</div><div class="photo-grid">${(CONFIG.photos||[]).map((p,i)=>`<button class="photo" data-photo="${i}" aria-label="照片 ${i+1}">${escapeHTML(p)}</button>`).join('')}</div><div class="section-label">回憶</div><div class="simple-card">🌇　最近的回憶<br><span class="muted">9 張照片 · 東京</span></div></div>`;
