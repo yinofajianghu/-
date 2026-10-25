@@ -330,6 +330,24 @@ html,body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro 
 @media(max-height:700px){.jh-camera-view{inset-bottom:190px}.jh-camera-bottom{gap:10px;padding-bottom:12px}.jh-camera-shutter{width:64px;height:64px}.jh-camera-shutter:after{width:50px;height:50px}.jh-camera-actions{min-height:66px}}
 
 
+/* Two-page iPhone home screen */
+#home .app-grid{display:flex;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;scroll-behavior:smooth;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;touch-action:pan-x pan-y;gap:0;margin:clamp(18px,3.5vh,30px) 0 0;scrollbar-width:none}
+#home .app-grid::-webkit-scrollbar{display:none}
+#home .home-app-page{flex:0 0 100%;width:100%;min-width:100%;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));align-content:start;align-items:start;gap:clamp(15px,3.6vh,26px) 8px;padding:0 2px;scroll-snap-align:start;scroll-snap-stop:always}
+#home .home-page-dots{height:22px;display:flex;align-items:center;justify-content:center;gap:8px;flex-shrink:0}
+#home .home-page-dot{width:7px;height:7px;border-radius:50%;padding:0;background:rgba(255,255,255,.45);box-shadow:none;transition:width .2s,background .2s}
+#home .home-page-dot.active{width:18px;border-radius:8px;background:rgba(255,255,255,.95)}
+#home .g-clock{background:linear-gradient(145deg,#44484f,#111318);color:#fff}
+#home .g-calendar{background:linear-gradient(#fff 0 26%,#ff453a 26%);color:#222;font-size:25px;font-weight:700}
+#home .g-files{background:linear-gradient(145deg,#8fc8ff,#2686f5);color:#fff}
+#home .g-music{background:linear-gradient(145deg,#ff6688,#c80042);color:#fff}
+.utility-app .utility-clock{font-size:64px;font-weight:300;letter-spacing:-3px;margin:16px 0 28px}
+.utility-app .utility-calendar-date{font-size:20px;font-weight:700;margin:12px 0 22px}
+.utility-app .simple-card{background:#f0f0f5;border-radius:16px;padding:16px;margin:10px 0;color:#17171b}
+.utility-app .simple-card p{margin:8px 0 0;color:#777;font-size:14px;line-height:1.5}
+.utility-app .simple-action{margin-top:12px;padding:12px 16px;border-radius:12px;background:#0a84ff;color:#fff}
+@media(max-height:700px){#home .app-grid{margin-top:12px}#home .home-app-page{gap:12px 8px}#home .home-page-dots{height:18px}}
+
 /* Light appearance: keep primary text dark and legible on light surfaces. */
 #appView:not(.dark) #appContent .page{color:#111}
 #appView:not(.dark) #appContent .page .nav-title,
@@ -402,6 +420,7 @@ html,body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro 
       <div class="widget"><div class="widget-label">▦ 即將到來</div><div class="event-title" id="event1"></div><div class="event-row" id="eventTime1"></div><div class="event-row" id="event2"></div></div>
     </div>
     <div class="app-grid" id="appGrid"></div>
+    <div class="home-page-dots" id="homePageDots" aria-label="主畫面頁數"></div>
     <div class="dock" id="dock"></div>
   </section>
   <section id="appView"><div id="appContent"></div><div class="app-homebar-wrap"><span id="appHomebar" class="home-indicator" aria-label="返回桌面"></span></div></section>
@@ -483,7 +502,11 @@ const apps = [
   {id:"photos",name:"相簿",icon:"🌈",cls:"g-photos"},
   {id:"notes",name:"備忘錄",icon:"▤",cls:"g-notes"},
   {id:"maps",name:"地圖",icon:"➤",cls:"g-maps"},
-  {id:"settings",name:"設定",icon:"⚙",cls:"g-settings"}
+  {id:"settings",name:"設定",icon:"⚙",cls:"g-settings"},
+  {id:"clock",name:"時鐘",icon:"◷",cls:"g-clock"},
+  {id:"calendar",name:"行事曆",icon:"31",cls:"g-calendar"},
+  {id:"files",name:"檔案",icon:"📁",cls:"g-files"},
+  {id:"music",name:"音樂",icon:"♫",cls:"g-music"}
 ];
 let currentFriend = CONFIG.contactName, viewBeforeProfile = "line", currentSong = -1, songPlaying = false, songProgress = 0, songTimer = null, audioEl = null, callTimer = null, callSeconds = 0, callMessageTimers = [], callMode = false;
 function wallpaperStyle(){
@@ -519,7 +542,10 @@ function appButton(a){
 function initHome(){
  $('#weatherPlace').textContent=CONFIG.weather.place;$('#weatherTemp').textContent=CONFIG.weather.temp;$('#weatherDesc').textContent=CONFIG.weather.desc || `最高 ${CONFIG.weather.high} / 最低 ${CONFIG.weather.low}`;
  const ev=CONFIG.events||[];$('#event1').textContent=ev[0]?.title||"予定はありません";$('#eventTime1').textContent=ev[0]?.time||"";$('#event2').textContent=ev[1]?`${ev[1].time} · ${ev[1].title}`:"";
- $('#appGrid').innerHTML=apps.slice(0,8).map(appButton).join('')+apps.slice(8).map(appButton).join('');
+ $('#appGrid').innerHTML='<div class="home-app-page" data-home-page="0">'+apps.slice(0,12).map(appButton).join('')+'</div><div class="home-app-page" data-home-page="1">'+apps.slice(12).map(appButton).join('')+'</div>';
+ $('#homePageDots').innerHTML='<button class="home-page-dot active" data-page-to="0" aria-label="第 1 頁"></button><button class="home-page-dot" data-page-to="1" aria-label="第 2 頁"></button>';
+ $('#homePageDots').querySelectorAll('[data-page-to]').forEach(b=>b.onclick=()=>{const page=Number(b.dataset.pageTo);$('#appGrid').scrollTo({left:page*$('#appGrid').clientWidth,behavior:'smooth'});});
+ $('#appGrid').onscroll=()=>{const page=Math.round($('#appGrid').scrollLeft/Math.max(1,$('#appGrid').clientWidth));$('#homePageDots').querySelectorAll('.home-page-dot').forEach((d,i)=>d.classList.toggle('active',i===page));};
  $('#dock').innerHTML=[apps[0],apps[1],apps[2],apps[3]].map(appButton).join('');
 }
 let unlockInProgress = false;
@@ -658,12 +684,28 @@ function returnToRecentApp(){
  return true;
 }
 function showApp(id){
+  if(["clock","calendar","files","music"].includes(id)){renderUtilityApp(id);return}
  if(id==="instagram"){startIncomingCall();return}
  if(id==="messages"){renderMessages();return}
  if(id==="camera"||id==="youtube"){renderSimple(id);return}
  if(id==="spotify"){renderSpotify();return}
  $('#home').classList.remove('active');$('#lock').classList.remove('active');$('#appView').classList.add('active');$('#appView').classList.toggle('dark',id==="x");
  if(id==="phone")renderPhone();else if(id==="line")renderLine();else if(id==="x")renderX();else if(id==="photos")renderPhotos();else if(id==="notes")renderNotes();else if(id==="maps")renderMaps();else if(id==="settings")renderSettings();
+}
+function renderUtilityApp(id){
+  const configs={
+   clock:{title:"時鐘",icon:"◷",subtitle:"世界時鐘",body:`<div class="utility-clock" id="utilityClock"></div><div class="simple-card"><b>鬧鐘</b><p>尚未設定鬧鐘</p></div><div class="simple-card"><b>計時器</b><p>準備好時再開始計時</p></div>`},
+   calendar:{title:"行事曆",icon:"31",subtitle:"今天的行程",body:`<div class="utility-calendar-date" id="utilityCalendarDate"></div><div class="simple-card"><b>今天</b><p>目前沒有其他安排</p></div><div class="simple-card"><b>提醒事項</b><p>把重要的事情留在這裡</p></div>`},
+   files:{title:"檔案",icon:"📁",subtitle:"瀏覽",body:`<div class="simple-card"><b>最近項目</b><p>最近開啟的檔案會顯示在這裡</p></div><div class="simple-card"><b>iCloud Drive</b><p>尚未連接雲端檔案</p></div><div class="simple-card"><b>我的 iPhone</b><p>本機檔案</p></div>`},
+   music:{title:"音樂",icon:"♫",subtitle:"現在就來聽點音樂",body:`<div class="simple-card"><b>最近播放</b><p>尚無播放紀錄</p></div><div class="simple-card"><b>你的音樂</b><p>新增喜歡的歌曲後，就能在這裡找到它們</p></div><button class="simple-action" id="openSpotify">開啟 Spotify</button>`}
+  };
+  const c=configs[id];if(!c)return;
+  $('#home').classList.remove('active');$('#lock').classList.remove('active');$('#appView').classList.add('active');$('#appView').classList.remove('dark');
+  $('#appContent').innerHTML=`<div class="page utility-app"><div class="nav"><button class="nav-button" id="utilityBack">‹ 主畫面</button><span>${c.icon}</span></div><div class="nav-title">${c.title}</div><div class="muted" style="margin:6px 0 22px">${c.subtitle}</div>${c.body}</div>`;
+  $('#utilityBack').onclick=goHome;
+  if(id==="clock"){const tick=()=>{const el=$('#utilityClock');if(el)el.textContent=new Date().toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit'});};tick();window.setInterval(tick,30000);}
+  if(id==="calendar")$('#utilityCalendarDate').textContent=new Date().toLocaleDateString('zh-TW',{year:'numeric',month:'long',day:'numeric',weekday:'long'});
+  if(id==="music")$('#openSpotify').onclick=()=>renderSpotify();
 }
 function goHome(){stopCall();closeAudio();$('#appView').classList.remove('active');$('#appView').classList.remove('dark');$('#home').classList.add('active');}
 let phoneTab='recent',phoneDigits='';
