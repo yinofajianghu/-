@@ -620,7 +620,7 @@ html,body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro 
         </div>
         <div class="cc-adjustments">
           <div class="cc-native-slider cc-brightness">
-            <input id="brightnessControl" type="range" min="35" max="100" value="100" aria-label="螢幕亮度">
+            <input id="brightnessControl" type="range" min="0" max="100" value="100" aria-label="螢幕亮度">
             <span class="cc-slider-symbol">☼</span><output id="brightnessValue">100%</output>
           </div>
           <div class="cc-native-slider cc-volume">
@@ -1623,6 +1623,23 @@ function startVideoCall(){
  #controlCenter .cc-native-tool-grid{column-gap:20px!important;row-gap:22px!important;padding:2px!important}
  #controlCenter .cc-native-tool{padding:12px!important;gap:8px!important}
 }
+
+/* Requested geometry: taller sliders/cards and a wider Focus tile */
+#controlCenter .cc-native-slider{height:clamp(230px,32vh,310px)!important;min-height:230px!important}
+#controlCenter .cc-page[data-cc-page="0"] .cc-concept-top{grid-template-columns:minmax(0,1.16fr) minmax(94px,.84fr)!important;gap:22px!important}
+#controlCenter .cc-connectivity{grid-template-columns:repeat(2,minmax(0,1fr))!important;grid-template-rows:repeat(3,48px) 52px!important;gap:12px!important;padding:16px!important}
+#controlCenter .cc-connectivity .cc-native-wide[data-toggle="focus"]{grid-column:1/-1!important;width:100%!important;min-height:52px!important;justify-content:flex-start!important;padding-inline:20px!important}
+#controlCenter .cc-adjustments{gap:18px!important}
+#controlCenter .cc-native-tool-grid{grid-auto-rows:minmax(120px,auto)!important;row-gap:26px!important;column-gap:24px!important}
+#controlCenter .cc-page[data-cc-page="2"] .cc-native-tool{min-height:120px!important;padding:16px 14px!important}
+#controlCenter .cc-native-control-row.cc-concept-shortcuts{column-gap:24px!important;row-gap:26px!important}
+#controlCenter .cc-native-control-row.cc-concept-shortcuts .cc-native-round{max-width:70px!important}
+@media(max-height:740px){
+ #controlCenter .cc-native-slider{height:clamp(205px,30vh,255px)!important;min-height:205px!important}
+ #controlCenter .cc-connectivity{grid-template-rows:repeat(3,42px) 48px!important}
+ #controlCenter .cc-native-tool-grid{grid-auto-rows:minmax(108px,auto)!important;row-gap:20px!important}
+ #controlCenter .cc-page[data-cc-page="2"] .cc-native-tool{min-height:108px!important}
+}
 </style>`;
  const v=$('#callVideo');if(v){v.play().catch(()=>{});$('#videoCall').addEventListener('click',()=>{v.muted=false;v.play().catch(()=>{});},{once:true})}
  callTimer=setInterval(()=>{callSeconds++;$('#callDuration').textContent=String(Math.floor(callSeconds/60)).padStart(2,'0')+':'+String(callSeconds%60).padStart(2,'0')},1000);
@@ -2026,7 +2043,7 @@ wallpaperStyle();initHome();updateClock();setInterval(updateClock,1000);
   if (brightness) {
     const applyBrightness = () => {
       const raw = Number(brightness.value);
-      const value = Number.isFinite(raw) ? Math.max(35, Math.min(100, raw)) : 100;
+      const value = Number.isFinite(raw) ? Math.max(0, Math.min(100, raw)) : 100;
       const fill = document.querySelector('#controlCenter .cc-brightness'); if(fill) fill.style.setProperty('--cc-fill', value+'%');
       phone.style.setProperty('--screen-brightness', String(value / 100));
       brightness.setAttribute('aria-valuenow', String(value));
