@@ -1763,13 +1763,14 @@ function renderPhotos(){
   if(state.viewer)renderViewer();
  }
  function modal(title,html){root.querySelector("#phModalhost").innerHTML='<div class="ph-backdrop" data-act="closeModal"><section class="ph-modal" role="dialog" aria-modal="true"><header><button data-act="closeModal">取消</button><b>'+title+'</b><button data-act="modalDone">完成</button></header><div class="ph-modalbody">'+html+'</div></section></div>'}
- function renderViewer(){
+ let viewerSwipeDirection=0;
+function renderViewer(){
   const p=photoById(state.viewer);if(!p){state.viewer=null;return}
   let old=root.querySelector(".ph-viewer");if(old)old.remove();
   const photos=state.photos.slice().sort((a,b)=>state.sort==="oldest"?a.date.localeCompare(b.date):b.date.localeCompare(a.date));
   const idx=photos.findIndex(q=>q.id===p.id);
   const dateLabel=(p.date||"").replace(/^(\d{4})-(\d{2})-(\d{2})$/,"$1年$2月$3日");
-  const v=document.createElement("div");v.className="ph-viewer";
+  const v=document.createElement("div");v.className="ph-viewer"+(viewerSwipeDirection<0?" ph-swipe-next":viewerSwipeDirection>0?" ph-swipe-prev":"");viewerSwipeDirection=0;
   v.innerHTML='<div class="ph-viewer-top"><button class="ph-glass-button ph-viewer-back" data-act="closeViewer" aria-label="返回">‹</button><div class="ph-viewer-heading"><b>'+esc(dateLabel||p.title)+'</b><small>'+esc(p.place||"")+'</small></div><button class="ph-glass-button ph-viewer-more" data-act="morePhoto" aria-label="更多選項">•••</button></div>'+
    '<div class="ph-viewer-image" role="button" aria-label="點一下顯示或隱藏控制項"><img id="phViewerImg" style="filter:'+esc(p.filter||"none")+';transform:rotate('+(p.rotation||0)+'deg)" src="'+esc(p.src)+'" alt="'+esc(p.title)+'"></div>'+
    '<div class="ph-viewer-details" hidden><div class="ph-details-title">'+esc(p.title)+'</div><div class="ph-details-date">'+esc(p.date||"")+' · '+esc(p.place||"")+'</div><div class="ph-details-meta"><span>▧　照片</span><span>原始照片資訊依匯入資料而定</span></div><button data-act="photoInfo">調整日期、名稱與地點　›</button></div>'+
@@ -1783,7 +1784,7 @@ function renderPhotos(){
   v.addEventListener("touchend",e=>{
    if(!e.changedTouches||!e.changedTouches[0])return;
    const dx=e.changedTouches[0].clientX-startX,dy=e.changedTouches[0].clientY-startY;
-   if(Math.abs(dx)>55&&Math.abs(dx)>Math.abs(dy)){const next=photos[idx+(dx<0?1:-1)];if(next){state.viewer=next.id;renderViewer()}}
+   if(Math.abs(dx)>55&&Math.abs(dx)>Math.abs(dy)){const next=photos[idx+(dx<0?1:-1)];if(next){viewerSwipeDirection=dx<0?-1:1;state.viewer=next.id;renderViewer()}}
    else if(dy < -65){v.querySelector(".ph-viewer-details").hidden=false;v.classList.add("details-open")}
    else if(dy > 65){if(!v.querySelector(".ph-viewer-details").hidden){v.querySelector(".ph-viewer-details").hidden=true;v.classList.remove("details-open")}else v.classList.toggle("controls-hidden")}
   },{passive:true});
@@ -3606,6 +3607,13 @@ window.__phoneMainReady = false;
 .ios26-photos .ph-viewer-tools button.ph-tool-delete{color:#ff3b30}
 .ios26-photos .ph-viewer-tools small{display:none!important}
 @media(max-width:360px){.ios26-photos .ph-viewer-tools{margin-left:12px;margin-right:12px}.ios26-photos .ph-viewer-tools .ph-tool-group{flex-basis:190px;gap:0}.ios26-photos .ph-viewer-tools button{width:46px;height:46px;min-width:46px}}
+
+/* Smooth horizontal photo-to-photo transition */
+.ios26-photos .ph-viewer.ph-swipe-next .ph-viewer-image{animation:phPhotoSlideNext .24s cubic-bezier(.22,.61,.36,1) both}
+.ios26-photos .ph-viewer.ph-swipe-prev .ph-viewer-image{animation:phPhotoSlidePrev .24s cubic-bezier(.22,.61,.36,1) both}
+@keyframes phPhotoSlideNext{from{opacity:.55;transform:translateX(34px)}to{opacity:1;transform:translateX(0)}}
+@keyframes phPhotoSlidePrev{from{opacity:.55;transform:translateX(-34px)}to{opacity:1;transform:translateX(0)}}
+@media(prefers-reduced-motion:reduce){.ios26-photos .ph-viewer.ph-swipe-next .ph-viewer-image,.ios26-photos .ph-viewer.ph-swipe-prev .ph-viewer-image{animation:none}}
 </style>
 </body>
 </html>
