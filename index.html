@@ -777,6 +777,7 @@ function renderMaps(){
 function renderSettings(){
  $('#appContent').innerHTML=`<div class="page"><div class="nav"><span class="nav-title">設定</span></div><div class="simple-card" style="display:flex;align-items:center;gap:12px"><div class="avatar">${escapeHTML((CONFIG.userName||"M").slice(0,1))}</div><div><b>${escapeHTML(CONFIG.userName)}</b><div class="muted" style="font-size:12px;margin-top:4px">Apple Account</div></div><span style="margin-left:auto;color:#aaa">›</span></div>${["飛行模式","Wi-Fi","Bluetooth","通知","一般","プライバシーとセキュリティ"].map((x,i)=>`<div class="settings-row"><div class="settings-ico" style="background:${['#ff9500','#0a84ff','#0a84ff','#ff3b30','#8e8e93','#34c759'][i]}">${['✈','⌁','ᛒ','◉','⚙','◈'][i]}</div><span>${x}</span><span style="margin-left:auto;color:#aaa">›</span></div>`).join('')}</div>`;
 }
+let cameraReturnToLock = false;
 function renderCamera(){
  $('#home').classList.remove('active');$('#lock').classList.remove('active');$('#appView').classList.add('active');$('#appView').classList.remove('dark');
  const content=$('#appContent');
@@ -804,7 +805,7 @@ function renderCamera(){
   catch(err){video.hidden=true;fallback.hidden=false;const msg=err&&err.name==='NotAllowedError'?'相機權限未開啟：請允許此網站使用相機':'目前無法使用相機，仍可體驗拍攝介面';say(msg);}
  };
  const updateMode=()=>{content.querySelectorAll('[data-mode]').forEach(b=>b.classList.toggle('selected',b.dataset.mode===mode));content.classList.toggle('jh-camera-video-mode',mode==='VIDEO');$id('jhCameraShutter').setAttribute('aria-label',mode==='VIDEO'?'開始或停止錄影':'拍照');};
- $id('jhCameraClose').onclick=()=>{stopStream();goHome();};
+ $id('jhCameraClose').onclick=()=>{stopStream();if(cameraReturnToLock){cameraReturnToLock=false;showLock();}else goHome();};
  $id('jhCameraControls').onclick=()=>{menu.hidden=!menu.hidden;};
  $id('jhCameraFormat').onclick=()=>say('照片格式：HEIF · 24 MP（介面示意）');
  content.querySelectorAll('[data-mode]').forEach(b=>b.onclick=()=>{mode=b.dataset.mode;updateMode();say(({PHOTO:'照片模式',VIDEO:'錄影模式',CINEMATIC:'電影效果模式',PORTRAIT:'人像模式',PANO:'全景模式'})[mode]+'（介面示意）');});
@@ -1120,8 +1121,13 @@ wallpaperStyle();initHome();updateClock();setInterval(updateClock,1000);
       e.preventDefault();
       const lock = $('#lock');
       if (lock && lock.classList.contains('active')) {
-        openPasscode();
-      } else showApp('camera');
+        cameraReturnToLock = true;
+        closePasscode();
+        showApp('camera');
+      } else {
+        cameraReturnToLock = false;
+        showApp('camera');
+      }
     }
   });
 
