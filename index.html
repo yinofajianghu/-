@@ -1572,6 +1572,30 @@ function startVideoCall(){
  #controlCenter .cc-native-slider input[type="range"]::-webkit-slider-thumb,
  #controlCenter .cc-native-slider input[type="range"]::-moz-range-thumb{transition:none!important}
 }
+
+/* Final spacing and slider fixes — placed last so earlier theme rules cannot override */
+#controlCenter .cc-page{gap:34px!important;padding:26px 22px 34px!important}
+#controlCenter .cc-concept-top{gap:28px!important}
+#controlCenter .cc-connectivity{gap:22px!important;padding:22px!important}
+#controlCenter .cc-adjustments{gap:24px!important}
+#controlCenter .cc-native-control-row{gap:26px!important;margin-top:18px!important}
+#controlCenter .cc-native-control-row.cc-concept-shortcuts{column-gap:26px!important;row-gap:28px!important;margin-top:18px!important}
+#controlCenter .cc-native-control-row:not(.cc-concept-shortcuts){column-gap:24px!important;row-gap:26px!important;margin-top:18px!important}
+#controlCenter .cc-native-tool-grid{column-gap:26px!important;row-gap:28px!important}
+#controlCenter .cc-native-control-row.cc-concept-shortcuts .cc-native-round{width:100%!important;max-width:68px!important;justify-self:center!important}
+#controlCenter .cc-native-slider{background:rgba(42,46,55,.48)!important;border:1px solid rgba(255,255,255,.22)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.16),0 8px 22px rgba(0,0,0,.16)!important}
+#controlCenter .cc-native-slider:before{height:var(--cc-fill,65%)!important;background:linear-gradient(180deg,rgba(255,255,255,.96),rgba(225,229,236,.92))!important;transition:height .34s cubic-bezier(.22,.8,.25,1)!important}
+#controlCenter .cc-native-slider:after{height:var(--cc-fill,65%)!important}
+#controlCenter .cc-native-slider input[type="range"]{touch-action:none!important;opacity:.015!important;cursor:ns-resize!important}
+@media(max-height:740px){
+ #controlCenter .cc-page{gap:26px!important;padding:18px 18px 28px!important}
+ #controlCenter .cc-concept-top{gap:20px!important}
+ #controlCenter .cc-connectivity{gap:16px!important;padding:17px!important}
+ #controlCenter .cc-adjustments{gap:18px!important}
+ #controlCenter .cc-native-control-row.cc-concept-shortcuts{column-gap:18px!important;row-gap:22px!important;margin-top:14px!important}
+ #controlCenter .cc-native-control-row:not(.cc-concept-shortcuts){column-gap:18px!important;row-gap:22px!important;margin-top:14px!important}
+ #controlCenter .cc-native-tool-grid{column-gap:20px!important;row-gap:22px!important}
+}
 </style>`;
  const v=$('#callVideo');if(v){v.play().catch(()=>{});$('#videoCall').addEventListener('click',()=>{v.muted=false;v.play().catch(()=>{});},{once:true})}
  callTimer=setInterval(()=>{callSeconds++;$('#callDuration').textContent=String(Math.floor(callSeconds/60)).padStart(2,'0')+':'+String(callSeconds%60).padStart(2,'0')},1000);
@@ -1974,8 +1998,9 @@ wallpaperStyle();initHome();updateClock();setInterval(updateClock,1000);
   const brightness = $('#brightnessControl');
   if (brightness) {
     const applyBrightness = () => {
-      const fill = document.querySelector('#controlCenter .cc-brightness'); if(fill) fill.style.setProperty('--cc-fill', (Number(brightness.value)||100)+'%');
-      const value = Math.max(35, Math.min(100, Number(brightness.value) || 100));
+      const raw = Number(brightness.value);
+      const value = Number.isFinite(raw) ? Math.max(35, Math.min(100, raw)) : 100;
+      const fill = document.querySelector('#controlCenter .cc-brightness'); if(fill) fill.style.setProperty('--cc-fill', value+'%');
       phone.style.setProperty('--screen-brightness', String(value / 100));
       brightness.setAttribute('aria-valuenow', String(value));
       const output=$('#brightnessValue');if(output)output.textContent=value+'%';
