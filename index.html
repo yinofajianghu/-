@@ -514,6 +514,57 @@ html,body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro 
  #controlCenter .cc-native-tool{min-height:91px!important;padding:10px 8px!important}
 }
 
+
+/* Liquid Glass refinement: translucency + icon breathing room */
+#controlCenter{
+ background:rgba(12,18,30,.10)!important;
+ -webkit-backdrop-filter:blur(48px) saturate(1.95) brightness(1.06)!important;
+ backdrop-filter:blur(48px) saturate(1.95) brightness(1.06)!important;
+}
+#controlCenter .cc-connectivity{
+ background:rgba(235,242,255,.105)!important;
+ border:1px solid rgba(255,255,255,.24)!important;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.32),inset 0 -1px 0 rgba(255,255,255,.07),0 10px 30px rgba(0,0,0,.12)!important;
+}
+#controlCenter .cc-native-connect{background:rgba(32,39,53,.49)!important;border-color:rgba(255,255,255,.22)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.13)!important}
+#controlCenter .cc-native-connect.on{background:rgba(0,122,255,.88)!important;border-color:rgba(255,255,255,.3)!important}
+#controlCenter .cc-native-round{
+ background:rgba(35,42,55,.47)!important;
+ border:1px solid rgba(255,255,255,.27)!important;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.24),inset 0 -1px 0 rgba(255,255,255,.06),0 7px 20px rgba(0,0,0,.12)!important;
+}
+#controlCenter .cc-native-wide{
+ background:rgba(40,47,61,.48)!important;
+ border:1px solid rgba(255,255,255,.24)!important;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.23),0 6px 18px rgba(0,0,0,.10)!important;
+}
+#controlCenter .cc-native-media{
+ background:linear-gradient(135deg,rgba(94,104,122,.58),rgba(35,42,55,.48))!important;
+ border-color:rgba(255,255,255,.25)!important;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 10px 26px rgba(0,0,0,.12)!important;
+}
+#controlCenter .cc-page[data-cc-page="2"] .cc-native-tool{
+ background:rgba(40,47,61,.48)!important;
+ border-color:rgba(255,255,255,.24)!important;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.23),0 6px 18px rgba(0,0,0,.10)!important;
+}
+/* Keep each glyph centered and visibly separated inside its own control */
+#controlCenter .cc-native-control-row.cc-concept-shortcuts{gap:14px!important;padding:0 2px!important}
+#controlCenter .cc-native-round{display:flex!important;align-items:center!important;justify-content:center!important;padding:0!important;overflow:hidden!important}
+#controlCenter .cc-native-round .cc-glyph{display:flex!important;align-items:center!important;justify-content:center!important;flex:0 0 auto!important;line-height:1!important}
+#controlCenter .cc-native-round .cc-glyph svg{display:block!important;flex:0 0 auto!important}
+#controlCenter .cc-connectivity{column-gap:10px!important;row-gap:9px!important}
+#controlCenter .cc-native-connect .cc-glyph{display:flex!important;align-items:center!important;justify-content:center!important;margin:auto!important}
+#controlCenter .cc-native-connect .cc-glyph svg{display:block!important;width:22px!important;height:22px!important}
+#controlCenter .cc-native-tool-grid{column-gap:12px!important;row-gap:12px!important;padding:1px 2px!important}
+#controlCenter .cc-page[data-cc-page="2"] .cc-native-tool{align-items:center!important;text-align:center!important;gap:12px!important;padding:13px 6px!important}
+#controlCenter .cc-page[data-cc-page="2"] .cc-native-tool>span{display:flex!important;align-items:center!important;justify-content:center!important;width:42px!important;height:42px!important;flex:0 0 42px!important;border-radius:50%!important;background:rgba(255,255,255,.105)!important;border:1px solid rgba(255,255,255,.13)!important}
+#controlCenter .cc-page[data-cc-page="2"] .cc-native-tool b{display:block!important;max-width:100%!important;overflow-wrap:anywhere!important}
+#controlCenter .cc-native-control-row{gap:12px!important}
+#controlCenter .cc-native-wide{gap:10px!important}
+#controlCenter .cc-native-wide .cc-native-control-icon{display:inline-flex!important;align-items:center!important;justify-content:center!important;flex:0 0 28px!important;width:28px!important;height:28px!important}
+#controlCenter .cc-native-wide>span:not(.cc-native-control-icon){min-width:0!important}
+
 </style>
 </head>
 <body>
