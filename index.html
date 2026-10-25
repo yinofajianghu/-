@@ -938,8 +938,9 @@ wallpaperStyle();initHome();updateClock();setInterval(updateClock,1000);
      }
    },{passive:true});
  });
- // Pull the lock screen down with the finger from Home or any open app.
- // The lock surface tracks the pointer 1:1 and springs back if the pull is too short.
+ // Pull the lock screen down from Home or an open app.
+ // Touch is handled natively (with preventDefault after a vertical pull starts) because
+ // mobile Safari may cancel pointer events when touch-action permits vertical panning.
  let lockPull = null;
  const lockSurface = document.querySelector('#lock');
  const mainSurface = () => {
@@ -952,7 +953,6 @@ wallpaperStyle();initHome();updateClock();setInterval(updateClock,1000);
  };
  const resetPulledLock = (commit, source) => {
    if(!lockPull) return;
-   const drag=lockPull;
    lockPull=null;
    if(!lockSurface) return;
    lockSurface.classList.remove('dragging');
@@ -961,7 +961,7 @@ wallpaperStyle();initHome();updateClock();setInterval(updateClock,1000);
      recentAppReturnAt=Date.now();
      closeAudio();stopCall();
      const outgoing=document.querySelector(source==='app'?'#appView':'#home');
-     lockSurface.style.transition='transform .42s cubic-bezier(.2,.85,.2,1),opacity .3s ease,filter .3s ease';
+     lockSurface.style.transition='transform .38s cubic-bezier(.18,.82,.22,1),opacity .3s ease,filter .3s ease';
      lockSurface.style.transform='translateY(0) scale(1)';
      lockSurface.style.opacity='1';
      lockSurface.style.filter='blur(0)';
@@ -971,9 +971,9 @@ wallpaperStyle();initHome();updateClock();setInterval(updateClock,1000);
        lockSurface.style.transform='';
        lockSurface.style.opacity='';
        lockSurface.style.filter='';
-     },440);
+     },400);
    }else{
-     lockSurface.style.transition='transform .34s cubic-bezier(.2,.8,.2,1),opacity .28s ease,filter .28s ease';
+     lockSurface.style.transition='transform .32s cubic-bezier(.2,.8,.2,1),opacity .25s ease,filter .25s ease';
      lockSurface.style.transform='translateY(-102%) scale(.985)';
      lockSurface.style.opacity='.65';
      lockSurface.style.filter='blur(3px)';
@@ -983,27 +983,18 @@ wallpaperStyle();initHome();updateClock();setInterval(updateClock,1000);
        lockSurface.style.transform='';
        lockSurface.style.opacity='';
        lockSurface.style.filter='';
-     },360);
+     },340);
    }
  };
- document.addEventListener('pointerdown',e=>{
-   const source=mainSurface();
-   if(!source || (e.pointerType==='mouse'&&e.button!==0))return;
-   // Start from anywhere on the visible main surface; horizontal movement is ignored later.
-   lockPull={id:e.pointerId,y:e.clientY,x:e.clientX,source,active:false};
- },{passive:true,capture:true});
- document.addEventListener('pointermove',e=>{
-   if(!lockPull||e.pointerId!==lockPull.id)return;
-   const dy=e.clientY-lockPull.y,dx=e.clientX-lockPull.x;
+ const beginPull = (id,x,y,source) => {lockPull={id,x,y,source,active:false};};
+ const movePull = (id,x,y) => {
+   if(!lockPull||lockPull.id!==id)return false;
+   const dy=y-lockPull.y,dx=x-lockPull.x;
    if(!lockPull.active){
-     if(Math.abs(dx)>Math.abs(dy)*1.2 && Math.abs(dx)>10){lockPull=null;return;}
-     if(dy<5)return;
-     if(dy<12)return;
+     if(Math.abs(dx)>Math.abs(dy)*1.2 && Math.abs(dx)>10){lockPull=null;return false;}
+     if(dy<10)return false;
      lockPull.active=true;
      lockSurface.classList.add('active','dragging');
-     lockSurface.style.transform='translateY(-102%) scale(.985)';
-     lockSurface.style.opacity='.62';
-     lockSurface.style.filter='blur(3px)';
      lockSurface.style.transition='none';
    }
    const distance=Math.max(0,Math.min(window.innerHeight,dy));
@@ -1011,16 +1002,50 @@ wallpaperStyle();initHome();updateClock();setInterval(updateClock,1000);
    lockSurface.style.transform=`translateY(${-window.innerHeight+distance}px) scale(${.985+.015*progress})`;
    lockSurface.style.opacity=String(.62+.38*progress);
    lockSurface.style.filter=`blur(${Math.max(0,3*(1-progress))}px)`;
- },{passive:true,capture:true});
- document.addEventListener('pointerup',e=>{
-   if(!lockPull||e.pointerId!==lockPull.id)return;
-   const drag=lockPull,dy=e.clientY-drag.y,dx=Math.abs(e.clientX-drag.x);
+   return true;
+ };
+ const endPull = (id,x,y) => {
+   if(!lockPull||lockPull.id!==id)return;
+   const drag=lockPull,dy=y-drag.y,dx=Math.abs(x-drag.x);
    if(!drag.active){lockPull=null;return;}
-   const commit=dy>Math.max(120,window.innerHeight*.22) && dy>dx*1.15;
-   resetPulledLock(commit,drag.source);
+   resetPulledLock(dy>Math.max(90,window.innerHeight*.16)&&dy>dx*1.1,drag.source);
+ };
+ // Touch-first path for iPhone/Safari.
+ document.addEventListener('touchstart',e=>{
+   const source=mainSurface(),t=e.changedTouches[0];
+   if(!source||!t)return;
+   beginPull('touch',t.clientX,t.clientY,source);
  },{passive:true,capture:true});
+ document.addEventListener('touchmove',e=>{
+   if(!lockPull||lockPull.id!=='touch')return;
+   const t=e.changedTouches[0];
+   if(t&&movePull('touch',t.clientX,t.clientY)&&e.cancelable)e.preventDefault();
+ },{passive:false,capture:true});
+ document.addEventListener('touchend',e=>{
+   if(!lockPull||lockPull.id!=='touch')return;
+   const t=e.changedTouches[0];
+   if(t)endPull('touch',t.clientX,t.clientY);
+   else resetPulledLock(false,lockPull.source);
+ },{passive:true,capture:true});
+ document.addEventListener('touchcancel',()=>{
+   if(lockPull?.id==='touch'){
+     if(lockPull.active)resetPulledLock(false,lockPull.source);
+     else lockPull=null;
+   }
+ },{passive:true,capture:true});
+ // Pointer path for mouse/pen; ignore touch pointers to avoid duplicate handling.
+ document.addEventListener('pointerdown',e=>{
+   const source=mainSurface();
+   if(!source||e.pointerType==='touch'||(e.pointerType==='mouse'&&e.button!==0))return;
+   beginPull(e.pointerId,e.clientX,e.clientY,source);
+ },{passive:true,capture:true});
+ document.addEventListener('pointermove',e=>{
+   if(!lockPull||lockPull.id!==e.pointerId)return;
+   movePull(e.pointerId,e.clientX,e.clientY);
+ },{passive:true,capture:true});
+ document.addEventListener('pointerup',e=>endPull(e.pointerId,e.clientX,e.clientY),{passive:true,capture:true});
  document.addEventListener('pointercancel',e=>{
-   if(lockPull&&e.pointerId===lockPull.id){
+   if(lockPull&&lockPull.id===e.pointerId){
      if(lockPull.active)resetPulledLock(false,lockPull.source);
      else lockPull=null;
    }
