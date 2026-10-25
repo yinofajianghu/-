@@ -342,7 +342,15 @@ html,body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro 
 #appView:not(.dark) #appContent .page .simple-card{color:#111}
 
 
-/* Match home-screen text contrast to the device appearance. */
+/* Home screen text: light appearance uses dark text; dark/default uses light text. */
+#home .status,#home .status *,
+#home .widget,#home .widget *,
+#home .app-icon,#home .app-name{color:#fff;text-shadow:0 1px 5px #0006}
+#home .battery{border-color:#fff}
+#home .battery:before,#home .battery:after{background:#fff}
+#home .widget-label,#home .weather-desc,#home .event-row{color:#ffffffe0}
+#home .weather-place,#home .weather-temp,#home .event-title{color:#fff}
+
 @media(prefers-color-scheme:light){
   #home .status,#home .status *,
   #home .widget,#home .widget *,
@@ -351,15 +359,6 @@ html,body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro 
   #home .battery:before,#home .battery:after{background:#171717}
   #home .widget-label,#home .weather-desc,#home .event-row{color:#454545}
   #home .weather-place,#home .weather-temp,#home .event-title{color:#171717}
-}
-@media(prefers-color-scheme:dark){
-  #home .status,#home .status *,
-  #home .widget,#home .widget *,
-  #home .app-icon,#home .app-name{color:#fff;text-shadow:0 1px 5px #0006}
-  #home .battery{border-color:#fff}
-  #home .battery:before,#home .battery:after{background:#fff}
-  #home .widget-label,#home .weather-desc,#home .event-row{color:#ffffffe0}
-  #home .weather-place,#home .weather-temp,#home .event-title{color:#fff}
 }
 
 </style>
