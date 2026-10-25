@@ -1774,7 +1774,7 @@ function renderPhotos(){
    '<div class="ph-viewer-image" role="button" aria-label="點一下顯示或隱藏控制項"><img id="phViewerImg" style="filter:'+esc(p.filter||"none")+';transform:rotate('+(p.rotation||0)+'deg)" src="'+esc(p.src)+'" alt="'+esc(p.title)+'"></div>'+
    '<div class="ph-viewer-details" hidden><div class="ph-details-title">'+esc(p.title)+'</div><div class="ph-details-date">'+esc(p.date||"")+' · '+esc(p.place||"")+'</div><div class="ph-details-meta"><span>▧　照片</span><span>原始照片資訊依匯入資料而定</span></div><button data-act="photoInfo">調整日期、名稱與地點　›</button></div>'+
    '<div class="ph-viewer-bottom"><div class="ph-filmstrip">'+photos.map(q=>'<button data-act="jumpPhoto" data-id="'+esc(q.id)+'" class="'+(q.id===p.id?"current":"")+'" aria-label="'+esc(q.title)+'"><img src="'+esc(q.src)+'" alt=""></button>').join("")+'</div>'+
-   '<div class="ph-viewer-tools"><button data-act="sharePhoto" aria-label="分享"><span class="ph-tool-symbol">↑</span><small>分享</small></button><button data-act="favoritePhoto" aria-label="最愛"><span class="ph-tool-symbol">'+(isFav(p.id)?"♥":"♡")+'</span><small>最愛</small></button><button data-act="showPhotoDetails" aria-label="照片資訊"><span class="ph-tool-symbol">ⓘ</span><small>資訊</small></button><button data-act="editPhoto" aria-label="編輯"><span class="ph-tool-symbol">☷</span><small>編輯</small></button><button data-act="deleteOne" aria-label="刪除"><span class="ph-tool-symbol">⌫</span><small>刪除</small></button></div></div>';
+   '<div class="ph-viewer-tools"><button data-act="sharePhoto" aria-label="分享"><span class="ph-tool-symbol"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15V3m-5 5 5-5 5 5M5 12v8h14v-8" /></svg></span><small>分享</small></button><button data-act="favoritePhoto" aria-label="最愛"><span class="ph-tool-symbol">'+(isFav(p.id)?'<svg viewBox="0 0 24 24" aria-hidden="true" class="filled"><path d="M12 21s-9-5.6-9-12a5 5 0 0 1 9-3 5 5 0 0 1 9 3c0 6.4-9 12-9 12z"/></svg>':'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.8 9.2c0 5.2-8.8 10.4-8.8 10.4S3.2 14.4 3.2 9.2A4.7 4.7 0 0 1 12 6.7a4.7 4.7 0 0 1 8.8 2.5z"/></svg>')+'</span><small>最愛</small></button><button data-act="showPhotoDetails" aria-label="照片資訊"><span class="ph-tool-symbol"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9.2"/><path d="M12 10.7v6m0-9.4h.01"/></svg></span><small>資訊</small></button><button data-act="editPhoto" aria-label="編輯"><span class="ph-tool-symbol"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l4.3-1 10.9-10.9a2.1 2.1 0 0 0-3-3L5.3 16 4 20zM14.8 6.5l3 3"/></svg></span><small>編輯</small></button><button data-act="deleteOne" aria-label="刪除"><span class="ph-tool-symbol"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3m-9 0 1 13h10l1-13M10 10v7m4-7v7"/></svg></span><small>刪除</small></button></div></div>';
   root.appendChild(v);
   const imageArea=v.querySelector(".ph-viewer-image");
   let startX=0,startY=0;
@@ -3568,6 +3568,31 @@ window.__phoneMainReady = false;
 .ios26-photos .ph-viewer.details-open .ph-viewer-bottom{opacity:.35}
 .ios26-photos .ph-viewer .ph-viewer-image{cursor:pointer}
 @media(min-width:600px){.ios26-photos .ph-viewer{width:min(100vw,430px);left:50%;transform:translateX(-50%);border-left:1px solid #333;border-right:1px solid #333}.ios26-photos .ph-viewer-details{bottom:calc(env(safe-area-inset-bottom) + 114px)}}
+
+
+/* White iOS Photos viewer and precisely spaced native-style controls */
+.ios26-photos .ph-viewer{background:#fff!important;color:#1c1c1e!important;color-scheme:light}
+.ios26-photos .ph-viewer-top{padding:0 16px 10px;grid-template-columns:44px 1fr 44px;min-height:52px}
+.ios26-photos .ph-glass-button{color:#1c1c1e;background:rgba(245,245,247,.92);border:1px solid rgba(0,0,0,.08);box-shadow:0 1px 4px rgba(0,0,0,.06);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px)}
+.ios26-photos .ph-viewer-heading b{color:#1c1c1e;font-size:16px;font-weight:600}
+.ios26-photos .ph-viewer-heading small{color:#6d6d72;font-size:12px}
+.ios26-photos .ph-viewer-image{background:#fff}
+.ios26-photos .ph-filmstrip{height:72px;padding:10px 8px 13px;gap:3px}
+.ios26-photos .ph-filmstrip button{flex:0 0 49px;width:49px;height:49px;border-radius:3px}
+.ios26-photos .ph-filmstrip button.current{border:2px solid #1c1c1e;box-shadow:none}
+.ios26-photos .ph-viewer-tools{display:flex;justify-content:space-between;align-items:center;gap:0;margin:0 20px;padding:11px 0 calc(8px + env(safe-area-inset-bottom));border:0;border-radius:0;background:transparent;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none}
+.ios26-photos .ph-viewer-tools button{flex:0 0 20%;width:20%;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;padding:0;background:transparent;color:#007aff;font-size:12px}
+.ios26-photos .ph-tool-symbol{width:28px;height:28px;display:grid;place-items:center;font-size:24px;line-height:1}
+.ios26-photos .ph-tool-symbol svg{display:block;width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.ios26-photos .ph-tool-symbol svg.filled{fill:#ff2d55;stroke:#ff2d55}
+.ios26-photos .ph-viewer-tools button[data-act="favoritePhoto"] .ph-tool-symbol{color:#ff2d55}
+.ios26-photos .ph-viewer-tools small{font-size:11px;line-height:14px;color:#007aff;font-weight:400}
+.ios26-photos .ph-viewer-tools button[data-act="deleteOne"]{color:#ff3b30}
+.ios26-photos .ph-viewer-tools button[data-act="deleteOne"] small{color:#ff3b30}
+.ios26-photos .ph-viewer-details{background:rgba(250,250,252,.97);border:1px solid rgba(0,0,0,.1);color:#1c1c1e;box-shadow:0 10px 35px #0002}
+.ios26-photos .ph-details-date,.ios26-photos .ph-details-meta{color:#6d6d72}
+.ios26-photos .ph-viewer-details>button{border-top:1px solid rgba(0,0,0,.1);color:#007aff}
+@media(min-width:600px){.ios26-photos .ph-viewer{background:#fff!important}}
 
 </style>
 </body>
