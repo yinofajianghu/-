@@ -2100,9 +2100,9 @@ function renderSpotify(){
 }
 function playSong(i){
  const songs=Array.isArray(spotifyAllTracks)?spotifyAllTracks:(Array.isArray(CONFIG.spotify?.songs)?CONFIG.spotify.songs:[]);if(!songs.length)return;closeAudio();currentSong=(i+songs.length)%songs.length;songProgress=0;songPlaying=true;
- const song=songs[currentSong];if(song.audio){audioEl=new Audio(song.audio);audioEl.loop=false;audioEl.addEventListener('timeupdate',()=>{if(audioEl){songProgress=audioEl.currentTime;updatePlayerProgress()}});audioEl.addEventListener('ended',()=>{playSong((currentSong+1)%songs.length);if($('#fullPlayer'))openFullPlayer()});audioEl.addEventListener('error',()=>{if(audioEl){audioEl=null;startFakeProgress()}});audioEl.play().catch(()=>{if(audioEl){audioEl=null;startFakeProgress()}});}
+ const song=songs[currentSong];if(song.audio){const player=new Audio(song.audio);audioEl=player;player.loop=false;player.addEventListener('timeupdate',()=>{if(audioEl===player){songProgress=player.currentTime;updatePlayerProgress()}});player.addEventListener('ended',()=>{if(audioEl!==player)return;playSong((currentSong+1)%songs.length);if($('#fullPlayer'))openFullPlayer()});player.addEventListener('error',()=>{if(audioEl===player){audioEl=null;startFakeProgress()}});player.play().catch(()=>{if(audioEl===player){audioEl=null;startFakeProgress()}});}
  else startFakeProgress();
- const mini=$('#miniPlayer');if(mini){mini.style.display='flex';$('#miniTitle').textContent=song.title;$('#miniArtist').textContent=song.artist;$('#miniCover').style.background=CONFIG.spotify.cover?`center/cover url("${CONFIG.spotify.cover}")`:'linear-gradient(145deg,#355c4c,#101b17)';$('#miniToggle').textContent='Ⅱ';}
+ const mini=$('#miniPlayer');if(mini){mini.style.display='flex';$('#miniTitle').textContent=song.title;$('#miniArtist').textContent=song.artist;$('#miniCover').style.background=CONFIG.spotify?.cover?`center/cover url("${CONFIG.spotify.cover}")`:'linear-gradient(145deg,#355c4c,#101b17)';$('#miniToggle').textContent='Ⅱ';}
  document.querySelectorAll('[data-song]').forEach((el,idx)=>{const title=el.querySelector('.song-title');if(title){title.style.color=idx===currentSong?'#1db954':'white';title.textContent=(idx===currentSong?'♫ ':'')+songs[idx].title}});
  updatePlayerProgress();
  if($('#appContent')?.querySelector('.sp-app'))renderSpotify();
