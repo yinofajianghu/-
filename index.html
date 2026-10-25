@@ -342,23 +342,30 @@ html,body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro 
 #appView:not(.dark) #appContent .page .simple-card{color:#111}
 
 
-/* Home screen text: light appearance uses dark text; dark/default uses light text. */
-#home .status,#home .status *,
-#home .widget,#home .widget *,
-#home .app-icon,#home .app-name{color:#fff;text-shadow:0 1px 5px #0006}
-#home .battery{border-color:#fff}
-#home .battery:before,#home .battery:after{background:#fff}
-#home .widget-label,#home .weather-desc,#home .event-row{color:#ffffffe0}
-#home .weather-place,#home .weather-temp,#home .event-title{color:#fff}
-
-@media(prefers-color-scheme:light){
-  #home .status,#home .status *,
-  #home .widget,#home .widget *,
-  #home .app-icon,#home .app-name{color:#171717;text-shadow:none}
-  #home .battery{border-color:#171717}
-  #home .battery:before,#home .battery:after{background:#171717}
-  #home .widget-label,#home .weather-desc,#home .event-row{color:#454545}
-  #home .weather-place,#home .weather-temp,#home .event-title{color:#171717}
+/* Home screen appearance colors: explicitly override inherited/component colors. */
+@media (prefers-color-scheme: dark) {
+  #home .status, #home .status *,
+  #home .widget, #home .widget *,
+  #home .app-icon, #home .app-name {
+    color: #fff !important;
+    text-shadow: 0 1px 5px #0006 !important;
+  }
+  #home .battery { border-color: #fff !important; }
+  #home .battery::before, #home .battery::after { background: #fff !important; }
+  #home .widget-label, #home .weather-desc, #home .event-row { color: #ffffffe0 !important; }
+  #home .weather-place, #home .weather-temp, #home .event-title { color: #fff !important; }
+}
+@media (prefers-color-scheme: light) {
+  #home .status, #home .status *,
+  #home .widget, #home .widget *,
+  #home .app-icon, #home .app-name {
+    color: #171717 !important;
+    text-shadow: none !important;
+  }
+  #home .battery { border-color: #171717 !important; }
+  #home .battery::before, #home .battery::after { background: #171717 !important; }
+  #home .widget-label, #home .weather-desc, #home .event-row { color: #454545 !important; }
+  #home .weather-place, #home .weather-temp, #home .event-title { color: #171717 !important; }
 }
 
 </style>
