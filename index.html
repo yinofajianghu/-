@@ -488,42 +488,72 @@ html,body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro 
   </section>
   <section id="appView"><div id="appContent"></div><div class="app-homebar-wrap"><span id="appHomebar" class="home-indicator" aria-label="返回桌面"></span></div></section>
   <section id="controlCenter" aria-label="控制中心" aria-hidden="true">
-  <div class="cc-top"><div><div class="cc-eyebrow">江湖 · 控制中心</div><span class="cc-heading">控制中心</span></div><button id="ccDone" class="cc-done" aria-label="關閉控制中心">完成</button></div>
+  <div class="cc-grabber" aria-hidden="true"></div>
   <div class="cc-pages" id="ccPages">
     <div class="cc-page" data-cc-page="0">
-      <div class="cc-connectivity">
-        <button class="cc-connect-main on" data-toggle="wifi"><span class="cc-big-symbol">⌁</span><span><b>Wi-Fi</b><small>無線網路</small></span><span class="cc-state">開啟</span></button>
-        <button class="cc-connect-main on" data-toggle="bluetooth"><span class="cc-big-symbol">ᛒ</span><span><b>藍牙</b><small>連接配件</small></span><span class="cc-state">開啟</span></button>
-        <div class="cc-mini-grid">
-          <button class="cc-round on" data-toggle="airplane"><span>✈</span><small>飛航模式</small></button>
-          <button class="cc-round" data-toggle="airdrop"><span>◉</span><small>AirDrop</small></button>
-          <button class="cc-round" data-toggle="cellular"><span>▥</span><small>行動網路</small></button>
-          <button class="cc-round" data-toggle="hotspot"><span>⌁</span><small>個人熱點</small></button>
+      <div class="cc-native-grid">
+        <div class="cc-connectivity cc-native-module">
+          <button class="cc-native-connect on" data-toggle="airplane" aria-label="飛航模式" aria-pressed="true"><span class="cc-glyph"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 16.5 10 13l-2-8 2-1 4 7 5-2.5c1.2-.6 2.4-.2 2.7.6.3.8-.2 1.7-1.3 2.3L13 16l-1 5-1.5.5-1-4-4 1.5z"/></svg></span></button>
+          <button class="cc-native-connect on" data-toggle="cellular" aria-label="行動網路" aria-pressed="true"><span class="cc-glyph"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19v-3M8 19v-6M12 19V9M16 19V5M20 19V2" /></svg></span></button>
+          <button class="cc-native-connect on" data-toggle="wifi" aria-label="Wi-Fi" aria-pressed="true"><span class="cc-glyph"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 8.5a14.2 14.2 0 0 1 19 0M5.8 12a9.3 9.3 0 0 1 12.4 0M9.2 15.5a4.4 4.4 0 0 1 5.6 0"/><circle cx="12" cy="19" r="1" fill="currentColor" stroke="none"/></svg></span></button>
+          <button class="cc-native-connect on" data-toggle="bluetooth" aria-label="藍牙" aria-pressed="true"><span class="cc-glyph"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m7 7 10 10-5 4V3l5 4L7 17"/></svg></span></button>
+          <button class="cc-native-connect" data-toggle="airdrop" aria-label="AirDrop" aria-pressed="false"><span class="cc-glyph"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M8 14.5a4.5 4.5 0 0 1 8 0M10 11.5a2.4 2.4 0 0 1 4 0"/></svg></span></button>
+          <button class="cc-native-connect" data-toggle="hotspot" aria-label="個人熱點" aria-pressed="false"><span class="cc-glyph"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="2"/><path d="M7.8 7.8a6 6 0 0 0 0 8.4m8.4-8.4a6 6 0 0 1 0 8.4M4.8 4.8a10.2 10.2 0 0 0 0 14.4m14.4-14.4a10.2 10.2 0 0 1 0 14.4"/></svg></span></button>
+        </div>
+        <div class="cc-native-media cc-media">
+          <div class="cc-media-top"><span class="cc-album">♫</span><div class="cc-track"><b>未在播放</b><small>音樂</small></div><span class="cc-output-icon">◉</span></div>
+          <div class="cc-native-progress"><i></i></div>
+          <div class="cc-media-buttons"><button aria-label="上一首">◀|</button><button id="ccPlay" aria-label="播放或暫停">▶</button><button aria-label="下一首">|▶</button></div>
+        </div>
+        <div class="cc-adjustments">
+          <div class="cc-native-slider cc-brightness">
+            <input id="brightnessControl" type="range" min="35" max="100" value="100" aria-label="螢幕亮度">
+            <span class="cc-slider-symbol"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3.5"/><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></span>
+            <output id="brightnessValue">100%</output>
+          </div>
+          <div class="cc-native-slider cc-volume">
+            <input id="volumeControl" type="range" min="0" max="100" value="65" aria-label="音量">
+            <span class="cc-slider-symbol"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9v6h4l5 4V5L7 9z"/><path d="M16 9a5 5 0 0 1 0 6m2.5-8.5a8.5 8.5 0 0 1 0 11"/></svg></span>
+            <output id="volumeValue">65%</output>
+          </div>
+        </div>
+        <div class="cc-native-control-row">
+          <button class="cc-native-wide" data-toggle="focus"><span class="cc-native-control-icon">☾</span><span>專注模式</span><span class="cc-chevron">⌄</span></button>
+          <button class="cc-native-round" data-toggle="rotation" aria-label="方向鎖定"><span class="cc-glyph"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="4" width="10" height="16" rx="2"/><path d="M4 8a8 8 0 0 1 14-3M20 4v4h-4"/></svg></span></button>
+          <button class="cc-native-round" data-toggle="silent" aria-label="靜音模式"><span class="cc-glyph"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10v4h4l5 4V6l-5 4zM17 9l4 6m0-6-4 6"/></svg></span></button>
+        </div>
+        <div class="cc-native-control-row cc-secondary-row">
+          <button class="cc-native-round" data-toggle="flashlight" aria-label="手電筒"><span class="cc-glyph">☼</span></button>
+          <button class="cc-native-round" data-toggle="timer" aria-label="計時器"><span class="cc-glyph">◷</span></button>
+          <button class="cc-native-round" data-toggle="lowpower" aria-label="低耗電模式"><span class="cc-glyph">▰</span></button>
+          <button class="cc-native-round" data-toggle="screenrecord" aria-label="螢幕錄製"><span class="cc-glyph">⦿</span></button>
         </div>
       </div>
-      <div class="cc-slider cc-brightness"><div class="cc-slider-label"><span>☼</span><b>亮度</b><output id="brightnessValue">100%</output></div><input id="brightnessControl" type="range" min="35" max="100" value="100" aria-label="螢幕亮度"></div>
-      <div class="cc-slider"><div class="cc-slider-label"><span>◖</span><b>音量</b><output id="volumeValue">65%</output></div><input id="volumeControl" type="range" min="0" max="100" value="65" aria-label="音量"></div>
-      <div class="cc-two-grid"><button class="cc-feature" data-toggle="focus"><span>☾</span><b>專注模式</b><small>勿擾與專注</small></button><button class="cc-feature" data-toggle="rotation"><span>↻</span><b>方向鎖定</b><small>直向螢幕</small></button></div>
     </div>
     <div class="cc-page" data-cc-page="1">
-      <div class="cc-section-title">媒體與播放</div>
-      <div class="cc-media"><div class="cc-album">♫</div><div class="cc-track"><b>正在播放</b><small>選擇音樂以開始播放</small><div class="cc-progress"><i></i></div><div class="cc-media-buttons"><button aria-label="上一首">|◀</button><button id="ccPlay" aria-label="播放或暫停">▶</button><button aria-label="下一首">▶|</button></div></div></div>
-      <div class="cc-two-grid"><button class="cc-feature" data-toggle="silent"><span>🔕</span><b>靜音模式</b><small>鈴聲與提示</small></button><button class="cc-feature" data-toggle="darkmode"><span>◐</span><b>深色外觀</b><small>顯示效果</small></button></div>
-      <div class="cc-slider"><div class="cc-slider-label"><span>◖</span><b>音量</b><output id="volumeValue2">65%</output></div><input id="volumeControl2" type="range" min="0" max="100" value="65" aria-label="媒體音量"></div>
+      <div class="cc-native-page-title">媒體與顯示</div>
+      <div class="cc-native-media cc-media">
+        <div class="cc-media-top"><span class="cc-album">♫</span><div class="cc-track"><b>未在播放</b><small>iPhone 上的音樂</small></div><span class="cc-output-icon">◉</span></div>
+        <div class="cc-native-progress"><i></i></div><div class="cc-media-buttons"><button aria-label="上一首">◀|</button><button id="ccPlay2" aria-label="播放或暫停">▶</button><button aria-label="下一首">|▶</button></div>
+      </div>
+      <div class="cc-native-control-row">
+        <button class="cc-native-wide" data-toggle="darkmode"><span class="cc-native-control-icon">◐</span><span>深色模式</span><span class="cc-chevron">⌄</span></button>
+        <button class="cc-native-wide" data-toggle="hearing"><span class="cc-native-control-icon">♫</span><span>聽力</span></button>
+      </div>
+      <div class="cc-native-note">控制項可點選切換。部分功能為網站介面模擬。</div>
     </div>
     <div class="cc-page" data-cc-page="2">
-      <div class="cc-section-title">快速工具</div>
-      <div class="cc-tool-grid">
-        <button class="cc-tool" data-toggle="flashlight"><span>☼</span><b>手電筒</b></button>
-        <button class="cc-tool" data-toggle="timer"><span>◷</span><b>計時器</b></button>
-        <button class="cc-tool" data-toggle="calculator"><span>＋</span><b>計算機</b></button>
-        <button class="cc-tool" data-toggle="screenrecord"><span>⦿</span><b>螢幕錄製</b></button>
-        <button class="cc-tool" data-toggle="lowpower"><span>▰</span><b>低耗電模式</b></button>
-        <button class="cc-tool" data-toggle="hearing"><span>♫</span><b>聽力</b></button>
-        <button class="cc-tool" data-toggle="camera"><span>▣</span><b>相機</b></button>
-        <button class="cc-tool" data-toggle="notes"><span>▤</span><b>備忘錄</b></button>
+      <div class="cc-native-page-title">快速控制項</div>
+      <div class="cc-native-tool-grid">
+        <button class="cc-native-tool" data-toggle="flashlight"><span>☼</span><b>手電筒</b></button>
+        <button class="cc-native-tool" data-toggle="timer"><span>◷</span><b>計時器</b></button>
+        <button class="cc-native-tool" data-toggle="calculator"><span>＋</span><b>計算機</b></button>
+        <button class="cc-native-tool" data-toggle="screenrecord"><span>⦿</span><b>螢幕錄製</b></button>
+        <button class="cc-native-tool" data-toggle="lowpower"><span>▰</span><b>低耗電模式</b></button>
+        <button class="cc-native-tool" data-toggle="hearing"><span>♫</span><b>聽力</b></button>
+        <button class="cc-native-tool" data-toggle="camera"><span>▣</span><b>相機</b></button>
+        <button class="cc-native-tool" data-toggle="notes"><span>▤</span><b>備忘錄</b></button>
       </div>
-      <div class="cc-note">點選控制項即可切換狀態。部分控制項為網站介面模擬。</div>
     </div>
   </div>
   <div class="cc-page-indicator" id="ccPageIndicator" aria-label="控制中心頁面"><button class="active" data-page="0" aria-label="第一頁"></button><button data-page="1" aria-label="第二頁"></button><button data-page="2" aria-label="第三頁"></button></div>
@@ -1080,6 +1110,63 @@ function startVideoCall(){
 #controlCenter .cc-page-indicator{flex-shrink:0;padding:10px 0 2px}
 @media(prefers-color-scheme:dark){#controlCenter{background:linear-gradient(150deg,rgba(35,39,50,.86),rgba(20,24,34,.82))!important;color:#f7f8fc!important}#controlCenter:before{background:radial-gradient(ellipse at 12% 8%,rgba(255,255,255,.14),transparent 42%),radial-gradient(ellipse at 92% 34%,rgba(78,113,184,.3),transparent 48%)}#controlCenter .cc-eyebrow{color:#c5cad6}#controlCenter .cc-heading{color:#fff}#controlCenter .cc-done{background:rgba(255,255,255,.16);color:#fff;border-color:rgba(255,255,255,.3)}#controlCenter .cc-connectivity,#controlCenter .cc-slider,#controlCenter .cc-feature,#controlCenter .cc-tool,#controlCenter .cc-media{background:rgba(255,255,255,.12)!important;border-color:rgba(255,255,255,.2)!important}}
 
+
+/* Rebuilt iOS 26-style Control Center layout */
+#controlCenter{position:absolute!important;inset:0!important;z-index:1000!important;display:none;box-sizing:border-box;isolation:isolate;overflow:hidden;padding:calc(18px + var(--safe-top)) 17px calc(20px + var(--safe-bottom))!important;color:#fff!important;background:rgba(14,16,22,.28)!important;-webkit-backdrop-filter:blur(54px) saturate(1.65)!important;backdrop-filter:blur(54px) saturate(1.65)!important}
+#controlCenter:before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:linear-gradient(160deg,rgba(18,22,31,.30),rgba(9,12,18,.54)),radial-gradient(ellipse at 80% 5%,rgba(255,255,255,.18),transparent 45%)}
+#controlCenter.active{display:flex!important;flex-direction:column!important;animation:ccIn .23s cubic-bezier(.2,.8,.2,1) both}
+#controlCenter .cc-grabber{width:36px;height:5px;border-radius:8px;background:rgba(255,255,255,.62);margin:0 auto 17px;flex-shrink:0;box-shadow:0 1px 2px #0002}
+#controlCenter .cc-pages{flex:1;min-height:0;margin:0 -1px;gap:0}
+#controlCenter .cc-page{padding:0 1px 12px;overflow-y:auto}
+#controlCenter .cc-native-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:13px;align-content:start}
+#controlCenter .cc-connectivity{grid-column:1;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;align-content:center;justify-items:center;min-height:150px;padding:15px 11px;border-radius:30px;background:rgba(32,35,43,.72)!important;border:1px solid rgba(255,255,255,.17)!important;box-shadow:inset 0 1px rgba(255,255,255,.14),0 8px 28px #0002!important;-webkit-backdrop-filter:blur(28px) saturate(1.5);backdrop-filter:blur(28px) saturate(1.5)}
+#controlCenter .cc-native-connect,#controlCenter .cc-native-round{display:grid;place-items:center;width:43px;height:43px;border:0;border-radius:50%;padding:0;color:#f5f5f7;background:rgba(255,255,255,.17);box-shadow:inset 0 1px rgba(255,255,255,.17);transition:transform .15s,background .18s}
+#controlCenter .cc-native-connect.on{background:#087cff;color:#fff;box-shadow:inset 0 1px rgba(255,255,255,.22)}
+#controlCenter .cc-glyph{display:grid;place-items:center;width:24px;height:24px;font-size:23px;line-height:1}
+#controlCenter .cc-glyph svg,#controlCenter .cc-slider-symbol svg{width:23px;height:23px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+#controlCenter .cc-media{grid-column:2;display:flex;flex-direction:column;justify-content:space-between;min-height:150px;padding:13px;border:1px solid rgba(255,255,255,.15)!important;border-radius:29px;background:rgba(40,42,49,.75)!important;color:#fff;box-shadow:inset 0 1px rgba(255,255,255,.13),0 8px 24px #0002!important}
+#controlCenter .cc-media-top{display:flex;align-items:center;gap:9px;min-width:0}
+#controlCenter .cc-album{width:43px;height:43px;border-radius:9px;background:linear-gradient(145deg,#8d8d95,#383840 70%);display:grid;place-items:center;color:#fff;font-size:22px;flex-shrink:0}
+#controlCenter .cc-track{flex:1;min-width:0}
+#controlCenter .cc-track b{font-size:12px;font-weight:600;display:block;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#controlCenter .cc-track small{display:block;color:#c5c5cc;font-size:10px;margin-top:4px}
+#controlCenter .cc-output-icon{font-size:18px;color:#d2d2d7}
+#controlCenter .cc-native-progress{height:3px;border-radius:4px;background:#ffffff38;margin:12px 0 7px}
+#controlCenter .cc-native-progress i{display:block;width:25%;height:100%;background:#f5f5f7;border-radius:4px}
+#controlCenter .cc-media-buttons{display:flex;align-items:center;justify-content:space-around}
+#controlCenter .cc-media-buttons button{border:0;background:transparent;color:#fff;font-size:14px;padding:3px 8px}
+#controlCenter .cc-media-buttons #ccPlay,#controlCenter .cc-media-buttons #ccPlay2{width:29px;height:29px;border-radius:50%;background:#f4f4f6;color:#202127;font-size:12px}
+#controlCenter .cc-adjustments{grid-column:1 / -1;display:grid;grid-template-columns:1fr 1fr;gap:13px;height:190px}
+#controlCenter .cc-native-slider{position:relative;overflow:hidden;border-radius:30px;background:rgba(35,37,44,.76);border:1px solid rgba(255,255,255,.15);box-shadow:inset 0 1px rgba(255,255,255,.14),0 8px 24px #0002}
+#controlCenter .cc-native-slider input{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:.01;z-index:3;cursor:pointer;writing-mode:vertical-lr;direction:rtl;touch-action:pan-y}
+#controlCenter .cc-native-slider:before{content:"";position:absolute;left:0;right:0;bottom:0;height:var(--fill,100%);border-radius:25px;background:linear-gradient(180deg,rgba(255,255,255,.98),rgba(235,236,240,.96));transition:height .08s}
+#controlCenter .cc-volume:before{height:65%}
+#controlCenter .cc-slider-symbol{position:absolute;z-index:2;left:0;right:0;bottom:13px;display:flex;justify-content:center;color:#33343a;pointer-events:none}
+#controlCenter .cc-slider-symbol svg{width:22px;height:22px}
+#controlCenter .cc-native-slider output{position:absolute;top:12px;left:0;right:0;text-align:center;font-size:10px;color:#fff;z-index:2;opacity:.0;pointer-events:none}
+#controlCenter .cc-native-control-row{grid-column:1 / -1;display:flex;align-items:center;gap:11px}
+#controlCenter .cc-native-wide{height:58px;flex:1;min-width:0;border-radius:30px;border:1px solid rgba(255,255,255,.16);background:rgba(39,41,49,.78);color:#fff;display:flex;align-items:center;gap:10px;padding:0 15px;font-size:12px;font-weight:600;text-align:left;box-shadow:inset 0 1px rgba(255,255,255,.12)}
+#controlCenter .cc-native-control-icon{display:grid;place-items:center;width:32px;height:32px;flex-shrink:0;border-radius:50%;background:rgba(255,255,255,.17);font-size:20px}
+#controlCenter .cc-chevron{margin-left:auto;color:#bfc0c6;font-size:18px}
+#controlCenter .cc-native-round{width:58px;height:58px;flex-shrink:0;background:rgba(39,41,49,.78);border:1px solid rgba(255,255,255,.16)}
+#controlCenter .cc-native-round.on,#controlCenter .cc-native-wide.on{background:#087cff;color:#fff}
+#controlCenter .cc-secondary-row{justify-content:space-between}
+#controlCenter .cc-native-page-title{font-size:22px;font-weight:700;letter-spacing:-.4px;margin:4px 3px 16px;color:#fff}
+#controlCenter .cc-native-tool-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+#controlCenter .cc-native-tool{min-height:78px;border:1px solid rgba(255,255,255,.16);border-radius:27px;background:rgba(39,41,49,.78);color:#fff;display:flex;align-items:center;gap:13px;padding:13px 16px;text-align:left}
+#controlCenter .cc-native-tool span{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.17);font-size:21px}
+#controlCenter .cc-native-tool b{font-size:12px;font-weight:600}
+#controlCenter .cc-native-tool.on{background:#087cff}
+#controlCenter .cc-native-note{color:#d3d3d8;font-size:11px;text-align:center;margin:20px 8px}
+#controlCenter .cc-page-indicator{padding:9px 0 10px;gap:6px}
+#controlCenter .cc-page-indicator button{width:6px;height:6px;background:#ffffff62}
+#controlCenter .cc-page-indicator button.active{width:6px;border-radius:50%;background:#fff}
+#controlCenter .cc-close{bottom:calc(8px + var(--safe-bottom));width:135px;height:5px;background:rgba(255,255,255,.88);box-shadow:0 1px 4px #0003;cursor:pointer}
+#controlCenter .cc-native-connect:active,#controlCenter .cc-native-round:active,#controlCenter .cc-native-wide:active{transform:scale(.95)}
+#controlCenter .cc-native-wide.on .cc-native-control-icon{background:#ffffff38}
+@media(max-width:370px){#controlCenter{padding-left:12px!important;padding-right:12px!important}#controlCenter .cc-native-grid{gap:9px}#controlCenter .cc-connectivity{gap:8px;padding:12px 8px}#controlCenter .cc-native-connect{width:39px;height:39px}#controlCenter .cc-media{padding:10px}#controlCenter .cc-album{width:36px;height:36px}#controlCenter .cc-adjustments{height:170px}#controlCenter .cc-native-control-row{gap:7px}#controlCenter .cc-native-round{width:51px;height:51px}#controlCenter .cc-native-wide{padding:0 10px;font-size:11px}}
+@media(max-height:700px){#controlCenter{padding-top:calc(10px + var(--safe-top))!important;padding-bottom:calc(15px + var(--safe-bottom))!important}#controlCenter .cc-grabber{margin-bottom:10px}#controlCenter .cc-connectivity,#controlCenter .cc-media{min-height:130px}#controlCenter .cc-adjustments{height:160px}#controlCenter .cc-native-wide{height:50px}#controlCenter .cc-native-round{width:50px;height:50px}}
+
 </style>`;
  const v=$('#callVideo');if(v){v.play().catch(()=>{});$('#videoCall').addEventListener('click',()=>{v.muted=false;v.play().catch(()=>{});},{once:true})}
  callTimer=setInterval(()=>{callSeconds++;$('#callDuration').textContent=String(Math.floor(callSeconds/60)).padStart(2,'0')+':'+String(callSeconds%60).padStart(2,'0')},1000);
@@ -1479,6 +1566,7 @@ wallpaperStyle();initHome();updateClock();setInterval(updateClock,1000);
   const brightness = $('#brightnessControl');
   if (brightness) {
     const applyBrightness = () => {
+      const fill = document.querySelector('#controlCenter .cc-brightness'); if(fill) fill.style.setProperty('--fill', (Number(brightness.value)||100)+'%');
       const value = Math.max(35, Math.min(100, Number(brightness.value) || 100));
       phone.style.setProperty('--screen-brightness', String(value / 100));
       brightness.setAttribute('aria-valuenow', String(value));
@@ -1489,7 +1577,7 @@ wallpaperStyle();initHome();updateClock();setInterval(updateClock,1000);
     applyBrightness();
   }
   const volumeInputs=Array.from(document.querySelectorAll('#volumeControl,#volumeControl2'));
-  function syncVolume(source){volumeInputs.forEach(el=>{if(el!==source)el.value=source.value});['#volumeValue','#volumeValue2'].forEach(sel=>{const o=$(sel);if(o)o.textContent=source.value+'%'})}
+  function syncVolume(source){const slider=document.querySelector('#controlCenter .cc-volume');if(slider)slider.style.setProperty('--fill',source.value+'%');volumeInputs.forEach(el=>{if(el!==source)el.value=source.value});['#volumeValue','#volumeValue2'].forEach(sel=>{const o=$(sel);if(o)o.textContent=source.value+'%'})}
   volumeInputs.forEach(el=>{el.addEventListener('input',()=>syncVolume(el));el.addEventListener('change',()=>syncVolume(el))});
   const ccPages=$('#ccPages'),ccIndicators=Array.from(document.querySelectorAll('#ccPageIndicator [data-page]'));
   if(ccPages){
