@@ -672,6 +672,17 @@ html,body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro 
 .x2-empty{padding:32px 18px;text-align:center;color:#71767B}
 @media(min-width:500px){#appView.dark .x2-app{max-width:430px;left:50%;transform:translateX(-50%);border-left:1px solid #2F3336;border-right:1px solid #2F3336}.x2-top{height:58px}}
 
+
+/* YouTube app */
+.yt-app{position:absolute;inset:0;background:#0f0f0f;color:#f1f1f1;display:flex;flex-direction:column;font-family:Arial,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;overflow:hidden}
+.yt-top{height:52px;display:flex;align-items:center;gap:12px;padding:0 15px;flex-shrink:0}.yt-logo{display:flex;align-items:center;gap:5px;font-size:19px;font-weight:800;letter-spacing:-1px;white-space:nowrap}.yt-logo-mark{width:27px;height:19px;border-radius:6px;background:#ff0033;display:inline-flex;align-items:center;justify-content:center;color:white;font-size:12px}.yt-top-spacer{flex:1}.yt-iconbtn{width:35px;height:35px;display:inline-flex;align-items:center;justify-content:center;background:transparent;border-radius:50%;font-size:21px;flex-shrink:0}.yt-iconbtn:active,.yt-chip:active,.yt-bottom button:active{background:#333}
+.yt-searchbar{display:flex;gap:7px;padding:0 12px 12px;flex-shrink:0}.yt-searchbar input{min-width:0;flex:1;border:1px solid #3f3f3f;background:#121212;color:white;border-radius:22px;padding:10px 14px;font-size:14px;outline:none}.yt-search-submit{width:43px;border-radius:22px;background:#272727;font-size:18px}.yt-chips{display:flex;gap:8px;overflow-x:auto;padding:0 12px 12px;scrollbar-width:none;flex-shrink:0}.yt-chips::-webkit-scrollbar{display:none}.yt-chip{white-space:nowrap;border-radius:8px;background:#272727;color:#f1f1f1;padding:8px 12px;font-size:12px}.yt-chip.active{background:#f1f1f1;color:#0f0f0f;font-weight:700}
+.yt-content{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin}.yt-video{margin-bottom:20px;cursor:pointer}.yt-thumb{aspect-ratio:16/9;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;color:#fff}.yt-thumb-art{font-size:clamp(42px,14vw,86px);filter:drop-shadow(0 5px 12px #0006)}.yt-duration{position:absolute;right:8px;bottom:8px;border-radius:4px;background:#000d;padding:3px 5px;font-size:11px;font-weight:700}.yt-video-info{display:flex;gap:11px;padding:11px 13px 0}.yt-channel-avatar{width:37px;height:37px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#353535;font-size:17px;flex-shrink:0}.yt-video-text{flex:1;min-width:0}.yt-video-title{font-size:14px;font-weight:650;line-height:1.42;margin:0 0 5px}.yt-video-meta{font-size:12px;color:#aaa;line-height:1.55}.yt-more{background:transparent;font-size:20px;width:26px;align-self:flex-start}
+.yt-bottom{height:61px;display:flex;align-items:stretch;justify-content:space-around;border-top:1px solid #292929;background:#0f0f0f;flex-shrink:0;padding-bottom:env(safe-area-inset-bottom,0px)}.yt-bottom button{background:transparent;min-width:0;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:10px;color:#f1f1f1}.yt-tab-icon{font-size:21px;line-height:1}.yt-create{width:34px;height:29px;border-radius:50%;background:#272727;font-size:24px;display:flex;align-items:center;justify-content:center}
+.yt-section-title{font-size:21px;font-weight:750;padding:14px 14px 16px}.yt-shorts-card{margin:0 10px 16px;aspect-ratio:9/13;border-radius:12px;overflow:hidden;position:relative;display:flex;align-items:center;justify-content:center;font-size:64px}.yt-shorts-caption{position:absolute;bottom:14px;left:12px;right:12px;font-size:13px;font-weight:700;text-shadow:0 2px 5px #000}.yt-shorts-actions{position:absolute;right:9px;bottom:55px;display:flex;flex-direction:column;gap:17px}.yt-shorts-actions button{background:#0006;border-radius:50%;width:40px;height:40px;font-size:19px}
+.yt-watch{padding-bottom:22px}.yt-player{aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;position:relative}.yt-player-art{font-size:72px}.yt-player-play{position:absolute;background:#0008;border-radius:50%;width:58px;height:58px;font-size:25px}.yt-watch-body{padding:14px}.yt-watch-title{font-size:18px;line-height:1.4;font-weight:750;margin:0 0 9px}.yt-watch-meta{color:#aaa;font-size:12px;margin-bottom:14px}.yt-channel-row{display:flex;align-items:center;gap:10px;margin:13px 0}.yt-channel-name{font-size:14px;font-weight:700}.yt-channel-subs{font-size:11px;color:#aaa;margin-top:4px}.yt-subscribe{margin-left:auto;border-radius:20px;padding:9px 13px;background:#f1f1f1;color:#0f0f0f;font-size:12px;font-weight:750}.yt-subscribe.subscribed{background:#272727;color:#f1f1f1}.yt-action-row{display:flex;gap:8px;overflow-x:auto;padding:6px 0 13px;scrollbar-width:none}.yt-action-pill{display:flex;align-items:center;gap:7px;border-radius:22px;background:#272727;padding:10px 13px;white-space:nowrap;font-size:12px}.yt-action-pill.active{background:#454545}.yt-description{background:#272727;border-radius:12px;padding:12px;font-size:12px;line-height:1.6;color:#ddd}.yt-comments-head{display:flex;align-items:center;justify-content:space-between;font-weight:750;margin:19px 0 12px}.yt-comment{font-size:12px;line-height:1.55;margin:12px 0;display:flex;gap:9px}.yt-comment b{display:block;margin-bottom:3px}.yt-comment-form{display:flex;gap:8px;margin-top:12px}.yt-comment-form input{min-width:0;flex:1;background:transparent;border:0;border-bottom:1px solid #555;color:#fff;padding:9px 2px}.yt-comment-form button{background:#3ea6ff;color:#0f0f0f;border-radius:18px;padding:8px 12px;font-size:12px;font-weight:700}
+.yt-empty{padding:45px 22px;text-align:center;color:#aaa;font-size:13px;line-height:1.7}.yt-empty-icon{font-size:42px;margin-bottom:12px}.yt-profile-head{padding:20px 16px}.yt-profile-banner{height:90px;border-radius:12px;background:linear-gradient(120deg,#a8d7ff,#a58bd6,#f2b9c8)}.yt-profile-info{display:flex;align-items:center;gap:13px;margin:16px 0}.yt-profile-avatar{width:68px;height:68px;border-radius:50%;background:#343434;display:flex;align-items:center;justify-content:center;font-size:30px}.yt-profile-info h2{font-size:19px;margin:0 0 5px}.yt-profile-info p{font-size:12px;color:#aaa;margin:0}.yt-settings-row{display:flex;align-items:center;gap:14px;padding:15px;border-bottom:1px solid #292929;font-size:14px;cursor:pointer}.yt-toast{position:absolute;left:16px;right:16px;bottom:72px;padding:12px 16px;border-radius:10px;background:#eee;color:#111;font-size:13px;box-shadow:0 5px 22px #0006;z-index:5}.yt-backline{display:flex;align-items:center;gap:10px;padding:10px 14px}.yt-backline button{background:transparent;font-size:22px}.yt-backline span{font-weight:700}
+
 </style>
 </head>
 <body>
@@ -1418,13 +1429,92 @@ function renderCamera(){
  let touchX=0;const view=$id('jhCameraView');view.addEventListener('touchstart',e=>{touchX=e.changedTouches[0]?.clientX||0},{passive:true});view.addEventListener('touchend',e=>{const dx=(e.changedTouches[0]?.clientX||touchX)-touchX;if(Math.abs(dx)>55){const modes=['CINEMATIC','VIDEO','PHOTO','PORTRAIT','PANO'];mode=modes[Math.max(0,Math.min(modes.length-1,modes.indexOf(mode)+(dx<0?1:-1)))];updateMode();}},{passive:true});
  updateMode();startStream();
 }
+function renderYouTube(){
+ $('#home').classList.remove('active');$('#lock').classList.remove('active');$('#appView').classList.add('active');$('#appView').classList.remove('dark');
+ const root=$('#appContent'),esc=s=>escapeHTML(String(s==null?'':s));
+ const state={tab:'home',chip:'全部',query:'',watch:null,liked:{},saved:{},subscribed:{},playing:false,comments:{},toast:'',toastTimer:null,history:[]};
+ const videos=[
+ {id:'v1',title:'把日常過成喜歡的樣子 ☁️｜療癒系生活 Vlog',channel:'Mori 日常',views:'觀看次數：24萬次',age:'2 天前',duration:'18:42',art:'☁️',bg:'linear-gradient(135deg,#f3c6b8,#9bb4cb 55%,#53677d)',avatar:'🌿',category:'生活',desc:'記錄一些平凡卻值得珍惜的日子。今天一起整理房間、煮咖啡，慢慢找回生活的節奏。'},
+ {id:'v2',title:'【作業用】深夜咖啡廳音樂 ☕ 放鬆・讀書・工作',channel:'Quiet Room',views:'觀看次數：180萬次',age:'1 週前',duration:'1:02:15',art:'☕',bg:'linear-gradient(135deg,#533c36,#c18b64 50%,#171a24)',avatar:'☕',category:'音樂',desc:'適合讀書、工作、放鬆時聆聽的咖啡廳氛圍音樂。'},
+ {id:'v3',title:'新手也能學會！5 個超實用的手機攝影技巧',channel:'小宇的影像筆記',views:'觀看次數：9.8萬次',age:'3 天前',duration:'12:08',art:'📷',bg:'linear-gradient(135deg,#243b55,#4e7b8b,#10141b)',avatar:'📸',category:'科技',desc:'從構圖、曝光到光線，分享五個容易上手的手機攝影技巧。'},
+ {id:'v4',title:'一個人旅行的週末｜海邊、散步與日落',channel:'日光旅行社',views:'觀看次數：53萬次',age:'5 天前',duration:'21:36',art:'🌅',bg:'linear-gradient(145deg,#f9c784,#e78372 50%,#55517e)',avatar:'🌅',category:'旅遊',desc:'把週末留給自己，去海邊走走，讓心情吹吹風。'},
+ {id:'v5',title:'遊戲實況精華！這操作我自己都不敢相信 😂',channel:'阿哲遊戲台',views:'觀看次數：32萬次',age:'昨天',duration:'15:27',art:'🎮',bg:'linear-gradient(135deg,#602b82,#e53e70,#22234c)',avatar:'🎮',category:'遊戲',desc:'本週最好笑的遊戲實況片段整理！'},
+ {id:'v6',title:'10 分鐘快速料理：下班後也能吃得很好',channel:'好好吃飯',views:'觀看次數：76萬次',age:'6 天前',duration:'10:11',art:'🍜',bg:'linear-gradient(135deg,#e7b46b,#d86b4c,#53372e)',avatar:'🍜',category:'美食',desc:'簡單食材快速完成一餐，忙碌的日子也要好好吃飯。'},
+ {id:'v7',title:'這週最想重播的 5 首歌 🎧｜華語歌單',channel:'耳機裡的宇宙',views:'觀看次數：41萬次',age:'4 天前',duration:'23:49',art:'🎧',bg:'linear-gradient(135deg,#344e91,#a46cb5,#ed9a9b)',avatar:'🎵',category:'音樂',desc:'收錄這週反覆播放的幾首歌，戴上耳機一起聽。'},
+ {id:'v8',title:'整理房間前後差太多了！極簡收納改造',channel:'Room Reset',views:'觀看次數：15萬次',age:'1 天前',duration:'14:03',art:'🪴',bg:'linear-gradient(135deg,#c7d9c0,#91a8a1,#506d68)',avatar:'🪴',category:'生活',desc:'從凌亂桌面開始，分享舒服又好維持的收納方法。'}
+ ];
+ const shorts=[{title:'今日份療癒小貓 🐈',art:'🐈',bg:'linear-gradient(150deg,#f4bdcb,#6d6cb4)'},{title:'30 秒學會漂亮的咖啡拉花 ☕',art:'☕',bg:'linear-gradient(150deg,#d3a47a,#4e3228)'},{title:'日落真的太美了 🌇',art:'🌇',bg:'linear-gradient(150deg,#ffb26b,#754b87)'}];
+ const findVideo=id=>videos.find(v=>v.id===id)||videos[0];
+ function toast(msg){state.toast=msg;drawToast();clearTimeout(state.toastTimer);state.toastTimer=setTimeout(()=>{state.toast='';drawToast();},2200);}
+ function drawToast(){const old=root.querySelector('.yt-toast');if(old)old.remove();if(state.toast){const el=document.createElement('div');el.className='yt-toast';el.textContent=state.toast;root.querySelector('.yt-app').appendChild(el);}}
+ function top(){return '<header class="yt-top"><div class="yt-logo"><span class="yt-logo-mark">▶</span><span>YouTube</span></div><div class="yt-top-spacer"></div><button class="yt-iconbtn" data-action="cast" aria-label="投放">▣</button><button class="yt-iconbtn" data-action="notifications" aria-label="通知">♧</button><button class="yt-iconbtn" data-action="searchfocus" aria-label="搜尋">⌕</button></header>';}
+ function search(){return '<form class="yt-searchbar" id="ytSearchForm"><input id="ytSearchInput" value="'+esc(state.query)+'" placeholder="搜尋 YouTube" aria-label="搜尋 YouTube"><button class="yt-search-submit" type="submit" aria-label="搜尋">⌕</button><button class="yt-iconbtn" type="button" data-action="voice" aria-label="語音搜尋">🎙</button></form>';}
+ function chips(){return '<div class="yt-chips">'+['全部','音樂','遊戲','生活','科技','旅遊','美食','最新上傳'].map(c=>'<button class="yt-chip '+(state.chip===c?'active':'')+'" data-chip="'+c+'">'+c+'</button>').join('')+'</div>';}
+ function card(v){return '<article class="yt-video" data-video="'+v.id+'"><div class="yt-thumb" style="background:'+v.bg+'"><span class="yt-thumb-art">'+v.art+'</span><span class="yt-duration">'+v.duration+'</span></div><div class="yt-video-info"><div class="yt-channel-avatar">'+v.avatar+'</div><div class="yt-video-text"><p class="yt-video-title">'+esc(v.title)+'</p><div class="yt-video-meta">'+esc(v.channel)+'<br>'+esc(v.views)+' · '+esc(v.age)+'</div></div><button class="yt-more" data-action="videoMore" data-id="'+v.id+'" aria-label="更多選項">⋮</button></div></article>';}
+ function empty(icon,title,desc){return '<div class="yt-empty"><div class="yt-empty-icon">'+icon+'</div><b>'+title+'</b><br>'+desc+'</div>';}
+ function bottom(){return '<nav class="yt-bottom"><button data-tab="home"><span class="yt-tab-icon">⌂</span>首頁</button><button data-tab="shorts"><span class="yt-tab-icon">▣</span>Shorts</button><button data-action="create"><span class="yt-create">＋</span></button><button data-tab="subscriptions"><span class="yt-tab-icon">▤</span>訂閱內容</button><button data-tab="you"><span class="yt-tab-icon">●</span>個人中心</button></nav>';}
+ function draw(){
+  let body='';
+  if(state.watch){
+   const v=findVideo(state.watch),comments=state.comments[v.id]||[{name:'小雨',text:'好喜歡這種氛圍！💗'},{name:'阿米',text:'謝謝分享，已經收藏了。'},{name:'Chris',text:'This is so relaxing!'}];
+   body='<div class="yt-content"><div class="yt-watch"><div class="yt-player" style="background:'+v.bg+'"><span class="yt-player-art">'+v.art+'</span><button class="yt-player-play" data-action="play" aria-label="播放或暫停">'+(state.playing?'Ⅱ':'▶')+'</button><span class="yt-duration">示範影片</span></div><div class="yt-watch-body"><h1 class="yt-watch-title">'+esc(v.title)+'</h1><div class="yt-watch-meta">'+esc(v.views)+' · '+esc(v.age)+' · '+esc(v.category)+'</div><div class="yt-channel-row"><div class="yt-channel-avatar">'+v.avatar+'</div><div><div class="yt-channel-name">'+esc(v.channel)+'</div><div class="yt-channel-subs">訂閱者 12.8 萬人</div></div><button class="yt-subscribe '+(state.subscribed[v.channel]?'subscribed':'')+'" data-action="subscribe" data-channel="'+esc(v.channel)+'">'+(state.subscribed[v.channel]?'已訂閱':'訂閱')+'</button></div><div class="yt-action-row"><button class="yt-action-pill '+(state.liked[v.id]?'active':'')+'" data-action="like" data-id="'+v.id+'">👍 '+(state.liked[v.id]?'已喜歡':'喜歡')+'</button><button class="yt-action-pill" data-action="dislike">👎 不喜歡</button><button class="yt-action-pill" data-action="share" data-id="'+v.id+'">↗ 分享</button><button class="yt-action-pill '+(state.saved[v.id]?'active':'')+'" data-action="save" data-id="'+v.id+'">'+(state.saved[v.id]?'✓ 已儲存':'▣ 儲存')+'</button><button class="yt-action-pill" data-action="download">↓ 下載</button></div><div class="yt-description">'+esc(v.desc)+'<br><span style="color:#aaa">#YouTube #推薦影片</span></div><div class="yt-comments-head"><span>留言 '+comments.length+' 則</span><button class="yt-iconbtn" data-action="sortcomments" aria-label="留言排序">↕</button></div><div class="yt-comment-form"><input id="ytCommentInput" placeholder="新增留言…" aria-label="新增留言"><button data-action="comment" data-id="'+v.id+'">留言</button></div>'+comments.map(c=>'<div class="yt-comment"><div class="yt-channel-avatar">●</div><div><b>'+esc(c.name)+'</b>'+esc(c.text)+'</div></div>').join('')+'<div class="yt-section-title">接下來播放</div>'+videos.filter(x=>x.id!==v.id).slice(0,3).map(card).join('')+'</div></div>';
+  }else if(state.tab==='home'){
+   const q=state.query.trim().toLowerCase();let list=videos.filter(v=>(state.chip==='全部'||state.chip==='最新上傳'||v.category===state.chip)&&(!q||(v.title+' '+v.channel+' '+v.category).toLowerCase().includes(q)));if(state.chip==='最新上傳')list=list.slice().reverse();
+   body=search()+chips()+'<div class="yt-content">'+(list.length?list.map(card).join(''):empty('⌕','找不到影片','試試其他搜尋關鍵字或分類。'))+'</div>';
+  }else if(state.tab==='shorts'){
+   body='<div class="yt-content"><div class="yt-section-title">Shorts</div>'+shorts.map((s,i)=>'<div class="yt-shorts-card" style="background:'+s.bg+'"><span>'+s.art+'</span><div class="yt-shorts-actions"><button data-action="shortLike">♡</button><button data-action="shortComment">▤</button><button data-action="shortShare">↗</button></div><div class="yt-shorts-caption">'+esc(s.title)+'<br><span style="font-weight:400">@shorts_daily</span></div></div>').join('')+'</div>';
+  }else if(state.tab==='subscriptions'){
+   const list=videos.filter(v=>state.subscribed[v.channel]);body='<div class="yt-content"><div class="yt-section-title">訂閱內容</div>'+(list.length?list.map(card).join(''):empty('▤','還沒有訂閱的頻道','觀看影片後點選「訂閱」，這裡就會顯示該頻道的內容。'))+'<div class="yt-section-title">你可能會喜歡</div>'+videos.slice(0,3).map(card).join('')+'</div>';
+  }else if(state.tab==='you'){
+   body='<div class="yt-content"><div class="yt-profile-head"><div class="yt-profile-banner"></div><div class="yt-profile-info"><div class="yt-profile-avatar">🙂</div><div><h2>你的 YouTube</h2><p>@local_user · 本機模擬帳戶</p><p style="margin-top:5px">管理你的觀看與收藏</p></div></div><button class="yt-action-pill" data-action="history">◷ 觀看記錄</button> <button class="yt-action-pill" data-action="saved">▣ 已儲存的影片</button></div><div class="yt-settings-row" data-action="history">◷　觀看記錄 <span style="margin-left:auto">›</span></div><div class="yt-settings-row" data-action="saved">▣　播放清單與已儲存影片 <span style="margin-left:auto">›</span></div><div class="yt-settings-row" data-action="yourVideos">▶　你的影片 <span style="margin-left:auto">›</span></div><div class="yt-settings-row" data-action="settings">⚙　設定 <span style="margin-left:auto">›</span></div><div class="yt-section-title">最近觀看</div>'+(state.history.length?state.history.slice().reverse().map(card).join(''):empty('◷','尚無觀看記錄','打開一部影片後就會顯示在這裡。'))+'</div>';
+  }else if(state.tab==='history'){
+   body='<div class="yt-backline"><button data-action="back">‹</button><span>觀看記錄</span><div class="yt-top-spacer"></div><button data-action="clearHistory">⋮</button></div><div class="yt-content">'+(state.history.length?state.history.slice().reverse().map(card).join(''):empty('◷','尚無觀看記錄','你看過的影片會顯示在這裡。'))+'</div>';
+  }else if(state.tab==='saved'){
+   const list=videos.filter(v=>state.saved[v.id]);body='<div class="yt-backline"><button data-action="back">‹</button><span>已儲存的影片</span></div><div class="yt-content">'+(list.length?list.map(card).join(''):empty('▣','尚未儲存影片','在影片頁面按「儲存」，就會放在這裡。'))+'</div>';
+  }else if(state.tab==='settings'){
+   body='<div class="yt-backline"><button data-action="back">‹</button><span>設定</span></div><div class="yt-content">'+[['帳戶','管理本機模擬帳戶'],['一般','外觀與播放偏好'],['自動播放','此模擬介面不播放真實串流'],['通知','管理示範通知'],['隱私權與資料','資料只保存在目前頁面工作階段']].map(a=>'<div class="yt-settings-row" data-action="settingItem">⚙　<div>'+a[0]+'<div style="font-size:11px;color:#aaa;margin-top:4px">'+a[1]+'</div></div><span style="margin-left:auto">›</span></div>').join('')+'</div>';
+  }else body='<div class="yt-content">'+empty('▶','YouTube','選擇下方的分頁繼續瀏覽。')+'</div>';
+  root.innerHTML='<div class="yt-app">'+(state.watch?'<div class="yt-backline"><button data-action="back" aria-label="返回">‹</button><span>YouTube</span><div class="yt-top-spacer"></div><button class="yt-iconbtn" data-action="cast">▣</button><button class="yt-iconbtn" data-action="share">↗</button></div>':top())+body+bottom()+'</div>';
+  const form=root.querySelector('#ytSearchForm');if(form)form.onsubmit=e=>{e.preventDefault();state.query=root.querySelector('#ytSearchInput').value;draw();};
+  root.querySelectorAll('[data-video]').forEach(el=>el.addEventListener('click',e=>{if(e.target.closest('[data-action="videoMore"]'))return;const id=el.getAttribute('data-video');state.watch=id;state.playing=false;if(!state.history.some(v=>v.id===id))state.history.push(findVideo(id));draw();}));
+  root.querySelectorAll('[data-chip]').forEach(el=>el.onclick=()=>{state.chip=el.getAttribute('data-chip');draw();});
+  root.querySelectorAll('[data-tab]').forEach(el=>el.onclick=()=>{state.tab=el.getAttribute('data-tab');state.watch=null;state.query='';state.chip='全部';draw();});
+  root.querySelectorAll('[data-action]').forEach(el=>el.onclick=e=>{
+   e.stopPropagation();const a=el.getAttribute('data-action'),id=el.getAttribute('data-id'),v=id?findVideo(id):null;
+   if(a==='back'){if(state.watch){state.watch=null;state.playing=false;}else if(['history','saved','settings'].includes(state.tab))state.tab='you';else state.tab='home';draw();}
+   else if(a==='searchfocus'){const i=root.querySelector('#ytSearchInput');if(i)i.focus();else{state.tab='home';draw();root.querySelector('#ytSearchInput')?.focus();}}
+   else if(a==='cast')toast('投放功能目前為示範介面。');
+   else if(a==='notifications')toast('目前沒有新通知。');
+   else if(a==='voice')toast('語音搜尋需要裝置麥克風權限；此處為介面示範。');
+   else if(a==='create')toast('建立功能：上傳影片、建立 Shorts、直播（示範）。');
+   else if(a==='videoMore')toast('影片選項：不感興趣、稍後觀看、檢舉（示範）。');
+   else if(a==='play'){state.playing=!state.playing;draw();toast(state.playing?'示範播放中':'已暫停');}
+   else if(a==='like'){state.liked[id]=!state.liked[id];draw();toast(state.liked[id]?'已加入喜歡的影片':'已取消喜歡');}
+   else if(a==='dislike')toast('已記錄你的偏好（示範）。');
+   else if(a==='share'){const url='https://www.youtube.com/watch?v='+(id||state.watch||'v1');if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(url).then(()=>toast('影片連結已複製')).catch(()=>toast('分享連結：'+url));else toast('分享連結：'+url);}
+   else if(a==='save'){state.saved[id]=!state.saved[id];draw();toast(state.saved[id]?'已儲存到稍後觀看':'已從儲存清單移除');}
+   else if(a==='download')toast('下載功能需要真實 YouTube 服務；此處為示範。');
+   else if(a==='subscribe'){const ch=el.getAttribute('data-channel');state.subscribed[ch]=!state.subscribed[ch];draw();toast(state.subscribed[ch]?'已訂閱頻道':'已取消訂閱');}
+   else if(a==='comment'){const i=root.querySelector('#ytCommentInput'),text=i&&i.value.trim();if(!text){toast('請先輸入留言。');return;}state.comments[id]=state.comments[id]||[{name:'小雨',text:'好喜歡這種氛圍！💗'},{name:'阿米',text:'謝謝分享，已經收藏了。'},{name:'Chris',text:'This is so relaxing!'}];state.comments[id].unshift({name:'你',text:text});draw();}
+   else if(a==='sortcomments')toast('留言依熱門程度排列（示範）。');
+   else if(a==='shortLike')toast('已喜歡這則 Shorts（示範）。');
+   else if(a==='shortComment')toast('開啟 Shorts 留言（示範）。');
+   else if(a==='shortShare')toast('已準備分享 Shorts（示範）。');
+   else if(a==='history'){state.tab='history';draw();}
+   else if(a==='saved'){state.tab='saved';draw();}
+   else if(a==='settings'){state.tab='settings';draw();}
+   else if(a==='yourVideos')toast('本機模擬帳戶尚無上傳影片。');
+   else if(a==='clearHistory'){state.history=[];draw();toast('觀看記錄已清除');}
+   else if(a==='settingItem')toast('此項設定為介面示範。');
+  });
+ }
+ draw();
+}
 function renderSimple(id){
  if(id==='camera'){renderCamera();return;}
+ if(id==='youtube'){renderYouTube();return;}
  $('#home').classList.remove('active');$('#lock').classList.remove('active');$('#appView').classList.add('active');$('#appView').classList.remove('dark');
- const data={
-  youtube:['YouTube','<div style="background:#111;color:#fff;border-radius:15px;padding:35px 15px;text-align:center;font-size:45px">▶</div><div class="simple-card">おすすめの動画<br><span class="muted">このスマートフォンの持ち主</span></div>'],
-  messages:['訊息',`<div class="simple-card">💬　${escapeHTML(CONFIG.contactName)}<br><span class="muted">今どこにいるの？</span></div>`]
- };
+ const data={messages:['訊息',`<div class="simple-card">💬　${escapeHTML(CONFIG.contactName)}<br><span class="muted">今どこにいるの？</span></div>`]};
  $('#appContent').innerHTML=`<div class="page"><div class="nav"><button class="nav-button" id="simpleBack">‹ 返回</button><span class="nav-title">${data[id][0]}</span><span></span></div>${data[id][1]}</div>`;$('#simpleBack').onclick=goHome;
 }
 function renderMessages(){
