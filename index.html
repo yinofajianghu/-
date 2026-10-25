@@ -540,7 +540,22 @@ function unlock() {
     window.setTimeout(finish, 260);
   }
 }
-function showLock(){closeAudio();stopCall();$('#appView').classList.remove('active');$('#home').classList.remove('active');$('#lock').classList.add('active');}
+let recentAppReturnAt = 0;
+function showLock(){
+ const app=$('#appView'), home=$('#home');
+ if(app?.classList.contains('active')) recentAppReturnAt=Date.now();
+ else recentAppReturnAt=0;
+ closeAudio();stopCall();app.classList.remove('active');home.classList.remove('active');$('#lock').classList.add('active');
+}
+function returnToRecentApp(){
+ if(!recentAppReturnAt || Date.now()-recentAppReturnAt>10000) return false;
+ recentAppReturnAt=0;
+ $('#lock').classList.remove('active');
+ $('#passcodeScreen').classList.remove('active');
+ $('#home').classList.remove('active');
+ $('#appView').classList.add('active');
+ return true;
+}
 function showApp(id){
  if(id==="instagram"){startIncomingCall();return}
  if(id==="messages"){renderMessages();return}
@@ -823,7 +838,7 @@ document.addEventListener('keydown',e=>{if(!$('#passcodeScreen').classList.conta
 const lockScreen=$('#lock');let swipeStartY=null,swipePointerId=null,swipeMoved=false;
 lockScreen.addEventListener('pointerdown',e=>{if(!lockScreen.classList.contains('active')||unlockInProgress)return;if(e.pointerType==='mouse'&&e.button!==0)return;swipeStartY=e.clientY;swipePointerId=e.pointerId;swipeMoved=false;lockScreen.classList.add('dragging');try{lockScreen.setPointerCapture(e.pointerId)}catch(_){}},{passive:true});
 lockScreen.addEventListener('pointermove',e=>{if(swipeStartY===null||e.pointerId!==swipePointerId)return;const delta=Math.min(0,e.clientY-swipeStartY);if(Math.abs(delta)>3)swipeMoved=true;const progress=Math.min(1,Math.abs(delta)/Math.max(180,window.innerHeight*.24));lockScreen.style.transform=`translateY(${Math.max(-window.innerHeight*.22,delta)}px)`;lockScreen.style.opacity=String(1-progress*.45);},{passive:true});
-function finishLockSwipe(e){if(swipeStartY===null||(e&&e.pointerId!==swipePointerId))return;const delta=e?e.clientY-swipeStartY:0;const shouldUnlock=delta < -Math.max(20,window.innerHeight*.03);swipeStartY=null;swipePointerId=null;lockScreen.classList.remove('dragging');if(shouldUnlock){lockScreen.style.transform='';lockScreen.style.opacity='';openPasscode();return;}if(swipeMoved){lockScreen.style.transition='transform .24s cubic-bezier(.2,.8,.2,1),opacity .24s ease';requestAnimationFrame(()=>{lockScreen.style.transform='translateY(0)';lockScreen.style.opacity='1';window.setTimeout(()=>{lockScreen.style.transition='';lockScreen.style.transform='';lockScreen.style.opacity='';},260)});}else{lockScreen.style.transform='';lockScreen.style.opacity='';}}
+function finishLockSwipe(e){if(swipeStartY===null||(e&&e.pointerId!==swipePointerId))return;const delta=e?e.clientY-swipeStartY:0;const shouldUnlock=delta < -Math.max(20,window.innerHeight*.03);swipeStartY=null;swipePointerId=null;lockScreen.classList.remove('dragging');if(shouldUnlock){lockScreen.style.transform='';lockScreen.style.opacity='';if(!returnToRecentApp())openPasscode();return;}if(swipeMoved){lockScreen.style.transition='transform .24s cubic-bezier(.2,.8,.2,1),opacity .24s ease';requestAnimationFrame(()=>{lockScreen.style.transform='translateY(0)';lockScreen.style.opacity='1';window.setTimeout(()=>{lockScreen.style.transition='';lockScreen.style.transform='';lockScreen.style.opacity='';},260)});}else{lockScreen.style.transform='';lockScreen.style.opacity='';}}
 // Track swipes that start specifically on the white home indicator.
 const indicator=$('#lockBar');
 if(indicator){
@@ -841,7 +856,7 @@ if(indicator){
 }
 lockScreen.addEventListener('pointerup',finishLockSwipe);lockScreen.addEventListener('pointercancel',()=>finishLockSwipe(null));
 // Native touch fallback: preserve normal vertical touch handling while recognizing an upward unlock swipe.
-let nativeTouchStartY=null;lockScreen.addEventListener('touchstart',e=>{if(!lockScreen.classList.contains('active')||unlockInProgress)return;nativeTouchStartY=e.changedTouches[0]?.clientY??null;},{passive:true});lockScreen.addEventListener('touchend',e=>{if(nativeTouchStartY===null)return;const endY=e.changedTouches[0]?.clientY??nativeTouchStartY;const movedUp=nativeTouchStartY-endY;nativeTouchStartY=null;if(movedUp>Math.max(20,window.innerHeight*.03)&&!unlockInProgress)openPasscode();},{passive:true});lockScreen.addEventListener('touchcancel',()=>{nativeTouchStartY=null;},{passive:true});
+let nativeTouchStartY=null;lockScreen.addEventListener('touchstart',e=>{if(!lockScreen.classList.contains('active')||unlockInProgress)return;nativeTouchStartY=e.changedTouches[0]?.clientY??null;},{passive:true});lockScreen.addEventListener('touchend',e=>{if(nativeTouchStartY===null)return;const endY=e.changedTouches[0]?.clientY??nativeTouchStartY;const movedUp=nativeTouchStartY-endY;nativeTouchStartY=null;if(movedUp>Math.max(20,window.innerHeight*.03)&&!unlockInProgress&&!returnToRecentApp())openPasscode();},{passive:true});lockScreen.addEventListener('touchcancel',()=>{nativeTouchStartY=null;},{passive:true});
 document.addEventListener('click',e=>{const b=e.target.closest('[data-app]');if(b)showApp(b.dataset.app)});
 wallpaperStyle();initHome();updateClock();setInterval(updateClock,1000);
 
