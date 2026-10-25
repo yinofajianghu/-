@@ -995,6 +995,12 @@ try {
 } catch (error) {
   console.warn("無法讀取已儲存的 X 個人資料", error);
 }
+try {
+  const savedLineProfile = JSON.parse(localStorage.getItem("yinofajianghu_line_profile_v1") || "null");
+  if (savedLineProfile && typeof savedLineProfile.name === "string" && savedLineProfile.name.trim()) CONFIG.userName = savedLineProfile.name.trim();
+} catch (error) {
+  console.warn("無法讀取已儲存的 LINE 個人資料", error);
+}
 /* =================== CONFIG 結束；以下是互動功能 =================== */
 const $ = s => document.querySelector(s);
 const escapeHTML = s => String(s ?? "").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
