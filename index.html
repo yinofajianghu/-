@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#dce7dd">
 <title>拾得物｜iPhone Simulation</title>
 <style>
@@ -649,6 +649,17 @@ html,body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro 
 .x2-modal{width:100%;max-width:480px;border:1px solid #2F3336;border-radius:18px;background:#000;color:#E7E9EA;box-shadow:0 15px 55px #000a;overflow:hidden}
 .x2-modal header{height:54px;display:flex;align-items:center;justify-content:space-between;padding:0 14px;border-bottom:1px solid #2F3336;font-size:14px}.x2-modal header button{background:transparent;color:#E7E9EA;padding:7px}.x2-modal header .x2-modal-post{background:#E7E9EA;color:#0F1419;border-radius:999px;font-weight:800;padding:8px 14px}.x2-modal header .x2-modal-post:disabled{opacity:.45}
 .x2-modal-editor{display:flex;gap:12px;padding:18px 14px;min-height:170px}.x2-modal-editor textarea,.x2-reply-text{flex:1;min-width:0;resize:vertical;min-height:135px;background:transparent;border:0;outline:0;color:#E7E9EA;font-size:17px;line-height:1.5}.x2-modal footer{padding:12px 15px;border-top:1px solid #2F3336;color:#1D9BF0;font-size:12px}.x2-modal footer small{color:#71767B}.x2-reply-text{box-sizing:border-box;width:100%;padding:18px}.x2-edit-field{display:flex;flex-direction:column;gap:8px;padding:14px;font-size:13px;color:#71767B}.x2-edit-field input,.x2-edit-field textarea{background:#16181C;border:1px solid #2F3336;border-radius:10px;padding:12px;color:#E7E9EA;resize:vertical}
+/* Prevent iOS Safari focus zoom in X profile editor and restore predictable viewport behavior. */
+#appView.dark .x2-edit-field input,
+#appView.dark .x2-edit-field textarea,
+#appView.dark .x2-modal input,
+#appView.dark .x2-modal textarea,
+#appView.dark .x2-app input,
+#appView.dark .x2-app textarea{font-size:16px!important;line-height:1.4;max-width:100%;-webkit-text-size-adjust:100%;text-size-adjust:100%}
+#appView.dark .x2-modal-backdrop{box-sizing:border-box;width:100%;max-width:100vw;left:0;right:0}
+#appView.dark .x2-edit-field input:focus,
+#appView.dark .x2-edit-field textarea:focus{font-size:16px!important;transform:none}
+
 .x2-toast{position:absolute;left:50%;bottom:calc(72px + var(--safe-bottom));transform:translateX(-50%);z-index:15;background:#E7E9EA;color:#0F1419;border-radius:999px;padding:10px 15px;font-size:13px;font-weight:650;max-width:90%;opacity:0;pointer-events:none;transition:opacity .2s}.x2-toast.show{opacity:1}
 .x2-empty{padding:32px 18px;text-align:center;color:#71767B}
 @media(min-width:500px){#appView.dark .x2-app{max-width:430px;left:50%;transform:translateX(-50%);border-left:1px solid #2F3336;border-right:1px solid #2F3336}.x2-top{height:58px}}
