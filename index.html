@@ -641,7 +641,7 @@ html,body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro 
 .x2-conversation{width:100%;display:flex;align-items:center;gap:10px;padding:13px;background:#000;color:#E7E9EA;text-align:left;border-bottom:1px solid #2F3336}
 .x2-conversation-body{display:flex;flex-direction:column;gap:5px;flex:1;min-width:0}.x2-conversation-body b{font-size:14px}.x2-conversation-body small,.x2-conversation time{color:#71767B;font-size:11px;font-weight:400}.x2-conversation-body>span{font-size:13px;color:#71767B;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.x2-conversation i{width:8px;height:8px;background:#1D9BF0;border-radius:50%}
 .x2-chat-head{height:58px;display:flex;align-items:center;gap:12px;padding:8px 14px;border-bottom:1px solid #2F3336}.x2-chat-head>button{background:transparent;color:#E7E9EA;font-size:20px}.x2-chat-head>span{display:flex;flex-direction:column;gap:3px;flex:1}.x2-chat-head small{font-size:12px;color:#71767B}
-.x2-main-chat{display:flex;flex-direction:column;overflow:hidden;padding-bottom:0!important;min-height:0}
+.x2-main-chat{display:flex;flex-direction:column;overflow:hidden;padding-bottom:calc(59px + var(--safe-bottom))!important;min-height:0}
 .x2-main-chat .x2-chat-head{flex:0 0 58px}
 .x2-main-chat .x2-chat-scroll{padding:16px;display:flex;flex:1 1 auto;flex-direction:column;gap:10px;min-height:0;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:none}
 .x2-main-chat .x2-chat-scroll::-webkit-scrollbar{display:none}
