@@ -354,6 +354,7 @@ html,body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro 
 #home.editing .app-icon .glyph{transition:transform .15s,filter .15s}
 #home.editing .app-icon.dragging-app{animation:none;z-index:30;position:relative;transform:scale(1.12);opacity:.88;filter:drop-shadow(0 10px 12px #0004);cursor:grabbing}
 #home.editing .app-icon.drop-target .glyph{transform:scale(.88);filter:brightness(1.12)}
+#home.editing .home-icon-placeholder{border:1.5px dashed #ffffffa8;border-radius:16px;background:#ffffff18;align-self:stretch;min-height:52px}
 #home.editing .app-icon{ -webkit-user-select:none;user-select:none}
 #home.editing .app-icon .app-name{pointer-events:none}
 #homePageDots{position:relative}
@@ -1066,7 +1067,7 @@ wallpaperStyle();initHome();updateClock();setInterval(updateClock,1000);
  const home=document.querySelector('#home'), grid=document.querySelector('#appGrid'), dots=document.querySelector('#homePageDots');
  if(!home||!grid||!dots)return;
  const STORAGE_KEY='jianghu.home.appOrder.v2';
- let editMode=false, pressTimer=null, pressedIcon=null, draggedIcon=null, startX=0, startY=0, dragging=false, moved=false;
+ let editMode=false, pressTimer=null, pressedIcon=null, draggedIcon=null, placeholder=null, startX=0, startY=0, dragging=false, moved=false, dragOffsetX=0, dragOffsetY=0;
  const icons=()=>Array.from(grid.querySelectorAll('.app-icon'));
  function saveOrder(){
   try{localStorage.setItem(STORAGE_KEY,JSON.stringify(Array.from(grid.querySelectorAll('.home-app-page')).map(page=>Array.from(page.querySelectorAll('.app-icon')).map(el=>el.dataset.app))))}catch(e){}
@@ -1095,7 +1096,7 @@ wallpaperStyle();initHome();updateClock();setInterval(updateClock,1000);
   if(!on){saveOrder();icons().forEach(el=>el.classList.remove('dragging-app','drop-target'))}
  }
  function moveToPoint(x,y){
-  if(!draggedIcon)return;
+  if(!draggedIcon||!placeholder)return;
   const target=document.elementFromPoint(x,y);
   const targetIcon=target&&target.closest?target.closest('#appGrid .app-icon'):null;
   const targetPage=target&&target.closest?target.closest('#appGrid .home-app-page'):null;
@@ -1104,14 +1105,14 @@ wallpaperStyle();initHome();updateClock();setInterval(updateClock,1000);
    icons().forEach(el=>{if(el!==targetIcon)el.classList.remove('drop-target')});
    const r=targetIcon.getBoundingClientRect();
    const before=(y<r.top+r.height/2)||(Math.abs(y-(r.top+r.height/2))<r.height*.2&&x<r.left+r.width/2);
-   targetIcon.parentElement.insertBefore(draggedIcon,before?targetIcon:targetIcon.nextSibling);
+   if(placeholder!==targetIcon&&placeholder!==targetIcon.nextSibling)targetIcon.parentElement.insertBefore(placeholder,before?targetIcon:targetIcon.nextSibling);
   }else if(targetPage&&!targetIcon){
    icons().forEach(el=>el.classList.remove('drop-target'));
    const r=targetPage.getBoundingClientRect();
-   if(y>r.bottom-35)targetPage.appendChild(draggedIcon);
-   else if(y<r.top+35)targetPage.insertBefore(draggedIcon,targetPage.firstChild);
+   if(y>r.bottom-35)targetPage.appendChild(placeholder);
+   else if(y<r.top+35)targetPage.insertBefore(placeholder,targetPage.firstChild);
   }
-  const page=draggedIcon.closest('.home-app-page');
+  const page=placeholder.closest('.home-app-page');
   if(page){const pageIndex=Number(page.dataset.homePage)||0;const edge=24;if(x<edge&&pageIndex>0)grid.scrollTo({left:0,behavior:'smooth'});else if(x>innerWidth-edge&&pageIndex===0)grid.scrollTo({left:grid.clientWidth,behavior:'smooth'});}
  }
  function clearPress(){if(pressTimer){clearTimeout(pressTimer);pressTimer=null}}
@@ -1124,7 +1125,14 @@ wallpaperStyle();initHome();updateClock();setInterval(updateClock,1000);
   clearPress();
   pressTimer=setTimeout(()=>{
    setEditMode(true);draggedIcon=pressedIcon;dragging=true;
+   const r=draggedIcon.getBoundingClientRect();
+   dragOffsetX=startX-r.left;dragOffsetY=startY-r.top;
+   placeholder=document.createElement('div');placeholder.className='home-icon-placeholder';
+   placeholder.style.width=r.width+'px';placeholder.style.height=r.height+'px';
+   placeholder.style.flex='0 0 '+r.width+'px';placeholder.style.minWidth='0';
+   draggedIcon.parentElement.insertBefore(placeholder,draggedIcon);
    draggedIcon.classList.add('dragging-app');
+   Object.assign(draggedIcon.style,{position:'fixed',left:(startX-dragOffsetX)+'px',top:(startY-dragOffsetY)+'px',width:r.width+'px',height:r.height+'px',margin:'0',pointerEvents:'none',zIndex:'9999',transform:'scale(1.08)'});
    if(navigator.vibrate)navigator.vibrate(18);
   },480);
  },{capture:true});
@@ -1135,13 +1143,22 @@ wallpaperStyle();initHome();updateClock();setInterval(updateClock,1000);
   if(!dragging&&moved)clearPress();
   if(dragging&&draggedIcon){
    if(e.cancelable)e.preventDefault();
+   draggedIcon.style.left=(e.clientX-dragOffsetX)+'px';
+   draggedIcon.style.top=(e.clientY-dragOffsetY)+'px';
    moveToPoint(e.clientX,e.clientY);
   }
  },{capture:true,passive:false});
  function endPointer(){
   clearPress();
-  if(dragging&&draggedIcon){draggedIcon.classList.remove('dragging-app','drop-target');icons().forEach(el=>el.classList.remove('drop-target'));saveOrder();updateDots()}
-  pressedIcon=null;draggedIcon=null;dragging=false;
+  if(dragging&&draggedIcon){
+   draggedIcon.classList.remove('dragging-app','drop-target');
+   if(placeholder&&placeholder.parentElement)placeholder.parentElement.insertBefore(draggedIcon,placeholder);
+   if(placeholder)placeholder.remove();
+   ['position','left','top','width','height','margin','pointerEvents','zIndex','transform'].forEach(k=>draggedIcon.style.removeProperty(k.replace(/[A-Z]/g,m=>'-'+m.toLowerCase())));
+   icons().forEach(el=>el.classList.remove('drop-target'));saveOrder();updateDots();
+  }
+  if(placeholder)placeholder.remove();
+  placeholder=null;pressedIcon=null;draggedIcon=null;dragging=false;
  }
  document.addEventListener('pointerup',endPointer,{capture:true});
  document.addEventListener('pointercancel',endPointer,{capture:true});
