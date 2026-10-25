@@ -761,9 +761,9 @@ html,body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro 
 /* ===================== 只需要修改這裡的 CONFIG ===================== */
 const CONFIG = {
   wallpaper: "https://raw.githubusercontent.com/yinofajianghu/-/main/image/Toya-background.png", // Toya background
-  userName: "ミオ",
+  userName: "東雲彰人",
   contactName: "ハル",
-  twitterHandle: "mio_days",
+  twitterHandle: "Shinonome_Akito",
   weather: { place: "東京", temp: "18°", desc: "晴れ ☀ 最高 21° / 最低 14°", high: "21°", low: "14°" },
   events: [
     { time: "今日 18:30", title: "ハルと待ち合わせ" },
@@ -823,9 +823,9 @@ const X_PROFILE_STORAGE_KEY = "yinofajianghu_x_profile_v1";
 try {
   const savedXProfile = JSON.parse(localStorage.getItem(X_PROFILE_STORAGE_KEY) || "null");
   if (savedXProfile && typeof savedXProfile === "object") {
-    if (typeof savedXProfile.name === "string") CONFIG.userName = savedXProfile.name;
+    if (typeof savedXProfile.name === "string") CONFIG.userName = savedXProfile.name === "ミオ" ? "東雲彰人" : savedXProfile.name;
     if (typeof savedXProfile.bio === "string") CONFIG.twitterBio = savedXProfile.bio;
-    if (typeof savedXProfile.handle === "string") CONFIG.twitterHandle = savedXProfile.handle;
+    if (typeof savedXProfile.handle === "string") CONFIG.twitterHandle = savedXProfile.handle === "mio_days" ? "Shinonome_Akito" : savedXProfile.handle;
     if (typeof savedXProfile.avatar === "string") CONFIG.twitterAvatar = savedXProfile.avatar;
   }
 } catch (error) {
