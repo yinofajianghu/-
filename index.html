@@ -923,6 +923,42 @@ wallpaperStyle();initHome();updateClock();setInterval(updateClock,1000);
    },{passive:true});
    homeSurface.addEventListener('pointercancel',()=>{homePointerStart=null;},{passive:true});
  }
+ // Swipe down from any app screen to return directly to the lock screen.
+ const phoneSurface=document.querySelector('#phone');
+ if(phoneSurface){
+   let appSwipeStart=null;
+   const appIsVisible=()=>document.querySelector('#appView')?.classList.contains('active')
+     && !document.querySelector('#lock')?.classList.contains('active')
+     && !document.querySelector('#home')?.classList.contains('active')
+     && !document.querySelector('#passcodeScreen')?.classList.contains('active')
+     && !document.querySelector('#controlCenter')?.classList.contains('active');
+   phoneSurface.addEventListener('touchstart',e=>{
+     if(!appIsVisible()){appSwipeStart=null;return;}
+     const t=e.changedTouches[0];
+     appSwipeStart=t?.clientY??null;
+   },{passive:true});
+   phoneSurface.addEventListener('touchend',e=>{
+     if(appSwipeStart===null)return;
+     const end=e.changedTouches[0]?.clientY??appSwipeStart;
+     const delta=end-appSwipeStart;
+     appSwipeStart=null;
+     if(delta>Math.max(45,window.innerHeight*.06)&&appIsVisible()&&typeof showLock==='function')showLock();
+   },{passive:true});
+   phoneSurface.addEventListener('touchcancel',()=>{appSwipeStart=null;},{passive:true});
+   let appPointerStart=null;
+   phoneSurface.addEventListener('pointerdown',e=>{
+     if(e.pointerType==='mouse'&&e.button!==0)return;
+     if(!appIsVisible()){appPointerStart=null;return;}
+     appPointerStart={y:e.clientY,x:e.clientX};
+   },{passive:true});
+   phoneSurface.addEventListener('pointerup',e=>{
+     if(!appPointerStart)return;
+     const dy=e.clientY-appPointerStart.y,dx=Math.abs(e.clientX-appPointerStart.x);
+     appPointerStart=null;
+     if(dy>Math.max(45,window.innerHeight*.06)&&dy>dx*1.25&&appIsVisible()&&typeof showLock==='function')showLock();
+   },{passive:true});
+   phoneSurface.addEventListener('pointercancel',()=>{appPointerStart=null;},{passive:true});
+ }
  // Keep the app usable in standalone/full-screen Safari and desktop browsers.
  document.documentElement.style.webkitTapHighlightColor='transparent';
 })();
