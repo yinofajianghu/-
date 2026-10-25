@@ -2082,26 +2082,32 @@ wallpaperStyle();initHome();updateClock();setInterval(updateClock,1000);
      setTimeout(()=>app.classList.remove('app-tap'),260);
    }
  });
+ function isTextEditing(target=document.activeElement){
+   return !!(target&&(target.isContentEditable||/^(INPUT|TEXTAREA|SELECT)$/.test(target.tagName)));
+ }
  const home=document.querySelector('#appHomebar');
  if(home){
-   let startY=0;
-   home.addEventListener('touchstart',e=>{startY=e.touches[0].clientY},{passive:true});
+   let startY=null;
+   home.addEventListener('touchstart',e=>{
+     // Do not arm navigation gestures while an input/keyboard is being used.
+     if(isTextEditing()){startY=null;return}
+     startY=e.touches[0].clientY;
+   },{passive:true});
    home.addEventListener('touchend',e=>{
+     if(startY===null||isTextEditing()){startY=null;return}
      const endY=e.changedTouches[0].clientY;
-     if(startY-endY>30){if(typeof goHome==='function')goHome()}
+     if(startY-endY>30&&typeof goHome==='function')goHome();
+     startY=null;
    },{passive:true});
  }
  document.addEventListener('keydown',e=>{
-   // Backspace is an editing key, not a navigation shortcut. Never exit an app
-   // when the user is deleting text in a profile field, search box, or message.
+   // Only Escape may navigate; Backspace/Delete must remain ordinary editing keys.
    if(e.key!=='Escape')return;
+   if(isTextEditing(e.target)||isTextEditing(document.activeElement))return;
    const full=document.querySelector('#fullPlayer');
    if(full){full.remove();return}
-   const target=e.target;
-   const editing=target&&(target.isContentEditable||/^(INPUT|TEXTAREA|SELECT)$/.test(target.tagName));
-   if(editing)return;
    const active=document.querySelector('#appView.active');
-   if(active&&typeof goHome==='function'){goHome();return}
+   if(active&&typeof goHome==='function')goHome();
  });
  // Show a small welcoming notification only once per page load; it is purely decorative.
  setTimeout(()=>{
@@ -2112,6 +2118,9 @@ wallpaperStyle();initHome();updateClock();setInterval(updateClock,1000);
  document.querySelectorAll('#home,#appView').forEach(surface=>{
    surface.addEventListener('touchstart',e=>{sx=e.touches[0].clientX;sy=e.touches[0].clientY},{passive:true});
    surface.addEventListener('touchend',e=>{
+     // Keyboard interactions can generate touch movement on mobile; never treat
+     // them as app-back gestures while a text field is focused.
+     if(isTextEditing()){return}
      const dx=e.changedTouches[0].clientX-sx,dy=e.changedTouches[0].clientY-sy;
      if(Math.abs(dx)>100&&Math.abs(dx)>Math.abs(dy)*1.4){
        // Native-feeling edge gesture: left-to-right from an app returns to the home screen.
