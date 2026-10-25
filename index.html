@@ -3623,6 +3623,14 @@ window.__phoneMainReady = false;
 .ios26-photos .ph-filmstrip>button{flex:0 0 49px;scroll-snap-align:center;transition:transform .2s ease,opacity .2s ease,border-color .2s ease}
 .ios26-photos .ph-filmstrip>button.current{transform:scale(1.06);scroll-snap-align:center}
 @media(prefers-reduced-motion:reduce){.ios26-photos .ph-filmstrip{scroll-behavior:auto}.ios26-photos .ph-filmstrip>button{transition:none}}
+
+/* Black viewer icons; smaller borderless filmstrip thumbnails */
+.ios26-photos .ph-viewer-tools button{color:#000!important}
+.ios26-photos .ph-viewer-tools button[data-act="favoritePhoto"],.ios26-photos .ph-viewer-tools button.ph-tool-delete{color:#000!important}
+.ios26-photos .ph-viewer-tools .ph-tool-symbol svg{stroke:#000!important}
+.ios26-photos .ph-viewer-tools .ph-tool-symbol svg.filled{fill:#000!important;stroke:#000!important}
+.ios26-photos .ph-filmstrip>button,.ios26-photos .ph-filmstrip button.current{flex:0 0 42px;width:42px;height:42px;border:0!important;outline:0!important;box-shadow:none!important;border-radius:3px}
+.ios26-photos .ph-filmstrip{height:66px;padding:8px 8px 10px;gap:4px}
 </style>
 </body>
 </html>
