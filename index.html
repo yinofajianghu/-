@@ -329,6 +329,18 @@ html,body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro 
 .jh-camera .jh-camera-back{color:#fff;background:transparent;font-size:15px}
 @media(max-height:700px){.jh-camera-view{inset-bottom:190px}.jh-camera-bottom{gap:10px;padding-bottom:12px}.jh-camera-shutter{width:64px;height:64px}.jh-camera-shutter:after{width:50px;height:50px}.jh-camera-actions{min-height:66px}}
 
+
+/* Light appearance: keep primary text dark and legible on light surfaces. */
+#appView:not(.dark) #appContent .page{color:#111}
+#appView:not(.dark) #appContent .page .nav-title,
+#appView:not(.dark) #appContent .page .profile-name,
+#appView:not(.dark) #appContent .page .call-type,
+#appView:not(.dark) #appContent .page .event-title,
+#appView:not(.dark) #appContent .page .weather-place,
+#appView:not(.dark) #appContent .page .weather-temp,
+#appView:not(.dark) #appContent .page .settings-row,
+#appView:not(.dark) #appContent .page .simple-card{color:#111}
+
 </style>
 </head>
 <body>
