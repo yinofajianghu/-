@@ -837,6 +837,44 @@ html body #controlCenter .cc-native-slider output{
 #appView:has(.ig-app) .app-homebar-wrap{background:#fff;z-index:21}
 #appView:has(.ig-app.ig-dark) .app-homebar-wrap{background:#000}
 </style>
+
+/* Rebuilt Instagram bottom navigation: stable flex layout, visible SVG icons, and full-size tap targets. */
+#appContent:has(.ig-app){bottom:calc(25px + var(--safe-bottom))!important;overflow:hidden!important}
+#appContent:has(.ig-app)>.ig-app{display:flex!important;flex-direction:column!important;min-height:0!important;height:100%!important;overflow:hidden!important}
+#appContent .ig-app .ig-main{flex:1 1 0!important;height:0!important;min-height:0!important;overflow-x:hidden!important;overflow-y:auto!important;padding-bottom:0!important}
+#appContent .ig-app .ig-bottom-nav{
+  position:relative!important;inset:auto!important;transform:none!important;
+  display:flex!important;flex:0 0 58px!important;height:58px!important;min-height:58px!important;
+  width:100%!important;margin:0!important;padding:0!important;gap:0!important;
+  align-items:center!important;justify-content:space-around!important;
+  overflow:visible!important;z-index:100!important;isolation:isolate!important;
+  background:var(--ig-panel,#fff)!important;border-top:1px solid var(--ig-line,#eee)!important;
+  box-shadow:none!important;
+}
+#appContent .ig-app .ig-bottom-nav button{
+  appearance:none!important;-webkit-appearance:none!important;
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  flex:1 1 20%!important;width:20%!important;min-width:0!important;
+  height:58px!important;min-height:58px!important;margin:0!important;padding:0!important;
+  position:relative!important;inset:auto!important;transform:none!important;
+  border:0!important;border-radius:0!important;background:transparent!important;
+  color:var(--ig-text,#171717)!important;opacity:1!important;overflow:visible!important;
+  z-index:101!important;cursor:pointer!important;touch-action:manipulation!important;
+  -webkit-tap-highlight-color:transparent!important;
+}
+#appContent .ig-app .ig-bottom-nav button>span{
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  width:28px!important;height:28px!important;min-width:28px!important;min-height:28px!important;
+  margin:0!important;padding:0!important;line-height:1!important;visibility:visible!important;opacity:1!important;
+}
+#appContent .ig-app .ig-bottom-nav button>span svg{
+  display:block!important;visibility:visible!important;opacity:1!important;
+  width:25px!important;height:25px!important;min-width:25px!important;min-height:25px!important;
+  overflow:visible!important;stroke:currentColor;
+}
+#appContent .ig-app .ig-bottom-nav button.selected{color:var(--ig-text,#171717)!important}
+#appContent .ig-app .ig-bottom-nav button:active{opacity:.65!important}
+
 </head>
 <body>
 <div id="phone">
@@ -1269,13 +1307,13 @@ function renderInstagramApp(){
   ['reels','<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M3.5 9h17M8 4l4 5m2-5 4 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="m10 12 5 3-5 3z" fill="currentColor"/></svg>','Reels'],
   ['messages','<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21.2 3.2 14.5 21c-.3.8-1.4.8-1.7 0l-3.2-7-7-3.2c-.8-.4-.7-1.5.1-1.8l17.1-6.5c.8-.3 1.7.6 1.4 1.4Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="m9.7 14.1 6.1-6.1" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>','私訊'],
   ['search','<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="7.2" fill="none" stroke="currentColor" stroke-width="2"/><path d="m16.2 16.2 4.3 4.3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>','搜尋'],
-  ['profile','◎','個人檔案']
+  ['profile','<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.6" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M4.5 20c.6-4 3.3-6 7.5-6s6.9 2 7.5 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>','個人檔案']
  ];
  const go=page=>{S.page=page;S.modal='';render()};
  const storyItems=()=>'<div class="ig-story ig-addstory" data-action="story-create"><span class="ig-story-ring ig-addstory-ring">'+avatar(S.profile?.face||S.profile?.avatar||'☺','ig-myface')+'<span class="ig-addstory-plus">+</span></span><span>你的限時動態</span></div>'+friends.map((f,i)=>'<div class="ig-story" data-action="story-view" data-index="'+i+'"><span class="ig-story-ring">'+avatar(f.face)+'</span><span>'+esc(f.name)+'</span></div>').join('')+S.stories.map((st,i)=>'<div class="ig-story" data-action="story-view" data-index="'+(friends.length+i)+'"><span class="ig-story-ring">'+avatar(st.emoji||'✨')+'</span><span>你的限時動態</span></div>').join('');
  const postCard=p=>'<article class="ig-post" data-post="'+esc(p.id)+'"><div class="ig-post-head">'+avatar(p.face)+'<div class="ig-post-user"><b data-action="user" data-user="'+esc(p.user)+'">'+esc(p.user)+'</b><small>'+esc(p.place||'分享日常')+'</small></div><button class="ig-icon-btn" data-action="post-menu" data-id="'+esc(p.id)+'" aria-label="更多">•••</button></div><div class="ig-art" style="background:'+esc(p.color||'linear-gradient(135deg,#e9c7d8,#e9d8bd)')+'" data-action="post-open" data-id="'+esc(p.id)+'">'+(p.image?'<img src="'+esc(p.image)+'" alt="貼文圖片">':'<span class="ig-art-spark">✦</span><strong>'+esc(p.art||p.emoji||'A MOMENT')+'</strong><small>'+esc(p.caption||'')+'</small>')+'<span class="ig-art-index">1/1</span></div><div class="ig-post-actions"><button data-action="like" data-id="'+esc(p.id)+'" class="'+(S.liked[p.id]?'active':'')+'">'+(S.liked[p.id]?'♥':'♡')+'</button><button data-action="comments" data-id="'+esc(p.id)+'">▢</button><button data-action="share" data-id="'+esc(p.id)+'">➤</button><button class="ig-save-btn '+(S.savedPosts[p.id]?'active':'')+'" data-action="save" data-id="'+esc(p.id)+'">'+(S.savedPosts[p.id]?'▣':'♧')+'</button></div><div class="ig-likes">'+(p.likes+(S.liked[p.id]?1:0)).toLocaleString()+' 個讚</div><div class="ig-caption"><b>'+esc(p.user)+'</b> '+esc(p.caption||'')+'</div><button class="ig-view-comments" data-action="comments" data-id="'+esc(p.id)+'">查看全部 '+((S.comments[p.id]||[]).length||'0')+' 則留言</button><div class="ig-time">2 小時前</div></article>';
  const topbar=()=>'<header class="ig-topbar"><button class="ig-wordmark" data-action="home">Instagram<span>⌄</span></button><div class="ig-top-actions"><button data-action="notifications" aria-label="通知">♡</button><button data-action="create" aria-label="建立">＋</button><button data-action="messages" aria-label="私訊" class="ig-dm-top">➤<i></i></button></div></header>';
- const bottom=()=>'<nav class="ig-bottom-nav" aria-label="Instagram 導覽列">'+navItems.map(n=>'<button type="button" data-action="'+n[0]+'" class="'+(S.page===n[0]?'selected':'')+'" aria-label="'+n[2]+'" title="'+n[2]+'"><span>'+(n[0]==='profile'?avatar('🙂','ig-nav-avatar'):n[1])+'</span></button>').join('')+'</nav>';
+ const bottom=()=>'<nav class="ig-bottom-nav" aria-label="Instagram 導覽列">'+navItems.map(n=>'<button type="button" data-action="'+n[0]+'" class="'+(S.page===n[0]?'selected':'')+'" aria-label="'+n[2]+'" title="'+n[2]+'"><span>'+n[1]+'</span></button>').join('')+'</nav>';
  const profileHeader=(user,own)=>'<div class="ig-profile-head"><div class="ig-profile-avatar">'+avatar(own?'🙂':(friends.find(f=>f.name===user)||{}).face||'🌼')+'</div><div class="ig-profile-stats"><div><b>'+(own?S.posts.length+3:24)+'</b><span>貼文</span></div><div data-action="followers" data-user="'+esc(user)+'"><b>'+(own?'1,286':'8,421')+'</b><span>粉絲</span></div><div data-action="following-list" data-user="'+esc(user)+'"><b>'+(own?'512':'386')+'</b><span>追蹤中</span></div></div></div>';
  const profile=()=>{const own=S.page==='profile'||S.target===S.username;const user=own?S.username:S.target;return '<section class="ig-profile-page"><div class="ig-profile-toolbar"><b>'+esc(user)+'</b><div><button data-action="profile-share">↗</button><button data-action="profile-menu">☰</button></div></div>'+profileHeader(user,own)+'<div class="ig-profile-bio"><b>'+esc(own?S.displayName:((friends.find(f=>f.name===user)||{}).displayName||user))+'</b><p>'+esc(own?S.bio:((friends.find(f=>f.name===user)||{}).bio||'記錄生活中喜歡的片刻 ✨'))+'</p><small>✧ daily moments · life & style</small></div><div class="ig-profile-buttons">'+(own?'<button class="ig-pill" data-action="edit-profile">編輯個人檔案</button><button class="ig-pill" data-action="share-profile">分享個人檔案</button>':'<button class="ig-pill '+(S.following[user]?'ig-following':'ig-primary')+'" data-action="follow" data-user="'+esc(user)+'">'+(S.following[user]?'追蹤中':'追蹤')+'</button><button class="ig-pill" data-action="message-user" data-user="'+esc(user)+'">發送訊息</button>')+'<button class="ig-square" data-action="profile-menu">⌄</button></div>'+(own?'<div class="ig-highlights"><button data-action="highlight-create">'+avatar('＋')+'<span>新增</span></button><button data-action="archive">'+avatar('🌙')+'<span>典藏</span></button><button data-action="saved">'+avatar('♡')+'<span>珍藏</span></button>':'<div class="ig-highlights"><button data-action="highlight-create">'+avatar('✨')+'<span>精選</span></button></div>')+'<div class="ig-profile-tabs"><button class="'+(S.profileTab==='貼文'?'on':'')+'" data-action="profile-tab" data-tab="貼文">▦</button><button class="'+(S.profileTab==='Reels'?'on':'')+'" data-action="profile-tab" data-tab="Reels">▻</button><button class="'+(S.profileTab==='標註'?'on':'')+'" data-action="profile-tab" data-tab="標註">♙</button></div><div class="ig-grid">'+allPosts().filter(p=>own?(p.user===S.username||p.id.startsWith('seed')):true).map(p=>'<button data-action="post-open" data-id="'+esc(p.id)+'" style="background:'+esc(p.color||'linear-gradient(135deg,#ddd,#aaa)')+'">'+(p.image?'<img src="'+esc(p.image)+'">':esc(p.emoji||'✦'))+'</button>').join('')+'</div></section>'};
  const searchPage=()=>'<section class="ig-search-page"><div class="ig-searchbox"><span>⌕</span><input id="ig-search" value="'+esc(S.query)+'" placeholder="搜尋" autocomplete="off"><button data-action="clear-search">×</button></div>'+(S.query?'<div class="ig-search-results">'+friends.filter(f=>(f.name+' '+f.bio).toLowerCase().includes(S.query.toLowerCase())).map(f=>'<div class="ig-search-result" data-action="user" data-user="'+esc(f.name)+'">'+avatar(f.face)+'<div><b>'+esc(f.name)+'</b><small>'+esc(f.bio)+'</small></div><button data-action="follow" data-user="'+esc(f.name)+'">'+(S.following[f.name]?'追蹤中':'追蹤')+'</button></div>').join('')+'</div>':'<div class="ig-explore-label"><b>為你推薦</b><small>探索靈感與新日常</small></div><div class="ig-explore-grid">'+allPosts().concat(allPosts()).map((p,i)=>'<button data-action="post-open" data-id="'+esc(p.id)+'" style="background:'+esc(p.color||'#ddd')+'">'+(p.image?'<img src="'+esc(p.image)+'">': '<span>'+esc(p.emoji||'✦')+'</span>')+(i%5===0?'<i>▻</i>':'')+'</button>').join('')+'</div>')+'</section>';
