@@ -284,6 +284,51 @@ html,body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro 
 #phone.flashlight-on .lock-time,#phone.flashlight-on .lock-date,#phone.flashlight-on .lock-small{color:#252525;text-shadow:none}
 #phone.flashlight-on .lock-control{background:rgba(30,30,30,.1);color:#222;border-color:#777}
 
+
+/* Native-inspired Camera app */
+#appContent:has(.jh-camera){padding:0!important;background:#050505!important;color:#fff!important;overflow:hidden}
+.jh-camera{position:relative;height:100%;min-height:590px;min-height:100%;background:#050505;color:#fff;overflow:hidden;display:flex;flex-direction:column;isolation:isolate}
+.jh-camera-view{position:absolute;inset:0 0 235px;background:radial-gradient(ellipse at 50% 30%,#777 0%,#343434 38%,#101010 78%);overflow:hidden}
+.jh-camera-view:before{content:"";position:absolute;inset:0;background:linear-gradient(135deg,#ffffff0a,transparent 45%,#0008),radial-gradient(ellipse at 50% 55%,transparent 15%,#0003 100%);pointer-events:none;z-index:1}
+.jh-camera-video,.jh-camera-shot{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.jh-camera-fallback{position:absolute;inset:0;display:grid;place-items:center;background:radial-gradient(ellipse at 55% 36%,#c7c4b7 0,#77796e 24%,#454a45 48%,#171b1a 100%)}
+.jh-camera-fallback:before{content:"";position:absolute;width:72%;height:48%;top:20%;border-radius:46% 46% 14% 14%;background:linear-gradient(130deg,#d4d0c2,#737c70 50%,#303a37);filter:blur(1px);opacity:.8}
+.jh-camera-fallback:after{content:"";position:absolute;width:40%;height:32%;top:30%;left:30%;border-radius:50%;background:radial-gradient(circle at 35% 30%,#d6d5c8,#777f75 42%,#414842 72%);box-shadow:0 0 50px #d8d8c455}
+.jh-camera-top{position:relative;z-index:3;display:flex;align-items:center;justify-content:space-between;padding:calc(12px + var(--safe-top,0px)) 19px 10px;min-height:70px;background:linear-gradient(#0005,transparent)}
+.jh-camera-glass{border:1px solid #ffffff25;background:#27272765;color:white;backdrop-filter:blur(22px) saturate(1.4);-webkit-backdrop-filter:blur(22px) saturate(1.4);border-radius:999px;display:flex;align-items:center;justify-content:center}
+.jh-camera-round{width:42px;height:42px;font-size:18px}
+.jh-camera-format{padding:10px 13px;font-size:12px;font-weight:650;letter-spacing:.03em}
+.jh-camera-zoom{position:absolute;z-index:3;bottom:17px;left:0;right:0;display:flex;justify-content:center;align-items:center;gap:7px}
+.jh-camera-zoom button{width:38px;height:38px;border-radius:50%;font-size:12px;font-weight:600;color:#fff;background:#17171780;border:1px solid #ffffff18}
+.jh-camera-zoom button.selected{background:#f5dca9;color:#24211b;transform:scale(1.08)}
+.jh-camera-bottom{position:relative;z-index:4;margin-top:auto;background:linear-gradient(180deg,#10101000,#080808 18%);padding:8px 18px calc(18px + var(--safe-bottom,0px));display:flex;flex-direction:column;gap:18px}
+.jh-camera-modes{display:flex;justify-content:center;align-items:center;gap:25px;min-height:30px;touch-action:pan-y}
+.jh-camera-modes button{background:transparent;color:#bdbdbd;font-size:14px;font-weight:600;padding:7px 2px;white-space:nowrap}
+.jh-camera-modes button.selected{color:#f5dca9}
+.jh-camera-actions{display:grid;grid-template-columns:1fr 1.5fr 1fr;align-items:center;justify-items:center;min-height:76px}
+.jh-camera-thumb{width:47px;height:47px;border-radius:12px;border:2px solid #ffffffb5;background:linear-gradient(135deg,#7e8c7e,#e0d8c7 48%,#4b524b);overflow:hidden;padding:0}
+.jh-camera-thumb img{width:100%;height:100%;object-fit:cover}
+.jh-camera-shutter{width:74px;height:74px;border-radius:50%;background:#fff;border:5px solid #ffffffb8;box-shadow:inset 0 0 0 3px #111;display:grid;place-items:center}
+.jh-camera-shutter:after{content:"";width:58px;height:58px;border-radius:50%;background:#fff;box-shadow:0 0 0 1px #ffffff}
+.jh-camera-video-mode .jh-camera-shutter:after{width:29px;height:29px;border-radius:9px;background:#ff453a;box-shadow:none}
+.jh-camera-flip{width:47px;height:47px;border-radius:50%;font-size:23px;background:#252525c9;border:1px solid #ffffff24;color:white}
+.jh-camera-menu{position:absolute;z-index:8;top:calc(70px + var(--safe-top,0px));left:14px;right:14px;padding:16px;border-radius:27px;background:#252525df;border:1px solid #ffffff25;box-shadow:0 16px 50px #0008;backdrop-filter:blur(30px) saturate(1.5);-webkit-backdrop-filter:blur(30px) saturate(1.5)}
+.jh-camera-menu[hidden]{display:none}
+.jh-camera-menu-title{font-size:12px;color:#ffffff9c;margin:0 0 12px 3px}
+.jh-camera-menu-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
+.jh-camera-menu-grid button{min-height:67px;border-radius:17px;background:#ffffff12;border:1px solid #ffffff10;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;font-size:12px}
+.jh-camera-menu-grid button span:first-child{font-size:20px}
+.jh-camera-menu-grid button.on{background:#f5dca9;color:#25211b}
+.jh-camera-toast{position:absolute;z-index:9;left:20px;right:20px;top:calc(84px + var(--safe-top,0px));padding:12px 15px;border-radius:16px;background:#282828ed;border:1px solid #ffffff20;font-size:13px;text-align:center;box-shadow:0 10px 30px #0005}
+.jh-camera-toast[hidden]{display:none}
+.jh-camera-gallery{position:absolute;inset:0;z-index:10;background:#050505;display:flex;flex-direction:column;padding:calc(12px + var(--safe-top,0px)) 16px calc(18px + var(--safe-bottom,0px))}
+.jh-camera-gallery[hidden]{display:none}
+.jh-camera-gallery-head{display:flex;justify-content:space-between;align-items:center;height:48px}
+.jh-camera-gallery img{width:100%;height:0;min-height:0;flex:1;object-fit:contain;margin:12px 0}
+.jh-camera-gallery p{text-align:center;color:#ffffffa0;font-size:13px}
+.jh-camera .jh-camera-back{color:#fff;background:transparent;font-size:15px}
+@media(max-height:700px){.jh-camera-view{inset-bottom:190px}.jh-camera-bottom{gap:10px;padding-bottom:12px}.jh-camera-shutter{width:64px;height:64px}.jh-camera-shutter:after{width:50px;height:50px}.jh-camera-actions{min-height:66px}}
+
 </style>
 </head>
 <body>
@@ -732,10 +777,54 @@ function renderMaps(){
 function renderSettings(){
  $('#appContent').innerHTML=`<div class="page"><div class="nav"><span class="nav-title">設定</span></div><div class="simple-card" style="display:flex;align-items:center;gap:12px"><div class="avatar">${escapeHTML((CONFIG.userName||"M").slice(0,1))}</div><div><b>${escapeHTML(CONFIG.userName)}</b><div class="muted" style="font-size:12px;margin-top:4px">Apple Account</div></div><span style="margin-left:auto;color:#aaa">›</span></div>${["飛行模式","Wi-Fi","Bluetooth","通知","一般","プライバシーとセキュリティ"].map((x,i)=>`<div class="settings-row"><div class="settings-ico" style="background:${['#ff9500','#0a84ff','#0a84ff','#ff3b30','#8e8e93','#34c759'][i]}">${['✈','⌁','ᛒ','◉','⚙','◈'][i]}</div><span>${x}</span><span style="margin-left:auto;color:#aaa">›</span></div>`).join('')}</div>`;
 }
+function renderCamera(){
+ $('#home').classList.remove('active');$('#lock').classList.remove('active');$('#appView').classList.add('active');$('#appView').classList.remove('dark');
+ const content=$('#appContent');
+ content.innerHTML=`<section class="jh-camera" aria-label="相機">
+  <div class="jh-camera-view" id="jhCameraView"><div class="jh-camera-fallback" id="jhCameraFallback"></div><video class="jh-camera-video" id="jhCameraVideo" autoplay playsinline muted hidden></video><img class="jh-camera-shot" id="jhCameraShot" alt="最近拍攝的照片" hidden>
+   <div class="jh-camera-top"><button class="jh-camera-glass jh-camera-round" id="jhCameraClose" aria-label="返回主畫面">⌄</button><button class="jh-camera-glass jh-camera-format" id="jhCameraFormat">HEIF　·　24 MP</button><button class="jh-camera-glass jh-camera-round" id="jhCameraControls" aria-label="相機控制項">☷</button></div>
+   <div class="jh-camera-zoom" id="jhCameraZoom"><button data-zoom="0.5">0.5</button><button data-zoom="1" class="selected">1×</button><button data-zoom="2">2</button><button data-zoom="3">3</button></div>
+  </div>
+  <div class="jh-camera-bottom"><div class="jh-camera-modes" id="jhCameraModes"><button data-mode="CINEMATIC">電影效果</button><button data-mode="VIDEO">錄影</button><button class="selected" data-mode="PHOTO">照片</button><button data-mode="PORTRAIT">人像</button><button data-mode="PANO">全景</button></div>
+   <div class="jh-camera-actions"><button class="jh-camera-thumb" id="jhCameraThumb" aria-label="檢視最近照片"></button><button class="jh-camera-shutter" id="jhCameraShutter" aria-label="拍照"></button><button class="jh-camera-flip" id="jhCameraFlip" aria-label="切換前後鏡頭">⇄</button></div>
+  </div>
+  <div class="jh-camera-menu" id="jhCameraMenu" hidden><p class="jh-camera-menu-title">相機控制項</p><div class="jh-camera-menu-grid">
+   <button data-control="flash"><span>ϟ</span><span>閃光燈</span></button><button data-control="live"><span>◉</span><span>Live Photo</span></button><button data-control="timer"><span>◷</span><span>計時器</span></button><button data-control="exposure"><span>☼</span><span>曝光補償</span></button><button data-control="aspect"><span>▣</span><span>比例 4:3</span></button><button data-control="style"><span>◐</span><span>攝影風格</span></button>
+  </div></div>
+  <div class="jh-camera-toast" id="jhCameraToast" hidden></div>
+  <div class="jh-camera-gallery" id="jhCameraGallery" hidden><div class="jh-camera-gallery-head"><button class="jh-camera-back" id="jhCameraGalleryClose">‹ 相機</button><strong>最近項目</strong><button class="jh-camera-back" id="jhCameraSave">完成</button></div><img id="jhCameraGalleryImage" alt="拍攝的照片"><p id="jhCameraGalleryNote">此為目前工作階段拍攝的照片</p></div>
+ </section>`;
+ const $id=id=>content.querySelector('#'+id);
+ const video=$id('jhCameraVideo'), fallback=$id('jhCameraFallback'), shot=$id('jhCameraShot'), menu=$id('jhCameraMenu'), toast=$id('jhCameraToast');
+ let stream=null,facing='environment',mode='PHOTO',zoom=1,lastShot='',flash=false,live=true,exposure=0,aspect='4:3',style='標準',timer=null,toastTimer=null;
+ const say=msg=>{toast.textContent=msg;toast.hidden=false;clearTimeout(toastTimer);toastTimer=setTimeout(()=>toast.hidden=true,2400)};
+ const stopStream=()=>{if(stream){stream.getTracks().forEach(t=>t.stop());stream=null;}};
+ const startStream=async()=>{if(!navigator.mediaDevices?.getUserMedia){say('此瀏覽器無法開啟相機，請在支援相機的 Safari 中使用');return;}
+  try{stopStream();stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:facing},width:{ideal:1920},height:{ideal:1080}},audio:false});video.srcObject=stream;video.hidden=false;fallback.hidden=true;shot.hidden=true;await video.play().catch(()=>{});}
+  catch(err){video.hidden=true;fallback.hidden=false;const msg=err&&err.name==='NotAllowedError'?'相機權限未開啟：請允許此網站使用相機':'目前無法使用相機，仍可體驗拍攝介面';say(msg);}
+ };
+ const updateMode=()=>{content.querySelectorAll('[data-mode]').forEach(b=>b.classList.toggle('selected',b.dataset.mode===mode));content.classList.toggle('jh-camera-video-mode',mode==='VIDEO');$id('jhCameraShutter').setAttribute('aria-label',mode==='VIDEO'?'開始或停止錄影':'拍照');};
+ $id('jhCameraClose').onclick=()=>{stopStream();goHome();};
+ $id('jhCameraControls').onclick=()=>{menu.hidden=!menu.hidden;};
+ $id('jhCameraFormat').onclick=()=>say('照片格式：HEIF · 24 MP（介面示意）');
+ content.querySelectorAll('[data-mode]').forEach(b=>b.onclick=()=>{mode=b.dataset.mode;updateMode();say(({PHOTO:'照片模式',VIDEO:'錄影模式',CINEMATIC:'電影效果模式',PORTRAIT:'人像模式',PANO:'全景模式'})[mode]+'（介面示意）');});
+ content.querySelectorAll('[data-zoom]').forEach(b=>b.onclick=()=>{zoom=Number(b.dataset.zoom);content.querySelectorAll('[data-zoom]').forEach(x=>x.classList.toggle('selected',x===b));if(video.srcObject&&video.srcObject.getVideoTracks()[0]?.getCapabilities){const track=video.srcObject.getVideoTracks()[0],caps=track.getCapabilities();if(caps.zoom)track.applyConstraints({advanced:[{zoom:Math.max(caps.zoom.min,Math.min(caps.zoom.max,zoom))}]}).catch(()=>{});}else if(!video.hidden){video.style.transform='scale('+Math.max(1,zoom)+')';}else fallback.style.transform='scale('+Math.max(1,zoom)+')';});
+ $id('jhCameraFlip').onclick=()=>{facing=facing==='environment'?'user':'environment';startStream();};
+ $id('jhCameraShutter').onclick=()=>{if(mode==='VIDEO'){say('錄影模式介面已切換；此模擬器目前以拍照為主');return;}if(timer){say('計時器拍攝中…');setTimeout(capture,timer);timer=null;}else capture();};
+ function capture(){try{if(!video.hidden&&video.readyState>=2){const canvas=document.createElement('canvas');canvas.width=video.videoWidth||1280;canvas.height=video.videoHeight||720;const ctx=canvas.getContext('2d');if(facing==='user'){ctx.translate(canvas.width,0);ctx.scale(-1,1);}ctx.drawImage(video,0,0,canvas.width,canvas.height);lastShot=canvas.toDataURL('image/jpeg',.9);}else{const canvas=document.createElement('canvas');canvas.width=900;canvas.height=1200;const ctx=canvas.getContext('2d');const g=ctx.createLinearGradient(0,0,900,1200);g.addColorStop(0,'#b9c8b9');g.addColorStop(.5,'#747f75');g.addColorStop(1,'#252c29');ctx.fillStyle=g;ctx.fillRect(0,0,900,1200);ctx.fillStyle='#ffffff55';ctx.beginPath();ctx.ellipse(470,420,220,270,-.2,0,Math.PI*2);ctx.fill();lastShot=canvas.toDataURL('image/jpeg',.85);say('示意照片已拍攝；允許相機權限可拍攝真實畫面');}
+  shot.src=lastShot;shot.hidden=false;video.hidden=true;const thumb=$id('jhCameraThumb');thumb.innerHTML='<img alt="" src="'+lastShot+'">';thumb.style.backgroundImage='none';}
+ catch(e){say('拍攝失敗，請再試一次');}}
+ $id('jhCameraThumb').onclick=()=>{if(!lastShot){say('尚未拍攝照片');return;}$id('jhCameraGalleryImage').src=lastShot;$id('jhCameraGallery').hidden=false;};
+ $id('jhCameraGalleryClose').onclick=()=>{$id('jhCameraGallery').hidden=true;};
+ $id('jhCameraSave').onclick=()=>{$id('jhCameraGallery').hidden=true;say('已返回相機');};
+ content.querySelectorAll('[data-control]').forEach(b=>b.onclick=()=>{const k=b.dataset.control;if(k==='flash'){flash=!flash;b.classList.toggle('on',flash);b.querySelector('span:last-child').textContent=flash?'閃光燈 開':'閃光燈';say(flash?'閃光燈已開啟（介面示意）':'閃光燈已關閉');}else if(k==='live'){live=!live;b.classList.toggle('on',live);b.querySelector('span:last-child').textContent=live?'Live Photo 開':'Live Photo 關';say(live?'Live Photo 已開啟':'Live Photo 已關閉');}else if(k==='timer'){timer=timer?null:3000;b.classList.toggle('on',!!timer);b.querySelector('span:last-child').textContent=timer?'計時器 3 秒':'計時器';say(timer?'已設定 3 秒計時器':'計時器已關閉');}else if(k==='exposure'){exposure=exposure>=1?-1:exposure+.5;fallback.style.filter='brightness('+Math.max(.65,Math.min(1.35,1+exposure*.2))+')';video.style.filter=fallback.style.filter;say('曝光補償 '+(exposure>0?'+':'')+exposure.toFixed(1)+' EV');}else if(k==='aspect'){aspect=aspect==='4:3'?'16:9':aspect==='16:9'?'1:1':'4:3';b.querySelector('span:last-child').textContent='比例 '+aspect;say('照片比例 '+aspect+'（介面示意）');}else{style=style==='標準'?'鮮明':style==='鮮明'?'暖色':'標準';fallback.style.filter=style==='鮮明'?'saturate(1.45) contrast(1.08)':style==='暖色'?'sepia(.18) saturate(1.1)':'none';video.style.filter=fallback.style.filter;say('攝影風格：'+style+'（介面示意）');}});
+ let touchX=0;const view=$id('jhCameraView');view.addEventListener('touchstart',e=>{touchX=e.changedTouches[0]?.clientX||0},{passive:true});view.addEventListener('touchend',e=>{const dx=(e.changedTouches[0]?.clientX||touchX)-touchX;if(Math.abs(dx)>55){const modes=['CINEMATIC','VIDEO','PHOTO','PORTRAIT','PANO'];mode=modes[Math.max(0,Math.min(modes.length-1,modes.indexOf(mode)+(dx<0?1:-1)))];updateMode();}},{passive:true});
+ updateMode();startStream();
+}
 function renderSimple(id){
+ if(id==='camera'){renderCamera();return;}
  $('#home').classList.remove('active');$('#lock').classList.remove('active');$('#appView').classList.add('active');$('#appView').classList.remove('dark');
  const data={
-  camera:['相機','<div style="height:65vh;background:#202025;border-radius:25px;display:grid;place-items:center;color:#aaa;font-size:44px">◉</div><div style="text-align:center;margin-top:25px">●　　◉　　●</div>'],
   youtube:['YouTube','<div style="background:#111;color:#fff;border-radius:15px;padding:35px 15px;text-align:center;font-size:45px">▶</div><div class="simple-card">おすすめの動画<br><span class="muted">このスマートフォンの持ち主</span></div>'],
   messages:['訊息',`<div class="simple-card">💬　${escapeHTML(CONFIG.contactName)}<br><span class="muted">今どこにいるの？</span></div>`]
  };
