@@ -1777,6 +1777,9 @@ function renderViewer(){
    '<div class="ph-viewer-bottom"><div class="ph-filmstrip">'+photos.map(q=>'<button data-act="jumpPhoto" data-id="'+esc(q.id)+'" class="'+(q.id===p.id?"current":"")+'" aria-label="'+esc(q.title)+'"><img src="'+esc(q.src)+'" alt=""></button>').join("")+'</div>'+
    '<div class="ph-viewer-tools"><button class="ph-tool-single" data-act="sharePhoto" aria-label="分享"><span class="ph-tool-symbol"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15V3m-5 5 5-5 5 5M5 12v8h14v-8" /></svg></span></button><div class="ph-tool-group"><button data-act="favoritePhoto" aria-label="最愛"><span class="ph-tool-symbol">'+(isFav(p.id)?'<svg viewBox="0 0 24 24" aria-hidden="true" class="filled"><path d="M12 21s-9-5.6-9-12a5 5 0 0 1 9-3 5 5 0 0 1 9 3c0 6.4-9 12-9 12z"/></svg>':'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.8 9.2c0 5.2-8.8 10.4-8.8 10.4S3.2 14.4 3.2 9.2A4.7 4.7 0 0 1 12 6.7a4.7 4.7 0 0 1 8.8 2.5z"/></svg>')+'</span></button><button data-act="showPhotoDetails" aria-label="資訊"><span class="ph-tool-symbol"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9.2"/><path d="M12 10.7v6m0-9.4h.01"/></svg></span></button><button data-act="editPhoto" aria-label="編輯"><span class="ph-tool-symbol"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l4.3-1 10.9-10.9a2.1 2.1 0 0 0-3-3L5.3 16 4 20zM14.8 6.5l3 3"/></svg></span></button></div><button class="ph-tool-single ph-tool-delete" data-act="deleteOne" aria-label="刪除"><span class="ph-tool-symbol"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3m-9 0 1 13h10l1-13M10 10v7m4-7v7"/></svg></span></button></div></div>';
   root.appendChild(v);
+  const filmstrip=v.querySelector(".ph-filmstrip");
+  const activeThumb=filmstrip&&filmstrip.querySelector("button.current");
+  if(activeThumb){requestAnimationFrame(()=>{const target=activeThumb.offsetLeft+activeThumb.offsetWidth/2-filmstrip.clientWidth/2;filmstrip.scrollTo({left:Math.max(0,target),behavior:"smooth"})})}
   const imageArea=v.querySelector(".ph-viewer-image");
   let startX=0,startY=0;
   imageArea.addEventListener("click",()=>{v.classList.toggle("controls-hidden")});
@@ -3614,6 +3617,12 @@ window.__phoneMainReady = false;
 @keyframes phPhotoSlideNext{from{opacity:.55;transform:translateX(34px)}to{opacity:1;transform:translateX(0)}}
 @keyframes phPhotoSlidePrev{from{opacity:.55;transform:translateX(-34px)}to{opacity:1;transform:translateX(0)}}
 @media(prefers-reduced-motion:reduce){.ios26-photos .ph-viewer.ph-swipe-next .ph-viewer-image,.ios26-photos .ph-viewer.ph-swipe-prev .ph-viewer-image{animation:none}}
+
+/* Keep the active thumbnail centered and animate the filmstrip */
+.ios26-photos .ph-filmstrip{display:flex;align-items:center;gap:5px;overflow-x:auto;scroll-behavior:smooth;scroll-snap-type:x mandatory;overscroll-behavior-x:contain}
+.ios26-photos .ph-filmstrip>button{flex:0 0 49px;scroll-snap-align:center;transition:transform .2s ease,opacity .2s ease,border-color .2s ease}
+.ios26-photos .ph-filmstrip>button.current{transform:scale(1.06);scroll-snap-align:center}
+@media(prefers-reduced-motion:reduce){.ios26-photos .ph-filmstrip{scroll-behavior:auto}.ios26-photos .ph-filmstrip>button{transition:none}}
 </style>
 </body>
 </html>
