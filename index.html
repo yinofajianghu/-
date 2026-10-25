@@ -2497,6 +2497,23 @@ function renderSpotify(){
 .ig-app:has(.ig-reels-page) .ig-bottom-nav button{color:#fff}
 
 
+
+/* Instagram reference-match pass: consistent story size and a fully visible five-icon tab bar. */
+#appContent:has(.ig-app){inset:var(--safe-top) 0 calc(32px + var(--safe-bottom)) 0!important;overflow:hidden!important;padding:0!important}
+#appContent:has(.ig-app)>.ig-app{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;min-height:0!important;max-height:none!important;margin:0!important;border:0!important;border-radius:0!important;overflow:hidden!important;display:flex!important;flex-direction:column!important}
+.ig-app .ig-topbar{position:relative!important;top:auto!important;left:auto!important;right:auto!important;flex:0 0 76px!important;height:76px!important;min-height:76px!important;padding-left:16px!important;padding-right:16px!important}
+.ig-app .ig-head{height:76px!important;min-height:76px!important;flex:0 0 76px!important;padding-left:16px!important;padding-right:16px!important}
+.ig-app .ig-main{position:relative!important;flex:1 1 0!important;height:0!important;min-height:0!important;width:100%!important;overflow-x:hidden!important;overflow-y:auto!important;padding:0!important}
+.ig-app .ig-bottom-nav{position:relative!important;left:auto!important;right:auto!important;bottom:auto!important;flex:0 0 66px!important;height:66px!important;min-height:66px!important;width:100%!important;padding:0 0 env(safe-area-inset-bottom,0px)!important;box-sizing:border-box!important;display:flex!important;align-items:center!important;justify-content:space-around!important;z-index:40!important;overflow:visible!important;background:var(--ig-panel,#fff)!important;border-top:1px solid var(--ig-line,#ddd)!important}
+.ig-app .ig-bottom-nav button{height:60px!important;min-height:60px!important;flex:0 0 20%!important;width:20%!important;font-size:29px!important;line-height:1!important;overflow:visible!important;z-index:41!important;padding:0!important;display:grid!important;place-items:center!important}
+.ig-app .ig-bottom-nav .ig-nav-avatar{width:29px!important;height:29px!important;max-width:29px!important;max-height:29px!important}
+.ig-app .ig-story{min-width:64px!important;width:64px!important;flex:0 0 64px!important;overflow:visible!important;align-items:center!important}
+.ig-app .ig-story-ring,.ig-app .ig-addstory .ig-addstory-ring{width:63px!important;height:63px!important;min-width:63px!important;min-height:63px!important;flex:0 0 63px!important;box-sizing:border-box!important;padding:3px!important;position:relative!important;display:grid!important;place-items:center!important;border-radius:50%!important;overflow:visible!important}
+.ig-app .ig-story-ring .ig-avatar{width:55px!important;height:55px!important;min-width:55px!important;min-height:55px!important}
+.ig-app .ig-addstory .ig-story-ring .ig-myface,.ig-app .ig-addstory .ig-addstory-ring .ig-myface{width:55px!important;height:55px!important;min-width:55px!important;min-height:55px!important;box-sizing:border-box!important}
+.ig-app .ig-addstory .ig-addstory-ring:after{content:"+"!important;position:absolute!important;right:-1px!important;bottom:-1px!important;width:22px!important;height:22px!important;border-radius:50%!important;display:flex!important;align-items:center!important;justify-content:center!important;background:#1685f8!important;color:#fff!important;border:2px solid var(--ig-bg,#fff)!important;font-size:18px!important;font-weight:700!important;line-height:1!important;z-index:99!important}
+.ig-app .ig-addstory-plus{display:none!important}
+#appView:has(.ig-app) .app-homebar-wrap{z-index:5!important;pointer-events:none!important}
 </style><div class="sp-app">`+top+body+`</div>`+mini+nav;
  const input=$('#spQuery');if(input)input.addEventListener('input',e=>{const p=e.target.selectionStart;query=e.target.value;spotifyUIQuery=query;spotifyUIPage=page;renderSpotify();const n=$('#spQuery');if(n){n.focus();n.setSelectionRange(p,p)}});
  const form=$('#spSearchForm');if(form)form.onsubmit=e=>{e.preventDefault();query=$('#spQuery').value;spotifyUIQuery=query;renderSpotify()};
