@@ -1758,7 +1758,7 @@ function renderPhotos(){
     const arr=visiblePhotos();
     const deletedEmpty=opened.smart==="deleted"&&!arr.length;
     const albumContent=deletedEmpty?'<div class="ph-deleted-empty"><div class="ph-deleted-icon">▤</div><b>最近刪除</b><p>最近刪除的照片和影片會保留 30 天，之後將永久刪除。</p></div>':photoGrid(arr);
-    body='<div class="ph-album-detail"><div class="ph-section-row"><button data-act="backCollections">‹ 收藏集</button><span>'+arr.length+' 張照片</span><button data-act="albumMenu" data-id="'+esc(opened.id)+'">•••</button></div>'+albumContent+(deletedEmpty?'':'<button class="ph-wide-action" data-act="addToAlbum">＋ 加入照片</button>')+'</div>';
+    body='<div class="ph-album-detail"><div class="ph-section-row ph-album-toolbar"><button data-act="backCollections">‹ 收藏集</button><span>'+arr.length+' 張照片</span><button data-act="albumMenu" data-id="'+esc(opened.id)+'">•••</button></div>'+albumContent+'</div>';
    }else{
    title="收藏集";
    const recent=state.photos.slice().sort((a,b)=>b.date.localeCompare(a.date)).slice(0,6);
@@ -3546,6 +3546,10 @@ window.__phoneMainReady = false;
 .ios26-photos .ph-section-row{margin:0 0 12px;align-items:center}
 .ios26-photos .ph-section-row h2{font-size:22px;font-weight:720;letter-spacing:-.5px;margin:0}
 .ios26-photos .ph-section-row button{font-size:13px;color:#087cff;background:transparent;border:0;padding:5px 0}
+.ios26-photos .ph-album-toolbar{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px;margin:0 0 12px;padding:0 9px;background:transparent;border:0;box-shadow:none;min-height:34px}
+.ios26-photos .ph-album-toolbar button:first-child{justify-self:start;transform:translateX(3px)}
+.ios26-photos .ph-album-toolbar span{justify-self:center;text-align:center;white-space:nowrap;color:#666;font-size:12px}
+.ios26-photos .ph-album-toolbar button:last-child{justify-self:end;transform:translateX(-4px);font-size:17px;letter-spacing:1px;color:#111;padding:5px 2px}
 .ios26-photos .ph-recent-strip{display:flex;gap:9px;overflow-x:auto;padding-bottom:3px;scrollbar-width:none}
 .ios26-photos .ph-recent-card{position:relative;flex:0 0 130px;height:158px;padding:0;border:0;border-radius:13px;overflow:hidden;background:#eee}
 .ios26-photos .ph-recent-card img{width:100%;height:100%;object-fit:cover}
