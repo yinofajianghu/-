@@ -1766,10 +1766,29 @@ function renderPhotos(){
  function renderViewer(){
   const p=photoById(state.viewer);if(!p){state.viewer=null;return}
   let old=root.querySelector(".ph-viewer");if(old)old.remove();
-  const v=document.createElement("div");v.className="ph-viewer";v.innerHTML='<header><button data-act="closeViewer">‹</button><div><b>'+esc(p.title)+'</b><small>'+esc(p.date)+' · '+esc(p.place)+'</small></div><button data-act="photoInfo">ⓘ</button></header><div class="ph-viewer-image"><img id="phViewerImg" style="filter:'+esc(p.filter||"none")+';transform:rotate('+(p.rotation||0)+'deg)" src="'+esc(p.src)+'" alt="'+esc(p.title)+'"></div><div class="ph-filmstrip">'+state.photos.slice(0,20).map(q=>'<button data-act="jumpPhoto" data-id="'+q.id+'" class="'+(q.id===p.id?"current":"")+'"><img src="'+esc(q.src)+'"></button>').join("")+'</div><div class="ph-viewer-tools"><button data-act="favoritePhoto">'+(isFav(p.id)?"♥":"♡")+'<small>最愛</small></button><button data-act="editPhoto">調整<small>編輯</small></button><button data-act="sharePhoto">↗<small>分享</small></button><button data-act="morePhoto">•••<small>更多</small></button></div>';
+  const photos=state.photos.slice().sort((a,b)=>state.sort==="oldest"?a.date.localeCompare(b.date):b.date.localeCompare(a.date));
+  const idx=photos.findIndex(q=>q.id===p.id);
+  const dateLabel=(p.date||"").replace(/^(\d{4})-(\d{2})-(\d{2})$/,"$1年$2月$3日");
+  const v=document.createElement("div");v.className="ph-viewer";
+  v.innerHTML='<div class="ph-viewer-top"><button class="ph-glass-button ph-viewer-back" data-act="closeViewer" aria-label="返回">‹</button><div class="ph-viewer-heading"><b>'+esc(dateLabel||p.title)+'</b><small>'+esc(p.place||"")+'</small></div><button class="ph-glass-button ph-viewer-more" data-act="morePhoto" aria-label="更多選項">•••</button></div>'+
+   '<div class="ph-viewer-image" role="button" aria-label="點一下顯示或隱藏控制項"><img id="phViewerImg" style="filter:'+esc(p.filter||"none")+';transform:rotate('+(p.rotation||0)+'deg)" src="'+esc(p.src)+'" alt="'+esc(p.title)+'"></div>'+
+   '<div class="ph-viewer-details" hidden><div class="ph-details-title">'+esc(p.title)+'</div><div class="ph-details-date">'+esc(p.date||"")+' · '+esc(p.place||"")+'</div><div class="ph-details-meta"><span>▧　照片</span><span>原始照片資訊依匯入資料而定</span></div><button data-act="photoInfo">調整日期、名稱與地點　›</button></div>'+
+   '<div class="ph-viewer-bottom"><div class="ph-filmstrip">'+photos.map(q=>'<button data-act="jumpPhoto" data-id="'+esc(q.id)+'" class="'+(q.id===p.id?"current":"")+'" aria-label="'+esc(q.title)+'"><img src="'+esc(q.src)+'" alt=""></button>').join("")+'</div>'+
+   '<div class="ph-viewer-tools"><button data-act="sharePhoto" aria-label="分享"><span class="ph-tool-symbol">↑</span><small>分享</small></button><button data-act="favoritePhoto" aria-label="最愛"><span class="ph-tool-symbol">'+(isFav(p.id)?"♥":"♡")+'</span><small>最愛</small></button><button data-act="showPhotoDetails" aria-label="照片資訊"><span class="ph-tool-symbol">ⓘ</span><small>資訊</small></button><button data-act="editPhoto" aria-label="編輯"><span class="ph-tool-symbol">☷</span><small>編輯</small></button><button data-act="deleteOne" aria-label="刪除"><span class="ph-tool-symbol">⌫</span><small>刪除</small></button></div></div>';
   root.appendChild(v);
- }
- function doImport(files){
+  const imageArea=v.querySelector(".ph-viewer-image");
+  let startX=0,startY=0;
+  imageArea.addEventListener("click",()=>{v.classList.toggle("controls-hidden")});
+  v.addEventListener("touchstart",e=>{if(!e.touches||!e.touches[0])return;startX=e.touches[0].clientX;startY=e.touches[0].clientY},{passive:true});
+  v.addEventListener("touchend",e=>{
+   if(!e.changedTouches||!e.changedTouches[0])return;
+   const dx=e.changedTouches[0].clientX-startX,dy=e.changedTouches[0].clientY-startY;
+   if(Math.abs(dx)>55&&Math.abs(dx)>Math.abs(dy)){const next=photos[idx+(dx<0?1:-1)];if(next){state.viewer=next.id;renderViewer()}}
+   else if(dy < -65){v.querySelector(".ph-viewer-details").hidden=false;v.classList.add("details-open")}
+   else if(dy > 65){if(!v.querySelector(".ph-viewer-details").hidden){v.querySelector(".ph-viewer-details").hidden=true;v.classList.remove("details-open")}else v.classList.toggle("controls-hidden")}
+  },{passive:true});
+}
+function doImport(files){
   const list=Array.from(files||[]);if(!list.length)return;
   let pending=list.length,added=0;
   list.forEach(file=>{
@@ -3515,6 +3534,40 @@ window.__phoneMainReady = false;
 .ios26-photos .ph-viewer{position:fixed;inset:0;z-index:15;padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}
 .ios26-photos .ph-viewer-tools{padding-bottom:12px}.ios26-photos .ph-modal{background:#f6f6fa}
 @media(min-width:600px){.ios26-photos{max-width:430px;margin:0 auto;min-height:800px;border-left:1px solid #eee;border-right:1px solid #eee}.ios26-photos .ph-glass-dock{position:absolute;bottom:25px}.ios26-photos .ph-time-dock{position:absolute;bottom:95px}}
+
+/* Native-style single photo viewer */
+.ios26-photos .ph-viewer{position:fixed;inset:0;width:100vw;height:100dvh;z-index:100;background:#050505;color:#fff;padding:calc(env(safe-area-inset-top) + 8px) 0 calc(env(safe-area-inset-bottom) + 8px);overflow:hidden;display:flex;flex-direction:column}
+.ios26-photos .ph-viewer-top{position:relative;z-index:3;display:grid;grid-template-columns:44px 1fr 44px;align-items:center;padding:0 13px 10px;min-height:52px;transition:opacity .2s}
+.ios26-photos .ph-glass-button{display:grid;place-items:center;width:42px;height:42px;border:1px solid #ffffff35;border-radius:50%;background:#3434389c;color:#fff;backdrop-filter:blur(24px) saturate(160%);-webkit-backdrop-filter:blur(24px) saturate(160%);font-size:25px;line-height:1}
+.ios26-photos .ph-viewer-back{font-size:34px;padding-bottom:4px}
+.ios26-photos .ph-viewer-heading{display:flex;flex-direction:column;align-items:center;gap:3px;min-width:0;text-align:center}
+.ios26-photos .ph-viewer-heading b{font-size:16px;font-weight:650;letter-spacing:-.2px}
+.ios26-photos .ph-viewer-heading small{font-size:12px;color:#c5c5ca;max-width:230px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ios26-photos .ph-viewer-more{font-size:18px;letter-spacing:1px}
+.ios26-photos .ph-viewer-image{position:relative;flex:1;min-height:0;width:100%;display:grid;place-items:center;overflow:hidden;touch-action:pan-y}
+.ios26-photos .ph-viewer-image img{display:block;width:100%;height:100%;max-width:100%;max-height:100%;object-fit:contain;user-select:none;-webkit-user-drag:none}
+.ios26-photos .ph-viewer-bottom{position:relative;z-index:3;transition:opacity .2s,transform .2s}
+.ios26-photos .ph-filmstrip{display:flex;justify-content:flex-start;gap:3px;overflow-x:auto;overflow-y:hidden;padding:10px 8px 13px;max-height:none;height:72px;scrollbar-width:none}
+.ios26-photos .ph-filmstrip::-webkit-scrollbar{display:none}
+.ios26-photos .ph-filmstrip button{flex:0 0 49px;width:49px;height:49px;border:2px solid transparent;border-radius:4px;padding:0;background:#222;overflow:hidden}
+.ios26-photos .ph-filmstrip button.current{border:2px solid #fff;box-shadow:0 0 0 1px #ffffff65}
+.ios26-photos .ph-filmstrip img{display:block;width:100%;height:100%;object-fit:cover}
+.ios26-photos .ph-viewer-tools{display:flex;justify-content:space-around;align-items:center;gap:0;margin:0 13px;padding:11px 8px 8px;border:1px solid #ffffff25;border-radius:30px;background:rgba(55,55,60,.72);box-shadow:0 4px 20px #0003,inset 0 1px 0 #ffffff20;backdrop-filter:blur(28px) saturate(160%);-webkit-backdrop-filter:blur(28px) saturate(160%)}
+.ios26-photos .ph-viewer-tools button{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:4px;padding:0 2px;background:transparent;color:#fff;font-size:21px}
+.ios26-photos .ph-tool-symbol{height:27px;display:grid;place-items:center;font-size:23px;line-height:1}
+.ios26-photos .ph-viewer-tools button[data-act="favoritePhoto"] .ph-tool-symbol{color:#ff375f}
+.ios26-photos .ph-viewer-tools small{font-size:10px;color:#f0f0f3}
+.ios26-photos .ph-viewer-details{position:absolute;z-index:4;left:12px;right:12px;bottom:calc(env(safe-area-inset-bottom) + 114px);padding:17px;border:1px solid #ffffff30;border-radius:20px;background:rgba(38,38,42,.92);backdrop-filter:blur(30px) saturate(150%);-webkit-backdrop-filter:blur(30px) saturate(150%);box-shadow:0 10px 35px #0005}
+.ios26-photos .ph-viewer-details[hidden]{display:none}
+.ios26-photos .ph-details-title{font-size:17px;font-weight:650;margin-bottom:6px;overflow-wrap:anywhere}
+.ios26-photos .ph-details-date{font-size:13px;color:#d1d1d6;margin-bottom:14px}
+.ios26-photos .ph-details-meta{display:flex;flex-direction:column;gap:8px;padding:12px 0;border-top:1px solid #ffffff22;font-size:12px;color:#c9c9cf}
+.ios26-photos .ph-viewer-details>button{display:block;width:100%;padding:12px 0 0;border:0;border-top:1px solid #ffffff22;background:transparent;color:#68aaff;text-align:left;font-size:13px}
+.ios26-photos .ph-viewer.controls-hidden .ph-viewer-top,.ios26-photos .ph-viewer.controls-hidden .ph-viewer-bottom{opacity:0;pointer-events:none}
+.ios26-photos .ph-viewer.details-open .ph-viewer-bottom{opacity:.35}
+.ios26-photos .ph-viewer .ph-viewer-image{cursor:pointer}
+@media(min-width:600px){.ios26-photos .ph-viewer{width:min(100vw,430px);left:50%;transform:translateX(-50%);border-left:1px solid #333;border-right:1px solid #333}.ios26-photos .ph-viewer-details{bottom:calc(env(safe-area-inset-bottom) + 114px)}}
+
 </style>
 </body>
 </html>
