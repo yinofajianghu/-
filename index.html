@@ -449,6 +449,71 @@ html,body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro 
   #home .weather-place, #home .weather-temp, #home .event-title { color: #171717 !important; }
 }
 
+
+/* Rebuild: reference-led iOS Control Center geometry */
+#controlCenter{
+  box-sizing:border-box!important;
+  padding:calc(18px + var(--safe-top)) 15px calc(24px + var(--safe-bottom))!important;
+  background:rgba(8,12,20,.20)!important;
+  -webkit-backdrop-filter:blur(42px) saturate(1.8)!important;
+  backdrop-filter:blur(42px) saturate(1.8)!important;
+}
+#controlCenter .cc-statusline{padding:0 7px 14px!important;font-size:15px!important;font-weight:650!important;letter-spacing:.1px}
+#controlCenter .cc-pages{height:calc(100% - 82px)!important;min-height:0!important}
+#controlCenter .cc-page{padding:0 1px 8px!important;gap:12px!important;overflow-y:auto!important;scrollbar-width:none}
+#controlCenter .cc-page::-webkit-scrollbar{display:none}
+#controlCenter .cc-page[data-cc-page="0"] .cc-concept-top{
+ display:grid!important;grid-template-columns:minmax(0,1.2fr) minmax(72px,.72fr)!important;
+ gap:11px!important;align-items:stretch!important
+}
+#controlCenter .cc-connectivity{
+ display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
+ grid-template-rows:repeat(3,42px) 40px!important;gap:8px!important;
+ padding:12px!important;border-radius:29px!important;
+ background:rgba(238,242,250,.18)!important;border:1px solid rgba(255,255,255,.17)!important;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.23),0 8px 24px #0002!important
+}
+#controlCenter .cc-native-connect{width:100%!important;height:42px!important;min-width:0!important;border-radius:50px!important;background:rgba(38,43,53,.72)!important;color:#fff!important;border:1px solid #ffffff1c!important}
+#controlCenter .cc-native-connect.on{background:#087cff!important;border-color:#168bff!important}
+#controlCenter .cc-connectivity .cc-native-wide{grid-column:1/-1!important;min-height:40px!important;border-radius:22px!important}
+#controlCenter .cc-adjustments{display:flex!important;flex-direction:row!important;height:auto!important;min-height:0!important;gap:9px!important}
+#controlCenter .cc-native-slider{
+ position:relative!important;flex:1!important;min-width:0!important;height:100%!important;min-height:180px!important;
+ border-radius:27px!important;overflow:hidden!important;background:linear-gradient(180deg,rgba(246,248,252,.93),rgba(190,196,207,.88))!important;
+ border:1px solid #ffffff85!important;box-shadow:inset 0 1px 1px #fff9,0 7px 20px #0002!important
+}
+#controlCenter .cc-native-slider input{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;writing-mode:vertical-lr!important;direction:rtl!important;appearance:slider-vertical!important;opacity:.01!important;cursor:pointer!important;z-index:3!important}
+#controlCenter .cc-native-slider:before{content:"";position:absolute;left:0;right:0;bottom:0;height:var(--cc-fill,70%);background:linear-gradient(180deg,#fff,#f7f8fa)!important;border-radius:22px 22px 0 0!important;pointer-events:none}
+#controlCenter .cc-brightness{--cc-fill:100%}
+#controlCenter .cc-volume{--cc-fill:65%}
+#controlCenter .cc-slider-symbol{position:absolute!important;left:0;right:0;bottom:12px!important;z-index:2!important;text-align:center!important;color:#262b34!important;font-size:24px!important}
+#controlCenter .cc-native-slider output{position:absolute!important;left:0;right:0;top:10px!important;z-index:2!important;color:#303640!important;font-size:10px!important;text-align:center!important}
+#controlCenter .cc-native-control-row.cc-concept-shortcuts{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:12px!important;margin-top:2px!important}
+#controlCenter .cc-native-round{width:100%!important;aspect-ratio:1!important;height:auto!important;min-height:0!important;border-radius:50%!important;background:rgba(46,51,61,.76)!important;border:1px solid rgba(255,255,255,.19)!important;box-shadow:inset 0 1px 0 #ffffff26,0 5px 16px #0002!important;color:#fff!important}
+#controlCenter .cc-native-round .cc-glyph,#controlCenter .cc-native-round .cc-glyph svg{width:25px!important;height:25px!important}
+#controlCenter .cc-page[data-cc-page="1"] .cc-native-page-title,
+#controlCenter .cc-page[data-cc-page="2"] .cc-native-page-title{font-size:18px!important;font-weight:650!important;letter-spacing:-.3px!important;margin:2px 5px 3px!important}
+#controlCenter .cc-native-media{border-radius:29px!important;padding:18px!important;background:linear-gradient(145deg,rgba(58,63,73,.83),rgba(24,28,36,.79))!important;border:1px solid #ffffff24!important;box-shadow:inset 0 1px 0 #ffffff25,0 10px 26px #0002!important}
+#controlCenter .cc-album{border-radius:13px!important;background:linear-gradient(135deg,#d4d7d9,#737c88 48%,#282d35)!important}
+#controlCenter .cc-media-buttons button{width:48px!important;height:48px!important;border-radius:50%!important;background:#ffffff16!important;border:1px solid #ffffff18!important}
+#controlCenter .cc-media-buttons #ccPlay2{background:#f5f6f8!important;color:#16191f!important}
+#controlCenter .cc-page[data-cc-page="1"] .cc-native-control-row{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important}
+#controlCenter .cc-native-wide{min-height:62px!important;padding:11px 13px!important;border-radius:23px!important;background:rgba(43,48,58,.77)!important;border:1px solid #ffffff20!important;box-shadow:inset 0 1px 0 #ffffff20!important;color:#fff!important}
+#controlCenter .cc-native-wide .cc-native-control-icon{font-size:23px!important}
+#controlCenter .cc-page[data-cc-page="2"] .cc-native-tool-grid{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:9px!important}
+#controlCenter .cc-page[data-cc-page="2"] .cc-native-tool{display:flex!important;flex-direction:column!important;align-items:flex-start!important;justify-content:space-between!important;min-width:0!important;min-height:103px!important;padding:13px 11px!important;border-radius:24px!important;background:rgba(43,48,58,.78)!important;border:1px solid #ffffff20!important;box-shadow:inset 0 1px 0 #ffffff22!important;text-align:left!important}
+#controlCenter .cc-page[data-cc-page="2"] .cc-native-tool>span{font-size:27px!important;line-height:1!important}
+#controlCenter .cc-page[data-cc-page="2"] .cc-native-tool b{font-size:10px!important;line-height:1.25!important;font-weight:600!important}
+#controlCenter .cc-home-control{margin-top:2px!important}
+#controlCenter .cc-page-indicator{bottom:calc(28px + var(--safe-bottom))!important}
+#controlCenter .cc-close{bottom:calc(9px + var(--safe-bottom))!important}
+@media(max-width:380px){
+ #controlCenter{padding-left:11px!important;padding-right:11px!important}
+ #controlCenter .cc-connectivity{padding:9px!important;gap:6px!important}
+ #controlCenter .cc-native-slider{min-height:165px!important}
+ #controlCenter .cc-native-tool{min-height:91px!important;padding:10px 8px!important}
+}
+
 </style>
 </head>
 <body>
