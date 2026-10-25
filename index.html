@@ -2766,7 +2766,7 @@ setupWallpaperPicker();initHome();updateClock();setInterval(updateClock,1000);
  });
  // Only a deliberate pull-down starting at the top edge returns the Home Screen to the lock screen.
  const homeSurface=document.querySelector('#home');
- const lockPullTop=()=>Math.max(64,window.innerHeight*.075);
+ const lockPullTop=()=>Math.max(24,window.innerHeight*.025);
  if(homeSurface){
    let homeSwipeStart=null;
    homeSurface.addEventListener('touchstart',e=>{
@@ -2797,7 +2797,7 @@ setupWallpaperPicker();initHome();updateClock();setInterval(updateClock,1000);
    && !document.querySelector('#home')?.classList.contains('active')
    && !document.querySelector('#passcodeScreen')?.classList.contains('active')
    && !document.querySelector('#controlCenter')?.classList.contains('active');
- const lockPullTop=()=>Math.max(64,window.innerHeight*.075);
+ const lockPullTop=()=>Math.max(24,window.innerHeight*.025);
  document.addEventListener('touchstart',e=>{
    if(!appIsVisible()){appSwipeStart=null;return;}
    const t=e.changedTouches[0];
