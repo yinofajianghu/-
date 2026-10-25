@@ -1511,6 +1511,46 @@ function startVideoCall(){
  #controlCenter .cc-native-control-row.cc-concept-shortcuts{gap:9px!important}
  #controlCenter .cc-native-wide{padding:9px!important;font-size:12px!important}
 }
+
+/* More air between every control + animated liquid slider fill */
+#controlCenter .cc-page{gap:22px!important}
+#controlCenter .cc-concept-top{gap:18px!important}
+#controlCenter .cc-connectivity{gap:13px!important;padding:16px!important}
+#controlCenter .cc-adjustments{gap:14px!important}
+#controlCenter .cc-native-control-row.cc-concept-shortcuts{column-gap:17px!important;row-gap:17px!important;margin-top:4px!important}
+#controlCenter .cc-native-control-row:not(.cc-concept-shortcuts){column-gap:16px!important;row-gap:16px!important;margin-top:4px!important}
+#controlCenter .cc-native-round{box-shadow:inset 0 1px 0 rgba(255,255,255,.28),0 8px 20px rgba(0,0,0,.14)!important}
+#controlCenter .cc-native-tool-grid{column-gap:16px!important;row-gap:16px!important}
+#controlCenter .cc-page[data-cc-page="2"] .cc-native-tool{margin:0!important}
+#controlCenter .cc-native-slider{position:relative!important;overflow:hidden!important;isolation:isolate!important;transition:background-color .28s ease,box-shadow .28s ease!important}
+#controlCenter .cc-native-slider:before{
+ height:var(--fill,65%)!important;
+ transition:height .22s cubic-bezier(.2,.75,.25,1),background .28s ease,box-shadow .28s ease!important;
+ will-change:height;
+}
+#controlCenter .cc-native-slider input[type="range"]{
+ z-index:3!important;cursor:ns-resize!important;touch-action:pan-x!important;
+}
+#controlCenter .cc-native-slider:after{
+ content:"";position:absolute;left:5px;right:5px;bottom:5px;height:var(--fill,65%);
+ border-radius:24px;pointer-events:none;z-index:0;
+ background:linear-gradient(180deg,rgba(255,255,255,.15),rgba(255,255,255,0));
+ opacity:.7;transition:height .22s cubic-bezier(.2,.75,.25,1),opacity .25s ease;
+}
+#controlCenter .cc-native-slider .cc-slider-symbol,
+#controlCenter .cc-native-slider output{z-index:4!important;transition:transform .22s ease,opacity .22s ease!important}
+#controlCenter .cc-native-slider:focus-within{box-shadow:0 0 0 2px rgba(255,255,255,.38),inset 0 1px 0 rgba(255,255,255,.32),0 8px 22px rgba(0,0,0,.15)!important}
+#controlCenter .cc-native-slider:active .cc-slider-symbol{transform:scale(1.12)}
+#controlCenter .cc-native-slider input[type="range"]::-webkit-slider-thumb{transition:transform .18s ease,box-shadow .18s ease}
+#controlCenter .cc-native-slider input[type="range"]:active::-webkit-slider-thumb{transform:scale(1.13);box-shadow:0 0 0 7px rgba(255,255,255,.15)}
+#controlCenter .cc-native-slider input[type="range"]::-moz-range-thumb{transition:transform .18s ease,box-shadow .18s ease}
+#controlCenter .cc-native-slider input[type="range"]:active::-moz-range-thumb{transform:scale(1.13);box-shadow:0 0 0 7px rgba(255,255,255,.15)}
+@media(prefers-reduced-motion:reduce){
+ #controlCenter .cc-native-slider,#controlCenter .cc-native-slider:before,#controlCenter .cc-native-slider:after,
+ #controlCenter .cc-native-slider .cc-slider-symbol,#controlCenter .cc-native-slider output,
+ #controlCenter .cc-native-slider input[type="range"]::-webkit-slider-thumb,
+ #controlCenter .cc-native-slider input[type="range"]::-moz-range-thumb{transition:none!important}
+}
 </style>`;
  const v=$('#callVideo');if(v){v.play().catch(()=>{});$('#videoCall').addEventListener('click',()=>{v.muted=false;v.play().catch(()=>{});},{once:true})}
  callTimer=setInterval(()=>{callSeconds++;$('#callDuration').textContent=String(Math.floor(callSeconds/60)).padStart(2,'0')+':'+String(callSeconds%60).padStart(2,'0')},1000);
