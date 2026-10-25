@@ -713,11 +713,16 @@ function renderMessages(){
  $('#home').classList.remove('active');$('#lock').classList.remove('active');$('#appView').classList.add('active');$('#appView').classList.remove('dark');
  const contact=CONFIG.contactName||'未知聯絡人';
  const initial=(contact.trim().slice(0,1)||'？');
- const state={detail:false,items:[{from:'them',text:'今どこにいるの？',time:'上午 10:42'}],draft:''};
+ const storageKey='jianghu-sms:'+contact;
+ let savedItems=[];
+ try{const raw=localStorage.getItem(storageKey);if(raw){const parsed=JSON.parse(raw);if(Array.isArray(parsed))savedItems=parsed.filter(m=>m&&typeof m.text==='string'&&(m.from==='me'||m.from==='them'));}}catch(e){}
+ const state={detail:false,items:savedItems.length?savedItems:[{from:'them',text:'今どこにいるの？',time:'上午 10:42'}],draft:''};
+ const saveItems=()=>{try{localStorage.setItem(storageKey,JSON.stringify(state.items));}catch(e){}};
+ const currentTime=()=>new Date().toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit',hour12:true});
  const esc=s=>escapeHTML(String(s||''));
  const draw=()=>{
   if(!state.detail){
-   $('#appContent').innerHTML=`<div class="sms-app"><div class="sms-status-space"></div><header class="sms-list-head"><h1>訊息</h1><button class="sms-compose" id="smsNew" aria-label="新增訊息">＋</button></header><div class="sms-search"><span>⌕</span><input id="smsSearch" placeholder="搜尋" aria-label="搜尋訊息"></div><button class="sms-thread" id="smsOpen"><div class="sms-avatar">${esc(initial)}</div><div class="sms-thread-main"><div class="sms-thread-title"><b>${esc(contact)}</b><time>上午 10:42</time></div><div class="sms-preview">${esc(state.items[state.items.length-1]?.text||'簡訊')}</div></div><span class="sms-chevron">›</span></button><div class="sms-foot-note">簡訊 · SMS</div><div class="sms-tabbar"><div class="sms-tab active"><span>▤</span>所有訊息</div><div class="sms-tab"><span>◉</span>已知寄件人</div><div class="sms-tab"><span>☰</span>未讀</div></div></div>`;
+   $('#appContent').innerHTML=`<div class="sms-app"><div class="sms-status-space"></div><header class="sms-list-head"><h1>訊息</h1><button class="sms-compose" id="smsNew" aria-label="新增訊息">＋</button></header><div class="sms-search"><span>⌕</span><input id="smsSearch" placeholder="搜尋" aria-label="搜尋訊息"></div><button class="sms-thread" id="smsOpen"><div class="sms-avatar">${esc(initial)}</div><div class="sms-thread-main"><div class="sms-thread-title"><b>${esc(contact)}</b><time>${esc(state.items[state.items.length-1]?.time||'上午 10:42')}</time></div><div class="sms-preview">${esc(state.items[state.items.length-1]?.text||'簡訊')}</div></div><span class="sms-chevron">›</span></button><div class="sms-foot-note">簡訊 · SMS</div><div class="sms-tabbar"><div class="sms-tab active"><span>▤</span>所有訊息</div><div class="sms-tab"><span>◉</span>已知寄件人</div><div class="sms-tab"><span>☰</span>未讀</div></div></div>`;
    $('#smsOpen').onclick=()=>{state.detail=true;draw()};
    $('#smsNew').onclick=()=>{state.detail=true;draw();setTimeout(()=>document.getElementById('smsInput')?.focus(),50)};
    const search=document.getElementById('smsSearch');search.oninput=()=>{const row=document.getElementById('smsOpen');row.style.display=(contact+' '+state.items.map(m=>m.text).join(' ')).toLowerCase().includes(search.value.toLowerCase())?'flex':'none'};
@@ -725,7 +730,7 @@ function renderMessages(){
    $('#appContent').innerHTML=`<div class="sms-app sms-detail"><header class="sms-chat-head"><button id="smsBack" class="sms-back">‹ <span>訊息</span></button><div class="sms-person"><div class="sms-avatar">${esc(initial)}</div><b>${esc(contact)}</b><span>›</span></div><button class="sms-video" aria-label="視訊通話">▣</button></header><div class="sms-conversation" id="smsConversation">${state.items.map((m,i)=>`<div class="sms-message-row ${m.from==='me'?'mine':''}"><div class="sms-bubble ${m.from==='me'?'green':'gray'}">${esc(m.text)}</div></div>`).join('')}<div class="sms-system-note">簡訊 · SMS</div></div><form class="sms-composer" id="smsForm"><button type="button" class="sms-plus" id="smsPlus">＋</button><input id="smsInput" autocomplete="off" placeholder="簡訊 · SMS" aria-label="輸入簡訊"><button class="sms-send" type="submit" aria-label="傳送" disabled>↑</button></form></div>`;
    document.getElementById('smsBack').onclick=()=>{state.detail=false;draw()};
    const input=document.getElementById('smsInput'),send=document.querySelector('.sms-send');input.oninput=()=>{send.disabled=!input.value.trim();send.classList.toggle('ready',!send.disabled)};
-   document.getElementById('smsForm').onsubmit=e=>{e.preventDefault();const text=input.value.trim();if(!text)return;state.items.push({from:'me',text,time:'現在'});draw();const conv=document.getElementById('smsConversation');if(conv)conv.scrollTop=conv.scrollHeight;document.getElementById('smsInput')?.focus()};
+   document.getElementById('smsForm').onsubmit=e=>{e.preventDefault();const text=input.value.trim();if(!text)return;state.items.push({from:'me',text,time:currentTime()});saveItems();draw();const conv=document.getElementById('smsConversation');if(conv)conv.scrollTop=conv.scrollHeight;document.getElementById('smsInput')?.focus()};
    document.getElementById('smsPlus').onclick=()=>{const input=document.getElementById('smsInput');input.placeholder='輸入簡訊';input.focus()};
    const conv=document.getElementById('smsConversation');if(conv)conv.scrollTop=conv.scrollHeight;
   }
