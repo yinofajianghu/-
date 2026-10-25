@@ -856,7 +856,7 @@ if(indicator){
 }
 lockScreen.addEventListener('pointerup',finishLockSwipe);lockScreen.addEventListener('pointercancel',()=>finishLockSwipe(null));
 // Native touch fallback: preserve normal vertical touch handling while recognizing an upward unlock swipe.
-let nativeTouchStartY=null;lockScreen.addEventListener('touchstart',e=>{if(!lockScreen.classList.contains('active')||unlockInProgress)return;nativeTouchStartY=e.changedTouches[0]?.clientY??null;},{passive:true});lockScreen.addEventListener('touchend',e=>{if(nativeTouchStartY===null)return;const endY=e.changedTouches[0]?.clientY??nativeTouchStartY;const movedUp=nativeTouchStartY-endY;nativeTouchStartY=null;if(movedUp>Math.max(20,window.innerHeight*.03)&&!unlockInProgress&&!returnToRecentApp())openPasscode();},{passive:true});lockScreen.addEventListener('touchcancel',()=>{nativeTouchStartY=null;},{passive:true});
+let nativeTouchStartY=null;lockScreen.addEventListener('touchstart',e=>{if(!lockScreen.classList.contains('active')||unlockInProgress)return;nativeTouchStartY=e.changedTouches[0]?.clientY??null;},{passive:true});lockScreen.addEventListener('touchend',e=>{if(nativeTouchStartY===null)return;const endY=e.changedTouches[0]?.clientY??nativeTouchStartY;const movedUp=nativeTouchStartY-endY;nativeTouchStartY=null;if(movedUp>Math.max(20,window.innerHeight*.03)&&!unlockInProgress&&$('#lock').classList.contains('active')&&!returnToRecentApp())openPasscode();},{passive:true});lockScreen.addEventListener('touchcancel',()=>{nativeTouchStartY=null;},{passive:true});
 document.addEventListener('click',e=>{const b=e.target.closest('[data-app]');if(b)showApp(b.dataset.app)});
 wallpaperStyle();initHome();updateClock();setInterval(updateClock,1000);
 
