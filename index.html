@@ -84,9 +84,8 @@ body{background:
 }
 @keyframes wallpaperBreathe{from{transform:scale(1.015)}to{transform:scale(1.055)}}
 #lock{backdrop-filter:none;transition:transform .42s cubic-bezier(.2,.8,.2,1)}
-#lock.active{animation:lockAppear .42s cubic-bezier(.2,.8,.2,1) both}
+#lock.active{animation:none}
 #lock.dragging{animation:none!important}
-@keyframes lockAppear{from{transform:translateY(-100%)}to{transform:translateY(0)}}
 @keyframes lockSlideAway{to{opacity:0;transform:translateY(-22%);filter:blur(2px)}}
 @media(prefers-reduced-motion:reduce){#lock.active,#home.active,#appView.active{animation:none!important}#lock{transition:none!important}}
 .lock-time{font-variant-numeric:tabular-nums;letter-spacing:-.075em;text-shadow:0 4px 30px rgba(0,0,0,.14)}
@@ -997,8 +996,12 @@ wallpaperStyle();initHome();updateClock();setInterval(updateClock,1000);
      if(Math.abs(dx)>Math.abs(dy)*1.2 && Math.abs(dx)>10){lockPull=null;return false;}
      if(dy<10)return false;
      lockPull.active=true;
-     lockSurface.classList.add('active','dragging');
+     // Keep the home/app visible underneath; reveal the lock panel only from above.
      lockSurface.style.transition='none';
+     lockSurface.style.transform=`translate3d(0,${-window.innerHeight}px,0)`;
+     lockSurface.style.opacity='1';
+     lockSurface.style.filter='none';
+     lockSurface.classList.add('active','dragging');
    }
    const distance=Math.max(0,Math.min(window.innerHeight,dy));
    const progress=distance/Math.max(1,window.innerHeight);
