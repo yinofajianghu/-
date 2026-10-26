@@ -4474,26 +4474,5 @@ window.__phoneMainReady = false;
  #appView .wx-atmo-scene .rain,#appView .wx-atmo-scene .rain:before,#appView .wx-atmo-scene .rain:after{animation:none!important}
 }
 </style>
-
-<style id="ios-weather-enable-real-footage">
-/* Enable the existing real weather footage layer; it was previously hidden by a later override. */
-#appView .wx-video-scene{display:block!important;visibility:visible!important;z-index:0!important;opacity:1!important}
-#appView .wx-video-scene video{display:block!important;visibility:visible!important;width:100%!important;height:100%!important;object-fit:cover!important;opacity:.94!important}
-#appView .wx-app>.wx-atmo-scene{background:transparent!important;z-index:1!important;opacity:1!important}
-#appView .wx-app>.wx-atmo-scene .rain,
-#appView .wx-app>.wx-atmo-scene .cloud,
-#appView .wx-app>.wx-atmo-scene .sun,
-#appView .wx-app>.wx-atmo-scene .moon,
-#appView .wx-app>.wx-atmo-scene .stars,
-#appView .wx-app>.wx-atmo-scene .snow,
-#appView .wx-app>.wx-atmo-scene .fog,
-#appView .wx-app>.wx-atmo-scene .flash{display:none!important;opacity:0!important}
-#appView .wx-app>.wx-scroll,#appView .wx-app>.wx-bottom{position:relative!important;z-index:2!important;background:transparent!important}
-#appView .wx-video-scene:after{background:linear-gradient(180deg,#08182b35 0%,#14263b08 28%,#14263b18 62%,#09162665 100%)!important}
-#appView .wx-app.wx-rain .wx-video-scene video,
-#appView .wx-app.wx-storm .wx-video-scene video{filter:saturate(.78) brightness(.88) contrast(1.08)!important}
-#appView .wx-app.wx-time-night .wx-video-scene video{filter:saturate(.66) brightness(.66) contrast(1.08)!important}
-@media(prefers-reduced-motion:reduce){#appView .wx-video-scene video{display:block!important}}
-</style>
 </body>
 </html>
