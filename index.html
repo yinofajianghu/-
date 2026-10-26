@@ -4478,6 +4478,39 @@ window.__phoneMainReady = false;
 @media(prefers-reduced-motion:reduce){
  #appView .wx-atmo-scene .rain,#appView .wx-atmo-scene .rain:before,#appView .wx-atmo-scene .rain:after{animation:none!important}
 }
+
+/* Fix: animate the background rain itself, not the weather icon. */
+<style id="wx-rain-moving-fix">
+#appView .wx-atmo-scene .rain{
+  background:
+    repeating-linear-gradient(180deg,transparent 0 7px,rgba(230,241,249,.38) 7px 19px,transparent 19px 66px),
+    repeating-linear-gradient(180deg,transparent 0 22px,rgba(239,247,252,.62) 22px 38px,transparent 38px 91px),
+    repeating-linear-gradient(180deg,transparent 0 4px,rgba(225,239,248,.24) 4px 12px,transparent 12px 53px)!important;
+  background-size:180px 132px,230px 182px,145px 106px!important;
+  background-repeat:repeat!important;
+  -webkit-mask-image:repeating-linear-gradient(90deg,#000 0 1.3px,transparent 1.3px 26px);
+  mask-image:repeating-linear-gradient(90deg,#000 0 1.3px,transparent 1.3px 26px);
+  animation:wxRainActuallyFalls .62s linear infinite!important;
+}
+#appView .wx-atmo-scene .rain:before{
+  background:
+    repeating-linear-gradient(180deg,transparent 0 11px,rgba(246,250,253,.76) 11px 26px,transparent 26px 76px),
+    repeating-linear-gradient(180deg,transparent 0 31px,rgba(213,231,242,.52) 31px 50px,transparent 50px 109px)!important;
+  background-size:210px 152px,270px 218px!important;
+  background-repeat:repeat!important;
+  -webkit-mask-image:repeating-linear-gradient(90deg,transparent 0 9px,#000 9px 10.8px,transparent 10.8px 42px);
+  mask-image:repeating-linear-gradient(90deg,transparent 0 9px,#000 9px 10.8px,transparent 10.8px 42px);
+  animation:wxRainActuallyFallsFast .43s linear infinite!important;
+}
+@keyframes wxRainActuallyFalls{
+  from{background-position:0 0,0 35px,0 12px}
+  to{background-position:0 132px,0 217px,0 118px}
+}
+@keyframes wxRainActuallyFallsFast{
+  from{background-position:0 0,0 44px}
+  to{background-position:0 152px,0 262px}
+}
+</style>
 </style>
 </body>
 </html>
