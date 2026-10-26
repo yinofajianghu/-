@@ -4952,9 +4952,28 @@ window.__phoneMainReady = false;
 
 
 <style id="spotify-scroll-repair-2026">
-/* Give Spotify its own touch-scrollable viewport inside the clipped simulated app frame. */
-#appView #appContent:has(.sp-app){position:relative!important;overflow:hidden!important;min-height:0!important}
-#appView #appContent .sp-app{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;min-height:0!important;max-height:100%!important;box-sizing:border-box!important;overflow-x:hidden!important;overflow-y:auto!important;-webkit-overflow-scrolling:touch!important;overscroll-behavior-y:contain!important;touch-action:pan-y!important;padding-bottom:calc(180px + var(--safe-bottom))!important;scrollbar-width:none}
+/* Keep the Spotify root in normal layout flow so its interface remains visible, and scroll within the app viewport. */
+#appView #appContent:has(.sp-app){
+  position:relative!important;
+  overflow:hidden!important;
+  min-height:0!important;
+}
+#appView #appContent .sp-app{
+  position:relative!important;
+  inset:auto!important;
+  width:100%!important;
+  height:100%!important;
+  min-height:0!important;
+  max-height:100%!important;
+  box-sizing:border-box!important;
+  overflow-x:hidden!important;
+  overflow-y:auto!important;
+  -webkit-overflow-scrolling:touch!important;
+  overscroll-behavior-y:contain!important;
+  touch-action:pan-y!important;
+  padding-bottom:calc(180px + var(--safe-bottom))!important;
+  scrollbar-width:none;
+}
 #appView #appContent .sp-app::-webkit-scrollbar{display:none}
 </style>
 </body>
