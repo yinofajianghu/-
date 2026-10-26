@@ -924,6 +924,12 @@ html body #controlCenter .cc-native-slider output{
 .wx-screen{position:absolute;inset:0;z-index:5;overflow:auto;padding:calc(16px + var(--safe-top)) 18px 30px;background:linear-gradient(#65b4ec,#cce4f5);color:white}.night .wx-screen{background:linear-gradient(#19254d,#4a6086)}.wx-head{display:flex;align-items:center;gap:12px;margin-bottom:20px}.wx-head h2{font-size:22px;flex:1;margin:0}.wx-search{width:100%;height:44px;border:1px solid #ffffff55;border-radius:13px;background:#ffffff25;color:white;padding:0 12px;margin-bottom:12px}.wx-search::placeholder{color:#ffffffbd}.wx-city-row{width:100%;display:flex;align-items:center;text-align:left;gap:12px;padding:14px;margin:8px 0;border-radius:16px;background:#ffffff25;border:1px solid #ffffff35;color:white}.wx-city-row span{flex:1}.wx-city-row b{font-size:30px;font-weight:300}.wx-city-row small{display:block;font-size:11px}.wx-primary{width:100%;border:0;border-radius:14px;padding:13px;background:#fff;color:#3475a7;font-weight:600;margin:6px 0}.wx-chip{border:1px solid #ffffff55;border-radius:20px;background:#ffffff25;color:white;padding:9px 13px}.wx-chip.on{background:white;color:#3475a7}.wx-map{height:55vh;min-height:300px;border-radius:22px;background-color:#9bcbd2;background-image:linear-gradient(30deg,transparent 46%,#e7dfc3 47%,#e7dfc3 49%,transparent 50%),linear-gradient(110deg,transparent 34%,#e7dfc3 35%,#e7dfc3 37%,transparent 38%),repeating-linear-gradient(90deg,transparent 0 42px,#ffffff40 43px 45px),repeating-linear-gradient(0deg,transparent 0 38px,#ffffff40 39px 41px);position:relative;overflow:hidden}.wx-radar{position:absolute;inset:0;background:radial-gradient(ellipse at 30% 35%,#54b7fa99,transparent 25%),radial-gradient(ellipse at 65% 58%,#a47ff699,transparent 25%),radial-gradient(ellipse at 55% 25%,#4ed8ac99,transparent 20%)}.wx-pin{position:absolute;left:50%;top:45%;font-size:30px}.wx-note{font-size:12px;color:#ffffffce;line-height:1.5}.wx-toggle{width:44px;height:25px;accent-color:#36d56a}
 @media(min-width:520px){.wx-scroll{max-width:480px;margin:auto}.wx-screen{width:100%;max-width:520px;left:50%;right:auto;transform:translateX(-50%)}}
 </style>
+
+/* Reduce the app content viewport slightly at the bottom so apps feel less edge-to-edge. */
+<style id="app-content-bottom-inset-2026">
+#appContent{bottom:calc(46px + var(--safe-bottom))}
+</style>
+
 </head>
 <body>
 <div id="phone">
