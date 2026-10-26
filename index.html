@@ -4250,5 +4250,71 @@ window.__phoneMainReady = false;
 }
 </style>
 
+
+<style id="ios-weather-final-polish">
+/* Longer, translucent glass city strip */
+#appView .wx-app>.wx-scroll{z-index:2!important}
+#appView .wx-app .wx-top{
+  position:sticky!important;top:0!important;z-index:8!important;
+  margin:0 -16px 12px!important;padding:calc(8px + var(--safe-top,0px)) 20px 12px!important;
+  min-height:68px;box-sizing:border-box;
+  background:linear-gradient(120deg,rgba(224,242,255,.24),rgba(173,215,245,.12) 52%,rgba(255,255,255,.19))!important;
+  border:1px solid rgba(255,255,255,.27);border-top:0;border-radius:0 0 23px 23px;
+  box-shadow:0 10px 28px rgba(17,43,71,.09),inset 0 1px 0 rgba(255,255,255,.2);
+  -webkit-backdrop-filter:blur(24px) saturate(145%);backdrop-filter:blur(24px) saturate(145%);
+}
+#appView .wx-app.night .wx-top{background:linear-gradient(120deg,rgba(18,36,64,.55),rgba(55,78,108,.3))!important;border-color:rgba(255,255,255,.16)}
+#appView .wx-app .wx-top-title b{font-size:17px;letter-spacing:.02em}
+#appView .wx-app .wx-top button{background:rgba(255,255,255,.17);border-color:rgba(255,255,255,.32);backdrop-filter:blur(12px)}
+/* Draw the weather animation locally with CSS; do not depend on remote video files. */
+#appView .wx-video-scene{display:none!important}
+#appView .wx-app>.wx-atmo-scene{z-index:0!important;opacity:1!important;filter:none!important}
+#appView .wx-app>.wx-scroll{background:transparent!important}
+#appView .wx-atmo-scene .cloud{will-change:transform;animation:wxCloud 62s linear infinite!important}
+#appView .wx-atmo-scene .cloud.c2{animation-duration:86s!important;animation-delay:-29s!important}
+#appView .wx-atmo-scene .cloud.c3{animation-duration:104s!important;animation-delay:-53s!important}
+#appView .wx-atmo-scene .sun{animation:wxSun 8s ease-in-out infinite!important}
+#appView .wx-atmo-scene .rain{background-size:83px 115px,137px 165px!important;animation:wxRain .72s linear infinite!important}
+#appView .wx-atmo-scene .snow{animation:wxSnow 10s linear infinite!important}
+#appView .wx-atmo-scene .fog{animation:wxFog 8s ease-in-out infinite alternate!important}
+#appView .wx-app.wx-storm .wx-atmo-scene .flash{animation:wxFlash 8s linear infinite!important}
+#appView .wx-app.wx-rain .wx-atmo-scene .rain,#appView .wx-app.wx-storm .wx-atmo-scene .rain{opacity:.58!important}
+#appView .wx-app.wx-snow .wx-atmo-scene .snow{opacity:.85!important}
+#appView .wx-app.wx-fog .wx-atmo-scene .fog{opacity:.72!important}
+/* All forecast rows share identical six-column tracks. The range bar uses its data offsets. */
+#appView .wx-days{width:100%;min-width:0}
+#appView .wx-days .wx-day{
+  display:grid!important;
+  grid-template-columns:52px 26px 30px 32px minmax(30px,1fr) 32px!important;
+  column-gap:3px!important;row-gap:0!important;
+  align-items:center!important;width:100%!important;min-width:0!important;
+  padding:0!important;margin:0!important;box-sizing:border-box!important;
+}
+#appView .wx-days .wx-day>span:first-child{grid-column:1;text-align:left;white-space:nowrap}
+#appView .wx-days .wx-day>span:nth-child(2){grid-column:2;display:flex;align-items:center;justify-content:center}
+#appView .wx-days .wx-day>small{grid-column:3;text-align:center;white-space:nowrap;font-size:10px}
+#appView .wx-days .wx-day>.wx-low-temp{grid-column:4;text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+#appView .wx-days .wx-day>.wx-bar{
+  grid-column:5;position:relative!important;display:block!important;width:100%!important;
+  height:5px!important;min-width:0!important;overflow:visible!important;
+  border-radius:99px!important;background:rgba(255,255,255,.2)!important;
+}
+#appView .wx-days .wx-day>.wx-bar:before{
+  content:"";position:absolute;top:0;bottom:0;left:clamp(0%,var(--wx-left,0%),100%);
+  width:clamp(7%,var(--wx-width,7%),100%);border-radius:99px;
+  background:linear-gradient(90deg,#8bd5ff 0%,#ffe28a 58%,#ffad78 100%);
+  box-shadow:0 0 7px rgba(255,220,145,.16);
+}
+#appView .wx-days .wx-day>span:last-child{grid-column:6;text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+#appView .wx-days .wx-day .wx-weather-icon{width:24px!important;height:24px!important}
+@media(max-width:360px){
+  #appView .wx-app .wx-top{margin-left:-12px!important;margin-right:-12px!important;padding-left:14px!important;padding-right:14px!important}
+  #appView .wx-days .wx-day{grid-template-columns:45px 23px 27px 29px minmax(22px,1fr) 29px!important;column-gap:2px!important}
+  #appView .wx-days .wx-day>small{font-size:9px}
+}
+@media(prefers-reduced-motion:reduce){
+  #appView .wx-atmo-scene .cloud,#appView .wx-atmo-scene .sun,#appView .wx-atmo-scene .rain,#appView .wx-atmo-scene .snow,#appView .wx-atmo-scene .fog,#appView .wx-atmo-scene .flash{animation:none!important}
+}
+</style>
 </body>
 </html>
