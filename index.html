@@ -4118,7 +4118,37 @@ window.__phoneMainReady = false;
 .wx-app.wx-time-night.wx-clear .wx-atmo-scene .sun,.wx-app.wx-time-night.wx-partly .wx-atmo-scene .sun{display:none}
 .wx-app.wx-partly .wx-atmo-scene .cloud.c2,.wx-app.wx-partly .wx-atmo-scene .cloud.c3{opacity:.48}.wx-app.wx-cloudy .wx-atmo-scene .cloud.c2,.wx-app.wx-cloudy .wx-atmo-scene .cloud.c3{opacity:.78}@keyframes wxHalo{from{transform:scale(.92);opacity:.55}to{transform:scale(1.08);opacity:1}}
 </style>
-<script id="ios-weather-realism-controller">(function(){const num=t=>{if(!t||!/^[0-9]{2}:[0-9]{2}$/.test(t))return null;const p=t.split(":").map(Number);return p[0]*60+p[1]};function timeClass(){const current=num(window.wx&&wx.localTime);const now=current===null?(new Date().getHours()*60+new Date().getMinutes()):current;const rise=num(window.wx&&wx.sunrise),set=num(window.wx&&wx.sunset);if(rise===null||set===null)return now<360||now>=1140?"wx-time-night":"wx-time-day";if(now<rise-60||now>=set+60)return"wx-time-night";if(now<rise+75)return"wx-time-dawn";if(now>set-75&&now<set+60)return"wx-time-dusk";return"wx-time-day"}function apply(){const app=document.querySelector("#appView .wx-app");if(!app)return;app.classList.remove("wx-time-dawn","wx-time-day","wx-time-dusk","wx-time-night");app.classList.add(timeClass());const scene=app.querySelector(".wx-atmo-scene");if(scene){scene.dataset.weather=String(Number(window.wx&&wx.code)||0);scene.dataset.time=window.wx&&wx.localTime||""}}function start(){apply();if(document.documentElement)new MutationObserver(apply).observe(document.documentElement,{childList:true,subtree:true});setInterval(apply,5000)}if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",start,{once:true});else start()})();</script>
+<script id="ios-weather-realism-controller">(function(){
+ const mins=t=>{if(!t||!/^[0-9]{2}:[0-9]{2}$/.test(t))return null;const p=t.split(":").map(Number);return p[0]*60+p[1]};
+ function getWx(){try{return typeof wx!=="undefined"?wx:null}catch(e){return null}}
+ function timeClass(){
+  const w=getWx(), current=mins(w&&w.localTime), now=current===null?(new Date().getHours()*60+new Date().getMinutes()):current;
+  const rise=mins(w&&w.sunrise),set=mins(w&&w.sunset);
+  if(rise===null||set===null)return now<360||now>=1140?"wx-time-night":"wx-time-day";
+  if(now<rise-45||now>=set+45)return "wx-time-night";
+  if(now<rise+55)return "wx-time-dawn";
+  if(now>set-55&&now<set+45)return "wx-time-dusk";
+  return "wx-time-day";
+ }
+ function weatherClass(app,w){
+  app.classList.remove("wx-clear","wx-partly","wx-cloudy","wx-fog","wx-rain","wx-snow","wx-storm");
+  const c=Number(w&&w.code)||0;
+  app.classList.add(c===0?"wx-clear":c<=2?"wx-partly":c===3?"wx-cloudy":c<=48?"wx-fog":c<=67?"wx-rain":c<=77?"wx-snow":c<=82?"wx-rain":c<=86?"wx-snow":"wx-storm");
+ }
+ function apply(){
+  const app=document.querySelector("#appView .wx-app");if(!app)return;
+  const w=getWx();
+  app.classList.remove("wx-time-dawn","wx-time-day","wx-time-dusk","wx-time-night");
+  app.classList.add(timeClass());
+  // The old manual night preference was forcing a dark palette during daytime.
+  app.classList.remove("night");
+  if(w)weatherClass(app,w);
+  const scene=app.querySelector(".wx-atmo-scene");
+  if(scene){scene.dataset.weather=String(Number(w&&w.code)||0);scene.dataset.time=w&&w.localTime||""}
+ }
+ function start(){apply();if(document.documentElement)new MutationObserver(apply).observe(document.documentElement,{childList:true,subtree:true});setInterval(apply,5000)}
+ if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",start,{once:true});else start();
+})();</script>
 
 
 <style id="ios-weather-photoreal-sky">
@@ -4348,6 +4378,48 @@ window.__phoneMainReady = false;
 @media(prefers-reduced-motion:reduce){
  #appView .wx-app.wx-time-day.wx-cloudy .wx-atmo-scene .cloud{animation:none!important}
 }
+</style>
+<style id="ios-weather-realistic-animation-fix">
+/* Realistic layered atmospheric sky; day/night follows the selected city's live weather clock. */
+#appView .wx-app.night .wx-top{background:linear-gradient(120deg,rgba(224,242,255,.24),rgba(173,215,245,.12) 52%,rgba(255,255,255,.19))!important;border-color:rgba(255,255,255,.27)!important}
+#appView .wx-app>.wx-atmo-scene{background:linear-gradient(180deg,#75a3c4 0%,#a9c1d0 42%,#d3dce0 76%,#e8e9e6 100%)!important;transition:background 2.5s ease!important}
+#appView .wx-app.wx-time-day.wx-clear>.wx-atmo-scene{background:linear-gradient(180deg,#438fc9 0%,#79b6df 42%,#c4e0ee 76%,#e8f0ee 100%)!important}
+#appView .wx-app.wx-time-day.wx-partly>.wx-atmo-scene{background:linear-gradient(180deg,#579bc9 0%,#92bdd8 45%,#d6e1e5 100%)!important}
+#appView .wx-app.wx-time-day.wx-cloudy>.wx-atmo-scene,#appView .wx-app.wx-time-day.wx-fog>.wx-atmo-scene{background:linear-gradient(180deg,#9caab5 0%,#b9c3c9 36%,#d2d7da 72%,#e4e6e5 100%)!important}
+#appView .wx-app.wx-time-day.wx-rain>.wx-atmo-scene,#appView .wx-app.wx-time-day.wx-storm>.wx-atmo-scene{background:linear-gradient(180deg,#596c7c 0%,#7d8e9b 48%,#b0bbc1 100%)!important}
+#appView .wx-app.wx-time-day.wx-snow>.wx-atmo-scene{background:linear-gradient(180deg,#a9c1d1 0%,#d0dce2 58%,#edf0ef 100%)!important}
+#appView .wx-app.wx-time-dawn>.wx-atmo-scene{background:linear-gradient(180deg,#596b89 0%,#a5a5b3 36%,#e0b5a3 70%,#f0d5bd 100%)!important}
+#appView .wx-app.wx-time-dusk>.wx-atmo-scene{background:linear-gradient(180deg,#485873 0%,#92899b 38%,#d9a69d 70%,#efd0b1 100%)!important}
+#appView .wx-app.wx-time-night>.wx-atmo-scene{background:linear-gradient(180deg,#101a2b 0%,#243548 48%,#3b4c5a 78%,#52616a 100%)!important}
+#appView .wx-app.wx-time-night.wx-clear>.wx-atmo-scene{background:linear-gradient(180deg,#071326 0%,#142b49 55%,#30465d 100%)!important}
+#appView .wx-app.wx-time-night.wx-rain>.wx-atmo-scene,#appView .wx-app.wx-time-night.wx-storm>.wx-atmo-scene{background:linear-gradient(180deg,#111821 0%,#202d3b 55%,#35434d 100%)!important}
+#appView .wx-app.wx-time-night .wx-atmo-scene .sun{opacity:0!important;visibility:hidden!important}
+#appView .wx-app:not(.wx-time-night) .wx-atmo-scene .moon,#appView .wx-app:not(.wx-time-night) .wx-atmo-scene .stars{opacity:0!important}
+#appView .wx-app.wx-time-night .wx-atmo-scene .moon{opacity:.8!important;visibility:visible!important}
+#appView .wx-app.wx-time-night.wx-cloudy .wx-atmo-scene .moon,#appView .wx-app.wx-time-night.wx-rain .wx-atmo-scene .moon,#appView .wx-app.wx-time-night.wx-storm .wx-atmo-scene .moon{opacity:.12!important}
+#appView .wx-app.wx-time-day.wx-cloudy .wx-atmo-scene .sun{opacity:.06!important;visibility:visible!important;filter:blur(18px)!important}
+#appView .wx-app.wx-time-day.wx-cloudy .wx-atmo-scene .cloud,
+#appView .wx-app.wx-time-day.wx-rain .wx-atmo-scene .cloud,
+#appView .wx-app.wx-time-day.wx-storm .wx-atmo-scene .cloud{
+  height:clamp(90px,15vh,180px)!important;width:155%!important;left:-25%!important;border-radius:50%!important;
+  background:radial-gradient(ellipse at 18% 72%,rgba(241,244,246,.92) 0%,rgba(220,226,230,.72) 30%,transparent 61%),radial-gradient(ellipse at 48% 42%,rgba(231,235,238,.96) 0%,rgba(185,196,204,.82) 42%,transparent 68%),radial-gradient(ellipse at 80% 70%,rgba(204,213,219,.9) 0%,rgba(171,184,193,.72) 43%,transparent 70%)!important;
+  filter:blur(14px) drop-shadow(0 12px 20px rgba(46,57,67,.1))!important;box-shadow:none!important;
+}
+#appView .wx-app.wx-time-day.wx-cloudy .wx-atmo-scene .cloud:before,
+#appView .wx-app.wx-time-day.wx-cloudy .wx-atmo-scene .cloud:after,
+#appView .wx-app.wx-time-day.wx-rain .wx-atmo-scene .cloud:before,
+#appView .wx-app.wx-time-day.wx-rain .wx-atmo-scene .cloud:after,
+#appView .wx-app.wx-time-day.wx-storm .wx-atmo-scene .cloud:before,
+#appView .wx-app.wx-time-day.wx-storm .wx-atmo-scene .cloud:after{display:none!important}
+#appView .wx-app.wx-time-day.wx-cloudy .wx-atmo-scene .cloud{top:18%!important;opacity:.88!important;animation:wxCloud 72s linear infinite!important}
+#appView .wx-app.wx-time-day.wx-cloudy .wx-atmo-scene .cloud.c2{top:35%!important;opacity:.72!important;transform:scale(.88)!important;animation-duration:96s!important;animation-delay:-37s!important}
+#appView .wx-app.wx-time-day.wx-cloudy .wx-atmo-scene .cloud.c3{top:4%!important;opacity:.52!important;transform:scale(.72)!important;animation-duration:115s!important;animation-delay:-61s!important}
+#appView .wx-app.wx-time-night.wx-cloudy .wx-atmo-scene .cloud{filter:blur(18px) brightness(.62)!important;opacity:.55!important}
+#appView .wx-app.wx-time-night.wx-cloudy .wx-atmo-scene .cloud:before,#appView .wx-app.wx-time-night.wx-cloudy .wx-atmo-scene .cloud:after{opacity:.25}
+#appView .wx-app.wx-time-day.wx-rain .wx-atmo-scene .cloud,#appView .wx-app.wx-time-day.wx-storm .wx-atmo-scene .cloud{filter:blur(16px) brightness(.78)!important;opacity:.96!important}
+#appView .wx-app.wx-time-day.wx-cloudy .wx-atmo-scene:before{background:linear-gradient(180deg,rgba(56,68,78,.08),transparent 42%,rgba(255,255,255,.2) 100%)!important;mix-blend-mode:normal!important}
+#appView .wx-app.wx-time-night .wx-atmo-scene:before{background:linear-gradient(180deg,rgba(3,9,18,.12),transparent 45%,rgba(7,14,22,.2))!important}
+@media(prefers-reduced-motion:reduce){#appView .wx-atmo-scene .cloud,#appView .wx-atmo-scene .sun,#appView .wx-atmo-scene .rain,#appView .wx-atmo-scene .snow{animation:none!important}}
 </style>
 </body>
 </html>
