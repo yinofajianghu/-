@@ -937,11 +937,15 @@ html body #controlCenter .cc-native-slider output{
 </style>
 
 <style id="instagram-bottom-nav-repair-2026">
-/* Restore Instagram's bottom tab bar and keep it inside the visible app viewport. */
+/* Compact Instagram's bottom tabs and explicitly size SVG navigation icons. */
 #appView:has(.ig-app) #appContent{bottom:calc(25px + var(--safe-bottom))!important;overflow:hidden!important}
 #appView:has(.ig-app) .ig-app{height:100%!important;min-height:0!important;overflow:hidden!important}
-#appView:has(.ig-app) .ig-bottom-nav{display:flex!important;visibility:visible!important;opacity:1!important;position:relative!important;flex:0 0 94px!important;height:94px!important;min-height:94px!important;z-index:30!important;background:var(--ig-panel,#fff)!important;border-top:1px solid var(--ig-line,#efefef)!important}
-#appView:has(.ig-app) .ig-bottom-nav button{display:grid!important;visibility:visible!important;opacity:1!important;flex:0 0 20%!important;width:20%!important;height:58px!important;min-height:58px!important;align-items:center!important;justify-items:center!important;position:relative!important;z-index:31!important;color:var(--ig-text,#171717)!important}
+#appView:has(.ig-app) .ig-bottom-nav{display:flex!important;visibility:visible!important;opacity:1!important;position:relative!important;flex:0 0 68px!important;height:68px!important;min-height:68px!important;box-sizing:border-box!important;padding:2px 0 4px!important;align-items:center!important;z-index:30!important;background:var(--ig-panel,#fff)!important;border-top:1px solid var(--ig-line,#efefef)!important}
+#appView:has(.ig-app) .ig-bottom-nav button{display:grid!important;visibility:visible!important;opacity:1!important;flex:0 0 20%!important;width:20%!important;height:52px!important;min-height:52px!important;align-items:center!important;justify-items:center!important;position:relative!important;z-index:31!important;color:var(--ig-text,#171717)!important;font-size:28px!important;padding:0!important}
+#appView:has(.ig-app) .ig-bottom-nav button>span{display:grid!important;place-items:center!important;width:30px!important;height:30px!important;line-height:1!important;overflow:visible!important;color:var(--ig-text,#171717)!important}
+#appView:has(.ig-app) .ig-bottom-nav button>span>svg{display:block!important;visibility:visible!important;opacity:1!important;width:25px!important;height:25px!important;min-width:25px!important;min-height:25px!important;max-width:25px!important;max-height:25px!important;overflow:visible!important;color:currentColor!important;flex:none!important}
+#appView:has(.ig-app) .ig-bottom-nav button>span>svg path,#appView:has(.ig-app) .ig-bottom-nav button>span>svg circle,#appView:has(.ig-app) .ig-bottom-nav button>span>svg rect{vector-effect:non-scaling-stroke}
+#appView:has(.ig-app) .ig-bottom-nav .ig-nav-avatar{display:inline-grid!important;width:27px!important;height:27px!important;font-size:17px!important}
 #appView:has(.ig-app) .app-homebar-wrap{z-index:40!important;background:var(--ig-bg,#fff)!important}
 </style>
 </head>
