@@ -3926,5 +3926,149 @@ window.__phoneMainReady = false;
 .ios26-photos .ph-filmstrip>button,.ios26-photos .ph-filmstrip button.current{flex:0 0 42px;width:42px;height:42px;border:0!important;outline:0!important;box-shadow:none!important;border-radius:3px}
 .ios26-photos .ph-filmstrip{height:66px;padding:8px 8px 10px;gap:4px}
 </style>
+<style id="ios-weather-refinement">
+/* Weather app refinement: native iOS-like glass, transparent icons, accessible controls */
+.wx-app{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif;background:linear-gradient(165deg,#4fa9f4 0%,#73bff3 48%,#b7ddf7 100%);color:#fff}
+.wx-app.night{background:linear-gradient(165deg,#081331 0%,#172c56 52%,#334d76 100%)}
+.wx-scroll{padding:calc(10px + var(--safe-top)) 16px calc(96px + var(--safe-bottom));scroll-behavior:smooth}
+.wx-top{background:linear-gradient(#4fa9f4e8 55%,transparent);padding:5px 0 16px}
+.wx-app.night .wx-top{background:linear-gradient(#081331ed 55%,transparent)}
+.wx-top button,.wx-head button{display:grid;place-items:center;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.24);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);font-size:22px}
+.wx-current{padding:10px 0 25px;text-shadow:0 1px 12px #174d7c18}
+.wx-current .wx-city{font-size:29px;font-weight:400;letter-spacing:-.5px}
+.wx-current .wx-icon{height:94px;padding:0;display:grid;place-items:center}
+.wx-icon .wx-weather-icon{width:96px;height:96px;filter:drop-shadow(0 5px 9px #1c4d7020)}
+.wx-temp{font-size:86px;font-weight:200;line-height:1.04;letter-spacing:-5px}
+.wx-condition{font-size:18px;font-weight:500}
+.wx-hilo{font-size:15px;color:#ffffffed;margin-top:7px}
+.wx-panel,.wx-detail{background:rgba(24,83,139,.22);border:1px solid rgba(255,255,255,.22);border-radius:22px;padding:16px;margin-bottom:13px;box-shadow:0 8px 28px #123a5910;backdrop-filter:blur(24px) saturate(135%);-webkit-backdrop-filter:blur(24px) saturate(135%)}
+.wx-title{font-size:12px;font-weight:650;letter-spacing:.025em;color:#ffffffd9;margin-bottom:13px;text-transform:none}
+.wx-summary{font-size:13px;line-height:1.45;color:#fff;margin-bottom:14px}
+.wx-hours{display:flex;gap:0;overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x proximity;scrollbar-width:none;margin:0 -5px;padding:0 2px 5px}
+.wx-hours::-webkit-scrollbar{display:none}
+.wx-hour{flex:0 0 54px;min-width:54px;min-height:132px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:10px;padding:0 2px;background:transparent!important;background-color:transparent!important;border:0!important;border-radius:0!important;box-shadow:none!important;outline:0;scroll-snap-align:start;color:#fff}
+.wx-hour>span:first-child{font-size:12px;white-space:nowrap;color:#fffffff0}
+.wx-hour i{width:38px;height:36px;display:flex;align-items:center;justify-content:center;font-style:normal;background:transparent!important;background-color:transparent!important;border:0!important;box-shadow:none!important;border-radius:0!important;padding:0!important;overflow:visible}
+.wx-hour .wx-weather-icon{display:block;width:34px;height:34px;object-fit:contain;background:transparent!important;background-color:transparent!important;border:0!important;box-shadow:none!important;border-radius:0!important;filter:drop-shadow(0 2px 3px #17466c18)}
+.wx-hour b{font-size:16px;font-weight:600;white-space:nowrap}
+.wx-hour small{font-size:11px;color:#d5edff!important;min-height:14px}
+.wx-day{grid-template-columns:minmax(48px,.95fr) 30px 28px minmax(45px,1.1fr) 35px;gap:5px;min-height:48px;font-size:12px;background:transparent!important}
+.wx-day>span:nth-child(2){display:flex;align-items:center;justify-content:center;background:transparent!important}
+.wx-day .wx-weather-icon{width:27px;height:27px;margin:auto;background:transparent!important;box-shadow:none!important;border:0!important}
+.wx-day small{color:#e0f2ff;font-size:11px;text-align:center}
+.wx-bar{position:relative;display:block;width:100%;height:5px;border-radius:8px;background:linear-gradient(90deg,#6bd5ff,#f7df76,#ff9c66);box-shadow:0 0 0 1px #ffffff20}
+.wx-day>span:last-child{justify-self:end}
+.wx-grid{gap:10px}
+.wx-detail{min-height:112px;background:rgba(24,83,139,.22);border-radius:20px;padding:14px}
+.wx-label{font-size:12px;color:#e4f3ff}
+.wx-value{font-size:27px;font-weight:350;letter-spacing:-.5px;margin:10px 0}
+.wx-sub{font-size:11px;color:#e0f1ff}
+.wx-bottom{background:linear-gradient(0deg,rgba(29,94,147,.96),rgba(29,94,147,.0));padding-top:24px}
+.wx-app.night .wx-bottom{background:linear-gradient(0deg,rgba(7,19,47,.97),transparent)}
+.wx-screen{background:linear-gradient(165deg,#4fa9f4,#86c6f2 65%,#bdddf5);padding-left:17px;padding-right:17px;overscroll-behavior:contain}
+.wx-app.night .wx-screen{background:linear-gradient(165deg,#081331,#1b3159 65%,#344c72)}
+.wx-head{position:sticky;top:-1px;z-index:3;padding:3px 0 14px;background:linear-gradient(180deg,#4fa9f4 65%,transparent)}
+.wx-app.night .wx-head{background:linear-gradient(180deg,#081331 65%,transparent)}
+.wx-head h2{font-size:21px;font-weight:650}
+.wx-search{color:#fff;background:rgba(255,255,255,.17);border:1px solid #ffffff48;outline-offset:2px}
+.wx-city-row{position:relative;background:rgba(255,255,255,.17);border:1px solid #ffffff30;min-height:65px}
+.wx-city-row [data-del]{flex:0 0 28px;width:28px;height:28px;display:grid;place-items:center;border-radius:50%;background:#ffffff22;color:#fff;font-size:22px}
+.wx-primary{background:rgba(255,255,255,.92);color:#21649c}
+.wx-chip{margin:0 5px 7px 0;cursor:pointer}
+.wx-map{height:48vh;min-height:290px;border:1px solid #ffffff35;background:#dce7e8;isolation:isolate}
+.wx-map #wxLeaflet{position:absolute;inset:0;z-index:1}
+.wx-map .wx-map-fallback{position:absolute;inset:0;display:grid;place-items:center;color:#46677a;text-align:center;padding:20px}
+.wx-map-controls{display:flex;gap:7px;flex-wrap:wrap;margin:12px 0}
+.wx-map-controls .wx-chip{margin:0}
+.wx-note{font-size:12px;line-height:1.55}
+.wx-screen .wx-panel{margin-top:12px}
+.wx-screen [data-close]{font-size:29px;line-height:1}
+.wx-screen button:active,.wx-hour:active,.wx-day:active,.wx-detail:active{filter:brightness(1.12);transform:scale(.985)}
+.wx-screen button,.wx-hour,.wx-day,.wx-detail{touch-action:manipulation}
+.wx-temp,.wx-value{font-variant-numeric:tabular-nums}
+.wx-empty{padding:25px 12px;text-align:center;color:#e7f4ff;font-size:13px}
+@media(min-width:520px){.wx-app{max-width:520px;left:50%;right:auto;transform:translateX(-50%);width:100%}.wx-screen{max-width:520px}}
+@media(max-width:360px){.wx-scroll{padding-left:12px;padding-right:12px}.wx-panel{padding:13px}.wx-hour{flex-basis:49px;min-width:49px}.wx-day{grid-template-columns:minmax(42px,.9fr) 27px 25px minmax(38px,1fr) 32px;gap:3px}}
+</style><script id="ios-weather-enhancements">
+/* Enhanced weather app: Open-Meteo forecast/geocoding, functional city management and map layers. */
+(function(){
+ const wxEsc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+ const wxSafeStore=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
+ const wxCodeName=c=>c===0?"clear-day":c===1?"mostly-clear-day":c===2?"partly-cloudy-day":c===3?"overcast":c<=48?"fog":c<=57?"drizzle":c<=67?"rain":c<=77?"snow":c<=82?"rain-showers-day":c<=86?"snow-showers-day":"thunderstorms";
+ const wxIconNew=c=>'<img class="wx-weather-icon" src="https://cdn.jsdelivr.net/gh/basmilius/weather-icons@v1.3.0/production/fill/all/'+wxCodeName(Number(c)||0)+'.svg" alt="'+wxEsc(wxDesc(Number(c)||0))+'" loading="lazy" onerror="this.onerror=null;this.src=\'https://cdn.jsdelivr.net/gh/basmilius/weather-icons@v1.3.0/production/fill/all/partly-cloudy-day.svg\'">';
+ wxIcon=wxIconNew;
+ wxHours=function(){return Array.from({length:12},(_,i)=>({time:i?" "+String((new Date().getHours()+i)%24).padStart(2,"0")+":00":"現在",t:wx.t,code:wx.code,rain:wx.rain}))};
+ wxDays=function(){return Array.from({length:10},(_,i)=>({day:i?"週"+["日","一","二","三","四","五","六"][new Date(Date.now()+i*86400000).getDay()]:"今天",code:wx.code,hi:wx.hi,lo:wx.lo,rain:wx.rain}))};
+ wxDraw=function(){
+  const h=$("#appView");if(!h)return;
+  h.classList.remove("dark");
+  const hours=wx.hours.length?wx.hours:wxHours(),days=wx.days.length?wx.days:wxDays();
+  const lo=Math.min(...days.map(d=>Number(d.lo)||0)),hi=Math.max(...days.map(d=>Number(d.hi)||0)),span=Math.max(1,hi-lo);
+  h.innerHTML='<div class="wx-app '+(wx.night?"night":"")+'"><div class="wx-scroll"><header class="wx-top"><button data-wx="cities" aria-label="城市列表">☷</button><div class="wx-top-title"><b>'+wxEsc(wx.city)+'</b><small>天氣預報</small></div><button data-wx="map" aria-label="天氣地圖">⌁</button></header><section class="wx-current"><div class="wx-city">'+wxEsc(wx.city)+'</div><div class="wx-icon">'+wxIcon(wx.code)+'</div><div class="wx-temp">'+wxT(wx.t)+'</div><div class="wx-condition">'+wxEsc(wxDesc(wx.code))+'</div><div class="wx-hilo">最高 '+wxT(wx.hi)+'　最低 '+wxT(wx.lo)+'</div></section><section class="wx-panel"><div class="wx-title">◷　每小時預報</div><div class="wx-summary">目前'+wxEsc(wxDesc(wx.code))+'。降雨機率與逐時溫度依天氣預報更新。</div><div class="wx-hours">'+hours.slice(0,24).map(x=>'<button class="wx-hour" data-wx="hour" data-i="'+wxEsc(x.t)+'" aria-label="'+wxEsc(x.time+' '+wxT(x.t))+'"><span>'+wxEsc(x.time)+'</span><i>'+wxIcon(x.code)+'</i><b>'+wxT(x.t)+'</b><small>☂ '+(Number(x.rain)||0)+'%</small></button>').join("")+'</div></section><section class="wx-panel"><div class="wx-title">▤　未來 10 天預報</div><div class="wx-days">'+days.slice(0,10).map((d,i)=>{const left=((Number(d.lo)-lo)/span)*100,width=Math.max(7,((Number(d.hi)-Number(d.lo))/span)*100);return '<button class="wx-day" data-wx="day" data-i="'+i+'"><span>'+wxEsc(d.day)+'</span><span>'+wxIcon(d.code)+'</span><small>'+((Number(d.rain)||0)>0?(Number(d.rain)||0)+'%':'—')+'</small><span class="wx-bar" title="溫度範圍" style="background:linear-gradient(90deg,#78d5ff,#ffe07b,#ff9d68);--wx-left:'+left+'%;--wx-width:'+width+'%"></span><span>'+wxT(d.hi)+'</span><span class="wx-min-temp" style="display:none">'+wxT(d.lo)+'</span></button>'}).join("")+'</div></section><div class="wx-grid">'+[['體感溫度','♨',wxT(wx.feel),'體感溫度'],['紫外線指數','☼',Math.round(wx.uv||0),'最高紫外線指數'],['日出日落','☀',wx.sunrise,'日落 '+wx.sunset],['風速','≋',Math.round(wx.wind||0)+' km/h','目前風速'],['降雨機率','☂',(wx.rain||0)+'%','近期降雨機率'],['濕度','♧',(wx.humidity||0)+'%','相對濕度'],['氣壓','▤',Math.round(wx.pressure||0)+' hPa','目前氣壓'],['能見度','◉',(wx.visibility!=null?(wx.visibility/1000).toFixed(1):'—')+' km','目前能見度']].map((d,i)=>'<button class="wx-detail" data-wx="detail" data-i="'+i+'"><div class="wx-label">'+d[1]+' '+d[0]+'</div><div class="wx-value">'+wxEsc(d[2])+'</div><div class="wx-sub">'+wxEsc(d[3])+'</div></button>').join("")+'</div><section class="wx-panel" style="margin-top:12px"><div class="wx-title">ⓘ　天氣資料</div><div class="wx-summary">資料來源：Open-Meteo。'+(wx.lastUpdated?'更新時間 '+wxEsc(wx.lastUpdated):'尚未取得即時更新')+'</div><button class="wx-primary" data-wx="refresh">↻　重新整理天氣</button><button class="wx-primary" data-wx="settings">天氣設定</button></section></div><footer class="wx-bottom"><button data-wx="cities" aria-label="城市">☷</button><div class="wx-dots">'+wx.cities.map((c,i)=>'<button title="'+wxEsc(c.name)+'" aria-label="'+wxEsc(c.name)+'" class="'+(c.name===wx.city?"on":"")+'" data-wx="switch" data-i="'+i+'"></button>').join("")+'</div><button data-wx="settings" aria-label="設定">⚙</button></footer></div>';
+  h.querySelectorAll("[data-wx]").forEach(b=>b.onclick=()=>wxAction(b.dataset.wx,b.dataset.i));
+  h.querySelectorAll(".wx-bar").forEach(b=>{b.style.background='linear-gradient(90deg,#78d5ff,#ffe07b,#ff9d68)';b.style.position='relative';b.style.overflow='hidden';b.style.setProperty('--unused','0')});
+ };
+ wxLoad=async function(lat,lon){
+  const prior={...wx};try{
+   const url="https://api.open-meteo.com/v1/forecast?latitude="+encodeURIComponent(lat)+"&longitude="+encodeURIComponent(lon)+"&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m,surface_pressure,visibility&hourly=temperature_2m,precipitation_probability,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,sunrise,sunset,uv_index_max&timezone=auto&forecast_days=10";
+   const r=await fetch(url,{signal:AbortSignal.timeout?AbortSignal.timeout(12000):undefined});if(!r.ok)throw Error("天氣服務暫時無法連線");const d=await r.json();if(!d.current||!d.daily||!d.hourly)throw Error("天氣資料格式不完整");
+   const c=d.current,z=d.daily,hr=d.hourly;wx.t=c.temperature_2m;wx.code=c.weather_code;wx.hi=z.temperature_2m_max[0];wx.lo=z.temperature_2m_min[0];wx.feel=c.apparent_temperature;wx.humidity=c.relative_humidity_2m;wx.wind=c.wind_speed_10m;wx.pressure=Math.round(c.surface_pressure);wx.visibility=c.visibility;wx.uv=z.uv_index_max[0];const nowIndex=Math.max(0,hr.time.findIndex(t=>t>=c.time));wx.rain=hr.precipitation_probability[nowIndex]||0;wx.sunrise=z.sunrise[0].slice(11,16);wx.sunset=z.sunset[0].slice(11,16);wx.hours=hr.time.slice(nowIndex,nowIndex+24).map((t,j)=>({time:j?" "+t.slice(11,16):"現在",t:hr.temperature_2m[nowIndex+j],code:hr.weather_code[nowIndex+j],rain:hr.precipitation_probability[nowIndex+j]||0}));wx.days=z.time.map((t,i)=>({day:i?"週"+["日","一","二","三","四","五","六"][new Date(t+"T12:00:00").getDay()]:"今天",date:t,code:z.weather_code[i],hi:z.temperature_2m_max[i],lo:z.temperature_2m_min[i],rain:z.precipitation_probability_max[i]||0}));wx.lastUpdated=new Date().toLocaleTimeString("zh-TW",{hour:"2-digit",minute:"2-digit"});wx.apiError="";
+  }catch(e){wx.apiError="天氣資料暫時無法更新，顯示上次資料。";if(!prior.hours.length)wx.hours=wxHours();if(!prior.days.length)wx.days=wxDays()}
+  wxDraw();if(wx.apiError){const box=$("#appView").querySelector(".wx-summary");if(box)box.textContent=wx.apiError+" "+box.textContent}
+ };
+ wxAction=function(a,i){
+  i=Number(i);
+  if(a==="cities")return wxCities();if(a==="map")return wxMap();if(a==="settings")return wxSettings();if(a==="refresh")return wxLoad(wx.lat,wx.lon);
+  if(a==="switch"){const c=wx.cities[i];if(c){wx.city=c.name;wx.lat=c.lat;wx.lon=c.lon;wx.hours=[];wx.days=[];wxDraw();wxLoad(c.lat,c.lon)}return}
+  if(a==="day"){const d=(wx.days.length?wx.days:wxDays())[i];if(d)return wxDetail((d.date||d.day)+" 預報",wxIcon(d.code)+" "+wxDesc(d.code),[["最高溫",wxT(d.hi)],["最低溫",wxT(d.lo)],["降雨機率",(d.rain||0)+"%"],["日期",d.date||d.day]])}
+  if(a==="hour"){const d=(wx.hours.length?wx.hours:wxHours()).find(x=>Number(x.t)===i)||wx.hours[0];return wxDetail("每小時預報",wxT(d?d.t:wx.t),[["時間",d?d.time:"現在"],["天氣狀況",wxDesc(d?d.code:wx.code)],["降雨機率",(d?d.rain:wx.rain)+"%"]])}
+  if(a==="detail"){const ds=[["體感溫度",wxT(wx.feel),"依據目前氣溫與環境條件估算"],["紫外線指數",String(Math.round(wx.uv||0)),"今日最高紫外線指數"],["日出與日落",wx.sunrise+" / "+wx.sunset,"當地日出與日落時間"],["風速",Math.round(wx.wind||0)+" km/h","目前風速"],["降雨機率",(wx.rain||0)+"%","近期預報降雨機率"],["濕度",(wx.humidity||0)+"%","目前相對濕度"],["氣壓",Math.round(wx.pressure||0)+" hPa","目前地面氣壓"],["能見度",wx.visibility!=null?(wx.visibility/1000).toFixed(1)+" km":"暫無資料","目前能見度"]][i];if(ds)return wxDetail(ds[0],ds[1],[["說明",ds[2]],["位置",wx.city]])}
+ };
+ wxDetail=function(title,value,rows){
+  const app=$("#appView").querySelector(".wx-app");if(!app)return;app.querySelector(".wx-screen")?.remove();
+  app.insertAdjacentHTML("beforeend",'<section class="wx-screen" role="dialog" aria-label="'+wxEsc(title)+'"><header class="wx-head"><button data-close aria-label="返回">‹</button><h2>'+wxEsc(title)+'</h2><span style="width:38px"></span></header><div style="font-size:38px;font-weight:300;margin:20px 0 24px;display:flex;align-items:center;gap:12px;overflow-wrap:anywhere">'+value+'</div><div class="wx-panel">'+rows.map(x=>'<p style="display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid #ffffff30;padding:10px 0;margin:0"><span>'+wxEsc(x[0])+'</span><span style="text-align:right">'+wxEsc(x[1])+'</span></p>').join("")+'</div><button class="wx-primary" data-close>完成</button></section>');
+  app.querySelectorAll(".wx-screen [data-close]").forEach(b=>b.onclick=()=>app.querySelector(".wx-screen")?.remove());
+ };
+ wxCities=function(){
+  const app=$("#appView").querySelector(".wx-app");if(!app)return;app.querySelector(".wx-screen")?.remove();
+  app.insertAdjacentHTML("beforeend",'<section class="wx-screen" role="dialog" aria-label="城市列表"><header class="wx-head"><button data-close aria-label="返回">‹</button><h2>城市</h2><span style="width:38px"></span></header><input id="wxSearch" class="wx-search" autocomplete="off" placeholder="搜尋城市或地區" aria-label="搜尋城市"><div class="wx-city-list"></div><p class="wx-note">點選城市切換預報。搜尋結果使用 Open-Meteo 地理編碼資料。</p></section>');
+  const sc=app.querySelector(".wx-screen"),input=sc.querySelector("#wxSearch"),list=sc.querySelector(".wx-city-list");
+  sc.querySelector("[data-close]").onclick=()=>sc.remove();
+  const draw=()=>{const q=input.value.trim().toLocaleLowerCase();list.innerHTML=wx.cities.filter(c=>!q||c.name.toLocaleLowerCase().includes(q)).map(c=>{const i=wx.cities.indexOf(c);return '<div class="wx-city-row" style="cursor:pointer"><button data-city="'+i+'" style="flex:1;text-align:left;background:transparent;color:white;padding:0"><span>'+wxEsc(c.name)+(c.name===wx.city?' <small>目前位置</small>':'')+'</span><b>'+(c.name===wx.city?wxT(wx.t):'›')+'</b></button><button data-del="'+i+'" aria-label="移除'+wxEsc(c.name)+'" style="flex:0 0 30px;background:#ffffff20;border-radius:50%;height:30px">×</button></div>'}).join("")||'<p class="wx-note">沒有符合的城市。輸入名稱搜尋並新增。</p>';list.querySelectorAll("[data-city]").forEach(b=>b.onclick=()=>{const c=wx.cities[+b.dataset.city];if(c){wx.city=c.name;wx.lat=c.lat;wx.lon=c.lon;wx.hours=[];wx.days=[];wxDraw();wxLoad(c.lat,c.lon)}});list.querySelectorAll("[data-del]").forEach(b=>b.onclick=()=>{const c=wx.cities[+b.dataset.del];if(!c)return;if(wx.cities.length===1){alert("至少保留一個城市。");return}wx.cities.splice(+b.dataset.del,1);wxSafeStore("ios-weather-cities-v1",wx.cities);if(c.name===wx.city){const n=wx.cities[0];wx.city=n.name;wx.lat=n.lat;wx.lon=n.lon;wxDraw();wxLoad(n.lat,n.lon)}else draw()})};
+  input.oninput=draw;draw();
+  const add=document.createElement("button");add.className="wx-primary";add.textContent="＋ 搜尋並新增城市";add.onclick=async()=>{const q=input.value.trim();if(!q){input.focus();input.placeholder="請先輸入城市名稱";return}add.disabled=true;add.textContent="搜尋中…";try{const r=await fetch("https://geocoding-api.open-meteo.com/v1/search?name="+encodeURIComponent(q)+"&count=8&language=zh&format=json");if(!r.ok)throw Error();const d=await r.json(),results=d.results||[];if(!results.length){list.insertAdjacentHTML("afterbegin",'<p class="wx-note">找不到城市，請試試英文名稱或更完整的地名。</p>');return}const old=sc.querySelector(".wx-results");old?.remove();list.insertAdjacentHTML("afterbegin",'<div class="wx-results">'+results.map((c,i)=>'<button class="wx-city-row" data-result="'+i+'"><span>'+wxEsc(c.name)+(c.admin1?', '+wxEsc(c.admin1):'')+'<small>'+wxEsc(c.country||'')+'</small></span><b>＋</b></button>').join("")+'</div>');sc.querySelectorAll("[data-result]").forEach(b=>b.onclick=()=>{const c=results[+b.dataset.result],name=c.name+(c.country==="台灣"||c.country==="Taiwan"?"":"");const city={name,lat:c.latitude,lon:c.longitude};const at=wx.cities.findIndex(x=>x.name===name);if(at>=0)wx.cities[at]=city;else wx.cities.push(city);wxSafeStore("ios-weather-cities-v1",wx.cities);wx.city=name;wx.lat=city.lat;wx.lon=city.lon;wx.hours=[];wx.days=[];wxDraw();wxLoad(wx.lat,wx.lon)})}catch(e){list.insertAdjacentHTML("afterbegin",'<p class="wx-note">城市搜尋目前無法連線，請稍後再試。</p>')}finally{add.disabled=false;add.textContent="＋ 搜尋並新增城市"}};
+  sc.appendChild(add);
+ };
+ wxSettings=function(){
+  const app=$("#appView").querySelector(".wx-app");if(!app)return;app.querySelector(".wx-screen")?.remove();
+  app.insertAdjacentHTML("beforeend",'<section class="wx-screen" role="dialog" aria-label="天氣設定"><header class="wx-head"><button data-close aria-label="返回">‹</button><h2>天氣設定</h2><span style="width:38px"></span></header><div class="wx-panel"><div class="wx-title">溫度單位</div><button class="wx-chip '+(wx.unit==="C"?"on":"")+'" data-unit="C">攝氏 °C</button><button class="wx-chip '+(wx.unit==="F"?"on":"")+'" data-unit="F">華氏 °F</button></div><div class="wx-panel"><label style="display:flex;justify-content:space-between;align-items:center;gap:12px">夜間外觀<input id="wxNight" type="checkbox" class="wx-toggle" '+(wx.night?"checked":"")+'></label></div><div class="wx-panel"><div class="wx-title">資料與隱私</div><p class="wx-note">天氣資料來自 Open-Meteo。城市清單與偏好只儲存在此瀏覽器。</p></div><button class="wx-primary" data-refresh>↻　重新整理天氣</button><button class="wx-primary" data-reset>重設城市列表</button></section>');
+  const sc=app.querySelector(".wx-screen"),save=()=>wxSafeStore("ios-weather-prefs-v1",{unit:wx.unit,night:wx.night});
+  sc.querySelector("[data-close]").onclick=()=>{sc.remove();wxDraw()};
+  sc.querySelectorAll("[data-unit]").forEach(b=>b.onclick=()=>{wx.unit=b.dataset.unit;save();wxSettings()});
+  sc.querySelector("#wxNight").onchange=e=>{wx.night=e.target.checked;save();app.classList.toggle("night",wx.night)};
+  sc.querySelector("[data-refresh]").onclick=()=>{sc.remove();wxDraw();wxLoad(wx.lat,wx.lon)};
+  sc.querySelector("[data-reset]").onclick=()=>{wx.cities=[{name:"台北市",lat:25.033,lon:121.5654}];wxSafeStore("ios-weather-cities-v1",wx.cities);wx.city="台北市";wx.lat=25.033;wx.lon=121.5654;wx.hours=[];wx.days=[];wxDraw();wxLoad(wx.lat,wx.lon)};
+ };
+ wxMap=function(){
+  const app=$("#appView").querySelector(".wx-app");if(!app)return;app.querySelector(".wx-screen")?.remove();
+  app.insertAdjacentHTML("beforeend",'<section class="wx-screen" role="dialog" aria-label="天氣地圖"><header class="wx-head"><button data-close aria-label="返回">‹</button><h2>天氣地圖</h2><span style="width:38px"></span></header><div class="wx-map"><div id="wxLeaflet"></div><div class="wx-map-fallback">載入互動地圖中…</div></div><div class="wx-map-controls">'+["降雨","溫度","風速","雲量"].map((x,i)=>'<button class="wx-chip '+(!i?"on":"")+'" data-layer="'+x+'">'+x+'</button>').join("")+'</div><label class="wx-note">預報時間　<span id="wxTime">現在</span><input class="wx-search" id="wxSlider" type="range" min="0" max="23" value="0"></label><p class="wx-note" id="wxMapNote">地圖圖磚由 OpenStreetMap 提供；降雨雷達使用 RainViewer 可用圖層。</p></section>');
+  const sc=app.querySelector(".wx-screen");sc.querySelector("[data-close]").onclick=()=>sc.remove();
+  let map=null,overlay=null,marker=null,layer="降雨",hour=0;
+  const note=sc.querySelector("#wxMapNote"),fallback=sc.querySelector(".wx-map-fallback"),mapNode=sc.querySelector("#wxLeaflet");
+  const loadScript=src=>new Promise((resolve,reject)=>{if(document.querySelector('script[src="'+src+'"]')){if(window.L)resolve();else setTimeout(()=>window.L?resolve():reject(Error("map library unavailable")),800);return}const s=document.createElement("script");s.src=src;s.onload=resolve;s.onerror=reject;document.head.appendChild(s)});
+  const setLayer=async()=>{
+   sc.querySelectorAll("[data-layer]").forEach(b=>b.classList.toggle("on",b.dataset.layer===layer));
+   if(!map)return;
+   if(overlay){map.removeLayer(overlay);overlay=null}
+   if(layer==="降雨"){try{const rr=await fetch("https://api.rainviewer.com/public/weather-maps.json");const rd=await rr.json();const frames=rd?.radar?.past||[];const frame=frames[Math.max(0,frames.length-1-Math.min(hour,frames.length-1))];if(frame)overlay=window.L.tileLayer("https://tilecache.rainviewer.com"+frame.path+"/256/{z}/{x}/{y}/2/1_1.png",{opacity:.65,attribution:"RainViewer"}).addTo(map);note.textContent=frame?"降雨雷達圖層（RainViewer）。":"目前沒有可用的降雨雷達影像。"}catch(e){note.textContent="降雨雷達暫時無法載入；仍可使用底圖。"}}
+   else {const colors={"溫度":"#ef6548","風速":"#498de0","雲量":"#8c86b8"};overlay=window.L.circle([wx.lat,wx.lon],{radius:Math.max(9000,45000-hour*500),color:colors[layer],fillColor:colors[layer],fillOpacity:.28,weight:2}).addTo(map);overlay.bindPopup(layer+" · "+(layer==="溫度"?wxT(wx.t):layer==="風速"?Math.round(wx.wind)+" km/h":"雲量預報圖層"));note.textContent=layer+"圖層：以目前城市的天氣資料標示，並非全球數值格點圖。"}
+  };
+  const init=async()=>{try{await loadScript("https://unpkg.com/leaflet@1.9.4/dist/leaflet.js");if(!sc.isConnected)return;mapNode.style.height="100%";map=window.L.map(mapNode,{zoomControl:true}).setView([wx.lat,wx.lon],8);window.L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:18,attribution:"© OpenStreetMap contributors"}).addTo(map);marker=window.L.marker([wx.lat,wx.lon]).addTo(map).bindPopup(wxEsc(wx.city));marker.openPopup();fallback.style.display="none";await setLayer();setTimeout(()=>map&&map.invalidateSize(),120)}catch(e){fallback.innerHTML='地圖暫時無法載入。<br>請確認網路連線後重新開啟。';note.textContent="互動地圖需要載入 Leaflet 與地圖圖磚；天氣首頁仍可正常使用。"}};
+  sc.querySelectorAll("[data-layer]").forEach(b=>b.onclick=()=>{layer=b.dataset.layer;setLayer()});
+  sc.querySelector("#wxSlider").oninput=e=>{hour=Number(e.target.value);sc.querySelector("#wxTime").textContent=hour?"+"+hour+" 小時":"現在";setLayer()};
+  init();
+ };
+})();
+</script>
 </body>
 </html>
