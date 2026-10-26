@@ -925,6 +925,13 @@ html body #controlCenter .cc-native-slider output{
 @media(min-width:520px){.wx-scroll{max-width:480px;margin:auto}.wx-screen{width:100%;max-width:520px;left:50%;right:auto;transform:translateX(-50%)}}
 </style>
 
+<style id="maps-home-indicator-visibility-2026">
+/* Keep the shared home indicator visible above the Maps app's floating controls. */
+#appView:has(.gm-app) .app-homebar-wrap{z-index:1000!important;background:#fff!important;pointer-events:auto!important}
+#appView:has(.gm-app) .app-homebar-wrap .home-indicator{background:#151515!important}
+#appContent:has(.gm-app) .gm-app{min-height:0!important}
+#appContent:has(.gm-app) .gm-map-wrap{min-height:0!important}
+</style>
 <style id="app-content-bottom-inset-2026">
 #appContent{bottom:calc(46px + var(--safe-bottom))}
 </style>
