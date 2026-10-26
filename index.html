@@ -4770,5 +4770,52 @@ window.__phoneMainReady = false;
 })();
 </script>
 
+
+<style id="wx-layout-navigation-hard-fix">
+/* Keep Weather and its subviews inside the same app viewport. */
+#appView #appContent .wx-app{position:absolute;inset:0;width:100%;height:100%;min-width:0;max-width:none;transform:none;box-sizing:border-box}
+#appView #appContent .wx-app .wx-scroll{width:100%;max-width:none;box-sizing:border-box}
+#appView #appContent .wx-app .wx-screen{left:0!important;right:0!important;top:0!important;bottom:0!important;width:auto!important;max-width:none!important;transform:none!important;box-sizing:border-box}
+#appView #appContent .wx-app .wx-city-screen{display:flex;flex-direction:column;gap:0;overflow-x:hidden;overflow-y:auto;min-height:0;padding:calc(10px + var(--safe-top)) 16px calc(18px + var(--safe-bottom))}
+#appView #appContent .wx-app .wx-city-list{flex:1 0 auto;min-height:0}
+#appView #appContent .wx-app .wx-city-search-results{flex:0 0 auto}
+#appView #appContent .wx-app .wx-city-footer{flex:0 0 auto}
+#appView #appContent .wx-app .wx-city-screen[hidden]{display:none!important}
+</style>
+<script id="wx-app-navigation-hard-fix">
+(function(){
+  function clearWeatherLayers(){
+    var content=document.getElementById('appContent');
+    if(!content)return;
+    content.querySelectorAll('.wx-screen').forEach(function(el){el.remove()});
+  }
+  var originalShowApp=window.showApp;
+  if(typeof originalShowApp==='function'&&!originalShowApp.__wxNavigationFixed){
+    var wrapped=function(id){
+      clearWeatherLayers();
+      var content=document.getElementById('appContent');
+      if(content && id!=='weather') content.querySelectorAll('.wx-app,.wx-screen').forEach(function(el){el.remove()});
+      return originalShowApp.apply(this,arguments);
+    };
+    wrapped.__wxNavigationFixed=true;
+    window.showApp=wrapped;
+  }
+  var originalGoHome=window.goHome;
+  if(typeof originalGoHome==='function'&&!originalGoHome.__wxNavigationFixed){
+    var home=function(){
+      clearWeatherLayers();
+      return originalGoHome.apply(this,arguments);
+    };
+    home.__wxNavigationFixed=true;
+    window.goHome=home;
+  }
+  document.addEventListener('click',function(e){
+    var bar=e.target&&e.target.closest&&e.target.closest('#appHomebar,.app-homebar-wrap');
+    if(bar&&document.getElementById('appView')?.classList.contains('active')){
+      if(typeof window.goHome==='function')window.goHome();
+    }
+  },true);
+})();
+</script>
 </body>
 </html>
