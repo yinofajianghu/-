@@ -4421,5 +4421,59 @@ window.__phoneMainReady = false;
 #appView .wx-app.wx-time-night .wx-atmo-scene:before{background:linear-gradient(180deg,rgba(3,9,18,.12),transparent 45%,rgba(7,14,22,.2))!important}
 @media(prefers-reduced-motion:reduce){#appView .wx-atmo-scene .cloud,#appView .wx-atmo-scene .sun,#appView .wx-atmo-scene .rain,#appView .wx-atmo-scene .snow{animation:none!important}}
 </style>
+<style id="ios-weather-realistic-rain">
+/* Layered rainfall: fine distant streaks, foreground drops, atmospheric veil and ground splash. */
+#appView .wx-atmo-scene .rain{
+  position:absolute!important;inset:-18% -12% -8%!important;z-index:2!important;pointer-events:none!important;
+  opacity:0!important;overflow:hidden!important;filter:none!important;
+  background:
+    repeating-linear-gradient(101deg,transparent 0 18px,rgba(235,246,255,.15) 18.5px,rgba(235,246,255,.15) 19px,transparent 19.5px 39px),
+    repeating-linear-gradient(102deg,transparent 0 47px,rgba(228,241,250,.25) 47.5px,rgba(228,241,250,.25) 48.4px,transparent 49px 77px),
+    repeating-linear-gradient(100deg,transparent 0 9px,rgba(232,244,252,.1) 9.3px,rgba(232,244,252,.1) 9.8px,transparent 10.2px 27px)!important;
+  background-size:190px 260px,270px 330px,130px 190px!important;
+  animation:wxRealRainFall .62s linear infinite!important;
+  transform:translateZ(0);
+}
+#appView .wx-atmo-scene .rain:before{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:
+    repeating-linear-gradient(101deg,transparent 0 34px,rgba(244,249,252,.46) 34.5px,rgba(244,249,252,.46) 36px,transparent 37px 83px),
+    repeating-linear-gradient(100deg,transparent 0 66px,rgba(209,229,241,.35) 66.5px,rgba(209,229,241,.35) 69px,transparent 70px 125px);
+  background-size:310px 380px,420px 470px;
+  animation:wxRealRainFast .38s linear infinite;
+  filter:blur(.35px);
+}
+#appView .wx-atmo-scene .rain:after{
+  content:"";position:absolute;left:-12%;right:-12%;bottom:-2%;height:30%;
+  background:
+    radial-gradient(ellipse at 12% 90%,rgba(229,240,247,.22),transparent 36%),
+    radial-gradient(ellipse at 63% 100%,rgba(228,239,245,.3),transparent 44%),
+    linear-gradient(180deg,transparent 0%,rgba(197,216,228,.08) 34%,rgba(207,224,233,.28) 100%);
+  filter:blur(8px);
+  animation:wxRainGroundMist 3.6s ease-in-out infinite alternate;
+}
+#appView .wx-app.wx-rain .wx-atmo-scene .rain,
+#appView .wx-app.wx-storm .wx-atmo-scene .rain{opacity:.88!important}
+#appView .wx-app.wx-time-day.wx-rain .wx-atmo-scene .rain,
+#appView .wx-app.wx-time-day.wx-storm .wx-atmo-scene .rain{opacity:.94!important}
+#appView .wx-app.wx-time-night.wx-rain .wx-atmo-scene .rain,
+#appView .wx-app.wx-time-night.wx-storm .wx-atmo-scene .rain{opacity:.68!important}
+#appView .wx-app.wx-time-day.wx-rain .wx-atmo-scene .rain:before,
+#appView .wx-app.wx-time-day.wx-storm .wx-atmo-scene .rain:before{opacity:.76}
+#appView .wx-app.wx-time-night.wx-rain .wx-atmo-scene .rain:before,
+#appView .wx-app.wx-time-night.wx-storm .wx-atmo-scene .rain:before{opacity:.5}
+#appView .wx-app.wx-rain .wx-atmo-scene .cloud,
+#appView .wx-app.wx-storm .wx-atmo-scene .cloud{animation-duration:46s!important}
+#appView .wx-app.wx-time-day.wx-rain>.wx-atmo-scene,
+#appView .wx-app.wx-time-day.wx-storm>.wx-atmo-scene{background:linear-gradient(180deg,#526777 0%,#718492 42%,#929fa7 72%,#aeb9bf 100%)!important}
+#appView .wx-app.wx-time-night.wx-rain>.wx-atmo-scene,
+#appView .wx-app.wx-time-night.wx-storm>.wx-atmo-scene{background:linear-gradient(180deg,#111b28 0%,#253544 48%,#3a4a56 100%)!important}
+@keyframes wxRealRainFall{from{background-position:0 -80px,0 -170px,0 -35px}to{background-position:-58px 360px,-96px 470px,-36px 260px}}
+@keyframes wxRealRainFast{from{background-position:0 -220px,0 -130px}to{background-position:-95px 440px,-130px 510px}}
+@keyframes wxRainGroundMist{from{opacity:.42;transform:translateX(-1%) scaleY(.94)}to{opacity:.85;transform:translateX(1.5%) scaleY(1.06)}}
+@media(prefers-reduced-motion:reduce){
+ #appView .wx-atmo-scene .rain,#appView .wx-atmo-scene .rain:before,#appView .wx-atmo-scene .rain:after{animation:none!important}
+}
+</style>
 </body>
 </html>
