@@ -3509,6 +3509,41 @@ setupWallpaperPicker();initHome();updateClock();setInterval(updateClock,1000);
    if(dy>Math.max(55,window.innerHeight*.07)&&dy>dx*1.15&&appIsVisible())showLock();
  },{passive:true,capture:true});
  document.addEventListener('pointercancel',()=>{appPointerStart=null;},{passive:true,capture:true});
+ // App-to-home gesture: allow an upward swipe from the bottom edge anywhere in an app,
+ // including interactive map surfaces that may consume their own touch gestures.
+ let appHomeSwipeStart=null;
+ const appHomeSwipeBottom=()=>window.innerHeight*.88;
+ document.addEventListener('touchstart',e=>{
+   if(!appIsVisible()||isTextEditing()){appHomeSwipeStart=null;return;}
+   const t=e.changedTouches&&e.changedTouches[0];
+   appHomeSwipeStart=t&&t.clientY>=appHomeSwipeBottom()
+     &&!e.target.closest('#controlCenter, input, textarea, select, [contenteditable="true"]')
+     ?{x:t.clientX,y:t.clientY}:null;
+ },{passive:true,capture:true});
+ document.addEventListener('touchend',e=>{
+   if(!appHomeSwipeStart||!appIsVisible()){appHomeSwipeStart=null;return;}
+   const start=appHomeSwipeStart,t=e.changedTouches&&e.changedTouches[0];
+   appHomeSwipeStart=null;
+   if(!t||isTextEditing())return;
+   const dx=t.clientX-start.x,dy=t.clientY-start.y;
+   if(dy < -55 && Math.abs(dy)>Math.abs(dx)*1.15 && appIsVisible() && typeof goHome==='function')goHome();
+ },{passive:true,capture:true});
+ document.addEventListener('touchcancel',()=>{appHomeSwipeStart=null;},{passive:true,capture:true});
+ let appHomePointerStart=null;
+ document.addEventListener('pointerdown',e=>{
+   if(e.pointerType==='mouse'&&e.button!==0)return;
+   if(!appIsVisible()||isTextEditing()){appHomePointerStart=null;return;}
+   appHomePointerStart=e.clientY>=appHomeSwipeBottom()
+     &&!e.target.closest('#controlCenter, input, textarea, select, [contenteditable="true"]')
+     ?{x:e.clientX,y:e.clientY}:null;
+ },{passive:true,capture:true});
+ document.addEventListener('pointerup',e=>{
+   if(!appHomePointerStart||!appIsVisible()){appHomePointerStart=null;return;}
+   const start=appHomePointerStart;appHomePointerStart=null;
+   const dx=e.clientX-start.x,dy=e.clientY-start.y;
+   if(dy < -55 && Math.abs(dy)>Math.abs(dx)*1.15 && appIsVisible() && typeof goHome==='function')goHome();
+ },{passive:true,capture:true});
+ document.addEventListener('pointercancel',()=>{appHomePointerStart=null;},{passive:true,capture:true});
  // Keep the app usable in standalone/full-screen Safari and desktop browsers.
  document.documentElement.style.webkitTapHighlightColor='transparent';
 })();
