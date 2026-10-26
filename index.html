@@ -2385,6 +2385,11 @@ function renderMessages(){
  Object.keys(threads).forEach(k=>{const t=threads[k];if(!t||typeof t!=='object'){delete threads[k];return;}t.name=String(t.name||k);t.items=Array.isArray(t.items)?t.items.filter(m=>m&&typeof m.text==='string'&&(m.from==='me'||m.from==='them')).map(m=>({from:m.from,text:String(m.text),time:String(m.time||'')})):[];});
  Object.keys(threads).forEach(k=>{const t=threads[k];if(typeof t.unread!=='boolean')t.unread=!!(t.items.length&&t.items[t.items.length-1].from==='them');});
  const save=()=>{try{localStorage.setItem(key,JSON.stringify(threads));}catch(e){}},state={active:null,search:'',editing:false,tab:'all'};
+ const deliveryNumber='090-7299-2822';
+ if(!threads[deliveryNumber]){
+  threads[deliveryNumber]={name:deliveryNumber,items:[{from:'them',text:'【櫻井配送服務】\n\n您好，您的包裹已抵達配送站，預計將於今日依配送路線安排送達，實際配送時間請以配送員聯繫為準。\n\n若您不便收件，請提前做好安排。感謝您的理解與配合。\n\n櫻井配送服務 敬上',time:'2026/10/26 10:22'}],updated:Date.parse('2026-10-26T10:22:00+08:00'),unread:true};
+  save();
+ }
  const ids=()=>Object.keys(threads).sort((a,b)=>(threads[b].updated||0)-(threads[a].updated||0)),last=t=>t.items[t.items.length-1]||{text:'尚無訊息，傳送一則訊息開始聊天',time:''};
  const open=id=>{if(threads[id]){state.active=id;threads[id].unread=false;state.editing=false;save();draw();}};
  const add=()=>{const v=window.prompt('輸入聯絡人名稱');if(v===null)return;const n=v.trim();if(!n){window.alert('請輸入聯絡人名稱。');return;}const found=Object.keys(threads).find(k=>k.toLowerCase()===n.toLowerCase());if(found){open(found);return;}threads[n]={name:n,items:[],updated:Date.now()};save();open(n);};
