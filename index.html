@@ -4511,6 +4511,61 @@ window.__phoneMainReady = false;
   to{background-position:0 152px,0 262px}
 }
 </style>
+
+<style id="wx-true-falling-rain">
+/* Real moving background rain: each streak is an element translated down the scene. */
+#appView .wx-atmo-scene .rain{
+  background:none!important;
+  -webkit-mask-image:none!important;
+  mask-image:none!important;
+  overflow:hidden!important;
+  contain:layout paint;
+}
+#appView .wx-atmo-scene .rain:before{background:none!important;mask-image:none!important;-webkit-mask-image:none!important}
+#appView .wx-atmo-scene .rain .wx-rain-drop{
+  position:absolute!important;display:block!important;top:-24px!important;left:var(--drop-x)!important;
+  width:1.2px!important;height:var(--drop-length)!important;border-radius:2px!important;
+  background:linear-gradient(180deg,rgba(231,244,252,0),rgba(231,244,252,.78) 35%,rgba(248,252,255,.95))!important;
+  opacity:var(--drop-opacity)!important;pointer-events:none!important;
+  transform:translate3d(0,0,0);will-change:transform;
+  animation:wxIndividualDropFall var(--drop-duration) linear var(--drop-delay) infinite!important;
+}
+#appView .wx-atmo-scene .rain .wx-rain-drop.depth-far{width:.8px!important;filter:blur(.25px)}
+#appView .wx-atmo-scene .rain .wx-rain-drop.depth-near{width:1.7px!important;filter:blur(.15px)}
+@keyframes wxIndividualDropFall{
+  from{transform:translate3d(0,-4vh,0)}
+  to{transform:translate3d(0,125vh,0)}
+}
+</style>
+<script id="wx-true-falling-rain-script">
+(function(){
+  function buildRain(){
+    document.querySelectorAll("#appView .wx-atmo-scene .rain").forEach(function(layer){
+      if(layer.dataset.realDropsBuilt==="1")return;
+      layer.dataset.realDropsBuilt="1";
+      var frag=document.createDocumentFragment();
+      for(var i=0;i<105;i++){
+        var drop=document.createElement("i");
+        drop.className="wx-rain-drop "+(i%9===0?"depth-near":i%3===0?"depth-far":"");
+        drop.setAttribute("aria-hidden","true");
+        drop.style.setProperty("--drop-x",(Math.random()*100)+"%");
+        drop.style.setProperty("--drop-length",(7+Math.random()*13)+"px");
+        drop.style.setProperty("--drop-duration",(0.48+Math.random()*0.62)+"s");
+        drop.style.setProperty("--drop-delay",(-Math.random()*1.1)+"s");
+        drop.style.setProperty("--drop-opacity",(0.28+Math.random()*0.64).toFixed(2));
+        frag.appendChild(drop);
+      }
+      layer.appendChild(frag);
+    });
+  }
+  function start(){
+    buildRain();
+    var root=document.querySelector("#appView");
+    if(root)new MutationObserver(function(){buildRain()}).observe(root,{childList:true,subtree:true});
+  }
+  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",start,{once:true});else start();
+})();
+</script>
 </style>
 </body>
 </html>
