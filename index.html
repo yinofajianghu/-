@@ -1092,8 +1092,8 @@ const CONFIG = {
     playlistName: "ふたりのプレイリスト",
     creator: "ミオ",
     songs: [
-      { title: "仮死化", artist: "Vivid BAD SQUAD", audio: "https://youtu.be/Ka3AFz5Dx30?si=W-_gA5j8ks8LIqQh" },
-      { title: "ハイパーベンチレイション", artist: "RADWIMPS", audio: "https://youtu.be/OEPmMz2Y0c8?si=UAHOM8X7rSFzTRZg" },
+      { title: "仮死化", artist: "Vivid BAD SQUAD", audio: "https://youtu.be/Ka3AFz5Dx30?si=W-_gA5j8ks8LIqQh", cover: "https://img.youtube.com/vi/Ka3AFz5Dx30/hqdefault.jpg" },
+      { title: "ハイパーベンチレイション", artist: "RADWIMPS", audio: "https://youtu.be/OEPmMz2Y0c8?si=UAHOM8X7rSFzTRZg", cover: "https://img.youtube.com/vi/OEPmMz2Y0c8/hqdefault.jpg" },
       { title: "ULTRA C", artist: "Vivid BAD SQUAD", audio: "" }
     ]
   },
@@ -2891,7 +2891,8 @@ function renderSpotify(){
  {title:'戀愛ing',artist:'五月天',album:'知足',emoji:'❤️',color:'#c15d57'}
  ];
  const tracks=songs.concat(extra.filter(t=>!songs.some(s=>s.title===t.title)));spotifyAllTracks=tracks;
- const cover=(t,w)=>'<div class="sp-cover" style="width:'+(w||'100%')+';aspect-ratio:1;background:linear-gradient(145deg,'+(t.color||'#315c45')+',#111)">'+(t.emoji||'♫')+'</div>';
+ const youtubeCover=(t)=>t.cover||((typeof getYouTubeVideoId==="function"&&getYouTubeVideoId(t.audio||""))?"https://img.youtube.com/vi/"+getYouTubeVideoId(t.audio||"")+"/hqdefault.jpg":"");
+ const cover=(t,w)=>{const src=youtubeCover(t);return '<div class="sp-cover" style="width:'+(w||'100%')+';aspect-ratio:1;background:linear-gradient(145deg,'+(t.color||'#315c45')+',#111);overflow:hidden;display:grid;place-items:center">'+(src?'<img src="'+escapeHTML(src)+'" alt="" loading="lazy" style="width:100%;height:100%;object-fit:cover" onerror="this.style.display=\'none\'">':(t.emoji||'♫'))+'</div>'};
  const persist=()=>{spotifyUIPage=page;spotifyUIQuery=query;spotifyUIFilter=filter;spotifyUILiked=liked;spotifyUISaved=saved;spotifyUIPlaylists=playlists;spotifyUISort=sort;spotifyUIFollowed=followed;spotifyUIActivePlaylist=activePlaylist;spotifyUIActiveTrack=activeTrack;try{localStorage.setItem('yin_spotify_ui_v2',JSON.stringify({liked:liked,saved:saved,playlists:playlists,followed:followed}))}catch(e){toast('無法儲存資料，請檢查瀏覽器儲存空間或隱私設定')}};
  const toast=msg=>{let el=document.getElementById('spotifyToast');if(!el){el=document.createElement('div');el.id='spotifyToast';el.style.cssText='position:absolute;z-index:60;left:18px;right:18px;bottom:40px;padding:12px;background:#f5f5f5;color:#111;border-radius:12px;text-align:center;font-size:13px';$('#appView').appendChild(el)}el.textContent=msg;el.style.display='block';clearTimeout(el._timer);el._timer=setTimeout(()=>el.style.display='none',2000)};
  const row=(t,i)=>'<div class="sp-row">'+cover(t,'48px')+'<button class="sp-row-main" data-sp="play" data-i="'+i+'"><b>'+escapeHTML(t.title)+'</b><small>'+escapeHTML(t.artist)+'</small></button><button class="sp-like" data-sp="like" data-i="'+i+'">'+(liked.includes(t.title)?'♥':'♡')+'</button><button class="sp-more" data-sp="more" data-i="'+i+'">•••</button></div>';
@@ -3196,7 +3197,7 @@ function playSong(i){
  const songs=Array.isArray(spotifyAllTracks)?spotifyAllTracks:(Array.isArray(CONFIG.spotify?.songs)?CONFIG.spotify.songs:[]);if(!songs.length)return;closeAudio();currentSong=(i+songs.length)%songs.length;songProgress=0;songPlaying=true;
  const song=songs[currentSong],youtubeId=getYouTubeVideoId(song.audio||"");if(youtubeId){songPlaying=false;}else if(song.audio){const player=new Audio(song.audio);audioEl=player;player.loop=false;player.addEventListener("timeupdate",()=>{if(audioEl===player){songProgress=player.currentTime;updatePlayerProgress()}});player.addEventListener("ended",()=>{if(audioEl!==player)return;playSong((currentSong+1)%songs.length);if($("#fullPlayer"))openFullPlayer()});player.addEventListener("error",()=>{if(audioEl===player){audioEl=null;songPlaying=false;const total=$("#fullTotal");if(total)total.textContent="音源無法播放"}});player.play().catch(()=>{if(audioEl===player){audioEl=null;songPlaying=false;const total=$("#fullTotal");if(total)total.textContent="音源無法播放"}});}
  else startFakeProgress();
- const mini=$('#miniPlayer');if(mini){mini.style.display='flex';$('#miniTitle').textContent=song.title;$('#miniArtist').textContent=song.artist;$('#miniCover').style.background=CONFIG.spotify?.cover?`center/cover url("${CONFIG.spotify.cover}")`:'linear-gradient(145deg,#355c4c,#101b17)';$('#miniToggle').textContent=songPlaying?'Ⅱ':'▶';}
+ const mini=$('#miniPlayer');if(mini){mini.style.display='flex';$('#miniTitle').textContent=song.title;$('#miniArtist').textContent=song.artist;$('#miniCover').style.background=(youtubeCover(song)||CONFIG.spotify?.cover)?`center/cover url("${youtubeCover(song)||CONFIG.spotify.cover}")`:'linear-gradient(145deg,#355c4c,#101b17)';$('#miniToggle').textContent=songPlaying?'Ⅱ':'▶';}
  document.querySelectorAll('[data-song]').forEach((el,idx)=>{const title=el.querySelector('.song-title');if(title){title.style.color=idx===currentSong?'#1db954':'white';title.textContent=(idx===currentSong?'♫ ':'')+songs[idx].title}});
  updatePlayerProgress();
  if($('#appContent')?.querySelector('.sp-app'))renderSpotify();
