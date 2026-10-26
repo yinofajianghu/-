@@ -4912,5 +4912,22 @@ window.__phoneMainReady = false;
 </style>
 
 <script id="wx-home-lock-live-sync-2026">(function(){function syncWeatherWidgets(){if(typeof wx==="undefined")return;var p=wx.city||"東京",t=wxT(wx.t),c=wxDesc(wx.code),hi=wxT(wx.hi),lo=wxT(wx.lo);var a=document.getElementById("weatherPlace"),b=document.getElementById("weatherTemp"),d=document.getElementById("weatherDesc"),l=document.getElementById("lockWeather");if(a)a.textContent=p;if(b)b.textContent=t;if(d)d.textContent=c+" · 最高 "+hi+" / 最低 "+lo;if(l)l.textContent=p+" · "+c+" · "+t+" · 最高 "+hi+" / 最低 "+lo}window.syncWeatherWidgets=syncWeatherWidgets;syncWeatherWidgets();if(typeof wxLoad==="function"){wx.city="東京";wx.lat=35.6762;wx.lon=139.6503;wxLoad(wx.lat,wx.lon)}})();</script>
+
+
+<style id="shared-app-bottom-safe-area-repair-2026">
+/* Keep every app's bottom navigation/footer clear of the simulated iPhone home-indicator area. */
+#appView #appContent{
+  bottom:calc(46px + var(--safe-bottom))!important;
+  min-height:0!important;
+  max-height:none;
+}
+#appView:has(.ig-app) #appContent{
+  bottom:calc(46px + var(--safe-bottom))!important;
+}
+#appView .app-homebar-wrap{
+  z-index:10000!important;
+  pointer-events:auto;
+}
+</style>
 </body>
 </html>
