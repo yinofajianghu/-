@@ -4120,5 +4120,44 @@ window.__phoneMainReady = false;
 </style>
 <script id="ios-weather-realism-controller">(function(){const num=t=>{if(!t||!/^[0-9]{2}:[0-9]{2}$/.test(t))return null;const p=t.split(":").map(Number);return p[0]*60+p[1]};function timeClass(){const current=num(window.wx&&wx.localTime);const now=current===null?(new Date().getHours()*60+new Date().getMinutes()):current;const rise=num(window.wx&&wx.sunrise),set=num(window.wx&&wx.sunset);if(rise===null||set===null)return now<360||now>=1140?"wx-time-night":"wx-time-day";if(now<rise-60||now>=set+60)return"wx-time-night";if(now<rise+75)return"wx-time-dawn";if(now>set-75&&now<set+60)return"wx-time-dusk";return"wx-time-day"}function apply(){const app=document.querySelector("#appView .wx-app");if(!app)return;app.classList.remove("wx-time-dawn","wx-time-day","wx-time-dusk","wx-time-night");app.classList.add(timeClass());const scene=app.querySelector(".wx-atmo-scene");if(scene){scene.dataset.weather=String(Number(window.wx&&wx.code)||0);scene.dataset.time=window.wx&&wx.localTime||""}}function start(){apply();if(document.documentElement)new MutationObserver(apply).observe(document.documentElement,{childList:true,subtree:true});setInterval(apply,5000)}if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",start,{once:true});else start()})();</script>
 
+
+<style id="ios-weather-photoreal-sky">
+/* Replace the playful bubble-cloud look with a restrained, atmospheric sky. */
+#appView .wx-app{background:transparent!important;isolation:isolate;overflow:hidden}
+#appView .wx-app>.wx-atmo-scene{z-index:0;inset:0;overflow:hidden;background:linear-gradient(180deg,#397eb8 0%,#73a9ce 35%,#b6cedd 68%,#e0e5e4 100%);transition:background 2.5s ease}
+#appView .wx-app>.wx-scroll,#appView .wx-app>.wx-bottom{position:relative;z-index:2}
+#appView .wx-atmo-scene:before{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(180deg,#10253b18 0%,transparent 40%,#f2eee42b 78%,#d9e0e244 100%);mix-blend-mode:soft-light}
+#appView .wx-atmo-scene:after{content:"";position:absolute;z-index:1;left:-20%;right:-20%;bottom:-12%;height:44%;pointer-events:none;background:radial-gradient(ellipse at 50% 100%,#f4f3ed80 0%,#e2e8e755 36%,transparent 75%);filter:blur(12px)}
+#appView .wx-atmo-scene .sun{width:112px;height:112px;right:10%;top:12%;border-radius:50%;background:radial-gradient(circle,#fffbe5 0%,#fff5d6 18%,#ffebbd55 43%,#ffedc522 60%,transparent 73%);filter:blur(.4px);box-shadow:0 0 45px 18px #fff2ce24;animation:wxSun 9s ease-in-out infinite}
+#appView .wx-atmo-scene .sun:after{display:none}
+#appView .wx-atmo-scene .cloud{left:-55%;top:22%;width:78vw;max-width:560px;height:170px;border-radius:48% 52% 38% 35%/60% 58% 35% 38%;background:radial-gradient(ellipse at 24% 68%,#e9f0f1e8 0%,#e0e9edc9 26%,transparent 60%),radial-gradient(ellipse at 43% 42%,#f4f5f0ef 0%,#e5ecece0 30%,transparent 62%),radial-gradient(ellipse at 66% 62%,#d7e2e7ed 0%,#c6d5dfb8 35%,transparent 66%),linear-gradient(180deg,#edf2f0d9 0%,#cbd9e2a6 58%,#b6c8d555 100%);filter:blur(9px) drop-shadow(0 15px 24px #304b601c);animation:wxCloud 65s linear infinite}
+#appView .wx-atmo-scene .cloud:before,#appView .wx-atmo-scene .cloud:after{content:"";position:absolute;border-radius:50%;background:radial-gradient(ellipse at 45% 38%,#f1f3f0dc 0%,#dbe5e8bd 42%,#b9cad655 74%,transparent 100%);filter:blur(10px)}
+#appView .wx-atmo-scene .cloud:before{width:58%;height:100%;left:8%;top:-16%}
+#appView .wx-atmo-scene .cloud:after{width:65%;height:110%;left:42%;top:-25%}
+#appView .wx-atmo-scene .cloud.c2{top:39%;left:-70%;transform:scale(1.25);animation-duration:88s;animation-delay:-33s;filter:blur(16px);opacity:.44}
+#appView .wx-atmo-scene .cloud.c3{top:8%;left:-65%;transform:scale(.7);animation-duration:105s;animation-delay:-61s;filter:blur(20px);opacity:.27}
+#appView .wx-app.wx-clear .wx-atmo-scene .cloud{opacity:.18}
+#appView .wx-app.wx-partly .wx-atmo-scene .cloud{opacity:.48}
+#appView .wx-app.wx-cloudy .wx-atmo-scene .cloud{opacity:.86}
+#appView .wx-app.wx-rain .wx-atmo-scene .cloud,#appView .wx-app.wx-storm .wx-atmo-scene .cloud{opacity:.96;background:radial-gradient(ellipse at 35% 38%,#aebdcae8 0%,#8599a9df 35%,transparent 67%),radial-gradient(ellipse at 65% 58%,#91a4b4ef 0%,#718596d9 43%,transparent 70%),linear-gradient(180deg,#bac8d2e8,#74899bba)}
+#appView .wx-app.wx-snow .wx-atmo-scene .cloud{opacity:.82;background:radial-gradient(ellipse at 30% 40%,#fff 0%,#e8eff2e8 35%,transparent 66%),radial-gradient(ellipse at 65% 60%,#d8e2e8ee 0%,#c1d0dbcc 42%,transparent 72%)}
+#appView .wx-app.wx-time-dawn>.wx-atmo-scene{background:linear-gradient(180deg,#435b79 0%,#8d91a5 34%,#d8a49b 65%,#f2d2b0 100%)}
+#appView .wx-app.wx-time-day>.wx-atmo-scene{background:linear-gradient(180deg,#397eb8 0%,#73a9ce 35%,#b6cedd 68%,#e0e5e4 100%)}
+#appView .wx-app.wx-time-dusk>.wx-atmo-scene{background:linear-gradient(180deg,#303d5d 0%,#786d86 36%,#c58e8d 66%,#eed0b0 100%)}
+#appView .wx-app.wx-time-night>.wx-atmo-scene{background:linear-gradient(180deg,#071326 0%,#122943 42%,#263d52 76%,#344a5a 100%)}
+#appView .wx-app.wx-time-night.wx-rain>.wx-atmo-scene,#appView .wx-app.wx-time-night.wx-storm>.wx-atmo-scene{background:linear-gradient(180deg,#070d19 0%,#172334 54%,#2d3b49 100%)}
+#appView .wx-app.wx-time-night.wx-snow>.wx-atmo-scene{background:linear-gradient(180deg,#18283d 0%,#40576c 64%,#788b98 100%)}
+#appView .wx-app.wx-time-night .wx-atmo-scene .sun{opacity:0;visibility:hidden}
+#appView .wx-app.wx-time-night .wx-atmo-scene .moon{opacity:.85;background:radial-gradient(circle at 35% 30%,#f0f1e9 0%,#c8d3dc 57%,#899eaf 100%);box-shadow:0 0 45px 12px #cbdcf026}
+#appView .wx-app.wx-time-night .wx-atmo-scene .stars{opacity:.62}
+#appView .wx-app.wx-time-dawn .wx-atmo-scene .sun,#appView .wx-app.wx-time-dusk .wx-atmo-scene .sun{opacity:.65;top:24%;filter:blur(1px);box-shadow:0 0 65px 25px #f2bd9c2b}
+#appView .wx-app.wx-time-night.wx-clear .wx-atmo-scene .cloud,#appView .wx-app.wx-time-night.wx-partly .wx-atmo-scene .cloud{opacity:.2}
+#appView .wx-app.wx-time-night.wx-cloudy .wx-atmo-scene .cloud{opacity:.52}
+#appView .wx-atmo-scene .rain{filter:blur(.25px);opacity:0}
+#appView .wx-app.wx-rain .wx-atmo-scene .rain,#appView .wx-app.wx-storm .wx-atmo-scene .rain{opacity:.48}
+#appView .wx-atmo-scene .flash{z-index:1}
+@media(prefers-reduced-motion:reduce){#appView .wx-atmo-scene .cloud,#appView .wx-atmo-scene .sun{animation:none!important}}
+</style>
+
 </body>
 </html>
