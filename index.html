@@ -4005,7 +4005,7 @@ window.__phoneMainReady = false;
   h.classList.remove("dark");
   const hours=wx.hours.length?wx.hours:wxHours(),days=wx.days.length?wx.days:wxDays();
   const lo=Math.min(...days.map(d=>Number(d.lo)||0)),hi=Math.max(...days.map(d=>Number(d.hi)||0)),span=Math.max(1,hi-lo);
-  h.innerHTML='<div class="wx-app '+(wx.night?"night":"")+'"><div class="wx-scroll"><header class="wx-top"><button data-wx="cities" aria-label="城市列表">☷</button><div class="wx-top-title"><b>'+wxEsc(wx.city)+'</b><small>天氣預報</small></div><button data-wx="map" aria-label="天氣地圖">⌁</button></header><section class="wx-current"><div class="wx-city">'+wxEsc(wx.city)+'</div><div class="wx-icon">'+wxIcon(wx.code)+'</div><div class="wx-temp">'+wxT(wx.t)+'</div><div class="wx-condition">'+wxEsc(wxDesc(wx.code))+'</div><div class="wx-hilo">最高 '+wxT(wx.hi)+'　最低 '+wxT(wx.lo)+'</div></section><section class="wx-panel"><div class="wx-title">◷　每小時預報</div><div class="wx-summary">目前'+wxEsc(wxDesc(wx.code))+'。降雨機率與逐時溫度依天氣預報更新。</div><div class="wx-hours">'+hours.slice(0,24).map(x=>'<button class="wx-hour" data-wx="hour" data-i="'+wxEsc(x.t)+'" aria-label="'+wxEsc(x.time+' '+wxT(x.t))+'"><span>'+wxEsc(x.time)+'</span><i>'+wxIcon(x.code)+'</i><small class="wx-hour-rain">'+(Number(x.rain)||0)+'%</small><b>'+wxT(x.t)+'</b></button>').join("")+'</div></section><section class="wx-panel"><div class="wx-title">▤　未來 10 天預報</div><div class="wx-days">'+days.slice(0,10).map((d,i)=>{const left=((Number(d.lo)-lo)/span)*100,width=Math.max(7,((Number(d.hi)-Number(d.lo))/span)*100);return '<button class="wx-day" data-wx="day" data-i="'+i+'"><span>'+wxEsc(d.day)+'</span><span>'+wxIcon(d.code)+'</span><small>'+((Number(d.rain)||0)>0?(Number(d.rain)||0)+'%':'—')+'</small><span class="wx-low-temp">'+wxT(d.lo)+'</span><span class="wx-bar" title="溫度範圍" style="--wx-left:'+left+'%;--wx-width:'+width+'%"></span><span>'+wxT(d.hi)+'</span></button>'}).join("")+'</div></section><div class="wx-grid">'+[['體感溫度','♨',wxT(wx.feel),'體感溫度'],['紫外線指數','☼',Math.round(wx.uv||0),'最高紫外線指數'],['日出日落','☀',wx.sunrise,'日落 '+wx.sunset],['風速','≋',Math.round(wx.wind||0)+' km/h','目前風速'],['降雨機率','☂',(wx.rain||0)+'%','近期降雨機率'],['濕度','♧',(wx.humidity||0)+'%','相對濕度'],['氣壓','▤',Math.round(wx.pressure||0)+' hPa','目前氣壓'],['能見度','◉',(wx.visibility!=null?(wx.visibility/1000).toFixed(1):'—')+' km','目前能見度']].map((d,i)=>'<button class="wx-detail" data-wx="detail" data-i="'+i+'"><div class="wx-label">'+d[1]+' '+d[0]+'</div><div class="wx-value">'+wxEsc(d[2])+'</div><div class="wx-sub">'+wxEsc(d[3])+'</div></button>').join("")+'</div><section class="wx-panel" style="margin-top:12px"><div class="wx-title">ⓘ　天氣資料</div><div class="wx-summary">資料來源：Open-Meteo。'+(wx.lastUpdated?'更新時間 '+wxEsc(wx.lastUpdated):'尚未取得即時更新')+'</div><button class="wx-primary" data-wx="refresh">↻　重新整理天氣</button><button class="wx-primary" data-wx="settings">天氣設定</button></section></div><footer class="wx-bottom"><button data-wx="cities" aria-label="城市">☷</button><div class="wx-dots">'+wx.cities.map((c,i)=>'<button title="'+wxEsc(c.name)+'" aria-label="'+wxEsc(c.name)+'" class="'+(c.name===wx.city?"on":"")+'" data-wx="switch" data-i="'+i+'"></button>').join("")+'</div><button data-wx="settings" aria-label="設定"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8z"></path><path d="m19.4 15 .1.1a1.7 1.7 0 0 1-2.4 2.4l-.1-.1a1.7 1.7 0 0 0-2.9 1.2v.2a1.7 1.7 0 0 1-3.4 0v-.2a1.7 1.7 0 0 0-2.9-1.2l-.1.1a1.7 1.7 0 1 1-2.4-2.4l.1-.1a1.7 1.7 0 0 0-1.2-2.9H4a1.7 1.7 0 0 1 0-3.4h.2a1.7 1.7 0 0 0 1.2-2.9l-.1-.1a1.7 1.7 0 1 1 2.4-2.4l.1.1a1.7 1.7 0 0 0 2.9-1.2V2a1.7 1.7 0 0 1 3.4 0v.2a1.7 1.7 0 0 0 2.9 1.2l.1-.1a1.7 1.7 0 1 1 2.4 2.4l-.1.1a1.7 1.7 0 0 0 1.2 2.9h.2a1.7 1.7 0 0 1 0 3.4h-.2a1.7 1.7 0 0 0-1.2 2.9z" transform="translate(1 1) scale(.92)"></path></svg></button></footer></div>';
+  h.innerHTML='<div class="wx-app '+(wx.night?"night":"")+'"><div class="wx-scroll"><header class="wx-top"><button data-wx="cities" aria-label="城市列表">☷</button><div class="wx-top-title"><b>'+wxEsc(wx.city)+'</b><small>天氣預報</small></div><button data-wx="map" aria-label="天氣地圖">⌁</button></header><section class="wx-current"><div class="wx-city">'+wxEsc(wx.city)+'</div><div class="wx-icon">'+wxIcon(wx.code)+'</div><div class="wx-temp">'+wxT(wx.t)+'</div><div class="wx-condition">'+wxEsc(wxDesc(wx.code))+'</div><div class="wx-hilo">最高 '+wxT(wx.hi)+'　最低 '+wxT(wx.lo)+'</div></section><section class="wx-panel"><div class="wx-title">◷　每小時預報</div><div class="wx-summary">目前'+wxEsc(wxDesc(wx.code))+'。降雨機率與逐時溫度依天氣預報更新。</div><div class="wx-hours">'+hours.slice(0,24).map(x=>'<button class="wx-hour" data-wx="hour" data-i="'+wxEsc(x.t)+'" aria-label="'+wxEsc(x.time+' '+wxT(x.t))+'"><span>'+wxEsc(x.time)+'</span><i>'+wxIcon(x.code)+'</i><small class="wx-hour-rain">'+(Number(x.rain)||0)+'%</small><b>'+wxT(x.t)+'</b></button>').join("")+'</div></section><section class="wx-panel"><div class="wx-title">▤　未來 10 天預報</div><div class="wx-days">'+days.slice(0,10).map((d,i)=>{const left=((Number(d.lo)-lo)/span)*100,width=Math.max(7,((Number(d.hi)-Number(d.lo))/span)*100);return '<button class="wx-day" data-wx="day" data-i="'+i+'"><span>'+wxEsc(d.day)+'</span><span>'+wxIcon(d.code)+'</span><small>'+((Number(d.rain)||0)>0?(Number(d.rain)||0)+'%':'—')+'</small><span class="wx-low-temp">'+wxT(d.lo)+'</span><span class="wx-bar" title="溫度範圍" style="--wx-left:'+left+'%;--wx-width:'+width+'%"></span><span>'+wxT(d.hi)+'</span></button>'}).join("")+'</div></section><div class="wx-grid">'+[['體感溫度','♨',wxT(wx.feel),'體感溫度'],['紫外線指數','☼',Math.round(wx.uv||0),'最高紫外線指數'],['日出日落','☀',wx.sunrise,'日落 '+wx.sunset],['風速','≋',Math.round(wx.wind||0)+' km/h','目前風速'],['降雨機率','☂',(wx.rain||0)+'%','近期降雨機率'],['濕度','♧',(wx.humidity||0)+'%','相對濕度'],['氣壓','▤',Math.round(wx.pressure||0)+' hPa','目前氣壓'],['能見度','◉',(wx.visibility!=null?(wx.visibility/1000).toFixed(1):'—')+' km','目前能見度']].map((d,i)=>'<button class="wx-detail" data-wx="detail" data-i="'+i+'"><div class="wx-label">'+d[1]+' '+d[0]+'</div><div class="wx-value">'+wxEsc(d[2])+'</div><div class="wx-sub">'+wxEsc(d[3])+'</div></button>').join("")+'</div><section class="wx-panel" style="margin-top:12px"><div class="wx-title">ⓘ　天氣資料</div><div class="wx-summary">資料來源：Open-Meteo。'+(wx.lastUpdated?'更新時間 '+wxEsc(wx.lastUpdated):'尚未取得即時更新')+'</div><button class="wx-primary" data-wx="refresh">↻　重新整理天氣</button><button class="wx-primary" data-wx="settings">天氣設定</button></section></div><footer class="wx-bottom"><button data-wx="cities" aria-label="城市">☷</button><div class="wx-dots">'+wx.cities.map((c,i)=>'<button title="'+wxEsc(c.name)+'" aria-label="'+wxEsc(c.name)+'" class="'+(c.name===wx.city?"on":"")+'" data-wx="switch" data-i="'+i+'"></button>').join("")+'</div><button data-wx="settings" aria-label="設定"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="3.1"></circle><circle cx="12" cy="12" r="8.3" stroke-dasharray="2.5 3.1"></circle></svg></button></footer></div>';
   h.querySelectorAll("[data-wx]").forEach(b=>b.onclick=()=>wxAction(b.dataset.wx,b.dataset.i));
   h.querySelectorAll(".wx-bar").forEach(b=>{b.style.background='linear-gradient(90deg,#78d5ff,#ffe07b,#ff9d68)';b.style.position='relative';b.style.overflow='hidden';b.style.setProperty('--unused','0')});
  };
@@ -4046,7 +4046,7 @@ window.__phoneMainReady = false;
   const sc=app.querySelector(".wx-screen"),save=()=>wxSafeStore("ios-weather-prefs-v1",{unit:wx.unit,night:wx.night});
   sc.querySelector("[data-close]").onclick=()=>{sc.remove();wxDraw()};
   sc.querySelectorAll("[data-unit]").forEach(b=>b.onclick=()=>{wx.unit=b.dataset.unit;save();wxSettings()});
-  sc.querySelector("#wxNight").onchange=e=>{wx.night=e.target.checked;save();app.classList.toggle("night",wx.night)};
+  sc.querySelector("#wxNight").addEventListener("change",e=>{wx.night=!!e.currentTarget.checked;save();app.classList.toggle("night",wx.night);app.dataset.theme=wx.night?"night":"day";sc.classList.toggle("night-mode-active",wx.night);});
   sc.querySelector("[data-refresh]").onclick=()=>{sc.remove();wxDraw();wxLoad(wx.lat,wx.lon)};
   sc.querySelector("[data-reset]").onclick=()=>{wx.cities=[{name:"台北市",lat:25.033,lon:121.5654}];wxSafeStore("ios-weather-cities-v1",wx.cities);wx.city="台北市";wx.lat=25.033;wx.lon=121.5654;wx.hours=[];wx.days=[];wxDraw();wxLoad(wx.lat,wx.lon)};
  };
@@ -4546,6 +4546,81 @@ window.__phoneMainReady = false;
 @keyframes wxIndividualDropFall{
   from{transform:translate3d(0,-4vh,0)}
   to{transform:translate3d(0,125vh,0)}
+}
+
+/* Weather UI polish: keep every icon centered inside its own control. */
+#appView .wx-app .wx-top button,
+#appView .wx-app .wx-head button,
+#appView .wx-app .wx-bottom>button{
+  display:grid!important;
+  place-items:center!important;
+  align-content:center!important;
+  justify-content:center!important;
+  padding:0!important;
+  line-height:1!important;
+}
+#appView .wx-app .wx-top button svg,
+#appView .wx-app .wx-head button svg,
+#appView .wx-app .wx-bottom>button svg{
+  display:block!important;
+  width:22px!important;height:22px!important;
+  margin:0!important;flex:none!important;
+}
+#appView .wx-app .wx-hour>i,
+#appView .wx-app .wx-icon,
+#appView .wx-app .wx-day>span:nth-child(2){
+  display:grid!important;place-items:center!important;
+}
+#appView .wx-app .wx-hour>i .wx-weather-icon,
+#appView .wx-app .wx-day>span:nth-child(2) .wx-weather-icon{
+  display:block!important;margin:0!important;justify-self:center!important;align-self:center!important;
+}
+/* Strong, explicit night-theme rules avoid lighter base selectors overriding the theme. */
+#appView .wx-app.night{
+  background:linear-gradient(165deg,#081331 0%,#172c56 52%,#253b61 100%)!important;
+  color:#f4f7ff!important;
+  color-scheme:dark;
+}
+#appView .wx-app.night .wx-top{
+  background:linear-gradient(#081331ed 55%,transparent)!important;
+}
+#appView .wx-app.night .wx-panel,
+#appView .wx-app.night .wx-detail{
+  background:rgba(7,18,43,.48)!important;
+  border-color:rgba(197,216,255,.18)!important;
+  color:#f4f7ff!important;
+}
+#appView .wx-app.night .wx-bottom{
+  background:linear-gradient(0deg,rgba(4,10,28,.98),transparent)!important;
+}
+#appView .wx-app.night .wx-screen{
+  background:linear-gradient(165deg,#081331 0%,#14284d 65%,#20375e 100%)!important;
+  color:#f4f7ff!important;
+  color-scheme:dark;
+}
+#appView .wx-app.night .wx-head{
+  background:linear-gradient(180deg,#081331 65%,transparent)!important;
+}
+#appView .wx-app.night .wx-primary{
+  background:rgba(224,235,255,.14)!important;
+  color:#f4f7ff!important;
+  border:1px solid rgba(220,232,255,.2)!important;
+}
+#appView .wx-app.night .wx-chip,
+#appView .wx-app.night .wx-search,
+#appView .wx-app.night .wx-city-row{
+  background:rgba(255,255,255,.08)!important;
+  color:#f4f7ff!important;
+  border-color:rgba(220,232,255,.2)!important;
+}
+#appView .wx-app.night .wx-chip.on{
+  background:#e5edff!important;color:#14284d!important;
+}
+#appView .wx-app.night .wx-note,
+#appView .wx-app.night .wx-label,
+#appView .wx-app.night .wx-sub,
+#appView .wx-app.night .wx-day small{
+  color:#d5e0f8!important;
 }
 </style>
 <script id="wx-true-falling-rain-script">
