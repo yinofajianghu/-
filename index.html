@@ -1482,7 +1482,35 @@ function wxDraw(){let h=$("#appView");if(!h)return;h.innerHTML='<div class="wx-a
 async function wxLoad(lat,lon){try{let r=await fetch("https://api.open-meteo.com/v1/forecast?latitude="+lat+"&longitude="+lon+"&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m,surface_pressure&hourly=temperature_2m,precipitation_probability,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,sunrise,sunset,uv_index_max&timezone=auto&forecast_days=10");if(!r.ok)throw Error();let d=await r.json(),c=d.current,z=d.daily;wx.t=c.temperature_2m;wx.code=c.weather_code;wx.hi=z.temperature_2m_max[0];wx.lo=z.temperature_2m_min[0];wx.feel=c.apparent_temperature;wx.humidity=c.relative_humidity_2m;wx.wind=c.wind_speed_10m;wx.pressure=Math.round(c.surface_pressure);wx.uv=z.uv_index_max[0];wx.rain=d.hourly.precipitation_probability[0]||0;wx.sunrise=z.sunrise[0].slice(11,16);wx.sunset=z.sunset[0].slice(11,16);wx.hours=d.hourly.time.slice(0,24).map((t,i)=>({time:i?" "+t.slice(11,16):"現在",t:d.hourly.temperature_2m[i],code:d.hourly.weather_code[i],rain:d.hourly.precipitation_probability[i]}));wx.days=z.time.map((t,i)=>({day:i?"週"+["日","一","二","三","四","五","六"][new Date(t+"T12:00:00").getDay()]:"今天",code:z.weather_code[i],hi:z.temperature_2m_max[i],lo:z.temperature_2m_min[i],rain:z.precipitation_probability_max[i]}))}catch(e){}wxDraw()}
 function wxAction(a,i){i=Number(i);if(a==="cities")return wxCities();if(a==="map")return wxMap();if(a==="settings")return wxSettings();if(a==="refresh")return wxLoad(wx.lat,wx.lon);if(a==="switch"){let c=wx.cities[i];if(c){wx.city=c.name;wx.lat=c.lat;wx.lon=c.lon;wxDraw();wxLoad(c.lat,c.lon)}return}if(a==="day"){let d=(wx.days.length?wx.days:wxDays())[i];return wxDetail(d.day+"預報",wxIcon(d.code)+" "+wxDesc(d.code),[["最高溫",wxT(d.hi)],["最低溫",wxT(d.lo)],["降雨機率",d.rain+"%"]])}if(a==="hour")return wxDetail("每小時預報",wxT(Number(i)),[["位置",wx.city],["目前狀況",wxDesc(wx.code)],["降雨機率",wx.rain+"%"]]);if(a==="detail"){let d=[["體感溫度",wxT(wx.feel),"依據氣溫等資料估算"],["紫外線指數",String(wx.uv),"外出請留意防曬"],["日出與日落",wx.sunrise+" / "+wx.sunset,"當地日出日落時間"],["風速",wx.wind+" km/h","目前風速"],["降雨機率",wx.rain+"%","預報估計值"],["濕度",wx.humidity+"%","目前相對濕度"],["氣壓",wx.pressure+" hPa","目前氣壓"],["能見度","10 km","能見度參考值"]][i];return wxDetail(d[0],d[1],[["說明",d[2]],["位置",wx.city]])}}
 function wxDetail(title,value,rows){let h=$("#appView");h.querySelector(".wx-screen")?.remove();h.querySelector(".wx-app").insertAdjacentHTML("beforeend",'<section class="wx-screen"><header class="wx-head"><button data-close>‹</button><h2>'+escapeHTML(title)+'</h2></header><div style="font-size:40px;font-weight:300;margin:24px 0">'+escapeHTML(value)+'</div><div class="wx-panel">'+rows.map(x=>'<p style="display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid #ffffff30;padding:10px 0"><span>'+escapeHTML(x[0])+'</span><span>'+escapeHTML(x[1])+'</span></p>').join("")+'</div></section>');h.querySelector(".wx-screen [data-close]").onclick=wxDraw}
-function wxCities(){let h=$("#appView");h.querySelector(".wx-screen")?.remove();h.querySelector(".wx-app").insertAdjacentHTML("beforeend",'<section class="wx-screen"><header class="wx-head"><button data-close>‹</button><h2>城市</h2><button data-add>＋</button></header><input id="wxSearch" class="wx-search" placeholder="搜尋城市名稱"><div class="wx-city-list"></div><p class="wx-note">點選城市切換預報；按 ＋ 搜尋並加入城市。</p></section>');let sc=h.querySelector(".wx-screen"),draw=()=>{let q=sc.querySelector("#wxSearch").value.toLowerCase();sc.querySelector(".wx-city-list").innerHTML=wx.cities.filter(c=>c.name.toLowerCase().includes(q)).map((c,i)=>'<button class="wx-city-row" data-city="'+escapeHTML(c.name)+'"><span>'+escapeHTML(c.name)+'<small>'+wxDesc(wx.code)+'</small></span><b>'+(c.name===wx.city?wxT(wx.t):"—")+'</b><span data-del="'+i+'">×</span></button>').join("")||'<p class="wx-note">沒有符合的城市</p>';sc.querySelectorAll("[data-city]").forEach(b=>b.onclick=e=>{if(e.target.dataset.del!==undefined){wx.cities.splice(+e.target.dataset.del,1);localStorage.setItem("ios-weather-cities-v1",JSON.stringify(wx.cities));draw();return}let c=wx.cities.find(x=>x.name===b.dataset.city);if(c){wx.city=c.name;wx.lat=c.lat;wx.lon=c.lon;wxDraw();wxLoad(c.lat,c.lon)}})};sc.querySelector("[data-close]").onclick=wxDraw;sc.querySelector("#wxSearch").oninput=draw;sc.querySelector("[data-add]").onclick=async()=>{let q=sc.querySelector("#wxSearch").value.trim();if(!q)return sc.querySelector("#wxSearch").focus();try{let r=await fetch("https://geocoding-api.open-meteo.com/v1/search?name="+encodeURIComponent(q)+"&count=8&language=zh&format=json"),d=await r.json();if(!d.results?.length)return alert("找不到城市，請換個名稱搜尋。");let x=d.results[0],c={name:x.name,lat:x.latitude,lon:x.longitude};if(!wx.cities.some(y=>y.name===c.name))wx.cities.push(c);localStorage.setItem("ios-weather-cities-v1",JSON.stringify(wx.cities));wx.city=c.name;wx.lat=c.lat;wx.lon=c.lon;wxDraw();wxLoad(c.lat,c.lon)}catch(e){alert("城市搜尋失敗，請確認網路連線。")}};draw()}
+function wxCities(){
+ let h=$("#appView"),app=h.querySelector(".wx-app");
+ h.querySelector(".wx-screen")?.remove();
+ app.insertAdjacentHTML("beforeend",'<section class="wx-screen wx-city-screen"><header class="wx-city-titlebar"><button class="wx-city-back" data-close aria-label="返回">‹</button><h2>天氣</h2><button class="wx-city-more" data-edit aria-label="編輯城市">•••</button></header><label class="wx-city-search-wrap"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.7" fill="none" stroke="currentColor" stroke-width="2"/><path d="m16 16 4.2 4.2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><input id="wxSearch" class="wx-search wx-city-search" placeholder="搜尋城市或機場" autocomplete="off" aria-label="搜尋城市或機場"><button type="button" data-clear-search aria-label="清除搜尋">×</button></label><div class="wx-city-list" aria-live="polite"></div><div class="wx-city-search-results"></div><footer class="wx-city-footer"><span>按住城市可調整排序</span><button data-add-current aria-label="新增城市">＋</button></footer></section>');
+ let sc=h.querySelector(".wx-city-screen"),input=sc.querySelector("#wxSearch"),list=sc.querySelector(".wx-city-list"),results=sc.querySelector(".wx-city-search-results"),timer=null,editing=false,seq=0;
+ function saveCities(){try{localStorage.setItem("ios-weather-cities-v1",JSON.stringify(wx.cities))}catch(e){}}
+ function renderSaved(){
+  list.innerHTML=wx.cities.map((c,i)=>'<article class="wx-city-card '+(c.name===wx.city?'is-active':'')+'" data-card="'+i+'"><button class="wx-city-card-main" data-city="'+i+'"><span class="wx-city-card-copy"><strong>'+(c.name===wx.city?'我的位置':escapeHTML(c.name))+'</strong><small class="wx-city-clock" data-clock="'+i+'">當地時間</small><span class="wx-city-condition" data-condition="'+i+'">'+(c.name===wx.city?escapeHTML(wxDesc(wx.code)):'載入天氣…')+'</span><span class="wx-city-hilo" data-hilo="'+i+'">'+(c.name===wx.city?'最高 '+wxT(wx.hi)+'　最低 '+wxT(wx.lo):'')}</span><span class="wx-city-card-temp" data-temp="'+i+'">'+(c.name===wx.city?wxT(wx.t):'—')+'</span><span class="wx-city-card-symbol" data-symbol="'+i+'">'+(c.name===wx.city?wxIcon(wx.code):'')+'</span></button>'+(editing?'<button class="wx-city-delete" data-delete="'+i+'" aria-label="刪除 '+escapeHTML(c.name)+'">−</button>':'')+'</article>').join('')||'<p class="wx-city-empty">尚未加入城市，請搜尋並新增地點。</p>';
+  wx.cities.forEach((c,i)=>{if(c.name===wx.city){let clock=sc.querySelector('[data-clock="'+i+'"]');if(clock)clock.textContent="目前城市";return}fetch("https://api.open-meteo.com/v1/forecast?latitude="+c.lat+"&longitude="+c.lon+"&current=temperature_2m,weather_code&daily=temperature_2m_max,temperature_2m_min&timezone=auto&forecast_days=1").then(r=>r.ok?r.json():null).then(d=>{if(!d||!sc.isConnected)return;let temp=sc.querySelector('[data-temp="'+i+'"]'),cond=sc.querySelector('[data-condition="'+i+'"]'),hi=sc.querySelector('[data-hilo="'+i+'"]'),clock=sc.querySelector('[data-clock="'+i+'"]'),sym=sc.querySelector('[data-symbol="'+i+'"]');if(temp)temp.textContent=Math.round(d.current.temperature_2m)+'°';if(cond)cond.textContent=wxDesc(d.current.weather_code);if(hi)hi.textContent='最高 '+Math.round(d.daily.temperature_2m_max[0])+'°　最低 '+Math.round(d.daily.temperature_2m_min[0])+'°';if(clock){let t=d.current.time||'';clock.textContent=t.length>=16?t.slice(11,16):'當地時間'}if(sym)sym.innerHTML=wxIcon(d.current.weather_code)}).catch(()=>{})});
+ }
+ async function searchCities(q){
+  const id=++seq;results.innerHTML='<p class="wx-city-search-status">正在搜尋地點…</p>';
+  try{let r=await fetch("https://geocoding-api.open-meteo.com/v1/search?name="+encodeURIComponent(q)+"&count=8&language=zh&format=json"),d=await r.json();if(id!==seq||!sc.isConnected)return;
+   let found=d.results||[];results.innerHTML=found.map((x,i)=>'<button class="wx-city-result" data-result="'+i+'"><span class="wx-city-result-pin">⌖</span><span class="wx-city-result-copy"><strong>'+escapeHTML(x.name)+'</strong><small>'+escapeHTML([x.admin1,x.country].filter(Boolean).join('，'))+'</small></span><span class="wx-city-result-plus">＋</span></button>').join('')||'<p class="wx-city-search-status">找不到地點，請試試其他城市名稱。</p>';
+   results.querySelectorAll("[data-result]").forEach(btn=>btn.onclick=()=>{let x=found[+btn.dataset.result];if(!x)return;let c={name:x.name,lat:x.latitude,lon:x.longitude};let old=wx.cities.find(y=>y.name===c.name&&Math.abs(y.lat-c.lat)<.01);if(!old)wx.cities.push(c);saveCities();wx.city=c.name;wx.lat=c.lat;wx.lon=c.lon;wxDraw();wxLoad(c.lat,c.lon)});
+  }catch(e){if(id===seq)results.innerHTML='<p class="wx-city-search-status">搜尋失敗，請檢查網路連線後再試。</p>'}
+ }
+ function draw(){if(input.value.trim().length>0){list.style.display="none";results.style.display="block";if(timer)clearTimeout(timer);let q=input.value.trim();if(q.length>=2)timer=setTimeout(()=>searchCities(q),280);else results.innerHTML='<p class="wx-city-search-status">請輸入至少兩個字元。</p>'}else{list.style.display="grid";results.style.display="none";results.innerHTML="";renderSaved()}}
+ sc.querySelector("[data-close]").onclick=wxDraw;
+ sc.querySelector("[data-edit]").onclick=()=>{editing=!editing;sc.querySelector("[data-edit]").textContent=editing?"完成":"•••";renderSaved()};
+ sc.querySelector("[data-clear-search]").onclick=()=>{input.value="";seq++;draw();input.focus()};
+ sc.querySelector("[data-add-current]").onclick=()=>{input.focus();input.placeholder="輸入城市名稱以新增"};
+ input.oninput=draw;
+ list.addEventListener("click",e=>{let del=e.target.closest("[data-delete]");if(del){let i=+del.dataset.delete;if(wx.cities.length<=1){sc.querySelector(".wx-city-empty")?.remove();return}let removed=wx.cities.splice(i,1)[0];if(removed&&removed.name===wx.city){let c=wx.cities[0];wx.city=c.name;wx.lat=c.lat;wx.lon=c.lon;saveCities();wxDraw();wxLoad(c.lat,c.lon)}else{saveCities();renderSaved()}return}let btn=e.target.closest("[data-city]");if(btn){let c=wx.cities[+btn.dataset.city];if(c){wx.city=c.name;wx.lat=c.lat;wx.lon=c.lon;wxDraw();wxLoad(c.lat,c.lon)}}});
+ let startY=0,dragIndex=-1;
+ list.addEventListener("touchstart",e=>{let card=e.target.closest("[data-card]");if(card){startY=e.touches[0].clientY;dragIndex=+card.dataset.card}},{passive:true});
+ list.addEventListener("touchend",e=>{if(dragIndex<0)return;let dy=e.changedTouches[0].clientY-startY;if(Math.abs(dy)>45){let to=Math.max(0,Math.min(wx.cities.length-1,dragIndex+Math.round(dy/76)));if(to!==dragIndex){let moved=wx.cities.splice(dragIndex,1)[0];wx.cities.splice(to,0,moved);saveCities();renderSaved()}}dragIndex=-1},{passive:true});
+ draw();
+}
 function wxMap(){let h=$("#appView");h.querySelector(".wx-screen")?.remove();h.querySelector(".wx-app").insertAdjacentHTML("beforeend",'<section class="wx-screen"><header class="wx-head"><button data-close>‹</button><h2>天氣地圖</h2><button data-locate>◎</button></header><div class="wx-map"><div class="wx-radar"></div><span class="wx-pin">📍</span></div><div class="wx-map-controls">'+["降雨","溫度","風速","雲量"].map((x,i)=>'<button class="wx-chip '+(!i?"on":"")+'" data-layer="'+x+'">'+x+'</button>').join("")+'</div><label>預報時間 <span id="wxTime">現在</span><input class="wx-search" id="wxSlider" type="range" min="0" max="12" value="0"></label><p class="wx-note">互動式示意地圖，可切換圖層及時間。</p></section>');let sc=h.querySelector(".wx-screen");sc.querySelector("[data-close]").onclick=wxDraw;sc.querySelector("[data-locate]").onclick=()=>sc.querySelector(".wx-note").textContent="目前位置："+wx.city+"（示意定位）";sc.querySelectorAll("[data-layer]").forEach(b=>b.onclick=()=>{sc.querySelectorAll("[data-layer]").forEach(x=>x.classList.toggle("on",x===b));sc.querySelector(".wx-radar").style.filter=({"降雨":"saturate(1.4)","溫度":"hue-rotate(90deg)","風速":"hue-rotate(190deg)","雲量":"grayscale(.7)"})[b.dataset.layer];sc.querySelector(".wx-note").textContent="目前圖層："+b.dataset.layer+"（示意）"});sc.querySelector("#wxSlider").oninput=e=>sc.querySelector("#wxTime").textContent=+e.target.value?"+"+e.target.value+" 小時":"現在"}
 function wxSettings(){let h=$("#appView");h.querySelector(".wx-screen")?.remove();h.querySelector(".wx-app").insertAdjacentHTML("beforeend",'<section class="wx-screen"><header class="wx-head"><button data-close>‹</button><h2>天氣設定</h2></header><div class="wx-panel"><div class="wx-title">溫度單位</div><button class="wx-chip '+(wx.unit==="C"?"on":"")+'" data-unit="C">攝氏 °C</button> <button class="wx-chip '+(wx.unit==="F"?"on":"")+'" data-unit="F">華氏 °F</button></div><div class="wx-panel"><label style="display:flex;justify-content:space-between">夜間外觀<input id="wxNight" type="checkbox" class="wx-toggle" '+(wx.night?"checked":"")+'></label></div><button class="wx-primary" data-refresh>重新整理天氣</button><button class="wx-primary" data-reset>重設城市列表</button></section>');let sc=h.querySelector(".wx-screen"),save=()=>localStorage.setItem("ios-weather-prefs-v1",JSON.stringify({unit:wx.unit,night:wx.night}));sc.querySelector("[data-close]").onclick=wxDraw;sc.querySelectorAll("[data-unit]").forEach(b=>b.onclick=()=>{wx.unit=b.dataset.unit;save();wxSettings()});sc.querySelector("#wxNight").onchange=e=>{wx.night=e.target.checked;save();h.querySelector(".wx-app").classList.toggle("night",wx.night)};sc.querySelector("[data-refresh]").onclick=()=>{wxDraw();wxLoad(wx.lat,wx.lon)};sc.querySelector("[data-reset]").onclick=()=>{wx.cities=[{name:"台北市",lat:25.033,lon:121.5654}];localStorage.setItem("ios-weather-cities-v1",JSON.stringify(wx.cities));wx.city="台北市";wx.lat=25.033;wx.lon=121.5654;wxDraw();wxLoad(wx.lat,wx.lon)}}
 
@@ -4861,6 +4889,106 @@ window.__phoneMainReady = false;
 @media(min-width:520px){
   #appView .wx-app .wx-scroll{max-width:480px;padding-left:18px;padding-right:18px}
 }
+</style>
+
+
+<style id="wx-ios-city-list">
+#appView .wx-app .wx-city-screen{
+  padding:calc(10px + var(--safe-top)) 16px calc(18px + var(--safe-bottom));
+  background:#08090c!important;color:#f5f5f7!important;
+}
+#appView .wx-app.night .wx-city-screen{background:#050608!important}
+#appView .wx-app .wx-city-titlebar{
+  display:grid;grid-template-columns:42px 1fr 42px;align-items:center;gap:10px;
+  margin:2px 0 15px;min-height:46px;
+}
+#appView .wx-app .wx-city-titlebar h2{
+  font-size:32px;line-height:1.1;letter-spacing:-.8px;font-weight:700;margin:0;text-align:left;
+}
+#appView .wx-app .wx-city-back,#appView .wx-app .wx-city-more{
+  display:grid;place-items:center;width:38px;height:38px;padding:0;border-radius:50%;
+  border:1px solid #ffffff1c;background:#202124;color:#f5f5f7;font-size:22px;
+}
+#appView .wx-app .wx-city-more{font-size:16px;letter-spacing:1px}
+#appView .wx-app .wx-city-search-wrap{
+  display:flex;align-items:center;gap:9px;height:44px;padding:0 12px;margin-bottom:17px;
+  border-radius:13px;background:#292a2e;border:1px solid #ffffff0d;color:#aeb0b8;
+}
+#appView .wx-app .wx-city-search-wrap svg{width:19px;height:19px;flex:none}
+#appView .wx-app .wx-city-search-wrap .wx-city-search{
+  flex:1;min-width:0;height:40px;margin:0;padding:0;border:0!important;outline:none;
+  background:transparent!important;color:#fff!important;font-size:16px;
+  box-shadow:none!important;
+}
+#appView .wx-app .wx-city-search::placeholder{color:#aeb0b8!important}
+#appView .wx-app .wx-city-search-wrap [data-clear-search]{
+  border:0;background:transparent;color:#aeb0b8;font-size:22px;padding:0 2px;
+}
+#appView .wx-app .wx-city-list{display:grid;gap:10px}
+#appView .wx-app .wx-city-card{
+  min-height:128px;position:relative;overflow:hidden;border-radius:24px;
+  background:linear-gradient(112deg,#4c7d9d 0%,#729eb8 46%,#8fb4c9 100%);
+  border:1px solid #ffffff25;box-shadow:0 5px 18px #00000020;
+}
+#appView .wx-app .wx-city-card:before{
+  content:"";position:absolute;inset:0;pointer-events:none;opacity:.8;
+  background:radial-gradient(ellipse at 78% 15%,#ffffff2a,transparent 36%),
+  linear-gradient(180deg,#ffffff08 0%,transparent 55%,#13263a24 100%);
+}
+#appView .wx-app .wx-city-card:nth-child(3n+2){background:linear-gradient(115deg,#466f9b,#729bc4 55%,#9dbbd5)}
+#appView .wx-app .wx-city-card:nth-child(3n){background:linear-gradient(115deg,#536f8b,#8b9fae 58%,#b3c2ca)}
+#appView .wx-app .wx-city-card.is-active{background:linear-gradient(115deg,#497fa4,#78a8c4 58%,#a0c2d4)}
+#appView .wx-app .wx-city-card-main{
+  position:relative;z-index:1;width:100%;min-height:128px;padding:15px 16px;
+  display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-rows:auto auto 1fr auto;
+  column-gap:10px;align-items:start;text-align:left;color:#fff;background:transparent;border:0;
+}
+#appView .wx-app .wx-city-card-copy{display:contents}
+#appView .wx-app .wx-city-card-copy strong{
+  grid-column:1;grid-row:1;font-size:21px;line-height:1.15;font-weight:650;
+  letter-spacing:-.3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+#appView .wx-app .wx-city-clock{grid-column:1;grid-row:2;margin-top:3px;font-size:12px;color:#ffffffd9}
+#appView .wx-app .wx-city-condition{grid-column:1;grid-row:4;font-size:13px;font-weight:500;color:#ffffffed}
+#appView .wx-app .wx-city-hilo{grid-column:2;grid-row:4;align-self:end;font-size:12px;font-weight:550;color:#ffffffed;white-space:nowrap;text-align:right}
+#appView .wx-app .wx-city-card-temp{
+  grid-column:2;grid-row:1 / span 2;font-size:42px;line-height:1;font-weight:300;
+  letter-spacing:-1.6px;white-space:nowrap;text-align:right;
+}
+#appView .wx-app .wx-city-card-symbol{
+  grid-column:2;grid-row:3;justify-self:end;align-self:center;height:26px;min-width:28px;
+}
+#appView .wx-app .wx-city-card-symbol .wx-weather-icon{width:28px!important;height:28px!important}
+#appView .wx-app .wx-city-delete{
+  position:absolute;z-index:3;left:9px;top:9px;width:25px;height:25px;border-radius:50%;
+  background:#ff453a;color:#fff;border:1px solid #ffffff70;font-size:21px;line-height:1;
+}
+#appView .wx-app .wx-city-card:has(.wx-city-delete) .wx-city-card-main{padding-left:43px}
+#appView .wx-app .wx-city-search-results{display:none}
+#appView .wx-app .wx-city-result{
+  display:flex;align-items:center;gap:12px;width:100%;padding:13px 8px;
+  border:0;border-bottom:1px solid #ffffff20;background:transparent;color:#fff;text-align:left;
+}
+#appView .wx-app .wx-city-result-pin{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;background:#2c2d31;font-size:20px;color:#d7d8dd}
+#appView .wx-app .wx-city-result-copy{display:grid;gap:3px;flex:1;min-width:0}
+#appView .wx-app .wx-city-result-copy strong{font-size:16px;font-weight:550}
+#appView .wx-app .wx-city-result-copy small{font-size:12px;color:#a9abb3}
+#appView .wx-app .wx-city-result-plus{font-size:25px;color:#aeb0b8;padding:0 5px}
+#appView .wx-app .wx-city-search-status,#appView .wx-app .wx-city-empty{
+  font-size:14px;color:#aeb0b8;padding:14px 4px;line-height:1.5;
+}
+#appView .wx-app .wx-city-footer{
+  display:flex;align-items:center;justify-content:space-between;margin-top:15px;
+  padding:8px 2px;color:#8f929a;font-size:12px;
+}
+#appView .wx-app .wx-city-footer button{
+  display:grid;place-items:center;width:34px;height:34px;border:0;border-radius:50%;
+  background:#25262a;color:#f5f5f7;font-size:25px;line-height:1;
+}
+#appView .wx-app .wx-city-screen .wx-city-search-wrap:focus-within{
+  border-color:#8c8f98;background:#303136;
+}
+@media(min-width:520px){#appView .wx-app .wx-city-screen{max-width:520px}}
 </style>
 
 </body>
