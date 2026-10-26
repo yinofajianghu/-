@@ -4193,7 +4193,7 @@ window.__phoneMainReady = false;
   const video=layer.querySelector("video"),key=sceneFor(typeof wx!=="undefined"?wx.code:0);
   if(video.dataset.scene!==key){video.dataset.scene=key;video.src=sources[key];video.load();const p=video.play();if(p&&p.catch)p.catch(()=>{})}
   app.classList.remove("wx-clear","wx-partly","wx-cloudy","wx-fog","wx-rain","wx-snow","wx-storm");
-  const c=Number(window.wx&&wx.code)||0;app.classList.add(c===0?"wx-clear":c<=2?"wx-partly":c===3?"wx-cloudy":c<=48?"wx-fog":c<=67||c<=82?"wx-rain":c<=86?"wx-snow":"wx-storm");
+  const c=Number(window.wx&&wx.code)||0;app.classList.add(c===0?"wx-clear":c<=2?"wx-partly":c===3?"wx-cloudy":c<=48?"wx-fog":c<=67?"wx-rain":c<=77?"wx-snow":c<=82?"wx-rain":c<=86?"wx-snow":"wx-storm");
  }
  function polishRain(){
   const app=document.querySelector("#appView .wx-app");if(!app)return;
