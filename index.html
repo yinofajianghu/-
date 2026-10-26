@@ -4929,5 +4929,26 @@ window.__phoneMainReady = false;
   pointer-events:auto;
 }
 </style>
+
+<style id="photos-library-scroll-repair-2026">
+/* The shared app viewport is clipped; make the Photos app itself the vertical scroller. */
+#appView #appContent:has(.ios26-photos){
+  overflow:hidden!important;
+  min-height:0!important;
+}
+#appView #appContent .ios26-photos{
+  position:relative!important;
+  height:100%!important;
+  min-height:0!important;
+  max-height:100%!important;
+  overflow-x:hidden!important;
+  overflow-y:auto!important;
+  -webkit-overflow-scrolling:touch!important;
+  overscroll-behavior-y:contain!important;
+  touch-action:pan-y!important;
+  padding-bottom:160px!important;
+}
+</style>
+
 </body>
 </html>
