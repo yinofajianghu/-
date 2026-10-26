@@ -1515,14 +1515,26 @@ function wxMap(){let h=$("#appView");h.querySelector(".wx-screen")?.remove();h.q
 function wxSettings(){let h=$("#appView");h.querySelector(".wx-screen")?.remove();h.querySelector(".wx-app").insertAdjacentHTML("beforeend",'<section class="wx-screen"><header class="wx-head"><button data-close>‹</button><h2>天氣設定</h2></header><div class="wx-panel"><div class="wx-title">溫度單位</div><button class="wx-chip '+(wx.unit==="C"?"on":"")+'" data-unit="C">攝氏 °C</button> <button class="wx-chip '+(wx.unit==="F"?"on":"")+'" data-unit="F">華氏 °F</button></div><div class="wx-panel"><label style="display:flex;justify-content:space-between">夜間外觀<input id="wxNight" type="checkbox" class="wx-toggle" '+(wx.night?"checked":"")+'></label></div><button class="wx-primary" data-refresh>重新整理天氣</button><button class="wx-primary" data-reset>重設城市列表</button></section>');let sc=h.querySelector(".wx-screen"),save=()=>localStorage.setItem("ios-weather-prefs-v1",JSON.stringify({unit:wx.unit,night:wx.night}));sc.querySelector("[data-close]").onclick=wxDraw;sc.querySelectorAll("[data-unit]").forEach(b=>b.onclick=()=>{wx.unit=b.dataset.unit;save();wxSettings()});sc.querySelector("#wxNight").onchange=e=>{wx.night=e.target.checked;save();h.querySelector(".wx-app").classList.toggle("night",wx.night)};sc.querySelector("[data-refresh]").onclick=()=>{wxDraw();wxLoad(wx.lat,wx.lon)};sc.querySelector("[data-reset]").onclick=()=>{wx.cities=[{name:"台北市",lat:25.033,lon:121.5654}];localStorage.setItem("ios-weather-cities-v1",JSON.stringify(wx.cities));wx.city="台北市";wx.lat=25.033;wx.lon=121.5654;wxDraw();wxLoad(wx.lat,wx.lon)}}
 
 function showApp(id){
+  // Reset the shared app container before every launch so no previous app overlay can survive.
+  const view=$('#appView'),content=$('#appContent');
+  if(content)content.replaceChildren();
+  if(view){view.classList.remove('dark');view.classList.add('active')}
+  $('#home').classList.remove('active');$('#lock').classList.remove('active');
   if(id==="fitness"){renderFitnessApp();return}
   if(["clock","calendar","files","music"].includes(id)){renderUtilityApp(id);return}
- if(id==="instagram"){renderInstagramApp();return}
- if(id==="messages"){renderMessages();return}
- if(id==="camera"||id==="youtube"){renderSimple(id);return}
- if(id==="spotify"){renderSpotify();return}
- $('#home').classList.remove('active');$('#lock').classList.remove('active');$('#appView').classList.add('active');$('#appView').classList.toggle('dark',id==="x");
- if(id==="weather")renderWeatherApp();else if(id==="phone")renderPhone();else if(id==="line")renderLine();else if(id==="x")renderX();else if(id==="photos")renderPhotos();else if(id==="notes")renderNotes();else if(id==="maps")renderMaps();else if(id==="settings")renderSettings();
+  if(id==="instagram"){renderInstagramApp();return}
+  if(id==="messages"){renderMessages();return}
+  if(id==="camera"||id==="youtube"){renderSimple(id);return}
+  if(id==="spotify"){renderSpotify();return}
+  view.classList.toggle('dark',id==="x");
+  if(id==="weather")renderWeatherApp();
+  else if(id==="phone")renderPhone();
+  else if(id==="line")renderLine();
+  else if(id==="x")renderX();
+  else if(id==="photos")renderPhotos();
+  else if(id==="notes")renderNotes();
+  else if(id==="maps")renderMaps();
+  else if(id==="settings")renderSettings();
 }
 
 let fitnessTab='home',fitnessRun=null,fitnessTimer=null,fitnessWatch=null,fitnessLastPos=null,fitnessDistance=0,fitnessPausedAt=0,fitnessElapsedBeforePause=0,fitnessGoal=5,fitnessHistory=[];
@@ -1597,7 +1609,13 @@ function renderUtilityApp(id){
   if(id==="calendar")$('#utilityCalendarDate').textContent=new Date().toLocaleDateString('zh-TW',{year:'numeric',month:'long',day:'numeric',weekday:'long'});
   if(id==="music")$('#openSpotify').onclick=()=>renderSpotify();
 }
-function goHome(){stopCall();closeAudio();$('#appView').classList.remove('active');$('#appView').classList.remove('dark');$('#home').classList.add('active');}
+function goHome(){
+  stopCall();closeAudio();
+  const view=$('#appView'),content=$('#appContent');
+  if(content)content.replaceChildren();
+  if(view){view.classList.remove('active','dark');}
+  $('#home').classList.add('active');
+}
 let phoneTab='recent',phoneDigits='';
 function renderPhone(tab){
  if(tab)phoneTab=tab;
@@ -4817,5 +4835,16 @@ window.__phoneMainReady = false;
   },true);
 })();
 </script>
+
+<style id="wx-layout-navigation-hardening-2026">
+/* Keep the weather app inside the shared app viewport, including the home indicator safe area. */
+#appView{overflow:hidden;isolation:isolate}
+#appView #appContent{position:absolute;inset:0;min-width:0;min-height:0;overflow:hidden}
+#appView #appContent>.wx-app{position:absolute;inset:0 0 calc(18px + env(safe-area-inset-bottom,0px));width:100%;height:auto;min-width:0;min-height:0;box-sizing:border-box;overflow:hidden}
+#appView #appContent>.wx-app>.wx-scroll{height:100%;min-height:0;max-height:100%;overflow-x:hidden;overflow-y:auto;padding-bottom:18px;box-sizing:border-box}
+#appView #appContent>.wx-app>.wx-bottom{position:absolute;left:0;right:0;bottom:0}
+#appView .wx-app .wx-screen{box-sizing:border-box;max-width:100%;min-width:0}
+#appView .wx-app .wx-city-screen{height:100%;padding-bottom:calc(30px + env(safe-area-inset-bottom,0px))}
+</style>
 </body>
 </html>
