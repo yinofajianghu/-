@@ -936,6 +936,14 @@ html body #controlCenter .cc-native-slider output{
 #appContent{bottom:calc(46px + var(--safe-bottom))}
 </style>
 
+<style id="instagram-bottom-nav-repair-2026">
+/* Restore Instagram's bottom tab bar and keep it inside the visible app viewport. */
+#appView:has(.ig-app) #appContent{bottom:calc(25px + var(--safe-bottom))!important;overflow:hidden!important}
+#appView:has(.ig-app) .ig-app{height:100%!important;min-height:0!important;overflow:hidden!important}
+#appView:has(.ig-app) .ig-bottom-nav{display:flex!important;visibility:visible!important;opacity:1!important;position:relative!important;flex:0 0 94px!important;height:94px!important;min-height:94px!important;z-index:30!important;background:var(--ig-panel,#fff)!important;border-top:1px solid var(--ig-line,#efefef)!important}
+#appView:has(.ig-app) .ig-bottom-nav button{display:grid!important;visibility:visible!important;opacity:1!important;flex:0 0 20%!important;width:20%!important;height:58px!important;min-height:58px!important;align-items:center!important;justify-items:center!important;position:relative!important;z-index:31!important;color:var(--ig-text,#171717)!important}
+#appView:has(.ig-app) .app-homebar-wrap{z-index:40!important;background:var(--ig-bg,#fff)!important}
+</style>
 </head>
 <body>
 <div id="phone">
