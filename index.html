@@ -4191,15 +4191,15 @@ window.__phoneMainReady = false;
   let layer=app.querySelector(":scope > .wx-video-scene");
   if(!layer){layer=document.createElement("div");layer.className="wx-video-scene";layer.setAttribute("aria-hidden","true");layer.innerHTML='<video muted autoplay loop playsinline webkit-playsinline preload="metadata"></video>';app.insertBefore(layer,app.firstChild)}
   const video=layer.querySelector("video"),key=sceneFor(typeof wx!=="undefined"?wx.code:0);
-  if(video.dataset.scene!==key){video.dataset.scene=key;video.src=sources[key];video.load();const p=video.play();if(p&&p.catch)p.catch(()=>{})}
+  if(video.dataset.scene!==key){video.dataset.scene=key;video.pause();video.src=sources[key];video.load()}if(!document.hidden&&!window.matchMedia("(prefers-reduced-motion: reduce)").matches&&video.paused){const p=video.play();if(p&&p.catch)p.catch(()=>{})}
   app.classList.remove("wx-clear","wx-partly","wx-cloudy","wx-fog","wx-rain","wx-snow","wx-storm");
   const c=Number(window.wx&&wx.code)||0;app.classList.add(c===0?"wx-clear":c<=2?"wx-partly":c===3?"wx-cloudy":c<=48?"wx-fog":c<=67?"wx-rain":c<=77?"wx-snow":c<=82?"wx-rain":c<=86?"wx-snow":"wx-storm");
  }
  function polishRain(){
   const app=document.querySelector("#appView .wx-app");if(!app)return;
   addVideo(app);
-  app.querySelectorAll(".wx-hour").forEach(el=>{const small=el.querySelector("small");if(!small)return;const m=small.textContent.match(/(\d+(?:\.\d+)?)\s*%/);if(!m)return;const label=rainLabel(m[1]);small.textContent=label?("☂ "+label):"";small.style.display=label?"":"none"});
-  app.querySelectorAll(".wx-day").forEach(el=>{const small=el.querySelector("small");if(!small)return;const m=small.textContent.match(/(\d+(?:\.\d+)?)\s*%/);if(!m)return;const label=rainLabel(m[1]);small.textContent=label;small.style.display=label?"":"none"});
+  app.querySelectorAll(".wx-hour").forEach(el=>{const small=el.querySelector("small");if(!small)return;const m=small.textContent.match(/(\d+(?:\.\d+)?)\s*%/);if(!m)return;const label=rainLabel(m[1]);const next=label?("☂ "+label):"";if(small.textContent!==next)small.textContent=next;small.style.display=label?"":"none"});
+  app.querySelectorAll(".wx-day").forEach(el=>{const small=el.querySelector("small");if(!small)return;const m=small.textContent.match(/(\d+(?:\.\d+)?)\s*%/);if(!m)return;const label=rainLabel(m[1]);if(small.textContent!==label)small.textContent=label;small.style.display=label?"":"none"});
   app.querySelectorAll(".wx-detail").forEach(el=>{const label=el.querySelector(".wx-label"),value=el.querySelector(".wx-value");if(!label||!value||!label.textContent.includes("降雨機率"))return;const m=value.textContent.match(/(\d+(?:\.\d+)?)\s*%/);if(!m)return;const out=rainLabel(m[1]);value.textContent=out;el.style.display=out?"":"none"});
   app.querySelectorAll(".wx-screen").forEach(el=>el.querySelectorAll("*").forEach(node=>{if(node.children.length||!node.textContent.includes("降雨機率"))return;}));
  }
@@ -4207,7 +4207,7 @@ window.__phoneMainReady = false;
  if(typeof oldDraw==="function")window.wxDraw=function(){const r=oldDraw.apply(this,arguments);requestAnimationFrame(polishRain);return r};
  const oldDetail=window.wxDetail;
  if(typeof oldDetail==="function")window.wxDetail=function(title,value,rows){if(Array.isArray(rows))rows=rows.filter(row=>!(Array.isArray(row)&&String(row[0]).includes("降雨機率")&&!rainLabel(row[1]))).map(row=>Array.isArray(row)&&String(row[0]).includes("降雨機率")?[row[0],rainLabel(row[1]),row[2]]:row);return oldDetail.call(this,title,value,rows)};
- function start(){polishRain();const target=document.querySelector("#appView");if(target)new MutationObserver(()=>polishRain()).observe(target,{childList:true,subtree:true});}
+ function start(){polishRain();const target=document.querySelector("#appView");if(target)new MutationObserver(()=>{if(!target.querySelector(".wx-app"))return;requestAnimationFrame(polishRain)}).observe(target,{childList:true});document.addEventListener("visibilitychange",()=>{const v=document.querySelector("#appView .wx-video-scene video");if(!v)return;if(document.hidden){v.pause()}else if(!window.matchMedia("(prefers-reduced-motion: reduce)").matches){const p=v.play();if(p&&p.catch)p.catch(()=>{})}});if(window.matchMedia("(prefers-reduced-motion: reduce)").matches){const v=document.querySelector("#appView .wx-video-scene video");if(v)v.pause()}}
  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",start,{once:true});else start();
 })();
 </script>
