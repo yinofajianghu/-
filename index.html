@@ -4229,7 +4229,7 @@ window.__phoneMainReady = false;
  function polishRain(){
   const app=document.querySelector("#appView .wx-app");if(!app)return;
   addVideo(app);
-  app.querySelectorAll(".wx-hour").forEach(el=>{const small=el.querySelector(".wx-hour-rain")||el.querySelector("small");if(!small)return;const m=small.textContent.match(/(\d+(?:\.\d+)?)\s*%/);if(!m)return;const next=Math.round(Number(m[1])||0)+"%";if(small.textContent!==next)small.textContent=next;small.style.display="";});
+  app.querySelectorAll(".wx-hour").forEach(el=>{const small=el.querySelector(".wx-hour-rain")||el.querySelector("small");if(!small)return;const m=small.textContent.match(/(\d+(?:\.\d+)?)\s*%/);if(!m)return;const raw=Number(m[1])||0;const next=Math.round(raw/10)*10+"%";if(small.textContent!==next)small.textContent=next;small.style.display="";small.style.visibility=raw<30?"hidden":"visible";});
   app.querySelectorAll(".wx-day").forEach(el=>{const small=el.querySelector("small");if(!small)return;const m=small.textContent.match(/(\d+(?:\.\d+)?)\s*%/);if(!m)return;const label=rainLabel(m[1]);if(small.textContent!==label)small.textContent=label;small.style.display=label?"":"none"});
   app.querySelectorAll(".wx-detail").forEach(el=>{const label=el.querySelector(".wx-label"),value=el.querySelector(".wx-value");if(!label||!value||!label.textContent.includes("降雨機率"))return;const m=value.textContent.match(/(\d+(?:\.\d+)?)\s*%/);if(!m)return;const out=rainLabel(m[1]);value.textContent=out;el.style.display=out?"":"none"});
   app.querySelectorAll(".wx-screen").forEach(el=>el.querySelectorAll("*").forEach(node=>{if(node.children.length||!node.textContent.includes("降雨機率"))return;}));
