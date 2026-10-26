@@ -4159,5 +4159,58 @@ window.__phoneMainReady = false;
 @media(prefers-reduced-motion:reduce){#appView .wx-atmo-scene .cloud,#appView .wx-atmo-scene .sun{animation:none!important}}
 </style>
 
+
+<style id="ios-weather-video-backgrounds">
+/* Cinematic, real-footage weather scenes; videos stay behind the readable UI. */
+#appView .wx-app{position:relative;isolation:isolate;background:#182a40!important;overflow:hidden}
+#appView .wx-video-scene{position:absolute;inset:0;z-index:0;overflow:hidden;pointer-events:none;background:linear-gradient(160deg,#476d8d,#a9bdc9)}
+#appView .wx-video-scene video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;opacity:.92;filter:saturate(.82) contrast(1.04);transition:opacity 1.2s ease}
+#appView .wx-video-scene:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,#08182b45 0%,#14263b12 28%,#14263b30 62%,#09162685 100%);pointer-events:none}
+#appView .wx-app>.wx-scroll,#appView .wx-app>.wx-bottom{position:relative;z-index:2}
+#appView .wx-app>.wx-atmo-scene{background:transparent!important;z-index:1!important;opacity:.28}
+#appView .wx-app.night .wx-video-scene video{filter:saturate(.62) brightness(.68) contrast(1.08)}
+#appView .wx-app.wx-rain .wx-video-scene video,#appView .wx-app.wx-storm .wx-video-scene video{filter:saturate(.68) brightness(.78) contrast(1.12)}
+@media(prefers-reduced-motion:reduce){#appView .wx-video-scene video{display:none}}
+</style>
+<script id="ios-weather-video-backgrounds">
+(function(){
+ const sources={
+  sunny:"https://raw.githubusercontent.com/mawaqit/mobile-assets/main/weather-videos/sunny.mp4",
+  cloudy:"https://raw.githubusercontent.com/mawaqit/mobile-assets/main/weather-videos/cloudy.mp4",
+  overcast:"https://raw.githubusercontent.com/mawaqit/mobile-assets/main/weather-videos/overcast.mp4",
+  light_rain:"https://raw.githubusercontent.com/mawaqit/mobile-assets/main/weather-videos/light_rain.mp4",
+  rain:"https://raw.githubusercontent.com/mawaqit/mobile-assets/main/weather-videos/rain.mp4",
+  snow:"https://raw.githubusercontent.com/mawaqit/mobile-assets/main/weather-videos/snow.mp4",
+  thunderstorm:"https://raw.githubusercontent.com/mawaqit/mobile-assets/main/weather-videos/thunderstorm.mp4"
+ };
+ function sceneFor(code){code=Number(code)||0;if(code===0)return "sunny";if(code<=2)return "cloudy";if(code===3)return "overcast";if(code<=48)return "overcast";if(code<=57)return "light_rain";if(code<=67)return "rain";if(code<=77)return "snow";if(code<=82)return "rain";if(code<=86)return "snow";return "thunderstorm"}
+ function rounded(v){const n=Number(v);return Number.isFinite(n)?Math.round(n/10)*10:null}
+ function rainLabel(v){const n=rounded(v);return n!==null&&n>=30?n+"%":""}
+ function addVideo(app){
+  if(!app)return;
+  let layer=app.querySelector(":scope > .wx-video-scene");
+  if(!layer){layer=document.createElement("div");layer.className="wx-video-scene";layer.setAttribute("aria-hidden","true");layer.innerHTML='<video muted autoplay loop playsinline webkit-playsinline preload="metadata"></video>';app.insertBefore(layer,app.firstChild)}
+  const video=layer.querySelector("video"),key=sceneFor(window.wx&&wx.code);
+  if(video.dataset.scene!==key){video.dataset.scene=key;video.src=sources[key];video.load();const p=video.play();if(p&&p.catch)p.catch(()=>{})}
+  app.classList.remove("wx-clear","wx-partly","wx-cloudy","wx-fog","wx-rain","wx-snow","wx-storm");
+  const c=Number(window.wx&&wx.code)||0;app.classList.add(c===0?"wx-clear":c<=2?"wx-partly":c===3?"wx-cloudy":c<=48?"wx-fog":c<=67||c<=82?"wx-rain":c<=86?"wx-snow":"wx-storm");
+ }
+ function polishRain(){
+  const app=document.querySelector("#appView .wx-app");if(!app)return;
+  addVideo(app);
+  app.querySelectorAll(".wx-hour").forEach(el=>{const small=el.querySelector("small");if(!small)return;const m=small.textContent.match(/(\d+(?:\.\d+)?)\s*%/);if(!m)return;const label=rainLabel(m[1]);small.textContent=label?("☂ "+label):"";small.style.display=label?"":"none"});
+  app.querySelectorAll(".wx-day").forEach(el=>{const small=el.querySelector("small");if(!small)return;const m=small.textContent.match(/(\d+(?:\.\d+)?)\s*%/);if(!m)return;const label=rainLabel(m[1]);small.textContent=label;small.style.display=label?"":"none"});
+  app.querySelectorAll(".wx-detail").forEach(el=>{const label=el.querySelector(".wx-label"),value=el.querySelector(".wx-value");if(!label||!value||!label.textContent.includes("降雨機率"))return;const m=value.textContent.match(/(\d+(?:\.\d+)?)\s*%/);if(!m)return;const out=rainLabel(m[1]);value.textContent=out;el.style.display=out?"":"none"});
+  app.querySelectorAll(".wx-screen").forEach(el=>el.querySelectorAll("*").forEach(node=>{if(node.children.length||!node.textContent.includes("降雨機率"))return;}));
+ }
+ const oldDraw=window.wxDraw;
+ if(typeof oldDraw==="function")window.wxDraw=function(){const r=oldDraw.apply(this,arguments);requestAnimationFrame(polishRain);return r};
+ const oldDetail=window.wxDetail;
+ if(typeof oldDetail==="function")window.wxDetail=function(title,value,rows){if(Array.isArray(rows))rows=rows.map(row=>Array.isArray(row)&&String(row[0]).includes("降雨機率")?[row[0],rainLabel(row[1])||"—",row[2]]:row);return oldDetail.call(this,title,value,rows)};
+ function start(){polishRain();const target=document.querySelector("#appView");if(target)new MutationObserver(()=>polishRain()).observe(target,{childList:true,subtree:true});}
+ if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",start,{once:true});else start();
+})();
+</script>
+
 </body>
 </html>
