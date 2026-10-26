@@ -4768,7 +4768,9 @@ window.__phoneMainReady = false;
     if(!root.classList.contains('active')||!root.querySelector('.wx-app')){start=null;return}
     var t=e.changedTouches&&e.changedTouches[0];
     if(!t){start=null;return}
-    /* Allow the home gesture to begin anywhere inside Weather, not only near the bottom edge. */
+    /* Only accept a home gesture that starts in the bottom 12% of the screen. */
+    var fromHomeIndicator=!!(e.target&&e.target.closest&&e.target.closest('.app-homebar-wrap'));
+    if(t.clientY<window.innerHeight*.88&&!fromHomeIndicator){start=null;return}
     start={x:t.clientX,y:t.clientY};
   },{passive:true});
   root.addEventListener('touchend',function(e){
