@@ -3994,8 +3994,8 @@ window.__phoneMainReady = false;
 (function(){
  const wxEsc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
  const wxSafeStore=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
- const wxCodeName=c=>c===0?"clear-day":c===1?"mostly-clear-day":c===2?"partly-cloudy-day":c===3?"overcast":c<=48?"fog":c<=57?"drizzle":c<=67?"rain":c<=77?"snow":c<=82?"rain-showers-day":c<=86?"snow-showers-day":"thunderstorms";
- const wxIconNew=c=>'<img class="wx-weather-icon" src="https://cdn.jsdelivr.net/gh/basmilius/weather-icons@dev/production/fill/all/'+wxCodeName(Number(c)||0)+'.svg" alt="'+wxEsc(wxDesc(Number(c)||0))+'" loading="lazy" onerror="this.onerror=null;this.src=\'https://cdn.jsdelivr.net/gh/basmilius/weather-icons@dev/production/fill/all/partly-cloudy-day.svg\'">';
+ const wxCodeName=c=>{c=Number(c)||0;if(c===0)return "clear-day";if(c<=2)return "partly-cloudy-day";if(c===3)return "overcast";if(c<=48)return "fog";if(c<=57)return "drizzle";if(c<=67)return "rain";if(c<=77)return "snow";if(c<=82)return "rain";if(c<=86)return "snow";return "thunderstorms";};
+ wxIconNew=c=>{const name=wxCodeName(c);const fallback="data:image/svg+xml,"+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><circle cx="42" cy="20" r="12" fill="#FFD76A"/><path d="M17 49h31a10 10 0 0 0 0-20 16 16 0 0 0-30-3 12 12 0 0 0-1 23Z" fill="#F4F9FF" stroke="#D5E9FA" stroke-width="2"/></svg>');return '<img class="wx-weather-icon" src="https://cdn.jsdelivr.net/gh/basmilius/weather-icons@2.0.0/production/fill/all/'+name+'.svg" alt="'+wxEsc(wxDesc(Number(c)||0))+'" loading="lazy" onerror="this.onerror=null;this.src=\''+fallback+'\'">';};
  wxIcon=wxIconNew;
  wxHours=function(){return Array.from({length:12},(_,i)=>({time:i?" "+String((new Date().getHours()+i)%24).padStart(2,"0")+":00":"現在",t:wx.t,code:wx.code,rain:wx.rain}))};
  wxDays=function(){return Array.from({length:10},(_,i)=>({day:i?"週"+["日","一","二","三","四","五","六"][new Date(Date.now()+i*86400000).getDay()]:"今天",code:wx.code,hi:wx.hi,lo:wx.lo,rain:wx.rain}))};
