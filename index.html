@@ -4229,7 +4229,7 @@ window.__phoneMainReady = false;
  function polishRain(){
   const app=document.querySelector("#appView .wx-app");if(!app)return;
   addVideo(app);
-  app.querySelectorAll(".wx-hour").forEach(el=>{const small=el.querySelector("small");if(!small)return;const m=small.textContent.match(/(\d+(?:\.\d+)?)\s*%/);if(!m)return;const label=rainLabel(m[1]);const next=label?("☂ "+label):"";if(small.textContent!==next)small.textContent=next;small.style.display=label?"":"none"});
+  app.querySelectorAll(".wx-hour").forEach(el=>{const small=el.querySelector(".wx-hour-rain")||el.querySelector("small");if(!small)return;const m=small.textContent.match(/(\d+(?:\.\d+)?)\s*%/);if(!m)return;const next=(Number(m[1])||0)+"%";if(small.textContent!==next)small.textContent=next;small.style.display="";});
   app.querySelectorAll(".wx-day").forEach(el=>{const small=el.querySelector("small");if(!small)return;const m=small.textContent.match(/(\d+(?:\.\d+)?)\s*%/);if(!m)return;const label=rainLabel(m[1]);if(small.textContent!==label)small.textContent=label;small.style.display=label?"":"none"});
   app.querySelectorAll(".wx-detail").forEach(el=>{const label=el.querySelector(".wx-label"),value=el.querySelector(".wx-value");if(!label||!value||!label.textContent.includes("降雨機率"))return;const m=value.textContent.match(/(\d+(?:\.\d+)?)\s*%/);if(!m)return;const out=rainLabel(m[1]);value.textContent=out;el.style.display=out?"":"none"});
   app.querySelectorAll(".wx-screen").forEach(el=>el.querySelectorAll("*").forEach(node=>{if(node.children.length||!node.textContent.includes("降雨機率"))return;}));
@@ -4279,6 +4279,16 @@ window.__phoneMainReady = false;
   #appView .wx-scroll{padding-left:12px!important;padding-right:12px!important}
   #appView .wx-days .wx-day{grid-template-columns:minmax(38px,.85fr) 24px 27px 30px minmax(22px,1fr) 30px!important;gap:3px!important}
 }
+
+ /* Hourly forecast: stable vertical stack; percentage sits directly beneath the weather icon. */
+ #appView .wx-scroll .wx-hours{display:flex!important;align-items:stretch!important;gap:clamp(10px,3vw,18px)!important;padding:2px 0 8px;}
+ #appView .wx-scroll .wx-hour{flex:0 0 42px!important;min-width:42px!important;max-width:54px!important;display:grid!important;grid-template-rows:auto 32px auto auto!important;align-content:start!important;justify-items:center!important;align-items:center!important;gap:6px!important;padding:5px 2px!important;margin:0!important;white-space:nowrap!important;overflow:visible!important;}
+ #appView .wx-scroll .wx-hour>span{grid-row:1;min-width:0;max-width:100%;font-size:11px;line-height:1.25;white-space:nowrap;}
+ #appView .wx-scroll .wx-hour>i{grid-row:2;width:32px!important;height:32px!important;min-width:32px;display:flex!important;align-items:center;justify-content:center;line-height:1;}
+ #appView .wx-scroll .wx-hour>i .wx-weather-icon{width:30px!important;height:30px!important;max-width:100%;object-fit:contain;}
+ #appView .wx-scroll .wx-hour>.wx-hour-rain,#appView .wx-scroll .wx-hour>small{grid-row:3;display:block!important;min-height:13px;font-size:10px!important;line-height:13px!important;font-weight:500;color:#d8eaff!important;font-variant-numeric:tabular-nums;white-space:nowrap;}
+ #appView .wx-scroll .wx-hour>b{grid-row:4;font-size:13px;line-height:1.25;font-weight:500;white-space:nowrap;font-variant-numeric:tabular-nums;}
+ @media(max-width:360px){#appView .wx-scroll .wx-hours{gap:8px!important}#appView .wx-scroll .wx-hour{flex-basis:40px!important;min-width:40px!important;padding-left:1px!important;padding-right:1px!important}#appView .wx-scroll .wx-hour>span{font-size:10px}}
 </style>
 
 
