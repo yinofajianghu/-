@@ -4012,7 +4012,7 @@ window.__phoneMainReady = false;
   const prior={...wx};try{
    const url="https://api.open-meteo.com/v1/forecast?latitude="+encodeURIComponent(lat)+"&longitude="+encodeURIComponent(lon)+"&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m,surface_pressure,visibility&hourly=temperature_2m,precipitation_probability,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,sunrise,sunset,uv_index_max&timezone=auto&forecast_days=10";
    const r=await fetch(url,{signal:AbortSignal.timeout?AbortSignal.timeout(12000):undefined});if(!r.ok)throw Error("天氣服務暫時無法連線");const d=await r.json();if(!d.current||!d.daily||!d.hourly)throw Error("天氣資料格式不完整");
-   const c=d.current,z=d.daily,hr=d.hourly;wx.t=c.temperature_2m;wx.code=c.weather_code;wx.hi=z.temperature_2m_max[0];wx.lo=z.temperature_2m_min[0];wx.feel=c.apparent_temperature;wx.humidity=c.relative_humidity_2m;wx.wind=c.wind_speed_10m;wx.pressure=Math.round(c.surface_pressure);wx.visibility=c.visibility;wx.uv=z.uv_index_max[0];const nowIndex=Math.max(0,hr.time.findIndex(t=>t>=c.time));wx.rain=hr.precipitation_probability[nowIndex]||0;wx.sunrise=z.sunrise[0].slice(11,16);wx.sunset=z.sunset[0].slice(11,16);wx.hours=hr.time.slice(nowIndex,nowIndex+24).map((t,j)=>({time:j?" "+t.slice(11,16):"現在",t:hr.temperature_2m[nowIndex+j],code:hr.weather_code[nowIndex+j],rain:hr.precipitation_probability[nowIndex+j]||0}));wx.days=z.time.map((t,i)=>({day:i?"週"+["日","一","二","三","四","五","六"][new Date(t+"T12:00:00").getDay()]:"今天",date:t,code:z.weather_code[i],hi:z.temperature_2m_max[i],lo:z.temperature_2m_min[i],rain:z.precipitation_probability_max[i]||0}));wx.lastUpdated=new Date().toLocaleTimeString("zh-TW",{hour:"2-digit",minute:"2-digit"});wx.apiError="";
+   const c=d.current,z=d.daily,hr=d.hourly;wx.localTime=String(c.time||"").slice(11,16);wx.localDate=String(c.time||"").slice(0,10);wx.t=c.temperature_2m;wx.code=c.weather_code;wx.hi=z.temperature_2m_max[0];wx.lo=z.temperature_2m_min[0];wx.feel=c.apparent_temperature;wx.humidity=c.relative_humidity_2m;wx.wind=c.wind_speed_10m;wx.pressure=Math.round(c.surface_pressure);wx.visibility=c.visibility;wx.uv=z.uv_index_max[0];const nowIndex=Math.max(0,hr.time.findIndex(t=>t>=c.time));wx.rain=hr.precipitation_probability[nowIndex]||0;wx.sunrise=z.sunrise[0].slice(11,16);wx.sunset=z.sunset[0].slice(11,16);wx.hours=hr.time.slice(nowIndex,nowIndex+24).map((t,j)=>({time:j?" "+t.slice(11,16):"現在",t:hr.temperature_2m[nowIndex+j],code:hr.weather_code[nowIndex+j],rain:hr.precipitation_probability[nowIndex+j]||0}));wx.days=z.time.map((t,i)=>({day:i?"週"+["日","一","二","三","四","五","六"][new Date(t+"T12:00:00").getDay()]:"今天",date:t,code:z.weather_code[i],hi:z.temperature_2m_max[i],lo:z.temperature_2m_min[i],rain:z.precipitation_probability_max[i]||0}));wx.lastUpdated=new Date().toLocaleTimeString("zh-TW",{hour:"2-digit",minute:"2-digit"});wx.apiError="";
   }catch(e){wx.apiError="天氣資料暫時無法更新，顯示上次資料。";if(!prior.hours.length)wx.hours=wxHours();if(!prior.days.length)wx.days=wxDays()}
   wxDraw();if(wx.apiError){const box=$("#appView").querySelector(".wx-summary");if(box)box.textContent=wx.apiError+" "+box.textContent}
  };
@@ -4081,6 +4081,52 @@ window.__phoneMainReady = false;
 .wx-atmo-scene .cloud.c2,.wx-atmo-scene .cloud.c3{opacity:0}.wx-atmo-scene .flash{animation:none}.wx-app.wx-storm .flash{animation:wxFlash 8s linear infinite}
 </style>
 <script id="ios-weather-atmosphere-controller">(function(){const cls=()=>{const c=Number(window.wx&&wx.code)||0;if(c===0)return"wx-clear";if(c<=2)return"wx-partly";if(c===3)return"wx-cloudy";if(c===45||c===48)return"wx-fog";if(c>=71&&c<=77||c===85||c===86)return"wx-snow";if(c>=95)return"wx-storm";if(c>=51&&c<=67||c>=80&&c<=82)return"wx-rain";return"wx-cloudy"};function install(){const app=document.querySelector("#appView .wx-app");if(!app)return;app.classList.remove("wx-clear","wx-partly","wx-cloudy","wx-fog","wx-rain","wx-snow","wx-storm");app.classList.add(cls());if(!app.querySelector(":scope>.wx-atmo-scene")){const el=document.createElement("div");el.className="wx-atmo-scene";el.setAttribute("aria-hidden","true");el.innerHTML='<div class="stars"></div><div class="sun"></div><div class="moon"></div><div class="cloud"></div><div class="cloud c2"></div><div class="cloud c3"></div><div class="rain"></div><div class="snow"></div><div class="fog"></div><div class="flash"></div>';app.insertBefore(el,app.firstChild)}}function start(){install();const t=document.querySelector("#appView");if(t)new MutationObserver(install).observe(t,{childList:true,subtree:true})}if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",start,{once:true});else start()})();</script>
+
+
+<style id="ios-weather-realism">
+/* More natural, layered sky inspired by iOS Weather. */
+.wx-app>.wx-atmo-scene{background:linear-gradient(180deg,#5ba9ec 0%,#88c9f5 42%,#d7efff 78%,#eff8ff 100%);transition:background 2s ease}
+.wx-app.wx-time-dawn>.wx-atmo-scene{background:linear-gradient(180deg,#465f91 0%,#9d91b8 34%,#f6b18d 68%,#ffe0b1 100%)}
+.wx-app.wx-time-day>.wx-atmo-scene{background:linear-gradient(180deg,#3286d2 0%,#69b3ed 40%,#b8e0fa 76%,#edf8ff 100%)}
+.wx-app.wx-time-dusk>.wx-atmo-scene{background:linear-gradient(180deg,#273d70 0%,#806c9b 34%,#e49a91 66%,#ffcf9c 100%)}
+.wx-app.wx-time-night>.wx-atmo-scene{background:linear-gradient(180deg,#050d24 0%,#101f43 48%,#263d61 78%,#405877 100%)}
+.wx-app.wx-time-night.wx-rain>.wx-atmo-scene,.wx-app.wx-time-night.wx-storm>.wx-atmo-scene{background:linear-gradient(180deg,#090e1e,#1b2a43 55%,#34445a)}
+.wx-app.wx-time-night.wx-snow>.wx-atmo-scene{background:linear-gradient(180deg,#182943,#526982 68%,#8b9eaf)}
+.wx-atmo-scene:before{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,#ffffff08,transparent 34%,#f7fbff18 72%,#ffffff2b);z-index:0}
+.wx-atmo-scene:after{content:"";position:absolute;left:-15%;right:-15%;bottom:-9%;height:37%;pointer-events:none;background:radial-gradient(ellipse at 50% 100%,#effaff88 0%,#d9effa55 35%,transparent 73%);opacity:.7}
+.wx-app.wx-time-night .wx-atmo-scene:after{background:radial-gradient(ellipse at 50% 100%,#8ea7c51c,transparent 70%);opacity:.45}
+.wx-atmo-scene .sun{width:100px;height:100px;right:13%;top:12%;background:radial-gradient(circle at 42% 37%,#fffde5 0%,#fff1b0 25%,#ffdb78 54%,#ffc45b 67%,#ffbd4b00 74%);filter:drop-shadow(0 0 34px #ffe6a577)}
+.wx-atmo-scene .sun:before{content:"";position:absolute;inset:-42px;border-radius:50%;background:radial-gradient(circle,#fff4c71c 0%,#ffe9a122 44%,transparent 70%);animation:wxHalo 8s ease-in-out infinite alternate}
+.wx-atmo-scene .cloud{width:230px;height:57px;background:linear-gradient(180deg,#ffffffed 0%,#f4f9fff0 46%,#d7e8f6d9 100%);box-shadow:inset 0 2px 4px #ffffffa8;filter:drop-shadow(0 10px 14px #194b7420)}
+.wx-atmo-scene .cloud:before{width:93px;height:93px;left:30px;top:-45px;background:radial-gradient(circle at 38% 32%,#fff 0%,#f7fbff 54%,#dceaf6 100%)}
+.wx-atmo-scene .cloud:after{width:122px;height:122px;left:86px;top:-64px;background:radial-gradient(circle at 38% 30%,#fff 0%,#f7fbff 54%,#dceaf6 100%)}
+.wx-atmo-scene .c2{top:31%;transform:scale(.76);opacity:.55}.wx-atmo-scene .c3{top:8%;transform:scale(.58);opacity:.36}
+.wx-app.wx-cloudy .wx-atmo-scene .cloud,.wx-app.wx-rain .wx-atmo-scene .cloud,.wx-app.wx-storm .wx-atmo-scene .cloud{background:linear-gradient(180deg,#cdd9e7 0%,#aebfd1 52%,#8298af 100%);box-shadow:inset 0 2px 5px #eff7ff66}
+.wx-app.wx-cloudy .wx-atmo-scene .cloud:before,.wx-app.wx-cloudy .wx-atmo-scene .cloud:after,.wx-app.wx-rain .wx-atmo-scene .cloud:before,.wx-app.wx-rain .wx-atmo-scene .cloud:after,.wx-app.wx-storm .wx-atmo-scene .cloud:before,.wx-app.wx-storm .wx-atmo-scene .cloud:after{background:radial-gradient(circle at 38% 30%,#dbe4ed 0%,#b5c5d5 55%,#8195aa 100%)}
+.wx-app.wx-time-dawn .wx-atmo-scene .sun,.wx-app.wx-time-dusk .wx-atmo-scene .sun{top:25%;filter:drop-shadow(0 0 40px #ffbc8c99);background:radial-gradient(circle,#fff4d1 0%,#ffd9a0 45%,#ffad83 68%,transparent 74%)}
+.wx-app.wx-time-night .wx-atmo-scene .sun{opacity:0!important}
+.wx-atmo-scene .moon{width:62px;height:62px;background:radial-gradient(circle at 33% 30%,#fffdf0 0%,#e5ecf7 42%,#b6c8df 78%,#90a8c9 100%);box-shadow:0 0 38px #d8e7ff44,0 0 85px #9fc5ff20}
+.wx-atmo-scene .moon:after{content:"";position:absolute;left:16px;top:15px;width:12px;height:10px;border-radius:50%;background:#a9bcd5;opacity:.38;box-shadow:18px 17px 0 3px #b5c6db,6px 31px 0 -2px #a7bad2}
+.wx-app.wx-time-dawn .wx-atmo-scene .moon,.wx-app.wx-time-dusk .wx-atmo-scene .moon{opacity:.3}
+.wx-app.wx-time-night .wx-atmo-scene .moon{opacity:1}
+.wx-app.wx-time-night .wx-atmo-scene .stars{opacity:.95}
+.wx-app.wx-time-night.wx-cloudy .wx-atmo-scene .stars,.wx-app.wx-time-night.wx-rain .wx-atmo-scene .stars,.wx-app.wx-time-night.wx-storm .wx-atmo-scene .stars{opacity:.12}
+.wx-atmo-scene .rain{background-image:repeating-linear-gradient(104deg,transparent 0 18px,#f2f8ffb8 19px,#f2f8ffb8 20px,transparent 21px 43px),repeating-linear-gradient(104deg,transparent 0 54px,#cce7ff75 55px,#cce7ff75 56px,transparent 57px 83px);background-size:83px 115px,137px 165px;filter:drop-shadow(0 0 1px #d7edff66)}
+.wx-atmo-scene .snow{background-image:radial-gradient(circle,#ffffff 0 2.2px,transparent 3.3px),radial-gradient(circle,#fffdf2 0 1.7px,transparent 2.8px),radial-gradient(circle,#ffffffdd 0 3px,transparent 4px),radial-gradient(circle,#e8f5ff 0 1px,transparent 2px);background-size:83px 100px,121px 137px,177px 160px,61px 79px;filter:drop-shadow(0 0 3px #fff8)}
+.wx-app.wx-fog .wx-atmo-scene{filter:saturate(.6)}
+.wx-app.wx-fog .wx-atmo-scene .fog{height:120px;filter:blur(15px);background:linear-gradient(180deg,transparent,#f1f6f7b8 45%,#e7eff080 65%,transparent)}
+.wx-app.wx-time-night.wx-clear .wx-atmo-scene .sun,.wx-app.wx-time-night.wx-partly .wx-atmo-scene .sun{display:none}
+@keyframes wxHalo{from{transform:scale(.92);opacity:.55}to{transform:scale(1.08);opacity:1}}
+</style>
+<script id="ios-weather-realism-controller">
+(function(){
+ const num=t=>{if(!t||!/^\d{2}:\d{2}$/.test(t))return null;const p=t.split(":").map(Number);return p[0]*60+p[1]};
+ function timeClass(){const current=num(window.wx&&wx.localTime)||((new Date().getHours()*60)+new Date().getMinutes());const rise=num(window.wx&&wx.sunrise),set=num(window.wx&&wx.sunset);if(rise===null||set===null)return current<360||current>=1140?"wx-time-night":"wx-time-day";if(current<rise-60||current>=set+60)return"wx-time-night";if(current<rise+75)return"wx-time-dawn";if(current>set-75&&current<set+60)return"wx-time-dusk";return"wx-time-day"}
+ function apply(){const app=document.querySelector("#appView .wx-app");if(!app)return;app.classList.remove("wx-time-dawn","wx-time-day","wx-time-dusk","wx-time-night");app.classList.add(timeClass());const scene=app.querySelector(":scope>.wx-atmo-scene");if(scene){const c=Number(window.wx&&wx.code)||0;scene.dataset.weather=c;scene.dataset.time=window.wx&&wx.localTime||""}}
+ function start(){apply();const target=document.querySelector("#appView");if(target)new MutationObserver(apply).observe(target,{childList:true,subtree:true});setInterval(apply,60000)}
+ if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",start,{once:true});else start();
+})();
+</script>
 
 </body>
 </html>
