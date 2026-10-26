@@ -4708,5 +4708,61 @@ window.__phoneMainReady = false;
 
 </style>
 
+
+<style id="wx-city-list-refresh-2026">
+/* Explicit refreshed iOS-style city picker */
+#appView .wx-app .wx-city-screen{display:flex;flex-direction:column;overflow-y:auto;overscroll-behavior:contain}
+#appView .wx-app .wx-city-titlebar h2{font-size:34px;letter-spacing:-1px}
+#appView .wx-app .wx-city-search-wrap{flex:0 0 44px;box-sizing:border-box}
+#appView .wx-app .wx-city-list{gap:12px;padding-bottom:6px}
+#appView .wx-app .wx-city-card{min-height:142px;border-radius:23px;box-shadow:0 8px 24px #0003;transition:transform .18s ease,border-color .18s ease}
+#appView .wx-app .wx-city-card.is-active{border-color:#ffffff85;box-shadow:0 0 0 1px #ffffff1c,0 8px 24px #0003}
+#appView .wx-app .wx-city-card-main{position:relative;display:block;width:100%;min-height:142px;padding:16px 18px;text-align:left;border:0;background:transparent;color:#fff}
+#appView .wx-app .wx-city-card-copy{display:flex;flex-direction:column;align-items:flex-start;gap:5px;max-width:65%}
+#appView .wx-app .wx-city-card-copy strong{font-size:23px;font-weight:650;letter-spacing:-.4px}
+#appView .wx-app .wx-city-clock{font-size:12px;color:#ffffffd1}
+#appView .wx-app .wx-city-condition{font-size:14px;color:#ffffffed}
+#appView .wx-app .wx-city-hilo{font-size:12px;color:#ffffffd1;margin-top:4px}
+#appView .wx-app .wx-city-card-temp{position:absolute;right:17px;top:10px;font-size:48px;line-height:1.1;font-weight:250;letter-spacing:-2px}
+#appView .wx-app .wx-city-card-symbol{position:absolute;right:24px;bottom:17px;font-size:27px}
+#appView .wx-app .wx-city-delete{position:absolute;z-index:2;left:7px;top:7px;width:25px;height:25px;border:0;border-radius:50%;background:#ff453a;color:#fff;font-size:22px;line-height:20px}
+#appView .wx-app .wx-city-card:has(.wx-city-delete) .wx-city-card-main{padding-left:38px}
+#appView .wx-app .wx-city-search-results{display:grid;gap:7px}
+#appView .wx-app .wx-city-result{display:flex;align-items:center;gap:12px;min-height:62px;padding:10px 12px;border:0;border-bottom:1px solid #ffffff18;border-radius:12px;background:#17181c;color:#fff;text-align:left}
+#appView .wx-app .wx-city-result-copy{display:flex;flex:1;flex-direction:column;gap:4px}
+#appView .wx-app .wx-city-result-copy strong{font-size:16px}
+#appView .wx-app .wx-city-result-copy small{font-size:12px;color:#aeb0b8}
+#appView .wx-app .wx-city-result-plus{font-size:24px;color:#aeb0b8}
+#appView .wx-app .wx-city-footer{position:sticky;bottom:calc(-18px - var(--safe-bottom));margin-top:auto;padding-top:12px;background:linear-gradient(180deg,#08090c00,#08090c 30%);flex-shrink:0}
+@media(prefers-reduced-motion:reduce){#appView .wx-app .wx-city-card{transition:none}}
+</style>
+<script id="wx-app-swipe-to-home-2026">
+(function(){
+  var root=document.getElementById('appView');
+  if(!root||root.dataset.wxSwipeHomeReady==='1')return;
+  root.dataset.wxSwipeHomeReady='1';
+  var start=null;
+  root.addEventListener('touchstart',function(e){
+    if(!root.classList.contains('active')||!root.querySelector('.wx-app')){start=null;return}
+    var t=e.changedTouches&&e.changedTouches[0];
+    if(!t){start=null;return}
+    var fromHomeIndicator=!!(e.target&&e.target.closest&&e.target.closest('.app-homebar-wrap'));
+    if(t.clientY<window.innerHeight*.68&&!fromHomeIndicator){start=null;return}
+    start={x:t.clientX,y:t.clientY};
+  },{passive:true});
+  root.addEventListener('touchend',function(e){
+    if(!start)return;
+    var t=e.changedTouches&&e.changedTouches[0],st=start;start=null;
+    if(!t||!root.classList.contains('active')||!root.querySelector('.wx-app'))return;
+    var dx=t.clientX-st.x,dy=t.clientY-st.y;
+    if(dy < -75 && Math.abs(dy)>Math.abs(dx)*1.15){
+      if(typeof goHome==='function')goHome();
+      else {root.classList.remove('active');var home=document.getElementById('home');if(home)home.classList.add('active')}
+    }
+  },{passive:true});
+  root.addEventListener('touchcancel',function(){start=null},{passive:true});
+})();
+</script>
+
 </body>
 </html>
