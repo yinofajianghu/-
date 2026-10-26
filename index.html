@@ -4653,5 +4653,215 @@ window.__phoneMainReady = false;
 })();
 </script>
 </style>
+
+<style id="wx-ios-weather-layout">
+/* iOS Weather-inspired hierarchy, typography and forecast cards */
+#appView .wx-app .wx-scroll{
+  box-sizing:border-box;
+  padding:calc(8px + var(--safe-top)) 16px calc(94px + var(--safe-bottom));
+  scroll-behavior:smooth;
+  overscroll-behavior-y:contain;
+}
+#appView .wx-app .wx-top{
+  min-height:46px;
+  display:grid!important;
+  grid-template-columns:42px minmax(0,1fr) 42px;
+  gap:10px;
+  align-items:center;
+  padding:3px 0 10px;
+  background:linear-gradient(180deg,rgba(65,145,211,.7),rgba(65,145,211,0))!important;
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+}
+#appView .wx-app.night .wx-top{
+  background:linear-gradient(180deg,rgba(8,19,49,.78),rgba(8,19,49,0))!important;
+}
+#appView .wx-app .wx-top-title{min-width:0;text-align:center;line-height:1.2}
+#appView .wx-app .wx-top-title b{font-size:18px;font-weight:600;letter-spacing:-.25px}
+#appView .wx-app .wx-top-title small{display:none}
+#appView .wx-app .wx-top button,
+#appView .wx-app .wx-bottom button{
+  border:1px solid rgba(255,255,255,.23)!important;
+  background:rgba(255,255,255,.16)!important;
+  box-shadow:0 2px 12px rgba(20,50,80,.08);
+  border-radius:50%!important;
+  color:#fff!important;
+  -webkit-tap-highlight-color:transparent;
+}
+#appView .wx-app .wx-current{
+  padding:14px 0 25px;
+  text-align:center;
+}
+#appView .wx-app .wx-current .wx-city{display:none}
+#appView .wx-app .wx-current .wx-icon{
+  height:76px;
+  padding:0;
+  display:grid;
+  place-items:center;
+  margin:0 auto 1px;
+}
+#appView .wx-app .wx-current .wx-icon .wx-weather-icon{
+  width:76px!important;height:76px!important;
+}
+#appView .wx-app .wx-current .wx-temp{
+  font-size:clamp(76px,20vw,92px);
+  line-height:.98;
+  font-weight:200;
+  letter-spacing:-4.5px;
+  margin:0;
+}
+#appView .wx-app .wx-current .wx-condition{
+  margin-top:7px;
+  font-size:18px;
+  font-weight:500;
+  letter-spacing:.05px;
+}
+#appView .wx-app .wx-current .wx-hilo{
+  margin-top:5px;
+  font-size:14px;
+  font-weight:500;
+  color:rgba(255,255,255,.9);
+}
+#appView .wx-app .wx-panel,
+#appView .wx-app .wx-detail{
+  border:1px solid rgba(255,255,255,.19)!important;
+  border-radius:22px!important;
+  background:rgba(31,79,123,.24)!important;
+  box-shadow:0 8px 24px rgba(18,52,88,.06),inset 0 1px 0 rgba(255,255,255,.06);
+  padding:15px 14px;
+  margin-bottom:12px;
+  backdrop-filter:blur(24px) saturate(1.15);
+  -webkit-backdrop-filter:blur(24px) saturate(1.15);
+}
+#appView .wx-app .wx-title{
+  font-size:12px;
+  font-weight:650;
+  letter-spacing:.45px;
+  text-transform:uppercase;
+  color:rgba(255,255,255,.72);
+  margin:0 0 11px;
+  padding-bottom:10px;
+  border-bottom:1px solid rgba(255,255,255,.17);
+}
+#appView .wx-app .wx-summary{
+  font-size:13px;
+  line-height:1.45;
+  color:rgba(255,255,255,.92);
+  margin-bottom:14px;
+}
+#appView .wx-app .wx-hours{
+  display:flex;
+  gap:0;
+  overflow-x:auto;
+  overscroll-behavior-x:contain;
+  scrollbar-width:none;
+  padding:0 0 2px;
+  scroll-snap-type:x proximity;
+}
+#appView .wx-app .wx-hours::-webkit-scrollbar{display:none}
+#appView .wx-app .wx-hour{
+  flex:0 0 52px;
+  min-width:52px;
+  min-height:100px;
+  gap:9px;
+  align-content:space-between;
+  justify-items:center;
+  padding:1px 2px 3px;
+  border:0!important;
+  border-radius:15px;
+  background:transparent!important;
+  color:#fff!important;
+  font-size:12px;
+  scroll-snap-align:start;
+}
+#appView .wx-app .wx-hour:first-child{
+  background:rgba(255,255,255,.09)!important;
+}
+#appView .wx-app .wx-hour>span{font-size:11px;color:rgba(255,255,255,.88);white-space:nowrap}
+#appView .wx-app .wx-hour>i{width:32px;height:30px}
+#appView .wx-app .wx-hour .wx-weather-icon{width:28px!important;height:28px!important}
+#appView .wx-app .wx-hour>b{font-size:15px;font-weight:600;white-space:nowrap}
+#appView .wx-app .wx-hour>small{font-size:11px;color:#bfe5ff!important;min-height:13px}
+#appView .wx-app .wx-days{gap:0}
+#appView .wx-app .wx-day{
+  grid-template-columns:minmax(58px,1.05fr) 30px 32px minmax(48px,1fr) 32px;
+  gap:5px;
+  min-height:43px;
+  padding:2px 0;
+  border-bottom:1px solid rgba(255,255,255,.14)!important;
+  color:#fff!important;
+  font-size:13px;
+}
+#appView .wx-app .wx-day>span:first-child{font-size:13px;font-weight:500}
+#appView .wx-app .wx-day>span:nth-child(2){width:30px;height:30px}
+#appView .wx-app .wx-day .wx-weather-icon{width:25px!important;height:25px!important}
+#appView .wx-app .wx-day>small{font-size:11px;color:#bfe5ff!important;text-align:center}
+#appView .wx-app .wx-day>span:last-child{font-size:13px;font-weight:600;text-align:right}
+#appView .wx-app .wx-day .wx-bar{
+  position:relative;
+  height:5px;
+  border-radius:8px;
+  background:linear-gradient(90deg,#73c8ff 0%,#a8d978 45%,#ffd66b 75%,#ff9b64 100%)!important;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.08);
+}
+#appView .wx-app .wx-grid{gap:10px}
+#appView .wx-app .wx-detail{
+  min-height:112px;
+  padding:13px;
+  text-align:left;
+}
+#appView .wx-app .wx-label{
+  font-size:11px;
+  font-weight:650;
+  letter-spacing:.45px;
+  color:rgba(255,255,255,.72)!important;
+}
+#appView .wx-app .wx-value{
+  font-size:27px;
+  font-weight:350;
+  letter-spacing:-.5px;
+  margin:12px 0 7px;
+}
+#appView .wx-app .wx-sub{font-size:11px;color:rgba(255,255,255,.78)!important}
+#appView .wx-app .wx-bottom{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  padding:10px 20px calc(12px + var(--safe-bottom));
+  background:linear-gradient(0deg,rgba(15,58,99,.7),rgba(15,58,99,0))!important;
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+}
+#appView .wx-app.night .wx-bottom{
+  background:linear-gradient(0deg,rgba(4,10,28,.82),rgba(4,10,28,0))!important;
+}
+#appView .wx-app .wx-bottom>button{width:42px;height:42px;min-width:42px;font-size:18px}
+#appView .wx-app .wx-dots{align-items:center;justify-content:center;flex:1}
+#appView .wx-app .wx-dots button{width:6px;height:6px;min-width:6px;min-height:6px;padding:0}
+#appView .wx-app .wx-dots button.on{background:#fff!important;transform:scale(1.18)}
+#appView .wx-app .wx-screen{
+  backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
+}
+#appView .wx-app.night .wx-panel,
+#appView .wx-app.night .wx-detail{
+  background:rgba(5,14,35,.42)!important;
+  border-color:rgba(220,232,255,.17)!important;
+}
+#appView .wx-app.night .wx-hour:first-child{background:rgba(255,255,255,.09)!important}
+#appView .wx-app.night .wx-hour>small,
+#appView .wx-app.night .wx-day>small{color:#b8dcff!important}
+@media(max-width:360px){
+  #appView .wx-app .wx-scroll{padding-left:12px;padding-right:12px}
+  #appView .wx-app .wx-panel{padding:13px 11px}
+  #appView .wx-app .wx-hour{flex-basis:48px;min-width:48px}
+  #appView .wx-app .wx-day{grid-template-columns:minmax(52px,1fr) 26px 28px minmax(38px,.9fr) 29px;gap:3px}
+}
+@media(min-width:520px){
+  #appView .wx-app .wx-scroll{max-width:480px;padding-left:18px;padding-right:18px}
+}
+</style>
+
 </body>
 </html>
