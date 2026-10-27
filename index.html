@@ -881,8 +881,35 @@ html body #controlCenter .cc-native-slider output{
 #appView .ios-clock-app .ic-timer-setup-actions{justify-content:space-between;margin:20px 8px 30px;padding:0 8px}
 #appView .ios-clock-app .ic-timer-round-action{width:76px;height:76px;min-width:76px;box-shadow:none;font-size:17px;font-weight:500;letter-spacing:.1px;transition:transform .15s ease,filter .15s ease}
 #appView .ios-clock-app .ic-timer-round-action:active{transform:scale(.94);filter:brightness(1.12)}
-#appView .ios-clock-app .ic-timer-round-cancel{background:#29292d;color:#ff453a}
-#appView .ios-clock-app .ic-timer-round-confirm{background:#ff9f0a;color:#171717}
+#appView .ios-clock-app .ic-timer-round-cancel{background:#1c1c1e;color:#636366}
+#appView .ios-clock-app .ic-timer-round-confirm{background:#10391f;color:#30d158}
+#appView .ios-clock-app .ic-timer-setup-actions{margin-top:26px;margin-bottom:58px;padding:0 0;align-items:center}
+#appView .ios-clock-app .ic-timer-round-action{width:192px;height:192px;min-width:0;max-width:calc((100vw - 80px)/2);font-size:38px;font-weight:400;letter-spacing:0}
+#appView .ios-clock-app .ic-timer-round-cancel{color:#636366}
+#appView .ios-clock-app .ic-timer-round-confirm{background:#102b14;color:#58d568}
+#appView .ios-clock-app .ic-wheel-picker{height:360px;margin:clamp(54px,10vh,112px) 0 14px;grid-template-columns:repeat(3,minmax(0,1fr));gap:0}
+#appView .ios-clock-app .ic-wheel-column{height:360px;scroll-padding-block:156px;mask-image:linear-gradient(to bottom,transparent 0%,rgba(0,0,0,.05) 12%,rgba(0,0,0,.35) 28%,#000 43%,#000 57%,rgba(0,0,0,.35) 72%,rgba(0,0,0,.05) 88%,transparent 100%);-webkit-mask-image:linear-gradient(to bottom,transparent 0%,rgba(0,0,0,.05) 12%,rgba(0,0,0,.35) 28%,#000 43%,#000 57%,rgba(0,0,0,.35) 72%,rgba(0,0,0,.05) 88%,transparent 100%)}
+#appView .ios-clock-app .ic-wheel-picker:before{top:156px;height:64px;left:0;right:0;border-radius:36px;background:#1c1c1e;border:0}
+#appView .ios-clock-app .ic-wheel-spacer{height:156px}
+#appView .ios-clock-app .ic-wheel-value{height:44px;font-size:34px;font-weight:400;color:rgba(245,245,247,.4)}
+#appView .ios-clock-app .ic-wheel-column{padding-top:0}
+#appView .ios-clock-app .ic-wheel-label{top:174px;font-size:23px;color:#f5f5f7;font-weight:500;letter-spacing:0}
+#appView .ios-clock-app .ic-timer-setting-caption{display:none}
+#appView .ios-clock-app .ic-card{border-radius:28px;background:#1c1c1e;border:0}
+#appView .ios-clock-app .ic-field{min-height:66px;padding:17px 22px}
+#appView .ios-clock-app .ic-field>span{font-size:21px}
+#appView .ios-clock-app .ic-field select{font-size:21px;color:#8e8e93}
+#appView .ios-clock-app .ic-section-title{font-size:24px;font-weight:650;margin-top:34px}
+@media(max-width:430px){
+#appView .ios-clock-app .ic-timer-round-action{width:clamp(112px,23vw,192px);height:clamp(112px,23vw,192px);font-size:clamp(22px,4.6vw,38px)}
+#appView .ios-clock-app .ic-timer-setup-actions{margin-top:26px;margin-bottom:48px}
+#appView .ios-clock-app .ic-wheel-picker{height:340px;margin-top:clamp(64px,12vh,112px);margin-bottom:10px}
+#appView .ios-clock-app .ic-wheel-column{height:340px;scroll-padding-block:148px}
+#appView .ios-clock-app .ic-wheel-picker:before{top:148px;height:64px}
+#appView .ios-clock-app .ic-wheel-spacer{height:148px}
+#appView .ios-clock-app .ic-wheel-label{top:166px;font-size:clamp(14px,3.5vw,23px)}
+#appView .ios-clock-app .ic-wheel-value{font-size:clamp(27px,5.2vw,34px)}
+}
 #appView .ios-clock-app .ic-card{border-radius:12px;background:#1c1c1e;border:1px solid rgba(255,255,255,.035);overflow:hidden}
 #appView .ios-clock-app .ic-field{min-height:52px;padding:15px 16px;border-bottom:0}
 #appView .ios-clock-app .ic-field>span{font-size:16px;font-weight:400;color:#f5f5f7}
