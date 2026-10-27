@@ -969,6 +969,14 @@ html body #controlCenter .cc-native-slider output{
 #appView #appContent:has(.ioscal)>.ioscal{box-sizing:border-box;min-height:0}
 #appView #appContent:has(.ioscal) .ioscal-mainview{min-height:0!important}
 </style>
+<style id="full-height-app-viewport-2026">
+/* Let app content extend to the physical bottom edge; the Home Indicator overlays it. */
+#appView{padding-bottom:0!important;box-sizing:border-box}
+#appView #appContent{bottom:0!important;inset-block-end:0!important;box-sizing:border-box}
+#appView .app-homebar-wrap{bottom:0!important;z-index:1000}
+#appView:has(.ig-app) #appContent,
+#appView:has(.ioscal) #appContent{bottom:0!important;inset-block-end:0!important}
+</style>
 </head>
 <body>
 <div id="phone">
