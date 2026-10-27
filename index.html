@@ -866,6 +866,14 @@ html body #controlCenter .cc-native-slider output{
 .nt-header>.nt-more-btn{position:absolute;right:16px;z-index:1}
 .nt-folder-card>.nt-folder-icon{display:none!important}
 .nt-folder-card{gap:0;padding-left:14px}
+
+/* Shared app viewport sizing: the content viewport already excludes the Home Indicator and safe-area inset. */
+#appContent{box-sizing:border-box;min-height:0}
+#appContent>.page{box-sizing:border-box;min-height:100%}
+/* Calendar previously imposed a full-device viewport minimum inside an already inset app viewport,
+   making its flex column taller than the available area and leaving the bottom layout inconsistent. */
+#appView #appContent:has(.ioscal)>.ioscal{box-sizing:border-box;min-height:0}
+#appView #appContent:has(.ioscal) .ioscal-mainview{min-height:0!important}
 </style>
 
 <style id="instagram-home-refresh">
