@@ -919,6 +919,32 @@ html body #controlCenter .cc-native-slider output{
 @media(max-height:740px){#appView .ios-clock-app .ic-wheel-picker{height:216px;margin-top:18px;margin-bottom:12px}#appView .ios-clock-app .ic-wheel-column{height:216px}#appView .ios-clock-app .ic-wheel-picker:before{top:84px}#appView .ios-clock-app .ic-wheel-spacer{height:84px}#appView .ios-clock-app .ic-wheel-label{top:99px}#appView .ios-clock-app .ic-timer-setup-actions{margin-top:12px;margin-bottom:20px}#appView .ios-clock-app .ic-timer-round-action{width:64px;height:64px;min-width:64px}}
 
 
+
+/* Timer setup: compact independent value wheels and stopwatch-sized circular actions */
+#appView .ios-clock-app .ic-wheel-picker{grid-template-columns:repeat(3,minmax(0,1fr));gap:0;height:300px;margin:clamp(44px,8vh,76px) 0 12px}
+#appView .ios-clock-app .ic-wheel-column{height:300px;scroll-padding-block:128px}
+#appView .ios-clock-app .ic-wheel-picker:before{top:128px;height:44px;left:0;right:0;background:#1c1c1e;border:0;border-radius:24px}
+#appView .ios-clock-app .ic-wheel-spacer{height:128px}
+#appView .ios-clock-app .ic-wheel-value{height:44px;font-size:24px;font-weight:400;letter-spacing:0;color:rgba(245,245,247,.4);text-align:center;padding:0}
+#appView .ios-clock-app .ic-wheel-label{display:none}
+#appView .ios-clock-app .ic-wheel-column:before{position:absolute;top:128px;right:0;bottom:auto;content:"";height:44px;width:1px;background:rgba(235,235,245,.12);z-index:3;pointer-events:none}
+#appView .ios-clock-app .ic-wheel-column:last-of-type:before{display:none}
+#appView .ios-clock-app .ic-wheel-column[data-wheel="hours"]:after{content:"小時";position:absolute;top:128px;right:7px;height:44px;display:flex;align-items:center;font-size:14px;color:#f5f5f7;pointer-events:none}
+#appView .ios-clock-app .ic-wheel-column[data-wheel="minutes"]:after{content:"分鐘";position:absolute;top:128px;right:5px;height:44px;display:flex;align-items:center;font-size:14px;color:#f5f5f7;pointer-events:none}
+#appView .ios-clock-app .ic-wheel-column[data-wheel="seconds"]:after{content:"秒";position:absolute;top:128px;right:8px;height:44px;display:flex;align-items:center;font-size:14px;color:#f5f5f7;pointer-events:none}
+#appView .ios-clock-app .ic-timer-setup-actions{display:flex;justify-content:space-around;align-items:center;gap:12px;margin:26px 0 48px;padding:0}
+#appView .ios-clock-app .ic-timer-round-action{width:78px;height:78px;min-width:78px;max-width:none;border-radius:50%;display:grid;place-items:center;font-size:14px;font-weight:400;box-shadow:none;border:1px solid #3a3a3c}
+#appView .ios-clock-app .ic-timer-round-cancel{background:#1c1c1e;color:#8e8e93;border-color:#3a3a3c}
+#appView .ios-clock-app .ic-timer-round-confirm{background:#10391f;color:#30d158;border-color:#10391f}
+@media(max-width:430px){
+#appView .ios-clock-app .ic-wheel-picker{height:280px;margin-top:clamp(36px,7vh,64px)}
+#appView .ios-clock-app .ic-wheel-column{height:280px;scroll-padding-block:118px}
+#appView .ios-clock-app .ic-wheel-picker:before{top:118px;height:44px}
+#appView .ios-clock-app .ic-wheel-spacer{height:118px}
+#appView .ios-clock-app .ic-wheel-value{font-size:22px}
+#appView .ios-clock-app .ic-wheel-column:before,#appView .ios-clock-app .ic-wheel-column[data-wheel="hours"]:after,#appView .ios-clock-app .ic-wheel-column[data-wheel="minutes"]:after,#appView .ios-clock-app .ic-wheel-column[data-wheel="seconds"]:after{top:118px}
+}
+
 /* Align wheel units inline with the selected values; reuse stopwatch circular controls */
 #appView .ios-clock-app .ic-wheel-picker{grid-template-columns:repeat(3,minmax(0,1fr));column-gap:0}
 #appView .ios-clock-app .ic-wheel-picker:before{left:0;right:0;background:#1c1c1e;border:0;border-radius:36px}
