@@ -1059,6 +1059,13 @@ html body #controlCenter .cc-native-slider output{
 /* Align each 00 value beside its unit label on the same center line */
 #appView .ios-clock-app .ic-timer-wheel-unit .ic-wheel-value{box-sizing:border-box!important;padding:0 20px 0 0!important}
 #appView .ios-clock-app .ic-timer-wheel-unit .ic-timer-unit{right:2px!important;justify-content:flex-start!important;width:22px!important;font-size:10px!important}
+/* Hard override for the actual rebuilt timer markup: align value text and unit label centers */
+#appView .ios-clock-app .ic-timer-setup-screen .ic-timer-wheel-unit .ic-wheel-column .ic-wheel-value{position:relative!important;top:0!important;transform:none!important;height:48px!important;line-height:48px!important;padding:0 20px 0 0!important;text-align:center!important}
+#appView .ios-clock-app .ic-timer-setup-screen .ic-timer-wheel-unit .ic-timer-unit{top:108px!important;height:48px!important;line-height:48px!important;align-items:center!important}
+@media(max-width:380px){
+#appView .ios-clock-app .ic-timer-setup-screen .ic-timer-wheel-unit .ic-wheel-column .ic-wheel-value{height:48px!important;line-height:48px!important}
+#appView .ios-clock-app .ic-timer-setup-screen .ic-timer-wheel-unit .ic-timer-unit{top:97px!important;height:48px!important;line-height:48px!important}
+}
 /* Final compact spacing pass for timer setup */
 #appView .ios-clock-app .ic-timer-setup-screen{max-width:400px!important;padding:2px 14px 12px!important}
 #appView .ios-clock-app .ic-timer-new-wheels{height:228px!important;margin:8px auto 4px!important}
