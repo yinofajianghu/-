@@ -1050,6 +1050,10 @@ html body #controlCenter .cc-native-slider output{
 #appView .ios-clock-app .ic-timer-setup-screen .ic-timer-round-action:active{transform:scale(.96)}
 @media(max-width:380px){#appView .ios-clock-app .ic-timer-setup-screen{padding-left:8px;padding-right:8px}#appView .ios-clock-app .ic-timer-new-wheels{height:238px;margin-top:12px}#appView .ios-clock-app .ic-timer-wheel-unit .ic-wheel-picker:before{top:97px!important;height:44px!important}#appView .ios-clock-app .ic-timer-wheel-unit .ic-wheel-column{scroll-padding-block:97px!important}#appView .ios-clock-app .ic-timer-wheel-unit .ic-wheel-spacer{height:97px!important}#appView .ios-clock-app .ic-timer-unit{top:97px;font-size:10px;right:2px}#appView .ios-clock-app .ic-timer-wheel-unit .ic-wheel-value{font-size:18px!important}#appView .ios-clock-app .ic-timer-setup-screen .ic-timer-setup-actions{margin-top:18px!important;gap:12px!important;padding:0 8px!important}#appView .ios-clock-app .ic-timer-setup-screen .ic-timer-round-action{width:min(25vw,96px)!important;max-width:96px!important}}
 
+/* Restore timer wheel row alignment: JS uses 48px per value */
+#appView .ios-clock-app .ic-timer-wheel-unit .ic-wheel-picker:before{height:48px!important}
+#appView .ios-clock-app .ic-timer-wheel-unit .ic-wheel-value{height:48px!important;line-height:48px!important}
+#appView .ios-clock-app .ic-timer-wheel-unit .ic-timer-unit{height:48px!important}
 /* Final compact spacing pass for timer setup */
 #appView .ios-clock-app .ic-timer-setup-screen{max-width:400px!important;padding:2px 14px 12px!important}
 #appView .ios-clock-app .ic-timer-new-wheels{height:228px!important;margin:8px auto 4px!important}
@@ -2068,7 +2072,7 @@ function iosClockTime(zone){try{return new Intl.DateTimeFormat('zh-TW',{timeZone
 function renderIOSClock(){
  stopIOSClockApp();$('#home').classList.remove('active');$('#lock').classList.remove('active');const view=$('#appView'),content=$('#appContent');view.classList.add('active');view.classList.remove('dark');
  iosClockTab='world';iosClockStopwatch={running:false,start:0,elapsed:0,laps:[]};iosClockCountdown={running:false,end:0,remaining:0,total:0};iosClockModalDays=[];
- let timerLastSelection={hours:0,minutes:5,seconds:0};
+ let timerLastSelection={hours:0,minutes:0,seconds:0};
  const draw=()=>{
  const now=new Date(),alarms=iosClockAlarms(),cities=iosClockCities(),elapsed=iosClockStopwatch.elapsed+(iosClockStopwatch.running?(Date.now()-iosClockStopwatch.start)/1000:0),remaining=iosClockCountdown.running?Math.max(0,(iosClockCountdown.end-Date.now())/1000):iosClockCountdown.remaining;
  let body='';
