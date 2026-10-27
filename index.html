@@ -1040,6 +1040,67 @@ html body #controlCenter .cc-native-slider output{
 /* Disable horizontal gesture-driven month navigation; the calendar itself scrolls vertically. */
 #appView #appContent .ioscal-continuous-calendar{touch-action:pan-y!important}
 </style>
+
+<style>
+/* Native-inspired Clock app replacement */
+#appView .ios-clock-app{position:absolute;inset:0;background:#000;color:#f5f5f7;display:flex;flex-direction:column;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;overflow:hidden}
+#appView .ios-clock-app *{box-sizing:border-box}
+#appView .ios-clock-app .ic-status{height:calc(30px + var(--safe-top,0px));padding:calc(8px + var(--safe-top,0px)) 24px 0;display:flex;justify-content:space-between;align-items:center;font-size:12px;font-weight:650;flex-shrink:0}
+#appView .ios-clock-app .ic-main{flex:1;min-height:0;overflow:auto;padding:18px 22px calc(18px + var(--safe-bottom,0px));scrollbar-width:none}
+#appView .ios-clock-app .ic-main::-webkit-scrollbar{display:none}
+#appView .ios-clock-app .ic-title{font-size:34px;font-weight:750;letter-spacing:-1px;margin:8px 0 24px}
+#appView .ios-clock-app .ic-section-title{font-size:13px;color:#a1a1a6;text-transform:uppercase;letter-spacing:.05em;margin:24px 0 10px}
+#appView .ios-clock-app .ic-row{display:flex;align-items:center;gap:14px;padding:15px 0;border-bottom:1px solid #29292d}
+#appView .ios-clock-app .ic-row-main{flex:1;min-width:0}
+#appView .ios-clock-app .ic-city{font-size:17px;color:#f5f5f7}
+#appView .ios-clock-app .ic-sub{font-size:12px;color:#8e8e93;margin-top:4px}
+#appView .ios-clock-app .ic-time{font-size:32px;font-weight:300;letter-spacing:-1px;font-variant-numeric:tabular-nums}
+#appView .ios-clock-app .ic-muted{color:#8e8e93}
+#appView .ios-clock-app .ic-button{border:0;background:transparent;color:#ff9f0a;padding:8px 0;font-size:16px}
+#appView .ios-clock-app .ic-blue{color:#0a84ff}
+#appView .ios-clock-app .ic-red{color:#ff453a}
+#appView .ios-clock-app .ic-card{background:#1c1c1e;border-radius:16px;padding:16px;margin:12px 0}
+#appView .ios-clock-app .ic-tabs{display:grid;grid-template-columns:repeat(4,1fr);padding:9px 7px calc(8px + var(--safe-bottom,0px));background:#171719;border-top:1px solid #2c2c2e;flex-shrink:0}
+#appView .ios-clock-app .ic-tab{background:transparent;color:#8e8e93;display:flex;flex-direction:column;align-items:center;gap:5px;font-size:10px;padding:4px 0}
+#appView .ios-clock-app .ic-tab span:first-child{font-size:22px;line-height:24px}
+#appView .ios-clock-app .ic-tab.active{color:#ff9f0a}
+#appView .ios-clock-app .ic-toolbar{display:flex;align-items:center;justify-content:space-between;margin:2px 0 10px;min-height:36px}
+#appView .ios-clock-app .ic-toolbar button{font-size:16px}
+#appView .ios-clock-app .ic-alarm-time{font-size:44px;font-weight:300;letter-spacing:-1.5px;font-variant-numeric:tabular-nums}
+#appView .ios-clock-app .ic-toggle{appearance:none;width:50px;height:30px;border-radius:20px;background:#39393d;position:relative;flex-shrink:0;cursor:pointer}
+#appView .ios-clock-app .ic-toggle:checked{background:#30d158}
+#appView .ios-clock-app .ic-toggle:after{content:"";position:absolute;width:24px;height:24px;left:3px;top:3px;border-radius:50%;background:#fff;transition:transform .18s}
+#appView .ios-clock-app .ic-toggle:checked:after{transform:translateX(20px)}
+#appView .ios-clock-app .ic-round{width:68px;height:68px;border-radius:50%;display:grid;place-items:center;background:#1c1c1e;border:1px solid #3a3a3c;font-size:14px}
+#appView .ios-clock-app .ic-round.primary{background:#10391f;color:#30d158;border-color:#10391f}
+#appView .ios-clock-app .ic-round.stop{background:#451c1c;color:#ff453a;border-color:#451c1c}
+#appView .ios-clock-app .ic-actions{display:flex;justify-content:space-between;align-items:center;margin-top:32px;gap:12px}
+#appView .ios-clock-app .ic-digital{font-size:clamp(62px,15vw,92px);font-weight:200;letter-spacing:-4px;text-align:center;font-variant-numeric:tabular-nums;margin:54px 0 12px;white-space:nowrap}
+#appView .ios-clock-app .ic-subdigital{text-align:center;color:#8e8e93;font-size:14px}
+#appView .ios-clock-app .ic-laphead,.ios-clock-app .ic-lap{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;padding:12px 0;border-bottom:1px solid #29292d;font-variant-numeric:tabular-nums}
+#appView .ios-clock-app .ic-lap span:nth-child(2){text-align:center}
+#appView .ios-clock-app .ic-lap span:last-child{text-align:right}
+#appView .ios-clock-app .ic-laphead{font-size:12px;color:#8e8e93}
+#appView .ios-clock-app .ic-timer-inputs{display:flex;justify-content:center;align-items:center;gap:10px;margin:36px 0 8px}
+#appView .ios-clock-app .ic-timefield{width:84px;text-align:center;background:transparent;color:#f5f5f7;border:0;border-bottom:1px solid #666;font-size:50px;font-weight:250;padding:6px 0;font-variant-numeric:tabular-nums}
+#appView .ios-clock-app .ic-timefield:focus{outline:none;border-color:#ff9f0a}
+#appView .ios-clock-app .ic-colon{font-size:44px;font-weight:200}
+#appView .ios-clock-app .ic-progress{height:5px;background:#39393d;border-radius:5px;overflow:hidden;margin:25px 0}
+#appView .ios-clock-app .ic-progress span{display:block;height:100%;width:0;background:#ff9f0a;transition:width .2s}
+#appView .ios-clock-app .ic-modal{position:absolute;inset:0;z-index:5;background:#0009;display:flex;align-items:flex-end}
+#appView .ios-clock-app .ic-sheet{width:100%;max-height:90%;overflow:auto;background:#1c1c1e;border-radius:22px 22px 0 0;padding:20px 22px calc(28px + var(--safe-bottom,0px))}
+#appView .ios-clock-app .ic-sheet-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+#appView .ios-clock-app .ic-sheet h2{font-size:22px;margin:0}
+#appView .ios-clock-app .ic-field{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid #39393d;font-size:15px}
+#appView .ios-clock-app .ic-field input[type=time],#appView .ios-clock-app .ic-field input[type=text],#appView .ios-clock-app .ic-field select{background:#2c2c2e;border:0;color:white;border-radius:9px;padding:9px;max-width:58%}
+#appView .ios-clock-app .ic-days{display:flex;justify-content:space-between;gap:4px;margin:12px 0}
+#appView .ios-clock-app .ic-day{width:35px;height:35px;border-radius:50%;background:#38383a;color:#eee}
+#appView .ios-clock-app .ic-day.on{background:#ff9f0a;color:#111}
+#appView .ios-clock-app .ic-save{width:100%;background:#ff9f0a;color:#111;font-weight:650;border-radius:12px;padding:14px;margin-top:18px}
+#appView .ios-clock-app .ic-empty{color:#8e8e93;text-align:center;padding:34px 12px;line-height:1.6}
+#appView .ios-clock-app .ic-toast{position:absolute;left:16px;right:16px;top:calc(42px + var(--safe-top,0px));background:#343438;color:#fff;border-radius:12px;padding:12px 14px;text-align:center;z-index:8}
+@media(min-width:600px){#appView .ios-clock-app .ic-main{width:min(100%,540px);align-self:center}#appView .ios-clock-app .ic-tabs{padding-left:max(7px,calc((100% - 540px)/2));padding-right:max(7px,calc((100% - 540px)/2))}}
+</style>
 </head>
 <body>
 <div id="phone">
@@ -1774,7 +1835,52 @@ function renderIOSCalendar(){
  draw();
 }
 
+
+let iosClockTab='world',iosClockTimer=null,iosClockTick=null,iosClockStopwatch={running:false,start:0,elapsed:0,laps:[]},iosClockCountdown={running:false,end:0,remaining:0,total:0},iosClockToastTimer=null,iosClockModalDays=[];
+function stopIOSClockApp(){if(iosClockTimer){clearInterval(iosClockTimer);iosClockTimer=null}if(iosClockTick){clearInterval(iosClockTick);iosClockTick=null}if(iosClockToastTimer){clearTimeout(iosClockToastTimer);iosClockToastTimer=null}}
+function iosClockRead(key,fallback){try{const v=JSON.parse(localStorage.getItem(key)||'null');return v==null?fallback:v}catch(e){return fallback}}
+function iosClockWrite(key,v){try{localStorage.setItem(key,JSON.stringify(v))}catch(e){}}
+function iosClockEscape(s){return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function iosClockFmt(sec,centi=false){sec=Math.max(0,sec);let h=Math.floor(sec/3600),m=Math.floor(sec%3600/60),s=Math.floor(sec%60),cs=Math.floor(sec*100%100);return (h?String(h).padStart(2,'0')+':':'')+String(m).padStart(2,'0')+':'+String(s).padStart(2,'0')+(centi?'.'+String(cs).padStart(2,'0'):'')}
+function iosClockCities(){return iosClockRead('ios-clock-cities-v1',[{name:'台北',zone:'Asia/Taipei'},{name:'東京',zone:'Asia/Tokyo'},{name:'紐約',zone:'America/New_York'},{name:'倫敦',zone:'Europe/London'},{name:'洛杉磯',zone:'America/Los_Angeles'}])}
+function iosClockAlarms(){return iosClockRead('ios-clock-alarms-v1',[])}
+function iosClockDate(zone){try{return new Intl.DateTimeFormat('zh-TW',{timeZone:zone,weekday:'short',month:'numeric',day:'numeric'}).format(new Date())}catch(e){return ''}}
+function iosClockTime(zone){try{return new Intl.DateTimeFormat('zh-TW',{timeZone:zone,hour:'2-digit',minute:'2-digit',hour12:false}).format(new Date())}catch(e){return '--:--'}}
+function renderIOSClock(){
+ stopIOSClockApp();$('#home').classList.remove('active');$('#lock').classList.remove('active');const view=$('#appView'),content=$('#appContent');view.classList.add('active');view.classList.remove('dark');
+ iosClockTab='world';iosClockStopwatch={running:false,start:0,elapsed:0,laps:[]};iosClockCountdown={running:false,end:0,remaining:0,total:0};iosClockModalDays=[];
+ const draw=()=>{
+ const now=new Date(),alarms=iosClockAlarms(),cities=iosClockCities(),elapsed=iosClockStopwatch.elapsed+(iosClockStopwatch.running?(Date.now()-iosClockStopwatch.start)/1000:0),remaining=iosClockCountdown.running?Math.max(0,(iosClockCountdown.end-Date.now())/1000):iosClockCountdown.remaining;
+ let body='';
+ if(iosClockTab==='world')body='<div class="ic-toolbar"><button class="ic-button" data-ic="home">主畫面</button><button class="ic-button" data-ic="add-city">＋</button></div><h1 class="ic-title">世界時鐘</h1>'+cities.map((city,i)=>'<div class="ic-row"><div class="ic-row-main"><div class="ic-city">'+iosClockEscape(city.name)+'</div><div class="ic-sub">'+(city.zone==='Asia/Taipei'?'目前城市':iosClockDate(city.zone))+'</div></div><div class="ic-time">'+iosClockTime(city.zone)+'</div><button class="ic-button ic-red" data-ic="delete-city" data-index="'+i+'" aria-label="刪除城市">−</button></div>').join('')+'<div class="ic-sub" style="margin-top:18px">點擊 ＋ 新增城市，－ 可移除城市。</div>';
+ if(iosClockTab==='alarm')body='<div class="ic-toolbar"><button class="ic-button" data-ic="home">主畫面</button><button class="ic-button" data-ic="edit-alarms">'+(window.iosClockEditing?'完成':'編輯')+'</button><button class="ic-button" data-ic="add-alarm">＋</button></div><h1 class="ic-title">鬧鐘</h1>'+ (alarms.length?alarms.map((a,i)=>'<div class="ic-row"><div class="ic-row-main"><div class="ic-alarm-time">'+iosClockEscape(a.time)+'</div><div class="ic-sub">'+iosClockEscape(a.label||'鬧鐘')+' · '+(a.days&&a.days.length?a.days.map(n=>['日','一','二','三','四','五','六'][n]).join('、'):'僅此一次')+(a.sound?' · '+iosClockEscape(a.sound):'')+'</div>'+(window.iosClockEditing?'<button class="ic-button" data-ic="edit-alarm" data-index="'+i+'">編輯</button> <button class="ic-button ic-red" data-ic="delete-alarm" data-index="'+i+'">刪除</button>':'')+'</div><input type="checkbox" class="ic-toggle" data-ic-toggle="'+i+'" '+(a.enabled?'checked':'')+' aria-label="啟用鬧鐘"></div>').join(''):'<div class="ic-empty">尚未設定鬧鐘<br>點擊右上角 ＋ 新增鬧鐘</div>');
+ if(iosClockTab==='stopwatch')body='<div class="ic-toolbar"><button class="ic-button" data-ic="home">主畫面</button><span class="ic-muted">碼錶</span><button class="ic-button" data-ic="stopwatch-reset">重置</button></div><h1 class="ic-title">碼錶</h1><div class="ic-digital" id="icStopwatch">'+iosClockFmt(elapsed,true)+'</div><div class="ic-subdigital">'+(iosClockStopwatch.running?'正在計時':elapsed>0?'已暫停':'準備就緒')+'</div><div class="ic-actions"><button class="ic-round" data-ic="lap" '+(!iosClockStopwatch.running?'disabled':'')+'>分圈</button><button class="ic-round '+(iosClockStopwatch.running?'stop':'primary')+'" data-ic="stopwatch-toggle">'+(iosClockStopwatch.running?'停止':'開始')+'</button></div><div class="ic-section-title">分圈紀錄</div><div class="ic-laphead"><span>分圈</span><span>分圈時間</span><span>總時間</span></div>'+iosClockStopwatch.laps.map((l,i)=>'<div class="ic-lap"><span>第 '+(iosClockStopwatch.laps.length-i)+' 圈</span><span>'+iosClockFmt(l.split,true)+'</span><span>'+iosClockFmt(l.total,true)+'</span></div>').join('');
+ if(iosClockTab==='timer'){let h=Math.floor(remaining/3600),m=Math.floor(remaining%3600/60),s=Math.floor(remaining%60);body='<div class="ic-toolbar"><button class="ic-button" data-ic="home">主畫面</button><span class="ic-muted">計時器</span><button class="ic-button" data-ic="timer-cancel">取消</button></div><h1 class="ic-title">計時器</h1>'+(iosClockCountdown.running||iosClockCountdown.total>0?'<div class="ic-digital" id="icTimerDisplay">'+iosClockFmt(remaining)+'</div><div class="ic-progress"><span style="width:'+Math.max(0,Math.min(100,100*(1-remaining/Math.max(1,iosClockCountdown.total))))+'%"></span></div><div class="ic-subdigital">'+(iosClockCountdown.running?'剩餘時間':'已暫停')+'</div><div class="ic-actions"><button class="ic-round" data-ic="timer-cancel">取消</button><button class="ic-round '+(iosClockCountdown.running?'stop':'primary')+'" data-ic="timer-toggle">'+(iosClockCountdown.running?'暫停':'繼續')+'</button></div>':'<div class="ic-timer-inputs"><input class="ic-timefield" id="icTimerMinutes" type="number" min="0" max="999" value="5" aria-label="分鐘"><span class="ic-colon">:</span><input class="ic-timefield" id="icTimerSeconds" type="number" min="0" max="59" value="00" aria-label="秒鐘"></div><div class="ic-subdigital">設定計時時間</div><div class="ic-card"><div class="ic-field"><span>計時結束時</span><select id="icTimerSound"><option>雷達</option><option>緩慢上升</option><option>訊號</option><option>無</option></select></div></div><button class="ic-save" data-ic="timer-start">開始計時</button>')+'<div class="ic-section-title">快速計時</div><div style="display:flex;gap:8px;flex-wrap:wrap">'+[1,3,5,10,15,30].map(n=>'<button class="ic-button" style="border:1px solid #48484a;border-radius:18px;padding:9px 14px" data-ic="quick-timer" data-min="'+n+'">'+n+' 分</button>').join('')+'</div>'}
+ content.innerHTML='<div class="ios-clock-app"><div class="ic-status"><span>'+now.toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit',hour12:false})+'</span><span>● ▮▮  ▰</span></div><main class="ic-main">'+body+'</main><nav class="ic-tabs">'+[['world','◷','世界時鐘'],['alarm','◴','鬧鐘'],['stopwatch','◉','碼錶'],['timer','◷','計時器']].map(t=>'<button class="ic-tab '+(iosClockTab===t[0]?'active':'')+'" data-ic-tab="'+t[0]+'"><span>'+t[1]+'</span><span>'+t[2]+'</span></button>').join('')+'</nav></div>';
+ const app=content.querySelector('.ios-clock-app');if(!app)return;
+ app.addEventListener('click',ev=>{const b=ev.target.closest('[data-ic],[data-ic-tab]');if(!b)return;const act=b.dataset.ic;
+ if(b.dataset.icTab){iosClockTab=b.dataset.icTab;window.iosClockEditing=false;draw();return}
+ if(act==='home'){goHome();return}
+ if(act==='add-city'){const name=prompt('輸入城市名稱（例如：新加坡、巴黎、雪梨）');if(!name)return;const map={'台北':'Asia/Taipei','新加坡':'Asia/Singapore','香港':'Asia/Hong_Kong','東京':'Asia/Tokyo','首爾':'Asia/Seoul','曼谷':'Asia/Bangkok','雪梨':'Australia/Sydney','巴黎':'Europe/Paris','倫敦':'Europe/London','紐約':'America/New_York','洛杉磯':'America/Los_Angeles','杜拜':'Asia/Dubai','上海':'Asia/Shanghai','溫哥華':'America/Vancouver'};const zone=map[name.trim()];if(!zone){alert('目前支援：台北、新加坡、香港、東京、首爾、曼谷、雪梨、巴黎、倫敦、紐約、洛杉磯、杜拜、上海、溫哥華');return}const cs=iosClockCities();if(cs.some(x=>x.name===name.trim())){alert('這個城市已經存在');return}cs.push({name:name.trim(),zone});iosClockWrite('ios-clock-cities-v1',cs);draw();return}
+ if(act==='delete-city'){const cs=iosClockCities();if(cs.length<=1){alert('至少保留一個城市');return}cs.splice(+b.dataset.index,1);iosClockWrite('ios-clock-cities-v1',cs);draw();return}
+ if(act==='edit-alarms'){window.iosClockEditing=!window.iosClockEditing;draw();return}
+ if(act==='add-alarm'||act==='edit-alarm'){const idx=act==='edit-alarm'?+b.dataset.index:-1,a=idx>=0?iosClockAlarms()[idx]:{time:'07:00',label:'鬧鐘',days:[],sound:'雷達',enabled:true};iosClockModalDays=[...(a.days||[])];const modal=document.createElement('div');modal.className='ic-modal';modal.innerHTML='<section class="ic-sheet"><div class="ic-sheet-head"><button class="ic-button" data-modal="cancel">取消</button><h2>'+(idx>=0?'編輯鬧鐘':'新增鬧鐘')+'</h2><button class="ic-button" data-modal="save">儲存</button></div><div class="ic-field"><label for="icAlarmTime">時間</label><input id="icAlarmTime" type="time" value="'+iosClockEscape(a.time)+'"></div><div class="ic-field"><label for="icAlarmLabel">標籤</label><input id="icAlarmLabel" type="text" value="'+iosClockEscape(a.label||'鬧鐘')+'" placeholder="鬧鐘名稱"></div><div class="ic-section-title">重複</div><div class="ic-days">'+['日','一','二','三','四','五','六'].map((d,i)=>'<button type="button" class="ic-day '+(iosClockModalDays.includes(i)?'on':'')+'" data-day="'+i+'">'+d+'</button>').join('')+'</div><div class="ic-field"><label for="icAlarmSound">提示聲</label><select id="icAlarmSound">'+['雷達','海邊','緩慢上升','訊號','無'].map(s=>'<option '+(s===(a.sound||'雷達')?'selected':'')+'>'+s+'</option>').join('')+'</select></div><div class="ic-field"><span>稍後提醒</span><input type="checkbox" id="icSnooze" checked></div><button class="ic-save" data-modal="save">儲存鬧鐘</button></section>';app.appendChild(modal);modal.addEventListener('click,e=>{}');modal.addEventListener('click',e=>{const mb=e.target.closest('[data-modal],[data-day]');if(!mb)return;if(mb.dataset.day!==undefined){const d=+mb.dataset.day;iosClockModalDays=iosClockModalDays.includes(d)?iosClockModalDays.filter(x=>x!==d):[...iosClockModalDays,d];mb.classList.toggle('on',iosClockModalDays.includes(d));return}if(mb.dataset.modal==='cancel'){modal.remove();return}const time=modal.querySelector('#icAlarmTime').value;if(!time){alert('請選擇鬧鐘時間');return}const list=iosClockAlarms(),item={time,label:modal.querySelector('#icAlarmLabel').value.trim()||'鬧鐘',days:[...iosClockModalDays].sort(),sound:modal.querySelector('#icAlarmSound').value,enabled:true,snooze:modal.querySelector('#icSnooze').checked};if(idx>=0)list[idx]=item;else list.push(item);list.sort((x,y)=>x.time.localeCompare(y.time));iosClockWrite('ios-clock-alarms-v1',list);modal.remove();draw()});return}
+ if(act==='delete-alarm'){const list=iosClockAlarms();list.splice(+b.dataset.index,1);iosClockWrite('ios-clock-alarms-v1',list);draw();return}
+ if(act==='stopwatch-toggle'){if(iosClockStopwatch.running){iosClockStopwatch.elapsed+=(Date.now()-iosClockStopwatch.start)/1000;iosClockStopwatch.running=false}else{iosClockStopwatch.start=Date.now();iosClockStopwatch.running=true}draw();return}
+ if(act==='lap'&&iosClockStopwatch.running){const total=iosClockStopwatch.elapsed+(Date.now()-iosClockStopwatch.start)/1000,prev=iosClockStopwatch.laps.reduce((s,l)=>s+l.split,0);iosClockStopwatch.laps.unshift({split:total-prev,total});draw();return}
+ if(act==='stopwatch-reset'){iosClockStopwatch={running:false,start:0,elapsed:0,laps:[]};draw();return}
+ if(act==='timer-start'||act==='quick-timer'){let total=act==='quick-timer'?+b.dataset.min*60:Math.max(0,Math.min(999*3600,(Number(app.querySelector('#icTimerMinutes')?.value)||0)*60+(Number(app.querySelector('#icTimerSeconds')?.value)||0)));if(total<=0){alert('請設定大於 0 的時間');return}iosClockCountdown={running:true,end:Date.now()+total*1000,remaining:total,total};draw();return}
+ if(act==='timer-toggle'){if(iosClockCountdown.running){iosClockCountdown.remaining=Math.max(0,(iosClockCountdown.end-Date.now())/1000);iosClockCountdown.running=false}else{iosClockCountdown.end=Date.now()+iosClockCountdown.remaining*1000;iosClockCountdown.running=true}draw();return}
+ if(act==='timer-cancel'){iosClockCountdown={running:false,end:0,remaining:0,total:0};draw();return}
+ });
+ app.addEventListener('change',ev=>{const t=ev.target;if(t.dataset.icToggle!==undefined){const list=iosClockAlarms(),a=list[+t.dataset.icToggle];if(a){a.enabled=t.checked;iosClockWrite('ios-clock-alarms-v1',list)}return}});
+ };
+ draw();
+ iosClockTick=setInterval(()=>{const app=$('#appContent .ios-clock-app');if(!app)return;const time=app.querySelector('.ic-status span');if(time)time.textContent=new Date().toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit',hour12:false});if(iosClockTab==='world'){iosClockCities().forEach((c,i)=>{const row=app.querySelectorAll('.ic-row')[i],el=row?.querySelector('.ic-time');if(el)el.textContent=iosClockTime(c.zone)})}if(iosClockTab==='stopwatch'){const el=app.querySelector('#icStopwatch');if(el)el.textContent=iosClockFmt(iosClockStopwatch.elapsed+(iosClockStopwatch.running?(Date.now()-iosClockStopwatch.start)/1000:0),true)}if(iosClockTab==='timer'&&iosClockCountdown.running){const rem=Math.max(0,(iosClockCountdown.end-Date.now())/1000),el=app.querySelector('#icTimerDisplay');if(el)el.textContent=iosClockFmt(rem);const bar=app.querySelector('.ic-progress span');if(bar)bar.style.width=Math.max(0,Math.min(100,100*(1-rem/Math.max(1,iosClockCountdown.total))))+'%';if(rem<=0){iosClockCountdown.running=false;iosClockCountdown.remaining=0;iosClockCountdown.total=0;draw();alert('計時器結束！')}}},100);
+}
+
 function renderUtilityApp(id){
+  if(id==="clock"){renderIOSClock();return;}
   if(id==="calendar"){renderIOSCalendar();return;}
   const configs={
    clock:{title:"時鐘",icon:"◷",subtitle:"世界時鐘",body:`<div class="utility-clock" id="utilityClock"></div><div class="simple-card"><b>鬧鐘</b><p>尚未設定鬧鐘</p></div><div class="simple-card"><b>計時器</b><p>準備好時再開始計時</p></div>`},
@@ -1791,6 +1897,7 @@ function renderUtilityApp(id){
   if(id==="music")$('#openSpotify').onclick=()=>renderSpotify();
 }
 function goHome(){
+  if(window.__activeAppId==="clock")stopIOSClockApp();
   window.__activeAppId=null;
   stopCall();closeAudio();
   const view=$('#appView'),content=$('#appContent');
