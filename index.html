@@ -1054,8 +1054,8 @@ html body #controlCenter .cc-native-slider output{
 #appView .ios-clock-app .ic-timer-wheel-unit .ic-wheel-picker:before{height:48px!important}
 #appView .ios-clock-app .ic-timer-wheel-unit .ic-wheel-value{height:48px!important;line-height:48px!important}
 #appView .ios-clock-app .ic-timer-wheel-unit .ic-timer-unit{height:48px!important}
-/* Optical baseline correction: wheel digits sit slightly high beside unit labels */
-#appView .ios-clock-app .ic-timer-wheel-unit .ic-wheel-value{transform:translateY(4px)!important}
+/* Correct visual baseline: lower only the timer wheel digits relative to centered unit labels */
+#appView .ios-clock-app .ic-timer-wheel-unit .ic-wheel-column .ic-wheel-value{position:relative!important;top:7px!important;transform:none!important}
 /* Align each 00 value beside its unit label on the same center line */
 #appView .ios-clock-app .ic-timer-wheel-unit .ic-wheel-value{box-sizing:border-box!important;padding:0 20px 0 0!important}
 #appView .ios-clock-app .ic-timer-wheel-unit .ic-timer-unit{right:2px!important;justify-content:flex-start!important;width:22px!important;font-size:10px!important}
