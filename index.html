@@ -2386,9 +2386,24 @@ function renderMessages(){
  Object.keys(threads).forEach(k=>{const t=threads[k];if(typeof t.unread!=='boolean')t.unread=!!(t.items.length&&t.items[t.items.length-1].from==='them');});
  const save=()=>{try{localStorage.setItem(key,JSON.stringify(threads));}catch(e){}},state={active:null,search:'',editing:false,tab:'all'};
  const deliveryNumber='090-7299-2822';
+ const getDeliveryDefaultTime=()=>{
+  const now=new Date(),minutes=now.getHours()*60+now.getMinutes(),sent=new Date(now);
+  if(minutes<=600){sent.setDate(sent.getDate()-1);sent.setHours(10,23,0,0);}
+  else if(minutes>=1200){sent.setHours(10,23,0,0);}
+  else sent.setTime(now.getTime()-4*60*60*1000);
+  const pad=n=>String(n).padStart(2,'0'),hour=sent.getHours(),ampm=hour<12?'上午':'下午',hour12=hour%12||12;
+  return {time:sent.getFullYear()+'/'+pad(sent.getMonth()+1)+'/'+pad(sent.getDate())+' '+ampm+' '+hour12+':'+pad(sent.getMinutes()),timestamp:sent.getTime()};
+ };
+ const deliveryDefaultText='【櫻井配送服務】\n\n您好，您的包裹已抵達配送站，預計將於今日依配送路線安排送達，實際配送時間請以配送員聯繫為準。\n\n若您不便收件，請提前做好安排。感謝您的理解與配合。\n\n櫻井配送服務 敬上';
  if(!threads[deliveryNumber]){
-  threads[deliveryNumber]={name:deliveryNumber,items:[{from:'them',text:'【櫻井配送服務】\n\n您好，您的包裹已抵達配送站，預計將於今日依配送路線安排送達，實際配送時間請以配送員聯繫為準。\n\n若您不便收件，請提前做好安排。感謝您的理解與配合。\n\n櫻井配送服務 敬上',time:'2026/10/26 10:22'}],updated:Date.parse('2026-10-26T10:22:00+08:00'),unread:true};
+  const sent=getDeliveryDefaultTime();
+  threads[deliveryNumber]={name:deliveryNumber,items:[{from:'them',text:deliveryDefaultText,time:sent.time}],updated:sent.timestamp,unread:true};
   save();
+ }else{
+  const existing=threads[deliveryNumber],first=existing.items&&existing.items[0];
+  if(first&&first.from==='them'&&first.text===deliveryDefaultText&&first.time==='2026/10/26 10:22'){
+   const sent=getDeliveryDefaultTime();first.time=sent.time;existing.updated=sent.timestamp;save();
+  }
  }
  const ids=()=>Object.keys(threads).sort((a,b)=>(threads[b].updated||0)-(threads[a].updated||0)),last=t=>t.items[t.items.length-1]||{text:'尚無訊息，傳送一則訊息開始聊天',time:''};
  const open=id=>{if(threads[id]){state.active=id;threads[id].unread=false;state.editing=false;save();draw();}};
