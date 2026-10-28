@@ -5676,6 +5676,61 @@ window.__phoneMainReady = false;
 .safari-app .sf-pop h3{padding:8px 5px 12px;font-size:17px}.safari-app .sf-pop button{display:block;width:100%;text-align:left;padding:13px 8px;border:0;border-top:1px solid #eee;background:white;color:#1674d1;font-size:15px}
 .safari-app .sf-tabcard{background:#f2f2f7;border-radius:12px;padding:12px;margin:8px 0;display:flex;align-items:center;gap:10px}.safari-app .sf-tabcard button{width:auto;display:inline-block;border:0;padding:7px 10px;background:white;border-radius:8px}
 @media(max-width:380px){.safari-app .sf-favicon{width:42px;height:42px}.safari-app .sf-home{padding-left:12px;padding-right:12px}.safari-app .sf-brand{font-size:36px}}
+
+/* Safari interaction and responsive refinements */
+.safari-app{--sf-blue:#007aff;--sf-bg:#f2f2f7;--sf-card:#fff;--sf-ink:#17171a;color:var(--sf-ink);padding-bottom:env(safe-area-inset-bottom,0px)}
+.safari-app .sf-top{gap:7px;padding:7px 10px 10px}
+.safari-app .sf-round{font-size:20px;box-shadow:0 1px 4px #00000012}
+.safari-app .sf-address{border-radius:15px;background:#e4e4e9;box-shadow:none}
+.safari-app .sf-address input{font-size:16px}
+.safari-app .sf-view{border-radius:0;margin:0;flex:1;min-height:0;background:var(--sf-bg)}
+.safari-app .sf-home{padding:18px 18px 30px;background:linear-gradient(180deg,#f2f2f7,#e9e9ef);overflow:auto;-webkit-overflow-scrolling:touch}
+.safari-app .sf-pagehead{display:flex;align-items:center;justify-content:center;position:relative}
+.safari-app .sf-brand{font-size:31px;letter-spacing:-1.2px;margin:12px 0 20px;color:#1677df;font-weight:750}
+.safari-app .sf-brand span:after{content:"";display:inline-block;width:9px;height:9px;border-radius:50%;background:#1685ff;margin-left:2px}
+.safari-app .sf-edit{position:absolute;right:0;top:12px;background:transparent;color:var(--sf-blue);font-size:13px}
+.safari-app .sf-search{border-radius:14px;padding:11px 12px;align-items:center;background:#fff;box-shadow:0 2px 10px #0000000a}
+.safari-app .sf-search input{font-size:16px;min-width:0}
+.safari-app .sf-search button{border-radius:18px;padding:8px 13px}
+.safari-app .sf-section{display:flex;justify-content:space-between;align-items:center;margin:24px 2px 12px;color:#68686d;font-size:14px;font-weight:650}
+.safari-app .sf-section button,.safari-app .sf-section-button{border:0;background:transparent;color:var(--sf-blue);font-size:13px;padding:3px}
+.safari-app .sf-section-button{width:100%;text-align:left}
+.safari-app .sf-favs{gap:18px 8px}
+.safari-app .sf-fav{gap:7px;color:#25252a;font-size:11px}
+.safari-app .sf-favicon{width:50px;height:50px;border-radius:15px;color:#1879df}
+.safari-app .sf-empty{background:#ffffff80;border-radius:14px;padding:17px 12px;font-size:13px}
+.safari-app .sf-tabcard{background:#fff;border-radius:13px;padding:11px;margin:8px 0;box-shadow:0 1px 3px #00000008;min-width:0}
+.safari-app .sf-cardbody{display:flex;flex:1;min-width:0;flex-direction:column;gap:4px;overflow:hidden}
+.safari-app .sf-cardbody b,.safari-app .sf-cardbody small{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.safari-app .sf-cardbody b{font-size:13px;font-weight:650}
+.safari-app .sf-cardbody small{font-size:11px;color:#777}
+.safari-app .sf-tabcard button{flex-shrink:0;color:#087df1;font-size:12px;border-radius:9px;padding:7px;background:#f2f7ff}
+.safari-app .sf-textbutton{background:transparent;color:#007aff;padding:9px;font-size:13px}
+.safari-app .sf-privacy-summary{font-size:12px;line-height:1.55;color:#74747b;padding:12px 14px;border-radius:13px;background:#fff}
+.safari-app .sf-bottom{min-height:58px;padding:5px 8px calc(5px + env(safe-area-inset-bottom,0px));background:#f8f8fc;border-top:1px solid #e0e0e5;gap:2px}
+.safari-app .sf-bottom button{min-width:32px;width:36px;height:40px;font-size:23px}
+.safari-app .sf-bottom button:disabled{opacity:.28}
+.safari-app .sf-tabcount{width:25px!important;min-width:25px!important;height:25px!important;border-radius:7px!important}
+.safari-app .sf-pop{inset:auto 8px 8px;max-height:78%;padding:13px;border:1px solid #e8e8ed;background:#f8f8fc;border-radius:20px;overflow:auto;box-shadow:0 8px 35px #0003}
+.safari-app .sf-pophead{display:flex;align-items:center;justify-content:space-between;padding:3px 4px 12px}
+.safari-app .sf-pophead h3{padding:0;margin:0;font-size:18px;font-weight:700}
+.safari-app .sf-pophead button{width:auto;border:0;background:transparent;color:#007aff;padding:7px;font-size:14px}
+.safari-app .sf-pop>button:not(.sf-pophead button){border-radius:10px;background:#fff;border:0;margin:3px 0;padding:12px;width:100%;text-align:left;color:#087df1;font-size:14px}
+.safari-app .sf-privacy-report,.safari-app .sf-settings{padding:12px;background:#fff;border-radius:14px;font-size:14px;line-height:1.6}
+.safari-app .sf-privacy-report h4{margin:0 0 10px;font-size:18px}
+.safari-app .sf-settings label{display:flex;align-items:center;gap:10px;padding:10px 0}
+.safari-app .sf-settings input:not([type=checkbox]){width:100%;min-width:0;border:1px solid #ddd;border-radius:9px;padding:10px;margin-top:12px}
+.safari-app .sf-framehint{position:absolute;bottom:8px;left:8px;right:8px;background:#f8f8f8ed;border-radius:12px;padding:8px;font-size:11px;color:#555;text-align:center}
+.safari-app .sf-framehint button{background:transparent;color:#007aff;text-decoration:underline;border:0;font-size:11px;padding:0}
+.safari-app .sf-notice{position:absolute;z-index:20;left:12px;right:12px;bottom:calc(68px + env(safe-area-inset-bottom,0px));background:#222e;color:#fff;padding:11px 14px;border-radius:13px;font-size:13px;text-align:center}
+.safari-app.sf-dark{background:#111;color:#f5f5f7}
+.safari-app.sf-dark .sf-home,.safari-app.sf-dark .sf-view{background:#1c1c1e;color:#f5f5f7}
+.safari-app.sf-dark .sf-address,.safari-app.sf-dark .sf-bottom,.safari-app.sf-dark .sf-tabcard,.safari-app.sf-dark .sf-privacy-summary,.safari-app.sf-dark .sf-pop,.safari-app.sf-dark .sf-privacy-report,.safari-app.sf-dark .sf-settings{background:#2c2c2e;color:#f5f5f7;border-color:#48484a}
+.safari-app.sf-dark .sf-fav,.safari-app.sf-dark .sf-brand span,.safari-app.sf-dark .sf-cardbody b{color:#f5f5f7}
+.safari-app.sf-dark .sf-search,.safari-app.sf-dark .sf-favicon{background:#3a3a3c;color:#f5f5f7}
+.safari-app.sf-dark .sf-pop>button:not(.sf-pophead button){background:#3a3a3c;color:#64aaff}
+.safari-app [hidden]{display:none!important}
+@media(max-width:380px){.safari-app .sf-home{padding-left:12px;padding-right:12px}.safari-app .sf-favicon{width:44px;height:44px}.safari-app .sf-tabcard{gap:5px;padding:9px}.safari-app .sf-tabcard button{padding:6px}}
 </style>
 <script id="ios-safari-app-script">
 function renderSafariApp(){
@@ -5695,7 +5750,7 @@ function renderSafariApp(){
  const app=host.querySelector('.safari-app'),view=app.querySelector('#sfView'),address=app.querySelector('#sfAddress');
  if(state.settings.dark)app.classList.add('sf-dark');
  function update(){const t=current();app.querySelectorAll('[data-sf="back"]').forEach(b=>b.disabled=t.navIndex<=0);app.querySelectorAll('[data-sf="forward"]').forEach(b=>b.disabled=t.navIndex<0||t.navIndex>=t.nav.length-1);const bm=state.bookmarks.some(x=>x.url===t.url&&t.url);app.querySelector('[data-sf="bookmark"]').textContent=bm?'★':'＋';app.querySelector('.sf-tabcount').textContent=state.tabs.length;address.value=t.url||'';address.title=t.url||'搜尋或輸入網站名稱'}
- function go(raw,replace=false){const url=normalize(raw);if(!url){notice('請輸入有效的 http 或 https 網址，或搜尋關鍵字。');return}const t=current(),entry={url,title:titleFor(url),time:Date.now()};if(replace&&t.navIndex>=0)t.nav[t.navIndex]=entry;else{t.nav=t.nav.slice(0,t.navIndex+1);t.nav.push(entry);t.navIndex=t.nav.length-1}t.url=url;t.title=entry.title;state.history.unshift({url,title:entry.title,time:entry.time});state.history=state.history.filter((x,i,a)=>a.findIndex(y=>y.url===x.url)===i).slice(0,100);save();renderPage();update()}
+ function go(raw,replace=false){const url=normalize(raw);if(!url){notice('請輸入有效的 http 或 https 網址，或搜尋關鍵字。');return}const t=current(),entry={url,title:titleFor(url),time:Date.now()};if(replace&&t.navIndex>=0)t.nav[t.navIndex]=entry;else{if(!t.nav.length&&!t.url){t.nav=[{url:'',title:'起始頁',time:Date.now()}];t.navIndex=0}t.nav=t.nav.slice(0,t.navIndex+1);t.nav.push(entry);t.navIndex=t.nav.length-1}t.url=url;t.title=entry.title;state.history.unshift({url,title:entry.title,time:entry.time});state.history=state.history.filter((x,i,a)=>a.findIndex(y=>y.url===x.url)===i).slice(0,100);save();renderPage();update()}
  function back(){const t=current();if(t.navIndex>0){t.navIndex--;syncEntry(t)}else if(t.navIndex===0){t.navIndex=-1;t.url='';t.title='起始頁'}else return;save();renderPage();update()}
  function forward(){const t=current();if(t.navIndex<t.nav.length-1){t.navIndex++;syncEntry(t);save();renderPage();update()}}
  function syncEntry(t){const e=t.nav[t.navIndex];t.url=e?.url||'';t.title=e?.title||'起始頁'}
