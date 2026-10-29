@@ -1615,16 +1615,16 @@ function appButton(a){
 }
 function updateCalendarHomeIcon(){
  const now=new Date();
- const weekday=now.toLocaleDateString('zh-TW',{weekday:'short'});
+ const weekday=now.toLocaleDateString('ja-JP',{weekday:'short'});
  const day=String(now.getDate());
  document.querySelectorAll('.calendar-live-glyph').forEach(icon=>{
    const w=icon.querySelector('.calendar-live-weekday'),d=icon.querySelector('.calendar-live-day');
    if(w)w.textContent=weekday;
    if(d)d.textContent=day;
-   icon.setAttribute('aria-label',now.toLocaleDateString('zh-TW',{year:'numeric',month:'long',day:'numeric',weekday:'long'}));
+   icon.setAttribute('aria-label',now.toLocaleDateString('ja-JP',{year:'numeric',month:'long',day:'numeric',weekday:'long'}));
  });
  const app=document.querySelector('#home [data-app="calendar"]');
- if(app)app.setAttribute('aria-label','行事曆，'+now.toLocaleDateString('zh-TW',{month:'long',day:'numeric',weekday:'long'}));
+ if(app)app.setAttribute('aria-label','カレンダー、'+now.toLocaleDateString('ja-JP',{month:'long',day:'numeric',weekday:'long'}));
 }
 function initHome(){
  $('#weatherPlace').textContent=CONFIG.weather.place;$('#weatherTemp').textContent=CONFIG.weather.temp;$('#weatherDesc').textContent=CONFIG.weather.desc || `最高 ${CONFIG.weather.high} / 最低 ${CONFIG.weather.low}`;
