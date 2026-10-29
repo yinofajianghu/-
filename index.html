@@ -6165,6 +6165,24 @@ window.__phoneMainReady = false;
  .ig-app .ig-profile-page .ig-profile-summary{gap:6px!important}
  .ig-app .ig-profile-page .ig-profile-stats>div{padding-left:1px!important;padding-right:1px!important}
 }
+
+/* Align profile name and each statistic number/label to the same left edge. */
+.ig-app .ig-profile-page .ig-profile-summary{align-items:stretch!important}
+.ig-app .ig-profile-page .ig-profile-name{
+ text-align:left!important;
+ padding-left:0!important;
+ margin-left:0!important;
+}
+.ig-app .ig-profile-page .ig-profile-stats>div{
+ align-items:flex-start!important;
+ justify-content:flex-start!important;
+ text-align:left!important;
+}
+.ig-app .ig-profile-page .ig-profile-stats>div>*{
+ text-align:left!important;
+ padding-left:0!important;
+ margin-left:0!important;
+}
 </style>
 <script id="ios-safari-app-script">
 function renderSafariApp(){
