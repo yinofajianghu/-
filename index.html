@@ -6254,6 +6254,75 @@ window.__phoneMainReady = false;
 .ig-app .ig-story-footer>.ig-story-reaction{display:grid!important;place-items:center!important;flex:0 0 44px!important;width:44px!important;min-width:44px!important;height:44px!important;min-height:44px!important;padding:0!important;border-radius:50%!important;color:#fff!important;font-size:32px!important;line-height:1!important;background:rgba(20,20,25,.2)!important}
 .ig-app .ig-story-footer>.ig-story-reaction.is-liked{color:#ff4967!important}
 </style>
+<style id="ig-story-footer-visibility-fix">
+/* Keep the story viewer inside the Instagram app viewport so its footer cannot be clipped by #appContent. */
+.ig-app .ig-modal-scrim:has(.ig-story-full){
+ position:absolute!important;
+ inset:0!important;
+ display:flex!important;
+ align-items:stretch!important;
+ justify-content:stretch!important;
+ padding:0!important;
+ overflow:hidden!important;
+ z-index:1000!important;
+ background:rgba(0,0,0,.96)!important;
+}
+.ig-app .ig-modal-scrim:has(.ig-story-full)>.ig-modal-sheet{
+ position:absolute!important;
+ inset:0!important;
+ display:flex!important;
+ flex-direction:column!important;
+ width:100%!important;
+ height:100%!important;
+ min-height:0!important;
+ max-height:none!important;
+ margin:0!important;
+ padding:0!important;
+ overflow:hidden!important;
+ border-radius:0!important;
+ background:#111!important;
+}
+.ig-app .ig-modal-scrim:has(.ig-story-full)>.ig-modal-sheet>.ig-modal-handle{display:none!important}
+.ig-app .ig-story-full{
+ position:relative!important;
+ display:flex!important;
+ flex-direction:column!important;
+ flex:1 1 auto!important;
+ width:100%!important;
+ height:100%!important;
+ min-height:0!important;
+ max-height:100%!important;
+ margin:0!important;
+ padding:calc(12px + var(--safe-top)) 14px calc(12px + var(--safe-bottom))!important;
+ overflow:hidden!important;
+ box-sizing:border-box!important;
+}
+.ig-app .ig-story-progress-list,.ig-app .ig-story-author{position:relative!important;z-index:5!important;flex:0 0 auto!important}
+.ig-app .ig-story-content{position:relative!important;z-index:1!important;display:flex!important;flex:1 1 0!important;min-height:0!important;overflow:hidden!important}
+.ig-app .ig-story-tap-left,.ig-app .ig-story-tap-right{top:70px!important;bottom:calc(76px + var(--safe-bottom))!important;z-index:3!important}
+.ig-app .ig-story-footer{
+ position:relative!important;
+ inset:auto!important;
+ z-index:20!important;
+ display:flex!important;
+ flex:0 0 58px!important;
+ align-items:center!important;
+ width:100%!important;
+ min-height:58px!important;
+ margin:0!important;
+ padding:7px 2px!important;
+ gap:12px!important;
+ overflow:visible!important;
+ visibility:visible!important;
+ opacity:1!important;
+ pointer-events:auto!important;
+ background:linear-gradient(180deg,transparent,rgba(0,0,0,.24))!important;
+}
+.ig-app .ig-story-footer .ig-story-reply-form{display:flex!important;flex:1 1 0!important;min-width:0!important;width:auto!important;height:44px!important;margin:0!important;visibility:visible!important;opacity:1!important;pointer-events:auto!important}
+.ig-app .ig-story-footer .ig-story-reply-form input{display:block!important;flex:1 1 0!important;min-width:0!important;width:0!important;height:100%!important;visibility:visible!important;opacity:1!important;pointer-events:auto!important}
+.ig-app .ig-story-footer .ig-story-reply-form button,.ig-app .ig-story-footer>.ig-story-reaction{display:grid!important;visibility:visible!important;opacity:1!important;pointer-events:auto!important}
+.ig-app .ig-story-footer>.ig-story-reaction{position:relative!important;z-index:21!important;flex:0 0 44px!important;width:44px!important;height:44px!important;min-width:44px!important;min-height:44px!important}
+</style>
 <script id="ios-safari-app-script">
 function renderSafariApp(){
  const host=$('#appContent');if(!host)return;
