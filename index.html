@@ -1635,6 +1635,8 @@ function initHome(){
  $('#appGrid').onscroll=()=>{const page=Math.round($('#appGrid').scrollLeft/Math.max(1,$('#appGrid').clientWidth));$('#homePageDots').querySelectorAll('.home-page-dot').forEach((d,i)=>d.classList.toggle('active',i===page));};
  $('#dock').innerHTML=[apps[0],apps[1],apps[2],apps[3]].map(appButton).join('');
  updateCalendarHomeIcon();
+ if(!window.__calendarHomeIconTimer)window.__calendarHomeIconTimer=window.setInterval(updateCalendarHomeIcon,30000);
+ if(!window.__calendarHomeIconListeners){document.addEventListener('visibilitychange',updateCalendarHomeIcon);window.addEventListener('pageshow',updateCalendarHomeIcon);window.addEventListener('focus',updateCalendarHomeIcon);window.__calendarHomeIconListeners=true;}
 }
 let unlockInProgress = false;
 const PHONE_PASSCODE = '0525';
