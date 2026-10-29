@@ -1335,6 +1335,12 @@ html body #controlCenter .cc-native-slider output{
 #appView .ios-clock-app .ic-toast{position:absolute;left:16px;right:16px;top:calc(42px + var(--safe-top,0px));background:#343438;color:#fff;border-radius:12px;padding:12px 14px;text-align:center;z-index:8}
 @media(min-width:600px){#appView .ios-clock-app .ic-main{width:min(100%,540px);align-self:center}#appView .ios-clock-app .ic-tabs{padding-left:max(7px,calc((100% - 540px)/2));padding-right:max(7px,calc((100% - 540px)/2))}}
 </style>
+<style id="calendar-dynamic-home-icon">
+#home .calendar-live-glyph{box-sizing:border-box;width:100%;height:100%;min-width:0;min-height:0;border-radius:22%;overflow:hidden;background:#fff!important;color:#1c1c1e;display:flex;flex-direction:column;align-items:stretch;justify-content:flex-start;line-height:1;text-shadow:none;border:1px solid #dedee3}
+#home .calendar-live-weekday{display:flex;align-items:center;justify-content:center;flex:0 0 27%;min-height:0;color:#e53935;background:#fff;font-size:clamp(8px,2.4vw,12px);font-weight:650;letter-spacing:-.3px;line-height:1}
+#home .calendar-live-day{display:flex;align-items:center;justify-content:center;flex:1;color:#202124;font-size:clamp(26px,8vw,39px);font-weight:300;letter-spacing:-1.5px;line-height:1;font-variant-numeric:tabular-nums}
+@media(prefers-color-scheme:dark){#home .calendar-live-glyph{background:#fff!important}}
+</style>
 </head>
 <body>
 <div id="phone">
@@ -1604,8 +1610,21 @@ function appButton(a){
  const file=imageFiles[a.id];
  const svg= a.id==="notes" ? notesSVG : iconSVG[a.id];
  const fitnessCover = `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="pulseBg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#292c31"/><stop offset="1" stop-color="#050607"/></linearGradient><linearGradient id="pulseLime" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e2ff54"/><stop offset="1" stop-color="#8cff00"/></linearGradient></defs><rect width="100" height="100" rx="23" fill="url(#pulseBg)"/><path d="M15 39h19M10 47h18M16 55h12" stroke="#b7ff28" stroke-width="2.2" stroke-linecap="round" opacity=".8"/><g fill="none" stroke="url(#pulseLime)" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="62" cy="23" r="5.5" fill="#d8ff42" stroke="none"/><path d="M53 36l-9 9 10 4 8-8 7 10 10-5M54 37l8 11-8 12-13 8M55 60l12 8 7 12M42 68l-7 13"/></g><text x="50" y="93" text-anchor="middle" fill="#fff" font-family="Arial,sans-serif" font-size="11" font-weight="900" font-style="italic" letter-spacing=".7">PULSE<tspan fill="#b7ff28">.</tspan></text></svg>`;
- const glyph=a.id==="fitness" && file ? `<span class="glyph ios26-inline-glyph asset-icon-frame asset-icon-frame-fitness" aria-hidden="true"><img src="image/${file}" alt=""></span>` : file ? `<span class="glyph ios26-inline-glyph asset-icon-frame asset-icon-frame-${a.id}" aria-hidden="true"><img src="image/${file}" alt=""></span>` : svg ? `<span class="glyph ios26-inline-glyph ${a.id==="notes"?"notes26-glyph":""}" aria-hidden="true">${svg}</span>` : `<span class="glyph ${a.cls}" aria-hidden="true">${escapeHTML(a.icon)}</span>`;
+ const glyph=a.id==="calendar" ? `<span class="glyph ios26-inline-glyph calendar-live-glyph" aria-hidden="true"><span class="calendar-live-weekday"></span><span class="calendar-live-day"></span></span>` : a.id==="fitness" && file ? `<span class="glyph ios26-inline-glyph asset-icon-frame asset-icon-frame-fitness" aria-hidden="true"><img src="image/${file}" alt=""></span>` : file ? `<span class="glyph ios26-inline-glyph asset-icon-frame asset-icon-frame-${a.id}" aria-hidden="true"><img src="image/${file}" alt=""></span>` : svg ? `<span class="glyph ios26-inline-glyph ${a.id==="notes"?"notes26-glyph":""}" aria-hidden="true">${svg}</span>` : `<span class="glyph ${a.cls}" aria-hidden="true">${escapeHTML(a.icon)}</span>`;
  return `<button class="app-icon" data-app="${a.id}" aria-label="${a.name}">${glyph}<span class="app-name">${a.name}</span></button>`
+}
+function updateCalendarHomeIcon(){
+ const now=new Date();
+ const weekday=now.toLocaleDateString('zh-TW',{weekday:'short'});
+ const day=String(now.getDate());
+ document.querySelectorAll('.calendar-live-glyph').forEach(icon=>{
+   const w=icon.querySelector('.calendar-live-weekday'),d=icon.querySelector('.calendar-live-day');
+   if(w)w.textContent=weekday;
+   if(d)d.textContent=day;
+   icon.setAttribute('aria-label',now.toLocaleDateString('zh-TW',{year:'numeric',month:'long',day:'numeric',weekday:'long'}));
+ });
+ const app=document.querySelector('#home [data-app="calendar"]');
+ if(app)app.setAttribute('aria-label','行事曆，'+now.toLocaleDateString('zh-TW',{month:'long',day:'numeric',weekday:'long'}));
 }
 function initHome(){
  $('#weatherPlace').textContent=CONFIG.weather.place;$('#weatherTemp').textContent=CONFIG.weather.temp;$('#weatherDesc').textContent=CONFIG.weather.desc || `最高 ${CONFIG.weather.high} / 最低 ${CONFIG.weather.low}`;
@@ -1615,6 +1634,7 @@ function initHome(){
  $('#homePageDots').querySelectorAll('[data-page-to]').forEach(b=>b.onclick=()=>{const page=Number(b.dataset.pageTo);$('#appGrid').scrollTo({left:page*$('#appGrid').clientWidth,behavior:'smooth'});});
  $('#appGrid').onscroll=()=>{const page=Math.round($('#appGrid').scrollLeft/Math.max(1,$('#appGrid').clientWidth));$('#homePageDots').querySelectorAll('.home-page-dot').forEach((d,i)=>d.classList.toggle('active',i===page));};
  $('#dock').innerHTML=[apps[0],apps[1],apps[2],apps[3]].map(appButton).join('');
+ updateCalendarHomeIcon();
 }
 let unlockInProgress = false;
 const PHONE_PASSCODE = '0525';
