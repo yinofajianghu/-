@@ -6205,6 +6205,34 @@ window.__phoneMainReady = false;
  .ig-app .ig-profile-page .ig-profile-stats>div{padding-left:1px!important;padding-right:1px!important}
 }
 
+/* Restore the standard three-column square post grid on every Instagram profile, including other users. */
+.ig-app .ig-profile-reference .ig-grid{
+ display:grid!important;
+ grid-template-columns:repeat(3,minmax(0,1fr))!important;
+ gap:2px!important;
+ width:100%!important;
+ margin:0!important;
+}
+.ig-app .ig-profile-reference .ig-grid>button{
+ display:grid!important;
+ position:relative!important;
+ min-width:0!important;
+ width:100%!important;
+ aspect-ratio:1/1!important;
+ height:auto!important;
+ padding:0!important;
+ overflow:hidden!important;
+ border:0!important;
+ border-radius:0!important;
+}
+.ig-app .ig-profile-reference .ig-grid>button>img{
+ position:absolute!important;
+ inset:0!important;
+ display:block!important;
+ width:100%!important;
+ height:100%!important;
+ object-fit:cover!important;
+}
 /* Align profile name and each statistic number/label to the same left edge. */
 .ig-app .ig-profile-page .ig-profile-summary{align-items:stretch!important}
 .ig-app .ig-profile-page .ig-profile-name{
