@@ -6425,12 +6425,18 @@ function renderSafariApp(){
 .ig-app .ig-profile-story-trigger.no-story .ig-avatar{border:0}
 .ig-app .ig-avatar-link{display:inline-flex;flex:0 0 auto;align-items:center;justify-content:center;padding:0;border:0;border-radius:50%;background:transparent;cursor:pointer}
 .ig-app .ig-avatar-link .ig-avatar{pointer-events:none}
-.ig-app .ig-avatar:not(.story-no-ring):not(.story-has-ring):not(.story-seen-ring){position:relative}
-.ig-app .ig-avatar.story-has-ring,.ig-app .ig-avatar.story-seen-ring{position:relative;isolation:isolate}
-.ig-app .ig-avatar.story-has-ring:before,.ig-app .ig-avatar.story-seen-ring:before{content:"";position:absolute;inset:-4px;border:3px solid transparent;border-radius:50%;background:linear-gradient(var(--ig-panel,#fff),var(--ig-panel,#fff)) padding-box,conic-gradient(#feda75,#fa7e1e,#d62976,#962fbf,#4f5bd5,#feda75) border-box;z-index:-1;pointer-events:none}
-.ig-app .ig-avatar.story-seen-ring:before{background:linear-gradient(var(--ig-panel,#fff),var(--ig-panel,#fff)) padding-box,#aaa border-box}
-.ig-app .ig-avatar.story-no-ring:before{content:none}
+.ig-app .ig-avatar.story-has-ring{border:3px solid transparent!important;background:linear-gradient(var(--ig-panel,#fff),var(--ig-panel,#fff)) padding-box,conic-gradient(#feda75,#fa7e1e,#d62976,#962fbf,#4f5bd5,#feda75) border-box!important;overflow:visible!important}
+.ig-app .ig-avatar.story-seen-ring{border:3px solid #aaa!important;background:linear-gradient(var(--ig-panel,#fff),var(--ig-panel,#fff)) padding-box,#aaa border-box!important;overflow:visible!important}
+.ig-app .ig-avatar.story-no-ring{border:1px solid #f4d9e2!important}
 .ig-app .ig-profile-story-trigger:focus-visible,.ig-app .ig-avatar-link:focus-visible{outline:2px solid #1685ff;outline-offset:3px}
+/* Make every DM conversation use the available width */
+.ig-app .ig-chat-page{width:100%;max-width:none}
+.ig-app .ig-chat-messages{width:100%;padding:16px 12px;gap:11px}
+.ig-app .ig-bubble{max-width:94%;padding:12px 16px;font-size:14px;line-height:1.5}
+.ig-app .ig-story-reply-group{width:min(90%,360px);max-width:90%}
+.ig-app .ig-chat-compose{width:calc(100% - 16px);margin:8px 8px 12px;padding:11px 14px;min-height:50px;gap:12px}
+.ig-app .ig-chat-compose input{font-size:15px;min-height:28px}
+.ig-app .ig-chat-compose button{flex:0 0 auto;font-size:21px;padding:3px 5px}
 </style>
 </body>
 </html>
