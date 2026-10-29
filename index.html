@@ -3702,6 +3702,64 @@ function renderSpotify(){
   outline-offset:-5px!important;
   border-radius:10px!important;
 }
+
+/* Instagram profile alignment: center the account title and normalize the section strip. */
+.ig-app .ig-profile-page{width:100%!important;max-width:100%!important;overflow-x:hidden!important;box-sizing:border-box!important}
+.ig-app .ig-profile-toolbar{
+  display:grid!important;grid-template-columns:40px minmax(0,1fr) 72px!important;
+  align-items:center!important;justify-content:stretch!important;
+  height:52px!important;min-height:52px!important;padding:0 14px!important;
+  box-sizing:border-box!important;gap:0!important
+}
+.ig-app .ig-profile-toolbar>b{
+  display:block!important;min-width:0!important;text-align:center!important;
+  justify-self:stretch!important;font-size:15px!important;font-weight:700!important;
+  line-height:1.2!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important
+}
+.ig-app .ig-profile-toolbar>div{display:flex!important;justify-content:flex-end!important;align-items:center!important;gap:14px!important;min-width:0!important}
+.ig-app .ig-profile-toolbar>button{justify-self:start!important;display:grid!important;place-items:center!important;width:32px!important;height:40px!important}
+.ig-app .ig-profile-head{
+  display:grid!important;grid-template-columns:minmax(92px,36%) minmax(0,1fr)!important;
+  align-items:center!important;gap:0!important;padding:14px 16px 8px!important;
+  width:100%!important;box-sizing:border-box!important
+}
+.ig-app .ig-profile-avatar{width:100%!important;min-width:0!important;flex:initial!important;justify-content:flex-start!important;align-items:center!important}
+.ig-app .ig-profile-avatar .ig-profile-photo{display:block!important;line-height:0!important}
+.ig-app .ig-profile-avatar .ig-avatar{width:clamp(76px,22vw,88px)!important;height:clamp(76px,22vw,88px)!important;max-width:100%!important;box-sizing:border-box!important}
+.ig-app .ig-profile-stats{width:100%!important;min-width:0!important;display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;align-items:center!important;justify-content:stretch!important;gap:2px!important;text-align:center!important}
+.ig-app .ig-profile-stats>div{min-width:0!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:4px!important}
+.ig-app .ig-profile-bio{
+  display:block!important;clear:both!important;width:100%!important;max-width:100%!important;
+  box-sizing:border-box!important;padding:5px 16px 12px!important;margin:0!important;
+  text-align:left!important;font-size:13px!important;line-height:1.45!important;overflow-wrap:anywhere!important
+}
+.ig-app .ig-profile-bio>b{display:block!important;margin:0 0 3px!important;text-align:left!important;font-size:14px!important;line-height:1.35!important;font-weight:700!important}
+.ig-app .ig-profile-bio p{display:block!important;margin:0!important;white-space:pre-wrap!important;overflow-wrap:anywhere!important}
+.ig-app .ig-profile-buttons{display:flex!important;align-items:center!important;gap:7px!important;width:100%!important;box-sizing:border-box!important;padding:0 12px 13px!important}
+.ig-app .ig-profile-buttons>button{min-width:0!important;min-height:36px!important;flex:1 1 0!important;border-radius:8px!important;font-size:12px!important;font-weight:650!important;white-space:nowrap!important}
+.ig-app .ig-profile-buttons>.ig-add-person{flex:0 0 40px!important;width:40px!important}
+.ig-app .ig-profile-tabs{
+  display:flex!important;align-items:stretch!important;justify-content:stretch!important;
+  width:100%!important;height:48px!important;min-height:48px!important;flex:0 0 48px!important;
+  margin:0!important;padding:0!important;border-top:1px solid var(--ig-line,#ddd)!important;
+  border-bottom:1px solid var(--ig-line,#ddd)!important;box-sizing:border-box!important;background:var(--ig-panel,#fff)!important
+}
+.ig-app .ig-profile-tabs>button{
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  flex:1 1 0!important;width:33.333%!important;min-width:0!important;height:47px!important;
+  margin:0!important;padding:0!important;border:0!important;border-bottom:2px solid transparent!important;
+  box-sizing:border-box!important;font-size:22px!important;line-height:1!important;color:var(--ig-muted,#888)!important
+}
+.ig-app .ig-profile-tabs>button.on{border-bottom:2px solid var(--ig-text,#222)!important;color:var(--ig-text,#222)!important}
+.ig-app .ig-profile-tabs svg{display:block!important;width:23px!important;height:23px!important;max-width:23px!important;max-height:23px!important}
+.ig-app .ig-profile-empty{width:100%!important;min-height:250px!important;box-sizing:border-box!important;padding:54px 16px 32px!important;display:flex!important;align-items:center!important;justify-content:flex-start!important}
+@media(max-width:380px){
+ .ig-app .ig-profile-head{grid-template-columns: minmax(84px,34%) minmax(0,1fr)!important;padding-left:12px!important;padding-right:12px!important}
+ .ig-app .ig-profile-bio{padding-left:12px!important;padding-right:12px!important}
+ .ig-app .ig-profile-toolbar{grid-template-columns:36px minmax(0,1fr) 68px!important;padding-left:10px!important;padding-right:10px!important}
+ .ig-app .ig-profile-buttons{gap:5px!important;padding-left:10px!important;padding-right:10px!important}
+ .ig-app .ig-profile-buttons>button{font-size:11px!important}
+}
 </style><div class="sp-app">`+top+body+`</div>`+mini+nav;
  const input=$('#spQuery');if(input)input.addEventListener('input',e=>{const p=e.target.selectionStart;query=e.target.value;spotifyUIQuery=query;spotifyUIPage=page;renderSpotify();const n=$('#spQuery');if(n){n.focus();n.setSelectionRange(p,p)}});
  const form=$('#spSearchForm');if(form)form.onsubmit=e=>{e.preventDefault();query=$('#spQuery').value;spotifyUIQuery=query;renderSpotify()};
