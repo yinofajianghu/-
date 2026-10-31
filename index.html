@@ -1949,65 +1949,62 @@ function renderInstagramApp(){
   const found=topics.find(item=>item[0].test(text));
   return found?found[1]:'這篇分享的日常片刻';
  };
- const commentTemplates=[
-  (topic,place)=>'這篇的'+topic+'很有記憶點，滑到會忍不住停下來看。',
-  (topic,place)=>'喜歡你記錄'+topic+'的方式，感覺很自然。',
-  (topic,place)=>'看完這篇，也讓我想起自己最近的'+topic+'。',
-  (topic,place)=>'這個'+place+'的畫面抓得很好，氛圍很舒服。',
-  (topic,place)=>'原本只是路過，結果被'+topic+'吸引住了。',
-  (topic,place)=>'照片和文字搭得很好，完全能感受到當下的心情。',
-  (topic,place)=>'這個角度很有意思，尤其'+topic+'的細節。',
-  (topic,place)=>'默默收藏了，之後想找'+topic+'的靈感時再回來看。',
-  (topic,place)=>'這篇不會太刻意，反而把'+topic+'拍得很有味道。',
-  (topic,place)=>'想問一下，這個'+place+'是你常去的地方嗎？',
-  (topic,place)=>'看得出來有花心思整理，'+topic+'呈現得很完整。',
-  (topic,place)=>'這種日常紀錄很耐看，比想像中更有趣。',
-  (topic,place)=>'我喜歡這篇留白的感覺，重點剛好落在'+topic+'上。',
-  (topic,place)=>'這篇讓我也想把今天的小事好好記下來。',
-  (topic,place)=>'細節比第一眼看到的還多，值得再看一次。',
-  (topic,place)=>'這個分享很剛好，最近正好也在注意'+topic+'。',
-  (topic,place)=>'整體看起來很舒服，沒有多餘的東西搶走焦點。',
-  (topic,place)=>'如果之後還有類似的'+topic+'，我會想繼續看！'
- ];
+ const personaCommentLines={
+  'aoyagi_toya525':['這個細節處理得很仔細。我很喜歡。','光線和周圍的氛圍都很柔和，讓人想多停留一會兒。','這個地方很適合你記錄下來。','看得出來你有認真觀察當下。','嗯……這張照片讓我想起一段旋律。','這樣的步調很好，不必急著往前。','構圖很安定，視線自然就落在重點上。','謝謝你分享這個瞬間，我很喜歡。'],
+  'shiraishi_annn':['欸欸這篇也太棒了吧！！我一滑到就停下來了～！','這個角度超讚耶！你怎麼拍到的～？','好想直接去現場看看！感覺一定超有趣！！','等等，這個細節也太可愛了吧～！','這種氣氛我超喜歡！下次也揪我啦～！','哇！連這種小地方都有注意到，太會了吧！','看完心情都變好了～！今天也要繼續加油！！','這張我要先收藏！真的很有感覺耶～！'],
+  'azusawa.kohane':['好、好漂亮……！我不小心看了好幾次。','這個地方看起來很舒服呢。謝謝你分享……！','我也想試著拍出這樣的感覺。','這個小細節好溫柔，讓人覺得很安心。','看著這張照片，心情也慢慢平靜下來了。','原來還可以從這個角度看呢……！','我覺得你把當時的感覺好好留下來了。','有點害羞，不過我真的很喜歡這篇！'],
+  'vividbadsquad':['四個人的聲音合在一起，才是我們追求的感覺。','這份能量很棒！讓人想立刻站上舞台。','每個細節都在累積，下一次也一起把現場點燃。','保持這股衝勁吧，還有更遠的地方要去。','這個瞬間值得記住。Keep the sound alive.'],
+  'Kam1._ru1i1':['呵呵，這幅景象彷彿正等待一場奇妙的演出。','若將這份光影化作舞台布景，想必相當有趣。','真是令人愉快的巧思。下一幕會是什麼呢？','平凡日常裡，也藏著值得發掘的奇蹟。','嗯哼，這份構成讓我萌生了新的點子。','如此恰到好處的安排，值得獻上掌聲。','若能加入一點意想不到的變化……呵呵。'],
+  'tenmatsukasa_._':['哈哈哈哈！如此精彩的瞬間，理應得到盛大的喝采！','很好！這份光彩足以成為舞台中央的焦點！','連本團長也要為這個構想鼓掌！','世界第一明星認證！這篇充滿了耀眼魅力！','哼哼，這樣的魄力正是值得學習的地方！','下次也要帶著這份氣勢，讓所有人看見！'],
+  'mizukiiiii___':['欸～這個也太可愛了吧♡ 完全是我的菜！','這個配色好舒服！想知道你在哪裡找到的～','等等，細節也太精緻了吧♡','今天的分享也很有你的風格呢～喜歡！','這張先收藏起來！下次想拿來當靈感♡','好啦，這個可愛程度有點犯規了吧～！','連小地方都好用心，眼光真的很好耶♡','這種日常感最棒了～看了就覺得開心！'],
+  'en4luv':['這個配色有挑過吧？明暗層次處理得不錯。','構圖的重心很清楚，沒有多餘元素搶焦點。','這個色調我可以。尤其光線落下來的地方。','嗯，這張有抓到質感，不需要再加太多濾鏡。','細節比第一眼看到的完整，值得放大看。','留白的位置很剛好，整體看起來更俐落。','這個角度選得不錯，畫面有自己的重點。','我喜歡這種克制的色彩，不會太用力。'],
+  'shinonome_akito':['喔，這次拍得還不錯嘛。','這個細節有注意到，算你厲害。','看起來挺有意思的。下次再拍點別的。','嗯，這個角度可以。比我想的好。','不是要特別稱讚啦……但這張確實不錯。','這種程度還行。繼續保持就好。','你有認真看細節嘛，這點我承認。','嘖，害我也想去看看了。'],
+  'hoshino_ichika':['這個瞬間很值得記下來呢。','看著這張照片，腦中好像也有旋律。','很喜歡這篇安靜的感覺。','光線落下來的樣子，讓人想起一首歌。','這樣的日常也很珍貴呢。','不知為什麼，看了之後心情平靜了許多。'],
+  'mio.days_07':['天啊，這個小地方也太療癒了吧！今天的心情被拯救了🌼','我會把這篇存起來，週末想照著安排看看！','看完突然想出門走走，謝謝你的分享～'],
+  'sora__blue23':['這張有種漂浮在雲裡的感覺🫧 好喜歡這種安靜。','顏色像水面反光一樣，很清透。','如果配上喜歡的歌，應該會更有氣氛。'],
+  'haru_note.18':['這個午後感好濃！看了就想找布丁和熱茶🍮','平常的小事被你記錄得好可愛。','這篇有種慢慢過日子的幸福感。'],
+  'yuki__camera':['曝光抓得很漂亮，亮部沒有吃掉細節。','這個焦段的空間感很舒服，想知道拍攝設定。','光線方向選得好，主體很自然地被帶出來。'],
+  'rinrin_0808':['喵……這張有讓人想窩起來的感覺🐈','這個角落好適合發呆，我想待一整個下午。','今天的可愛額度被這篇填滿了！'],
+  'cafe_milk_22':['這個地方感覺很適合點一杯拿鐵慢慢坐著☕','甜點和光線都好搭，咖啡時間安排起來！','有店名嗎？想把這家加進口袋名單。'],
+  'natsu.archive':['好有夏天的味道！看完都覺得空氣變亮了🌻','這種自在的紀錄最耐看了。','想把這個瞬間也收進自己的相簿裡。'],
+  'ao__sketch':['這個輪廓很有意思，拿來當速寫參考應該很棒。','色彩關係很舒服，尤其背景和主體的對比。','看完有新的構圖靈感了，謝謝分享！'],
+  'kotoha_memo':['把這種小小的日常留下來真的很好呢🪴','這篇有種植物慢慢長大的安心感。','細細看會發現很多溫柔的地方。'],
+  'luna.film_5':['像底片裡偶然洗出來的一格，氛圍好漂亮🌙','這張有電影場景的感覺，我喜歡。','光影和留白都很剛好，想多看一會兒。'],
+  'mame__piyo':['啾！這個也太可愛了吧🐥 看了忍不住笑出來！','今天最喜歡的貼文出現了！','小小的幸福感滿滿的，謝謝分享～'],
+  'slowdays.jp':['不急著做什麼的片刻，也有它自己的價值。','這樣安靜地記錄生活，很舒服。','喜歡這份從容的節奏，讓人也想慢下來。']
+ };
  const personaCommentStyle=person=>{
   const name=String(person[0]||'');
-  const known={
-   'aoyagi_toya525':['青柳冬弥','沉穩、溫柔、認真，句子簡潔而細膩'],
-   'shiraishi_annn':['白石杏','爽朗、直率、有活力，像朋友般自然'],
-   'azusawa.kohane':['小豆沢こはね','溫柔、謙虛、真誠，帶一點害羞'],
-   'vividbadsquad':['Vivid BAD SQUAD','團體口吻、熱情、有默契'],
-   'Kam1._ru1i1':['神代類','戲劇感、奇思妙想、帶點幽默'],
-   'tenmatsukasa_._':['天馬司','自信、誇張、充滿舞台感'],
-   'mizukiiiii___':['曉山瑞希','可愛、俏皮、輕快，偶爾帶♡'],
-   'en4luv':['東雲繪名','審美敏銳、直率，對色彩與細節講究'],
-   'shinonome_akito':['東雲彰人','嘴硬、直接、偶爾吐槽但其實欣賞'],
-   'hoshino_ichika':['星乃一歌','安靜、真誠，語氣溫和'],
-   'default':['日常使用者','自然、有自己的觀察，不刻意吹捧']
+  const styles={
+   'aoyagi_toya525':'沉穩、溫柔、細膩，句子簡潔而認真',
+   'shiraishi_annn':'爽朗直率、活力十足，常用驚嘆號與「～」',
+   'azusawa.kohane':'溫柔謙虛、真誠，偶爾有些害羞與停頓',
+   'vividbadsquad':'團體口吻、熱情、有舞台默契',
+   'Kam1._ru1i1':'戲劇感、奇思妙想、帶點幽默與舞台比喻',
+   'tenmatsukasa_._':'自信誇張、充滿舞台感與宣言式語氣',
+   'mizukiiiii___':'可愛俏皮、輕快，偶爾使用♡',
+   'en4luv':'審美敏銳、直率，講究色彩與構圖',
+   'shinonome_akito':'嘴硬直接、偶爾吐槽，但不會刻薄',
+   'hoshino_ichika':'安靜真誠、溫和，偶爾聯想到音樂',
+   'mio.days_07':'親切熱心、生活感強，像會分享週末計畫的朋友',
+   'sora__blue23':'安靜夢幻，偏愛天空、水色與氛圍感',
+   'haru_note.18':'溫暖慢活，常注意甜點與午後日常',
+   'yuki__camera':'觀察型攝影愛好者，會講光線、曝光和鏡頭',
+   'rinrin_0808':'慵懶可愛，常用貓咪語氣和療癒感表達',
+   'cafe_milk_22':'咖啡甜點愛好者，喜歡詢問店家與口袋名單',
+   'natsu.archive':'明亮外向，偏愛夏日、旅行和回憶',
+   'ao__sketch':'創作者視角，注意線條、輪廓和配色',
+   'kotoha_memo':'溫柔細心，喜歡植物與生活小事',
+   'luna.film_5':'文藝感、電影與底片語氣，重視光影',
+   'mame__piyo':'元氣可愛、反應直接，常用擬聲與小表情',
+   'slowdays.jp':'慢活內斂，重視日常節奏與留白'
   };
-  return known[name]||known.default;
- };
- const personaCommentLines={
-  '青柳冬弥':['這個細節處理得很仔細，我很喜歡。','整體的氛圍很平靜，看了心情也跟著放鬆。','這個地方和你的文字很搭。'],
-  '白石杏':['欸這篇很棒耶！尤其這個細節超有感！','這個我喜歡！下次也想去看看～','照片很有氣氛，完全有被你分享燒到！','欸欸這張也太好看了吧～！我直接停下來看第二次！','這個氛圍超棒的！下次有機會也想一起去～','哇！這個角度很讚耶～！完全有抓到那個感覺！','好喜歡這種自在的感覺！看了心情都變好了～','這也太有趣了吧！！還有更多照片的話我會想看～！'],
-  '小豆沢こはね':['好、好漂亮……我看了好幾次。','這個細節真的很可愛，讓人覺得很溫暖。','感覺當下應該很幸福呢。'],
-  'Vivid BAD SQUAD':['這篇很有我們喜歡的那種氛圍！','這個紀錄很棒，下次一起挑戰吧。','看了又想一起出去走走了！'],
-  '神代類':['呵呵，這畫面彷彿藏著一場有趣的演出。','構圖與氛圍的安排，真是令人玩味。','這份巧思值得給你掌聲。'],
-  '天馬司':['哈哈哈！這等精彩的畫面果然值得喝采！','好！這份魅力足以成為舞台焦點！','連本團長也不得不稱讚一番！'],
-  '曉山瑞希':['欸～這個也太可愛了吧♡','好有品味！這篇我先收藏起來～','這個氛圍很適合你耶，喜歡！'],
-  '東雲繪名':['配色真的不錯，光線也抓得很好。','這個角度有挑過吧？細節看得出來。','嗯，這張有打中我，尤其是色調。'],
-  '東雲彰人':['喔，這次拍得還不錯嘛。','這個細節有注意到，算你厲害。','看起來挺有意思的，下次分享別的角度。'],
-  '星乃一歌':['很喜歡這篇的感覺，讓人想多看一會兒。','這個瞬間很值得記下來呢。','看著照片，腦中好像也有旋律。']
+  return styles[name]||'自然真誠，從自己的興趣出發觀察貼文，不刻意吹捧';
  };
  const makeGeneratedComment=(post,person,index)=>{
-  const topic=commentTopicFor(post);
-  const place=String(post.place||'這個地方').slice(0,12);
-  const persona=personaCommentStyle(person);
-  const lines=personaCommentLines[persona[0]]||[];
-  const personalized=lines.length?lines[Math.floor(Math.random()*lines.length)]:null;
-  const offset=Math.floor(Math.random()*commentTemplates.length);
-  const base=commentTemplates[(offset+index)%commentTemplates.length](topic,place);
-  const text=personalized?(Math.random()<0.62?personalized:base):base;
-  return {user:person[0],text,likes:Math.floor(Math.random()*18),time:['剛剛','12 分鐘','36 分鐘','1 小時','3 小時'][Math.floor(Math.random()*5)],face:person[1],generated:true,personaVersion:7};
+  const lines=personaCommentLines[String(person[0]||'')]||['這個瞬間很有意思，謝謝分享。','我喜歡你記錄日常的方式。','這篇讓我注意到平常容易忽略的小細節。'];
+  const text=lines[(Math.floor(Math.random()*lines.length)+index)%lines.length];
+  return {user:person[0],text,likes:Math.floor(Math.random()*18),time:['剛剛','12 分鐘','36 分鐘','1 小時','3 小時'][Math.floor(Math.random()*5)],face:person[1],generated:true,personaVersion:8};
  };
  const commentsFor=p=>{
   if(!p||!p.id)return [];
@@ -2022,7 +2019,7 @@ function renderInstagramApp(){
    if(isVbsPost&&vbsMembers.includes(c.user))return false;
    return true;
   });
-  const needsRefresh=saved.some(c=>c&&c.generated&&c.personaVersion!==7)||sanitized.length!==saved.length||!Array.isArray(S.comments[p.id]);
+  const needsRefresh=saved.some(c=>c&&c.generated&&c.personaVersion!==8)||sanitized.length!==saved.length||!Array.isArray(S.comments[p.id]);
   if(needsRefresh){
    const preserved=sanitized.filter(c=>!c.generated);
    const targetCount=Math.floor(Math.random()*11);
