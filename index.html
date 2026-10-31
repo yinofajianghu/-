@@ -1933,46 +1933,59 @@ function renderInstagramApp(){
  const storyItems=()=>'<div class="ig-story ig-addstory" data-action="'+(S.stories.length?'story-view':'story-create')+'" data-index="'+friends.length+'"><span class="ig-story-ring ig-addstory-ring '+(S.stories.length?(S.viewedStories.own?'seen-story':'has-story'):'no-story')+'">'+avatar('🌿','ig-myface')+'<span class="ig-addstory-plus">+</span></span><span>你的限時動態</span></div>'+friends.map((f,i)=>'<div class="ig-story" data-action="story-view" data-index="'+i+'"><span class="ig-story-ring '+(S.viewedStories[f.name]?'seen-story':'has-story')+'">'+avatar(f.face)+'</span><span>'+esc(f.name)+'</span></div>').join('');
  const defaultComments={seed1:[{user:'shiraishi_annn',text:'這個氛圍也太舒服了吧！🌷',likes:18,time:'1 小時'},{user:'azusawa.kohane',text:'好喜歡這張的色調 ✨',likes:7,time:'42 分鐘'},{user:'vividbadsquad',text:'日常的小確幸 ☀️',likes:3,time:'25 分鐘'}],seed2:[{user:'aoyagi_toya525',text:'夕陽好美！是哪個海邊呀？🌅',likes:24,time:'2 小時'},{user:'azusawa.kohane',text:'好想立刻去海邊放空～',likes:9,time:'1 小時'},{user:'vividbadsquad',text:'這張照片好有電影感',likes:5,time:'38 分鐘'}],seed3:[{user:'shiraishi_annn',text:'配色好漂亮，期待更多作品！🎨',likes:15,time:'3 小時'},{user:'aoyagi_toya525',text:'這個構圖我好喜歡！',likes:8,time:'2 小時'}],seed4:[{user:'azusawa.kohane',text:'咖啡時間就是最棒的開始 ☕',likes:11,time:'1 小時'},{user:'shiraishi_annn',text:'看起來好好喝！',likes:4,time:'35 分鐘'}]};
  const generatedCommenters=[
-  [S.username,'🙂'],...friends.map(f=>[f.name,f.face||'🙂']),['mio.days_07','🌼'],['sora__blue23','🫧'],['haru_note.18','🍮'],['yuki__camera','📷'],['rinrin_0808','🐈'],['cafe_milk_22','☕'],['natsu.archive','🌻'],['ao__sketch','🎨'],['kotoha_memo','🪴'],['luna.film_5','🌙'],['mame__piyo','🐥'],['slowdays.jp','🍃']
+  ['mio.days_07','🌼'],['sora__blue23','🫧'],['haru_note.18','🍮'],['yuki__camera','📷'],['rinrin_0808','🐈'],['cafe_milk_22','☕'],['natsu.archive','🌻'],['ao__sketch','🎨'],['kotoha_memo','🪴'],['luna.film_5','🌙'],['mame__piyo','🐥'],['slowdays.jp','🍃']
  ];
- const personaCommentDetails={
-  shinonome_akito:["這個角度不錯。","嗯，這次的色調還行。","拍得挺好，繼續保持。","下次也試試這種構圖。"],
-  aoyagi_toya525:["光線很柔和，讓人看了很放鬆。","這個配色很舒服，我很喜歡。","謝謝分享，感覺像一起度過了午後。","細節也很漂亮。"],
-  shiraishi_annn:["欸這張超好看！！下次一定要帶我去啦！🎤","這個也太有感了吧！喜歡喜歡！💗","完全懂你的品味！拍得超棒✨","下一篇快點更新啦！"],
-  "azusawa.kohane":["好、好漂亮……！看了覺得很療癒。🥹","這個顏色好溫柔，我很喜歡！✨","謝謝你分享這麼棒的照片！","我也想試著拍出這樣的感覺……！"],
-  mizukiiiii___:["欸欸這個也太可愛了吧♡♡","這個氛圍好夢幻！想一起去～🎀","完全是我的菜！收藏了！🫶","今天也漂亮得太犯規了吧！"],
-  en4luv:["這組色彩關係處理得很漂亮，尤其明暗層次。","構圖很乾淨，視線落點也很明確。","這種低飽和的質感我喜歡，細節很耐看。","今天的造型和畫面色調很搭。✦"],
-  "Kam1._ru1i1":["呵呵，這個畫面若放進舞台設計，想必也會相當有趣。","色彩與構圖的安排，像是精心設計的登場呢。","真是令人愉快的靈感，期待下一幕。"],
-  "tenmatsukasa_._":["哈哈哈哈！這份光彩足以成為舞台中央的焦點！☆","很好！這就是世界第一明星應有的氣勢！","本團長也要給這份精彩喝采！"],
-  vividbadsquad:["這個瞬間值得收藏。下一次現場也一起創造回憶。🎧","很棒的分享！保持這個節奏，繼續向前。","大家都做得很好，下一個舞台見。"]
+ const commentTopicFor=post=>{
+  const text=String(post.caption||'')+' '+String(post.art||'')+' '+String(post.place||'');
+  const topics=[
+   [/(畫|繪|作品|顏料|配色|構圖|色彩|光影|畫布|創作|sketch|art)/i,'這次的創作細節'],
+   [/(咖啡|拿鐵|飲料|茶|甜點|蛋糕|餐|吃|美食|cafe)/i,'這次的咖啡和美食'],
+   [/(練習|排練|演出|舞台|音樂|歌曲|節奏|唱|VBS|sound)/i,'這段音樂和練習'],
+   [/(海|旅行|散步|街角|東京|台北|出門|景點|風景)/i,'這次記錄的風景'],
+   [/(穿搭|妝|髮|飾品|衣服|外套|美|漂亮|造型|時尚)/i,'今天的造型和搭配'],
+   [/(夕陽|陽光|光線|午後|天空|夜景|日落|黃昏)/i,'畫面裡的光線'],
+   [/(可愛|吊飾|娃娃|小物|包包|購物|櫥窗)/i,'這次分享的小物']
+  ];
+  const found=topics.find(item=>item[0].test(text));
+  return found?found[1]:'這篇分享的日常片刻';
  };
- const commentPoolFor=(post,commenter)=>{
-  const owner=post.user;
-  const subject=owner==='en4luv'?'art':owner==='mizukiiiii___'?'cute':owner==='shiraishi_annn'||owner==='azusawa.kohane'?'girls':owner==='vividbadsquad'?'music':'daily';
-  const own=personaCommentDetails[commenter]||[];
-  if(own.length)return own;
-  const contextual={
-   art:["這個配色好漂亮，細節也很有想法！🎨","看得出來花了很多心思，期待完成品。","這張的光影很有味道，想放大看細節。"],
-   cute:["也太可愛了吧！這個小細節好喜歡♡","照片好有氛圍，想知道是哪家店！🎀","這套搭配很適合你，漂亮！✨"],
-   girls:["這張真的好漂亮！💗","今天也太有活力了吧！下次一起！✨","這個瞬間好值得收藏～🫶"],
-   music:["這個瞬間很棒，下一次演出也期待！🎧","大家一起練習的成果越來越好了。","這個節奏很有 VBS 的感覺！"],
-   daily:["這張照片的光線很舒服。","喜歡這種自然的日常感。","這個角度很棒，謝謝分享。"]
-  };
-  return contextual[subject];
- };
+ const commentTemplates=[
+  (topic,place)=>'這篇的'+topic+'很有記憶點，滑到會忍不住停下來看。',
+  (topic,place)=>'喜歡你記錄'+topic+'的方式，感覺很自然。',
+  (topic,place)=>'看完這篇，也讓我想起自己最近的'+topic+'。',
+  (topic,place)=>'這個'+place+'的畫面抓得很好，氛圍很舒服。',
+  (topic,place)=>'原本只是路過，結果被'+topic+'吸引住了。',
+  (topic,place)=>'照片和文字搭得很好，完全能感受到當下的心情。',
+  (topic,place)=>'這個角度很有意思，尤其'+topic+'的細節。',
+  (topic,place)=>'默默收藏了，之後想找'+topic+'的靈感時再回來看。',
+  (topic,place)=>'這篇不會太刻意，反而把'+topic+'拍得很有味道。',
+  (topic,place)=>'想問一下，這個'+place+'是你常去的地方嗎？',
+  (topic,place)=>'看得出來有花心思整理，'+topic+'呈現得很完整。',
+  (topic,place)=>'這種日常紀錄很耐看，比想像中更有趣。',
+  (topic,place)=>'我喜歡這篇留白的感覺，重點剛好落在'+topic+'上。',
+  (topic,place)=>'這篇讓我也想把今天的小事好好記下來。',
+  (topic,place)=>'細節比第一眼看到的還多，值得再看一次。',
+  (topic,place)=>'這個分享很剛好，最近正好也在注意'+topic+'。',
+  (topic,place)=>'整體看起來很舒服，沒有多餘的東西搶走焦點。',
+  (topic,place)=>'如果之後還有類似的'+topic+'，我會想繼續看！'
+ ];
  const makeGeneratedComment=(post,person,index)=>{
-  const pool=commentPoolFor(post,person[0]);
-  return {user:person[0],text:pool[index%pool.length],likes:Math.floor(Math.random()*36),time:['剛剛','5 分鐘','18 分鐘','1 小時','2 小時'][Math.floor(Math.random()*5)],face:person[1],generated:true,personaVersion:2};
+  const topic=commentTopicFor(post);
+  const place=String(post.place||'這個地方').slice(0,12);
+  const offset=Math.floor(Math.random()*commentTemplates.length);
+  const text=commentTemplates[(offset+index)%commentTemplates.length](topic,place);
+  return {user:person[0],text,likes:Math.floor(Math.random()*18),time:['剛剛','12 分鐘','36 分鐘','1 小時','3 小時'][Math.floor(Math.random()*5)],face:person[1],generated:true,personaVersion:3};
  };
  const commentsFor=p=>{
   const saved=Array.isArray(S.comments[p.id])?S.comments[p.id]:[];
-  const needsRefresh=!Array.isArray(S.comments[p.id])||saved.some(c=>c.generated&&c.personaVersion!==2);
+  const needsRefresh=!Array.isArray(S.comments[p.id])||saved.some(c=>c.generated&&c.personaVersion!==3);
   if(needsRefresh){
-   const count=saved.length?Math.max(3,saved.length):Math.floor(Math.random()*6)+4;
+   const roll=Math.random();
+   const count=roll<0.24?0:roll<0.62?1:roll<0.88?2:3;
    const preserved=saved.filter(c=>!c.generated);
-   const people=generatedCommenters.filter(person=>person[0]!==p.user);
-   const generated=Array.from({length:Math.max(0,count-preserved.length)},(_,i)=>makeGeneratedComment(p,people[(i+1)%people.length]||people[0],i));
-   S.comments[p.id]=preserved.concat(generated).slice(0,12);save();
+   const people=generatedCommenters.slice().sort(()=>Math.random()-0.5);
+   const generated=Array.from({length:Math.max(0,count-preserved.length)},(_,i)=>makeGeneratedComment(p,people[i%people.length],i));
+   S.comments[p.id]=preserved.concat(generated).slice(0,8);save();
   }
   return S.comments[p.id].slice().sort((a,b)=>Number(b.likes||0)-Number(a.likes||0));
  };
