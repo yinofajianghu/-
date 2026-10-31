@@ -1988,7 +1988,7 @@ function renderInstagramApp(){
  };
  const personaCommentLines={
   '青柳冬弥':['這個細節處理得很仔細，我很喜歡。','整體的氛圍很平靜，看了心情也跟著放鬆。','這個地方和你的文字很搭。'],
-  '白石杏':['欸這篇很棒耶！尤其這個細節超有感！','這個我喜歡！下次也想去看看～','照片很有氣氛，完全有被你分享燒到！'],
+  '白石杏':['欸這篇很棒耶！尤其這個細節超有感！','這個我喜歡！下次也想去看看～','照片很有氣氛，完全有被你分享燒到！','欸欸這張也太好看了吧～！我直接停下來看第二次！','這個氛圍超棒的！下次有機會也想一起去～','哇！這個角度很讚耶～！完全有抓到那個感覺！','好喜歡這種自在的感覺！看了心情都變好了～','這也太有趣了吧！！還有更多照片的話我會想看～！'],
   '小豆沢こはね':['好、好漂亮……我看了好幾次。','這個細節真的很可愛，讓人覺得很溫暖。','感覺當下應該很幸福呢。'],
   'Vivid BAD SQUAD':['這篇很有我們喜歡的那種氛圍！','這個紀錄很棒，下次一起挑戰吧。','看了又想一起出去走走了！'],
   '神代類':['呵呵，這畫面彷彿藏著一場有趣的演出。','構圖與氛圍的安排，真是令人玩味。','這份巧思值得給你掌聲。'],
@@ -2013,36 +2013,31 @@ function renderInstagramApp(){
   if(!p||!p.id)return [];
   if(!S.comments||typeof S.comments!=='object')S.comments={};
   const saved=Array.isArray(S.comments[p.id])?S.comments[p.id]:[];
-  const needsRefresh=saved.some(c=>c&&c.generated&&c.personaVersion!==6);
-  if(needsRefresh||!Array.isArray(S.comments[p.id])){
-   const preserved=saved.filter(c=>c&&!c.generated);
+  const vbsMembers=['shinonome_akito','aoyagi_toya525','shiraishi_annn','azusawa.kohane'];
+  const isVbsPost=p.user==='vividbadsquad';
+  // VBS 官方帳號不會自動到別人的貼文留言；VBS 官方貼文也不顯示四位成員的留言。
+  const sanitized=saved.filter(c=>{
+   if(!c||typeof c!=='object'||typeof c.user!=='string')return false;
+   if(c.user==='vividbadsquad'&&c.generated)return false;
+   if(isVbsPost&&vbsMembers.includes(c.user))return false;
+   return true;
+  });
+  const needsRefresh=saved.some(c=>c&&c.generated&&c.personaVersion!==7)||sanitized.length!==saved.length||!Array.isArray(S.comments[p.id]);
+  if(needsRefresh){
+   const preserved=sanitized.filter(c=>!c.generated);
    const targetCount=Math.floor(Math.random()*11);
    const remaining=Math.max(0,targetCount-preserved.length);
    const randomPeople=generatedCommenters.slice();
-   const rolePeople=friends.filter(f=>f&&f.name&&f.name!==p.user).map(f=>[f.name,f.face||'🙂']);
-   const vbsPeople=[
-    ['vividbadsquad','🎧'],
-    ['shinonome_akito','🎤'],
-    ['aoyagi_toya525','🌷'],
-    ['shiraishi_annn','🎤'],
-    ['azusawa.kohane','🐹']
-   ];
-   const memberPeople=vbsPeople.filter(person=>person[0]!=='vividbadsquad');
+   const rolePeople=friends.filter(f=>f&&f.name&&f.name!==p.user&&f.name!=='vividbadsquad'&&(!isVbsPost||!vbsMembers.includes(f.name))).map(f=>[f.name,f.face||'🙂']);
    const used=new Set(preserved.map(c=>c.user));
    const candidates=[];
-   const availableFrom=pool=>pool.filter(person=>person&&person[0]&&!used.has(person[0])&&person[0]!==p.user);
+   const availableFrom=pool=>pool.filter(person=>person&&person[0]&&!used.has(person[0])&&person[0]!==p.user&&person[0]!=='vividbadsquad'&&(!isVbsPost||!vbsMembers.includes(person[0])));
    const addComment=person=>{
-    if(!person||!person[0]||used.has(person[0])||person[0]===p.user)return false;
+    if(!person||!person[0]||used.has(person[0])||person[0]===p.user||person[0]==='vividbadsquad'||(isVbsPost&&vbsMembers.includes(person[0])))return false;
     used.add(person[0]);
     candidates.push(makeGeneratedComment(p,person,candidates.length));
     return true;
    };
-   if(p.user==='vividbadsquad'&&remaining>0){
-    const memberPool=availableFrom(memberPeople);
-    if(memberPool.length)addComment(memberPool[Math.floor(Math.random()*memberPool.length)]);
-   }else if(p.user!=='vividbadsquad'&&remaining>0&&Math.random()<0.55){
-    addComment(['vividbadsquad','🎧']);
-   }
    while(candidates.length<remaining){
     const chooseRole=rolePeople.length>0&&Math.random()<0.38;
     const source=chooseRole?rolePeople:randomPeople;
@@ -2057,7 +2052,7 @@ function renderInstagramApp(){
   }
   return (Array.isArray(S.comments[p.id])?S.comments[p.id]:[]).slice().sort((a,b)=>Number(b.likes||0)-Number(a.likes||0));
  };
- const commentsPreviewFor=p=>Array.isArray(S.comments&&S.comments[p.id])?S.comments[p.id].slice().sort((a,b)=>Number(b.likes||0)-Number(a.likes||0)):[];
+const commentsPreviewFor=p=>Array.isArray(S.comments&&S.comments[p.id])?S.comments[p.id].slice().sort((a,b)=>Number(b.likes||0)-Number(a.likes||0)):[];
  const commentFace=name=>name===S.username?'🙂':(friends.find(f=>f.name===name)?.face||generatedCommenters.find(c=>c[0]===name)?.[1]||'🙂');
  const commentsSheet=()=>{const p=allPosts().find(x=>x.id===S.editingId)||seed[0],items=commentsFor(p);return '<section class="ig-comments-sheet"><header class="ig-comments-header"><b>留言</b><button data-action="close-modal" aria-label="關閉留言">×</button></header><div class="ig-comments-scroll"><div class="ig-comments-post">'+avatar(p.face)+'<div><b>'+esc(p.user)+'</b><p>'+esc(p.caption||'')+'</p></div></div><div class="ig-comments-divider"></div><div class="ig-comments-sort">熱門留言　⌄</div>'+(items.length?items.map(c=>'<article class="ig-comment-row">'+avatar(commentFace(c.user))+'<div class="ig-comment-body"><div><b>'+esc(c.user)+'</b> <span>'+esc(c.text)+'</span></div><div class="ig-comment-meta"><span>'+esc(c.time||'剛剛')+'</span><button type="button" data-action="comment-reply" data-user="'+esc(c.user)+'">回覆</button></div></div><button class="ig-comment-like" type="button" aria-label="喜歡留言">♡<small>'+Number(c.likes||0)+'</small></button></article>').join(''):'<div class="ig-comments-empty">還沒有留言。成為第一個留言的人吧。</div>')+'</div><form class="ig-comment-compose" id="ig-comment-form">'+avatar('🙂')+'<input name="comment" autocomplete="off" placeholder="新增留言⋯" aria-label="新增留言"><button type="submit">發佈</button></form></section>'};
  const postCard=p=>'<article class="ig-post" data-post="'+esc(p.id)+'"><div class="ig-post-head"><button type="button" class="ig-avatar-link" data-action="story-user" data-user="'+esc(p.user)+'" aria-label="觀看 '+esc(p.user)+' 的限時動態">'+avatar(p.face)+'</button><div class="ig-post-user"><b data-action="user" data-user="'+esc(p.user)+'">'+esc(p.user)+'</b><small>'+esc(p.place||'分享日常')+'</small></div><button class="ig-icon-btn" data-action="post-menu" data-id="'+esc(p.id)+'" aria-label="更多">•••</button></div><div class="ig-art" style="background:'+esc(p.color||'linear-gradient(135deg,#e9c7d8,#e9d8bd)')+'" data-action="post-open" data-id="'+esc(p.id)+'">'+(p.image?'<img src="'+esc(p.image)+'" alt="貼文圖片" loading="lazy" decoding="async">':'<span class="ig-art-spark">✦</span><strong>'+esc(p.art||p.emoji||'A MOMENT')+'</strong><small>'+esc(p.caption||'')+'</small>')+'<span class="ig-art-index">1/1</span></div><div class="ig-post-actions"><button data-action="like" data-id="'+esc(p.id)+'" class="'+(S.liked[p.id]?'active':'')+'">'+(S.liked[p.id]?'♥':'♡')+'</button><button class="ig-comment-icon" data-action="comments" data-id="'+esc(p.id)+'" aria-label="留言" title="留言"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M20.2 11.4a7.7 7.7 0 0 1-8 7.7 8.6 8.6 0 0 1-3.5-.7L4 20l1.3-3.7a7.4 7.4 0 0 1-1.2-4.1 7.9 7.9 0 0 1 8.1-7.7 7.8 7.8 0 0 1 8 6.9Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M8.5 11.8h.01m3.5 0h.01m3.5 0h.01" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></button><button data-action="share" data-id="'+esc(p.id)+'">➤</button><button class="ig-save-btn '+(S.savedPosts[p.id]?'active':'')+'" data-action="save" data-id="'+esc(p.id)+'">'+(S.savedPosts[p.id]?'▣':'♧')+'</button></div><div class="ig-likes">'+(p.likes+(S.liked[p.id]?1:0)).toLocaleString()+' 個讚</div><div class="ig-caption"><b>'+esc(p.user)+'</b> '+esc(p.caption||'')+'</div><button class="ig-view-comments" data-action="comments" data-id="'+esc(p.id)+'">查看全部 '+(commentsPreviewFor(p).length||'0')+' 則留言</button>'+(commentsPreviewFor(p).slice(0,2).length?'<div class="ig-comment-preview-list">'+commentsPreviewFor(p).slice(0,2).map(c=>'<div class="ig-comment-preview"><b>'+esc(c.user)+'</b><span>'+esc(c.text)+'</span><small>♥ '+Number(c.likes||0)+'</small></div>').join('')+'</div>':'')+'<div class="ig-time">2 小時前</div></article>';
