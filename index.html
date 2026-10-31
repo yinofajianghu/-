@@ -4748,12 +4748,12 @@ window.__phoneMainReady = false;
   try {
     ensureHomeLauncher();
     // Prefer the app's original icon renderer whenever its main script loaded.
-    if (Array.isArray(window.apps) && typeof window.appButton === 'function') {
+    if (typeof apps !== 'undefined' && Array.isArray(apps) && typeof appButton === 'function') {
       const grid=byId('appGrid'),dock=byId('dock');
       if(grid){
-        grid.innerHTML='<div class="home-app-page" data-home-page="0">'+window.apps.slice(0,12).map(window.appButton).join('')+'</div><div class="home-app-page" data-home-page="1">'+window.apps.slice(12).map(window.appButton).join('')+'</div>';
+        grid.innerHTML='<div class="home-app-page" data-home-page="0">'+apps.slice(0,12).map(appButton).join('')+'</div><div class="home-app-page" data-home-page="1">'+apps.slice(12).map(appButton).join('')+'</div>';
       }
-      if(dock)dock.innerHTML=window.apps.slice(0,4).map(window.appButton).join('');
+      if(dock)dock.innerHTML=apps.slice(0,4).map(appButton).join('');
     }
     if (typeof showApp === 'function') window.showApp = showApp;
     if (typeof goHome === 'function') window.goHome = goHome;
