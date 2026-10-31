@@ -1893,7 +1893,7 @@ function renderInstagramApp(){
  const formatCount=n=>Number(n)>=10000?(Number(n)/10000).toFixed(Number(n)%10000===0?0:1)+'萬':String(n);
  const displayNameFor=user=>{if(!user)return '';if(user===S.username)return S.displayName||user;const friend=friends.find(f=>f.name===user);if(friend?.displayName)return friend.displayName;const request=S.strangerMessages.find(r=>r.name===user);return request?.displayName||request?.fullName||request?.full_name||user};
 
- const seed=[{id:'seed1',user:'aoyagi_toya525',face:'🌷',place:'台北市',emoji:'🌷',caption:'把平凡的日子，過成喜歡的樣子。今天也留一點時間給自己 ☀️ #日常 #生活',likes:1284,color:'linear-gradient(145deg,#f7c7d8,#f7dfbd 48%,#b5c9ab)',art:'GOOD DAYS',kind:'post'},{id:'seed2',user:'shiraishi_annn',face:'🌊',place:'海邊',emoji:'🌅',caption:'海風、夕陽，還有自由。🌊 #旅行 #海邊',likes:856,color:'linear-gradient(145deg,#77c9dc,#f5b88e 55%,#f7dfbd)',art:'SLOW DOWN',kind:'post'},{id:'seed3',user:'azusawa.kohane',face:'🎨',place:'工作室',emoji:'🎨',caption:'最近的創作紀錄 ✨ #design #創作',likes:542,color:'linear-gradient(145deg,#c5b6ee,#f3b9bd 50%,#f6d8ad)',art:'MAKE IT',kind:'post'},{id:'seed4',user:'vividbadsquad',face:'☕',place:'咖啡店',emoji:'☕',caption:'慢慢醒來，慢慢開始。今天的第一杯咖啡 ☕',likes:231,color:'linear-gradient(145deg,#b88d6e,#eed1a7 50%,#f8e9d8)',art:'SLOW MORNING',kind:'post'}];
+ const seed=[{id:'seed1',user:'aoyagi_toya525',face:'🌷',place:'台北市',emoji:'🌷',caption:'午後的光線很舒服。把步調放慢一些，也能看見平常忽略的風景。☁️ #日常 #散步',likes:1284,color:'linear-gradient(145deg,#f7c7d8,#f7dfbd 48%,#b5c9ab)',art:'QUIET DAYS',kind:'post'},{id:'seed2',user:'shiraishi_annn',face:'🌊',place:'海邊',emoji:'🌅',caption:'海風也太舒服了吧！下次一定要拉 VBS 的大家一起來！🌊🎤 #海邊 #放風',likes:856,color:'linear-gradient(145deg,#77c9dc,#f5b88e 55%,#f7dfbd)',art:'FEEL THE WIND',kind:'post'},{id:'seed3',user:'azusawa.kohane',face:'🎨',place:'工作室',emoji:'🎨',caption:'今天試著畫了新的配色……一開始有點不安，不過完成後比想像中喜歡！✨ #創作 #練習',likes:542,color:'linear-gradient(145deg,#c5b6ee,#f3b9bd 50%,#f6d8ad)',art:'COLOR NOTES',kind:'post'},{id:'seed4',user:'vividbadsquad',face:'☕',place:'咖啡店',emoji:'☕',caption:'排練前的短暫休息。補充能量，下一個舞台繼續前進。🎧',likes:231,color:'linear-gradient(145deg,#b88d6e,#eed1a7 50%,#f8e9d8)',art:'BEFORE THE STAGE',kind:'post'}];
  const profilePosts=[['akito_post_01','🎸','AFTER SCHOOL','剛練完。今天有一段總算抓到感覺了，還差一點。',1842,'linear-gradient(145deg,#f2a35b,#bd4c36 55%,#292d3b)'],['akito_post_02','☕','COFFEE BREAK','練習前去買了杯咖啡。這家還行，下次應該會再來。',1627,'linear-gradient(145deg,#d9a477,#704d3e 55%,#29232b)'],['akito_post_03','🧡','GOLDEN HOUR','回家的路上看到這個光，順手拍了。',1539,'linear-gradient(145deg,#f8c078,#e66c45 50%,#70445a)'],['akito_post_04','🎤','ON STAGE','今天的演出還不錯。多虧冬彌有把那段接住，不然差點出問題。',2108,'linear-gradient(145deg,#ed744e,#9c294d 52%,#27243e)'],['akito_post_05','🥪','GOOD MORNING','難得睡飽了。出門前隨便弄點吃的。',1394,'linear-gradient(145deg,#f4d29b,#d58b5a 52%,#a64e3e)'],['akito_post_06','🎧','NEW SOUND','新曲還有幾個地方不太滿意，明天再跟 VBS 的大家試一次。',1763,'linear-gradient(145deg,#7e879e,#39465d 55%,#242638)'],['akito_post_07','🎧','STREET SOUND','剛剛在街上聽到一段節奏不錯的音樂，記下來了。說不定能拿來當練習的參考。',1986,'linear-gradient(145deg,#e6bd91,#9dba9b 52%,#627b83)'],['akito_post_08','🌇','CITY SUNSET','忙了一整天，回去大概只想洗澡睡覺。',2215,'linear-gradient(145deg,#f4a46e,#bb5c70 52%,#43476b)'],['akito_post_09','🧡','KEEP GOING','還沒到能滿意的程度。下次做得更好就行了。',2451,'linear-gradient(145deg,#f5a05b,#c54d3d 50%,#3c3448)']].map(p=>({id:p[0],user:'shinonome_akito',face:'🎸',place:'東京',emoji:p[1],art:p[2],caption:p[3],likes:p[4],color:p[5],kind:'post'}));
  const communityPostSpecs=[['shiraishi_annn','🎤','白石杏','街頭音樂與 Vivid BAD SQUAD 的日常。',27,'linear-gradient(145deg,#8dd8e8,#b8b6f4 55%,#f7c8a5)'],['azusawa.kohane','🐹','小豆沢こはね','記錄每一次練習與小小的進步。',12,'linear-gradient(145deg,#f7c8a5,#c2a8f5 55%,#8dd8e8)'],['vividbadsquad','🎧','Vivid BAD SQUAD','我們的音樂，還會繼續傳得更遠。',30,'linear-gradient(145deg,#c8a17c,#f4d5b4 55%,#bd4c36)'],['Kam1._ru1i1','🎭','神代 類','奇妙點子與舞台演出的紀錄。',10,'linear-gradient(145deg,#f3a7a8,#8b9ed9 55%,#d2d5b5)'],['tenmatsukasa_._','⭐','天馬司','世界第一明星的日常與演出！',30,'linear-gradient(145deg,#d2d5b5,#f0b4a2 55%,#f4c15d)']];
  const personaCaptionDetails={
@@ -1911,8 +1911,8 @@ function renderInstagramApp(){
   "今天有點懶得出門，最後還是被朋友約出去了。","整理相簿才發現最近拍了好多粉色的東西。","這個小店下次想再來，還有好多東西沒看完。","本來沒抱期待，結果意外買到很喜歡的東西。","今天的穿搭是最近的新歡，記一下。","跟大家分享一下最近手機裡捨不得刪的照片。","甜點太好吃了，差點忘記先拍照。","走了一整天有點累，但今天很值得。","最近天氣很好，連去便利商店都想繞遠路。","看到這個就想到之前和朋友一起逛街的那天。","新買的小物終於派上用場了。","今天沒有什麼大事，就是過得滿開心的。","挑照片挑了半天，每張都想放上來。","回家路上買了喜歡的飲料，完美收尾。","這個角落好適合拍照，下次還想帶朋友來。","有時候只是出門走走，就會遇到喜歡的東西。"
  ];
  const enaCaptions=[
-  "畫到一半覺得顏色不太對，改了幾次總算順眼了。","今天的光線很適合畫畫，可惜一下就天黑了。","買了新的顏料，回家馬上拆開試色。","這張還有很多地方不滿意，先放著過幾天再看。","畫累了去樓下買咖啡，回來反而有新想法。","看到別人的作品會忍不住想：我也要畫得更好。","今天終於把卡很久的地方處理掉了。","拍了幾張參考照片，回家整理時又有點子。","本來只想隨便畫一下，結果不小心坐了一整個下午。","這個配色比預想中好看，先記下來。","最近一直在練習不同的筆觸，還在找最適合的方式。","不想承認但這張重畫第三次了。至少現在比較滿意。","咖啡有點苦，畫倒是比昨天順一點。","看到喜歡的展覽，已經開始期待了。","今天沒有畫很多，不過總算有動筆。","把桌面整理乾淨之後，突然又想畫了。",
-  "把幾張草稿放在一起看，差異比想像中大。","今天試著不照平常的方式上色，還在適應。","看到一張很喜歡的照片，想拿來當下一張的參考。","有些地方越改越糟，先去睡一覺好了。","剛好遇到喜歡的展，回來腦袋一直停不下來。","桌上堆了不少東西，是時候整理了。","今天畫得不多，但至少沒有整天滑手機。","試色紙越來越多，已經不知道該收去哪。","這張拍得比我想像中好，先留著。","畫到後來才發現一開始的構圖就有問題。","今天的咖啡比平常好喝，值得記一下。","有時候看別人的作品會很焦慮，不過還是想繼續畫。","本來想休息，結果又坐回畫桌前。","這個顏色在螢幕上和實際看差好多。","最近想換個方向試試看，不急著定下來。","收工前拍一張，免得明天忘記今天改到哪裡。"
+  "今天的妝髮和光線意外很合。隨手拍的一張，反而最接近我想要的氛圍。✦","畫布旁邊的午後光，像替整個房間加了一層柔焦。","新買的顏料試色完成。喜歡這種低飽和、帶一點灰調的顏色。","不是每張作品都需要立刻完成，留白也是構圖的一部分。","咖啡、耳機和剛好的光線。今天的工作室有種安靜的高級感。","最近很喜歡奶油白和霧紫的搭配，簡單卻很耐看。","把畫作和今天的穿搭一起記錄，色彩剛好互相呼應。","美感不只在畫布上，連日常的小細節也值得好好挑選。","本來只是出門買咖啡，結果遇到很漂亮的展覽空間。","最近在練習更克制的配色，讓每個細節都有存在的理由。","今天的光影很漂亮，像一張不用修太多的底片。","挑了很久的飾品終於到手，細節比照片裡更精緻。","有時候一套簡單的黑白穿搭，就足夠讓整體輪廓變得俐落。","把喜歡的作品、香氣和音樂放在同一個午後。","畫到一半抬頭，才發現窗外的夕光也像一幅畫。","不追著流行跑，找到真正適合自己的色彩比較重要。",
+  "今天試著用更乾淨的線條整理畫面，少一點裝飾，多一點重點。","喜歡這種帶點復古感的光，讓普通的一天也有了電影畫面。","一件剪裁漂亮的外套，能讓簡單的搭配看起來很完整。","作品還有想調整的地方，但這次的色彩方向總算抓到了。","展場裡最喜歡的不是最華麗的那件，而是細節處理得剛剛好的作品。","桌面整理好之後，連靈感都變得清楚了一點。","把今天的配色存下來，或許會成為下一張作品的起點。","偶爾把鏡頭轉向自己，也想記錄畫畫以外的生活。","這家咖啡店的空間比例和自然光都很舒服，會想再來。","比起堆疊很多元素，我更喜歡讓質感自己說話。","今天的耳環和眼妝意外很搭，記錄一下這個小小的巧合。","靈感有時來自一張街拍、一面牆，或一個不經意的眼神。","重畫了幾次才找到平衡。創作和穿搭一樣，都需要取捨。","最近喜歡把生活過得精緻一點，不是為了誰，只是自己看了開心。","收工前拍下這個角落，明天再從這裡繼續。"
  ];
  const mizukiiiiiPosts=Array.from({length:102},(_,i)=>({id:'mizukiiiii_post_'+String(i+1).padStart(3,'0'),user:'mizukiiiii___',face:'🎀',place:['東京','甜點店','街角','家裡','咖啡店','商店街'][i%6],emoji:['🎀','🍰','🧸','📷','🛍️','🌷'][i%6],art:['A LITTLE CUTE','SWEET DAY','MY FAVORITE','TODAY’S SNAP','LITTLE FINDS','SOFT MOMENT'][i%6],caption:mizukiiiiiCaptions[i%mizukiiiiiCaptions.length],likes:2831+i*19,color:['linear-gradient(145deg,#f3b5d0,#c6b7ed 55%,#f8d8e6)','linear-gradient(145deg,#f6d4df,#e9c4f1 55%,#f5d9b6)','linear-gradient(145deg,#e8b8d2,#c3b9e9 55%,#f4d6c7)'][i%3],kind:'post'}));
  const enaPosts=Array.from({length:138},(_,i)=>({id:'en4luv_post_'+String(i+1).padStart(3,'0'),user:'en4luv',face:'🎨',place:['工作室','咖啡店','房間','美術館','街角'][i%5],emoji:['🎨','☕','🖼️','📷','🧃'][i%5],art:['COLOR STUDY','COFFEE BREAK','TODAY’S CANVAS','REFERENCE','AFTERNOON'][i%5],caption:enaCaptions[i%enaCaptions.length],likes:3610+i*23,color:['linear-gradient(145deg,#c4a6dc,#e7b7c8 55%,#f1d9c4)','linear-gradient(145deg,#d8b9df,#e9c5b7 55%,#c5c3e3)','linear-gradient(145deg,#bca9d7,#e9b9c8 55%,#e9d7b6)'][i%3],kind:'post'}));
@@ -1935,22 +1935,44 @@ function renderInstagramApp(){
  const generatedCommenters=[
   [S.username,'🙂'],...friends.map(f=>[f.name,f.face||'🙂']),['mio.days_07','🌼'],['sora__blue23','🫧'],['haru_note.18','🍮'],['yuki__camera','📷'],['rinrin_0808','🐈'],['cafe_milk_22','☕'],['natsu.archive','🌻'],['ao__sketch','🎨'],['kotoha_memo','🪴'],['luna.film_5','🌙'],['mame__piyo','🐥'],['slowdays.jp','🍃']
  ];
- const generatedCommentTexts=['這張真的好有氛圍！','好喜歡這種日常感 ☁️','看了心情也變好了！','這個配色好溫柔✨','想知道這是哪裡～','默默收藏這份美好♡','拍得好漂亮！','今天也辛苦了！','有被療癒到🥹','期待下一篇！','這個角度很棒耶','簡單的日常最珍貴。'];
+ const personaCommentDetails={
+  shinonome_akito:["這個角度不錯。","嗯，這次的色調還行。","拍得挺好，繼續保持。","下次也試試這種構圖。"],
+  aoyagi_toya525:["光線很柔和，讓人看了很放鬆。","這個配色很舒服，我很喜歡。","謝謝分享，感覺像一起度過了午後。","細節也很漂亮。"],
+  shiraishi_annn:["欸這張超好看！！下次一定要帶我去啦！🎤","這個也太有感了吧！喜歡喜歡！💗","完全懂你的品味！拍得超棒✨","下一篇快點更新啦！"],
+  azusawa.kohane:["好、好漂亮……！看了覺得很療癒。🥹","這個顏色好溫柔，我很喜歡！✨","謝謝你分享這麼棒的照片！","我也想試著拍出這樣的感覺……！"],
+  mizukiiiii___:["欸欸這個也太可愛了吧♡♡","這個氛圍好夢幻！想一起去～🎀","完全是我的菜！收藏了！🫶","今天也漂亮得太犯規了吧！"],
+  en4luv:["這組色彩關係處理得很漂亮，尤其明暗層次。","構圖很乾淨，視線落點也很明確。","這種低飽和的質感我喜歡，細節很耐看。","今天的造型和畫面色調很搭。✦"],
+  "Kam1._ru1i1":["呵呵，這個畫面若放進舞台設計，想必也會相當有趣。","色彩與構圖的安排，像是精心設計的登場呢。","真是令人愉快的靈感，期待下一幕。"],
+  "tenmatsukasa_._":["哈哈哈哈！這份光彩足以成為舞台中央的焦點！☆","很好！這就是世界第一明星應有的氣勢！","本團長也要給這份精彩喝采！"],
+  vividbadsquad:["這個瞬間值得收藏。下一次現場也一起創造回憶。🎧","很棒的分享！保持這個節奏，繼續向前。","大家都做得很好，下一個舞台見。"]
+ };
+ const commentPoolFor=(post,commenter)=>{
+  const owner=post.user;
+  const subject=owner==='en4luv'?'art':owner==='mizukiiiii___'?'cute':owner==='shiraishi_annn'||owner==='azusawa.kohane'?'girls':owner==='vividbadsquad'?'music':'daily';
+  const own=personaCommentDetails[commenter]||[];
+  if(own.length)return own;
+  const contextual={
+   art:["這個配色好漂亮，細節也很有想法！🎨","看得出來花了很多心思，期待完成品。","這張的光影很有味道，想放大看細節。"],
+   cute:["也太可愛了吧！這個小細節好喜歡♡","照片好有氛圍，想知道是哪家店！🎀","這套搭配很適合你，漂亮！✨"],
+   girls:["這張真的好漂亮！💗","今天也太有活力了吧！下次一起！✨","這個瞬間好值得收藏～🫶"],
+   music:["這個瞬間很棒，下一次演出也期待！🎧","大家一起練習的成果越來越好了。","這個節奏很有 VBS 的感覺！"],
+   daily:["這張照片的光線很舒服。","喜歡這種自然的日常感。","這個角度很棒，謝謝分享。"]
+  };
+  return contextual[subject];
+ };
+ const makeGeneratedComment=(post,person,index)=>{
+  const pool=commentPoolFor(post,person[0]);
+  return {user:person[0],text:pool[index%pool.length],likes:Math.floor(Math.random()*36),time:['剛剛','5 分鐘','18 分鐘','1 小時','2 小時'][Math.floor(Math.random()*5)],face:person[1],generated:true,personaVersion:2};
+ };
  const commentsFor=p=>{
-  if(!Array.isArray(S.comments[p.id])){
-   const count=Math.floor(Math.random()*11);
-   S.comments[p.id]=Array.from({length:count},(_,i)=>{const person=i===0?[S.username,'🙂']:generatedCommenters[Math.floor(Math.random()*generatedCommenters.length)];return {user:person[0],text:generatedCommentTexts[Math.floor(Math.random()*generatedCommentTexts.length)],likes:Math.floor(Math.random()*36),time:['剛剛','5 分鐘','18 分鐘','1 小時','2 小時'][Math.floor(Math.random()*5)],face:person[1],generated:true};});
-   save();
-  }else if(S.comments[p.id].length&&!S.comments[p.id].some(c=>c.user===S.username)){
-   const mine={user:S.username,text:generatedCommentTexts[Math.floor(Math.random()*generatedCommentTexts.length)],likes:Math.floor(Math.random()*36),time:['剛剛','5 分鐘','18 分鐘','1 小時'][Math.floor(Math.random()*4)],face:'🙂',generated:true};
-   if(S.comments[p.id].length>=10){const replaceAt=S.comments[p.id].findIndex(c=>c.generated);if(replaceAt>=0)S.comments[p.id][replaceAt]=mine;}else S.comments[p.id].push(mine);
-   save();
-  }
-  if(S.comments[p.id].length&&!S.comments[p.id].some(c=>friends.some(f=>f.name===c.user))){
-   const person=friends[Math.floor(Math.random()*friends.length)];
-   const extra={user:person.name,text:generatedCommentTexts[Math.floor(Math.random()*generatedCommentTexts.length)],likes:Math.floor(Math.random()*36),time:['剛剛','5 分鐘','18 分鐘','1 小時'][Math.floor(Math.random()*4)],face:person.face||'🙂',generated:true};
-   if(S.comments[p.id].length>=10){const replaceAt=S.comments[p.id].findIndex(c=>c.generated);if(replaceAt>=0)S.comments[p.id][replaceAt]=extra;}else S.comments[p.id].push(extra);
-   save();
+  const saved=Array.isArray(S.comments[p.id])?S.comments[p.id]:[];
+  const needsRefresh=!Array.isArray(S.comments[p.id])||saved.some(c=>c.generated&&c.personaVersion!==2);
+  if(needsRefresh){
+   const count=saved.length?Math.max(3,saved.length):Math.floor(Math.random()*6)+4;
+   const preserved=saved.filter(c=>!c.generated);
+   const people=generatedCommenters.filter(person=>person[0]!==p.user);
+   const generated=Array.from({length:Math.max(0,count-preserved.length)},(_,i)=>makeGeneratedComment(p,people[(i+1)%people.length]||people[0],i));
+   S.comments[p.id]=preserved.concat(generated).slice(0,12);save();
   }
   return S.comments[p.id].slice().sort((a,b)=>Number(b.likes||0)-Number(a.likes||0));
  };
