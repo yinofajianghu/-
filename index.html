@@ -633,6 +633,28 @@ html,body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro 
 .x2-comment-compose button{background:#1D9BF0;color:#fff;border-radius:999px;padding:9px 14px;font-size:12px;font-weight:750}
 .x2-comment-replies{margin:9px 0 0 12px;padding-left:12px;border-left:2px solid #2F3336;color:#AAB0B6;font-size:12px}
 .x2-comment-replies p{margin:5px 0}
+.x2-replying-context{font-size:11px;color:#71767B;margin:2px 0 7px}
+.x2-replying-context span{color:#1D9BF0}
+.x2-comments-scroll{padding:0;max-height:calc(76vh - 110px)}
+.x2-thread-root .x2-post{padding:17px 15px 12px;border-bottom:1px solid #2F3336}
+.x2-thread-replies-label{padding:12px 16px 3px;color:#71767B;font-size:12px;border-bottom:1px solid #202327}
+.x2-thread-reply{display:flex;gap:10px;padding:13px 15px 12px;border-bottom:1px solid #202327;position:relative}
+.x2-thread-reply:before{content:"";position:absolute;left:34px;top:53px;bottom:-1px;width:2px;background:#2F3336}
+.x2-thread-reply:last-child:before{display:none}
+.x2-thread-reply>.x2-avatar{width:40px;height:40px;flex:0 0 40px}
+.x2-thread-content{min-width:0;flex:1}
+.x2-thread-content .x2-post-text{margin:7px 0 9px}
+.x2-thread-content .x2-post-actions{max-width:310px}
+.x2-nested-replies{margin:8px 0 0 8px;padding-left:12px;border-left:2px solid #2F3336}
+.x2-nested-replies .x2-thread-reply{padding:8px 0;border:0}
+.x2-nested-replies .x2-thread-reply:before{display:none}
+.x2-comment-compose{display:grid;grid-template-columns:38px 1fr auto;gap:8px;align-items:center}
+.x2-comment-compose .x2-avatar{width:36px;height:36px}
+.x2-comment-compose .x2-replying-context{grid-column:2/4;margin:0}
+.x2-comment-compose input{grid-column:2;grid-row:2}
+.x2-comment-compose button{grid-column:3;grid-row:2}
+.x2-feed-tabs button{flex:1}
+
 .x2-post-actions{display:flex;justify-content:space-between;gap:3px;color:#71767B}
 .x2-post-actions button{display:flex;align-items:center;gap:4px;background:transparent;color:inherit;font-size:12px;padding:4px 1px;min-width:22px}
 .x2-post-actions button.active{color:#00BA7C}.x2-post-actions button.liked{color:#F91880}
@@ -2607,9 +2629,78 @@ function renderX(){
   [{user:"小豆澤心羽",handle:"@azusawa_kohane",text:"這段文字好溫柔……看完心情也平靜下來了。",likes:2,replies:[]},{user:"青柳冬彌",handle:"@aoyagi_toya",text:"能把喜歡的瞬間記下來，本身就是很棒的事。",likes:1,replies:[]}],
   [{user:"白石杏",handle:"@shiraishi_ann",text:"慢慢來也完全沒問題啦！我們一起加油～！！",likes:4,replies:[]},{user:"小豆澤心羽",handle:"@azusawa_kohane",text:"嗯……我也想記住這種一步一步前進的感覺。",likes:2,replies:[]}]
  ];
- let posts=(CONFIG.tweets||["今天也要記得留一點時間給自己。","記錄生活裡微小但值得珍惜的瞬間。","慢慢來，也是一種前進。"]).map((text,i)=>({id:i+1,text,when:["2 小時","昨天","10月20日"][i%3],likes:[12,8,24][i%3],replies:[3,2,5][i%3],reposts:[1,2,4][i%3],comments:starterComments[i%starterComments.length].map(c=>({...c,replies:[]}))}));
- try{const stored=JSON.parse(localStorage.getItem(X_SOCIAL_STORAGE_KEY)||"null");if(stored&&Array.isArray(stored.posts))posts=stored.posts.filter(p=>p&&typeof p.text==="string"&&Array.isArray(p.comments)).slice(0,200)}catch(error){console.warn("無法讀取 X 貼文資料",error)}
- function persistSocial(){try{localStorage.setItem(X_SOCIAL_STORAGE_KEY,JSON.stringify({posts:posts.slice(0,200)}))}catch(error){console.warn("X 貼文資料儲存失敗",error);notify("儲存空間不足，這次變更可能無法保留")}}
+ const xAccounts=[
+  {id:"shinonome_akito",name:"東雲彰人",handle:"Shinonome_Akito",face:"🎸",bio:"Vivid BAD SQUAD｜音樂、練習和日常。"},
+  {id:"aoyagi_toya525",name:"青柳冬彌",handle:"aoyagi_toya525",face:"🎹",bio:"把日常過成喜歡的樣子。"},
+  {id:"shiraishi_annn",name:"白石杏",handle:"shiraishi_annn",face:"🎤",bio:"街頭音樂與 Vivid BAD SQUAD！"},
+  {id:"azusawa_kohane",name:"小豆澤心羽",handle:"azusawa.kohane",face:"🐹",bio:"慢慢累積自己的音樂。"},
+  {id:"vividbadsquad",name:"Vivid BAD SQUAD",handle:"Vivid_BAD_SQUAD",face:"🎧",bio:"Keep the sound alive."},
+  {id:"kam1_ru1i1",name:"神代類",handle:"Kam1._ru1i1",face:"🎭",bio:"以奇思妙想打造最棒的表演。"},
+  {id:"tenmatsukasa",name:"天馬司",handle:"tenmatsukasa_._",face:"⭐",bio:"目標是成為世界第一的明星！"},
+  {id:"mizukiiiii",name:"曉山瑞希",handle:"mizukiiiii___",face:"🎀",bio:"喜歡可愛的東西，也喜歡自由自在的日常♡"},
+  {id:"en4luv",name:"東雲繪名",handle:"en4luv",face:"🎨",bio:"畫畫、咖啡，還有一些生活紀錄。"},
+  {id:"hoshino_ichika",name:"星乃一歌",handle:"hoshino_ichika",face:"🎸",bio:"音樂和日常的紀錄。"},
+  {id:"mio_days_07",name:"Mio",handle:"mio.days_07",face:"🌼",bio:"收集生活裡的小小幸福。"},
+  {id:"sora_blue23",name:"Sora",handle:"sora__blue23",face:"🫧",bio:"天空、海邊和喜歡的音樂。"},
+  {id:"haru_note18",name:"Haru",handle:"haru_note.18",face:"🍮",bio:"甜點店巡禮與慢生活。"},
+  {id:"yuki_camera",name:"Yuki",handle:"yuki__camera",face:"📷",bio:"用相機記錄光線和街景。"},
+  {id:"rinrin_0808",name:"Rinrin",handle:"rinrin_0808",face:"🐈",bio:"貓咪、日常和可愛小物。"},
+  {id:"cafe_milk22",name:"Milk",handle:"cafe_milk_22",face:"☕",bio:"咖啡因補給中。"},
+  {id:"natsu_archive",name:"Natsu",handle:"natsu.archive",face:"🌻",bio:"把每一天存進相簿。"},
+  {id:"ao_sketch",name:"Ao",handle:"ao__sketch",face:"🎨",bio:"塗鴉、插畫與靈感碎片。"},
+  {id:"kotoha_memo",name:"Kotoha",handle:"kotoha_memo",face:"🪴",bio:"植物和房間佈置。"},
+  {id:"luna_film5",name:"Luna",handle:"luna.film_5",face:"🌙",bio:"底片相機與深夜電影。"},
+  {id:"mame_piyo",name:"Mame",handle:"mame__piyo",face:"🐥",bio:"今天也努力過生活了。"},
+  {id:"slowdays_jp",name:"slowdays",handle:"slowdays.jp",face:"🍃",bio:"慢一點，也沒關係。"},
+  {id:"ichigo_trip",name:"Ichigo",handle:"ichigo_triplog",face:"🍓",bio:"旅行、散步和甜食。"}
+ ];
+ const xAccountMap=Object.fromEntries(xAccounts.map(a=>[a.id,a]));
+ const xPostBanks={
+  shinonome_akito:["剛練完。今天有一段總算抓到感覺了，還差一點。🎸","練習前去買了杯咖啡。這家還行，下次應該會再來。","新曲還有幾個地方不太滿意，明天再跟 VBS 的大家試一次。","回家的路上看到這個光，順手拍了。","還沒到能滿意的程度。下次做得更好就行了。"],
+  aoyagi_toya525:["午後的練習告一段落。把剛才的旋律再記下來。","今天試了新的咖啡豆，味道比想像中清爽。","有些地方還需要再調整。不過今天比上次順利一些。","回家的路上天色很好。走慢一點也沒關係。","最近常聽的曲子，每次聽都有不同的感覺。"],
+  shiraishi_annn:["今天和 VBS 的大家練得超順！！最後那段真的很有感～🎤","心羽剛剛那個地方唱得比上次更穩了！進步超多！！","練習結束後去吃了點東西，大家聊到差點忘記時間～！","今天的街頭演出超有感！下次也要一起來！！","彰人又在那邊不服輸了（笑）不過今天真的很帥啦！"],
+  azusawa_kohane:["今天和杏一起練習時，有一小段終於順起來了……！","VBS 的大家都很努力，我也想再多練習一點。","今天跟大家一起唱歌，感覺比以前更有自信了一點。","練習結束後和大家聊了一下，學到很多。","窗邊的光很漂亮，忍不住拍了下來。"],
+  vividbadsquad:["今天的練習又往前推進了一步。下一個舞台也請期待。","四個人的聲音合在一起，才是我們想要的答案。","不會停在這裡，還要把音樂帶到更遠的地方。","今天也全員集合，繼續磨合新的演出！","每一次排練都在累積，下一次現場見。"],
+  kam1_ru1i1:["呵呵，腦中又浮現了一個有趣的舞台構想。","若將這個機關與燈光結合，想必會相當精彩。","平凡的日常也能成為奇妙演出的起點呢。","下一場演出，似乎可以加入一點意想不到的驚喜。","嗯……這個點子還需要再推敲，真令人期待。"],
+  tenmatsukasa:["看吧！這就是未來世界第一明星的日常！☆","本團長今日也充滿活力！下一場演出必定更加精彩！","哈哈哈哈！掌聲與歡呼聲，本司已經聽見了！","為了成為世界第一明星，今日的練習也絕不懈怠！","下次也要讓所有觀眾見識本團長的光芒！"],
+  mizukiiiii:["剛剛看到這個顏色就忍不住拍了！是不是很可愛♡","今天出門本來只是買東西，結果又在小店待了好久。","這家甜點外觀也太犯規了吧，拍完才捨得吃。","最近很喜歡這種小小的吊飾，包包又多一個位置了。","和大家出去晃了一圈，沒做什麼但就是很好玩。"],
+  en4luv:["今天的妝髮和光線意外很合。隨手拍的一張，反而最接近想要的氛圍。✦","新買的顏料試色完成。喜歡這種低飽和、帶一點灰調的顏色。","不是每張作品都需要立刻完成，留白也是構圖的一部分。","咖啡、耳機和剛好的光線。今天的工作室很安靜。","最近在練習更克制的配色，讓每個細節都有存在的理由。"],
+  hoshino_ichika:["今天練習時，突然想起以前聽過的一段旋律。","回家路上戴著耳機，覺得今晚的天空很適合這首歌。","和大家一起演奏的時間，總是過得特別快。","把最近常聽的歌單整理了一下。","有些心情用音樂表達，好像會容易一點。"]
+ };
+ const genericBank=[
+  ["今天路過一間小店，意外找到很喜歡的東西。","把今天的天空拍下來，留給以後的自己。","最近開始早起，發現街道有不一樣的表情。"],
+  ["這杯拿鐵的奶泡很漂亮，差點捨不得喝。","週末想去新的咖啡店坐坐，有推薦嗎？","今天的甜點值得再訪！"],
+  ["整理相簿才發現最近拍了好多照片。","午後的光線剛剛好，隨手拍都很喜歡。","把喜歡的瞬間存起來，日子就有了形狀。"],
+  ["新的一週也慢慢來吧。","今天完成了一件拖很久的小事，心情很好。","有時候散步就是最好的充電方式。"]
+ ];
+ const replyBank={
+  aoyagi_toya525:["這個細節處理得很仔細。我很喜歡。","光線和周圍的氛圍都很柔和。","這樣的步調很好，不必急著往前。"],
+  shiraishi_annn:["欸欸這篇也太棒了吧！！我一滑到就停下來了～！","這個角度超讚耶！下次也揪我啦～！","看完心情都變好了～！"],
+  azusawa_kohane:["好、好漂亮……！我不小心看了好幾次。","這個地方看起來很舒服呢。","謝謝你分享……！"],
+  shinonome_akito:["喔，這次拍得還不錯嘛。","這個細節有注意到，算你厲害。","嘖，害我也想去看看了。"],
+  kam1_ru1i1:["呵呵，這幅景象彷彿正等待一場奇妙的演出。","真是令人愉快的巧思。下一幕會是什麼呢？"],
+  tenmatsukasa:["哈哈哈哈！如此精彩的瞬間，理應得到盛大的喝采！","世界第一明星認證！"],
+  mizukiiiii:["欸～這個也太可愛了吧♡","這個配色好舒服！想知道你在哪裡找到的～"],
+  en4luv:["這個配色有挑過吧？明暗層次處理得不錯。","留白的位置很剛好，整體看起來更俐落。"],
+  hoshino_ichika:["這個瞬間很值得記下來呢。","看著這張照片，腦中好像也有旋律。"]
+ };
+ const rand=arr=>arr[Math.floor(Math.random()*arr.length)];
+ const timeLabels=["3 分鐘","18 分鐘","42 分鐘","1 小時","2 小時","昨天"];
+ const characterPosts=xAccounts.map((account,index)=>Array.from({length:index<10?3:2},(_,j)=>{
+  const bank=xPostBanks[account.id]||genericBank[index%genericBank.length];
+  const text=rand(bank);
+  const id="xchar_"+account.id+"_"+j;
+  const replies=[];
+  const eligible=xAccounts.filter(a=>a.id!==account.id&&!(account.id==="vividbadsquad"&&["shinonome_akito","aoyagi_toya525","shiraishi_annn","azusawa_kohane"].includes(a.id))&&!(a.id==="vividbadsquad"));
+  const replyCount=1+Math.floor(Math.random()*3);
+  for(let k=0;k<replyCount;k++){const who=rand(eligible);const bank2=replyBank[who.id]||genericBank[xAccounts.indexOf(who)%genericBank.length];replies.push({user:who.id,handle:"@"+who.handle,text:rand(bank2),likes:Math.floor(Math.random()*28),replies:[]})}
+  return {id,user:account.id,handle:"@"+account.handle,displayName:account.name,face:account.face,text,when:rand(timeLabels),likes:Math.floor(18+Math.random()*2400),reposts:Math.floor(Math.random()*180),comments:replies,verified:account.id==="vividbadsquad"};
+ })).flat();
+ const ownPosts=(CONFIG.tweets||["今天也要記得留一點時間給自己。","記錄生活裡微小但值得珍惜的瞬間。","慢慢來，也是一種前進。"]).map((text,i)=>({id:"x_own_"+i,user:"__me",handle:"@"+handle,displayName:me,face:me.slice(0,1),text,when:["2 小時","昨天","10月20日"][i%3],likes:[12,8,24][i%3],reposts:[1,2,4][i%3],comments:starterComments[i%starterComments.length].map(c=>({...c,replies:[]})),verified:true}));
+ let posts=characterPosts.concat(ownPosts);
+ try{const stored=JSON.parse(localStorage.getItem(X_SOCIAL_STORAGE_KEY)||"null");if(stored&&Array.isArray(stored.posts)){const custom=stored.posts.filter(p=>p&&typeof p.text==="string"&&Array.isArray(p.comments));posts=posts.concat(custom.filter(p=>!posts.some(base=>String(base.id)===String(p.id)))).slice(-500)}}catch(error){console.warn("無法讀取 X 貼文資料",error)}
+ let feedMode="forYou";
+ function persistSocial(){try{localStorage.setItem(X_SOCIAL_STORAGE_KEY,JSON.stringify({posts:posts.filter(p=>!String(p.id).startsWith("xchar_")&&!String(p.id).startsWith("x_own_")).slice(-200)}))}catch(error){console.warn("X 貼文資料儲存失敗",error);notify("儲存空間不足，這次變更可能無法保留")}}
  let notifications=[
   {icon:"♡",title:"有人喜歡你的貼文",detail:"你的貼文獲得了新的喜歡",time:"現在"},
   {icon:"↻",title:"有人轉發了你的貼文",detail:"你的想法正在被更多人看見",time:"1 小時"},
@@ -2631,16 +2722,16 @@ function renderX(){
  function bottomNav(){
   return '<nav class="x2-bottom-nav" aria-label="主要導覽">'+navItems.map(([id,label])=>'<button class="'+(activeTab===id?'selected':'')+'" data-action="tab" data-tab="'+id+'" aria-label="'+label+'" aria-current="'+(activeTab===id?'page':'false')+'"><span>'+icon(id)+'</span>'+(id==="notifications"&&notifications.length?'<i></i>':'')+'</button>').join('')+'</nav>';
  }
- function postCard(p){
-  const isLiked=!!liked[p.id],isReposted=!!reposted[p.id],isSaved=!!saved[p.id];
-  const thread=Array.isArray(p.comments)?p.comments:[];
-  const preview=thread.slice(0,2).map(c=>'<button class="x2-comment-preview" data-action="comments" data-id="'+p.id+'"><b>'+esc(c.user)+'</b><span>'+esc(c.text)+'</span></button>').join('');
-  return '<article class="x2-post" data-post="'+p.id+'">'+avatar(me.slice(0,1),"",true)+'<div class="x2-post-content"><div class="x2-post-meta"><button class="x2-name" data-action="profile">'+esc(me)+'</button><span class="x2-verified">✓</span><span>@'+esc(handle)+'</span><span>· '+esc(p.when)+'</span><button class="x2-post-more" data-action="postmore" data-id="'+p.id+'" aria-label="貼文選項">•••</button></div><p class="x2-post-text">'+esc(p.text)+'</p><div class="x2-post-actions"><button data-action="comments" data-id="'+p.id+'" aria-label="回覆與留言">▢ <span>'+thread.length+'</span></button><button class="'+(isReposted?'active':'')+'" data-action="repost" data-id="'+p.id+'" aria-label="轉發">↻ <span>'+(p.reposts+(isReposted?1:0))+'</span></button><button class="'+(isLiked?'liked':'')+'" data-action="like" data-id="'+p.id+'" aria-label="喜歡">♡ <span>'+(p.likes+(isLiked?1:0))+'</span></button><button data-action="views" data-id="'+p.id+'" aria-label="瀏覽次數">▥ <span>'+([120,87,214][p.id%3])+'</span></button><button class="'+(isSaved?'active':'')+'" data-action="save" data-id="'+p.id+'" aria-label="收藏">♧</button><button data-action="share" data-id="'+p.id+'" aria-label="分享">↗</button></div>'+(preview?'<div class="x2-comment-preview-list">'+preview+'</div>':'<button class="x2-add-comment" data-action="comments" data-id="'+p.id+'">查看回覆並留言</button>')+'</div></article>';
+ function authorFor(p){if(p.user==="__me"||!p.user)return {id:"__me",name:me,handle:"@"+handle,face:me.slice(0,1)};return xAccountMap[p.user]||{id:p.user,name:p.displayName||p.user,handle:p.handle||"@"+p.user.replace(/^@/,""),face:p.face||"•"}}
+ function postCard(p,replyContext=false){
+  const a=authorFor(p),isLiked=!!liked[p.id],isReposted=!!reposted[p.id],isSaved=!!saved[p.id];
+  const directReplies=Array.isArray(p.comments)?p.comments.length:Number(p.replies)||0;
+  return '<article class="x2-post" data-post="'+esc(p.id)+'">'+avatar(a.face,"")+'<div class="x2-post-content"><div class="x2-post-meta"><button class="x2-name" data-action="profile">'+esc(a.name)+'</button>'+(p.verified?'<span class="x2-verified">✓</span>':'')+'<span>'+esc(a.handle)+'</span><span>· '+esc(p.when||"剛剛")+'</span><button class="x2-post-more" data-action="postmore" data-id="'+esc(p.id)+'" aria-label="貼文選項">•••</button></div>'+(replyContext?'<div class="x2-replying-context">正在回覆 <span>@'+esc(replyContext)+'</span></div>':'')+'<p class="x2-post-text">'+esc(p.text)+'</p><div class="x2-post-actions"><button data-action="reply" data-id="'+esc(p.id)+'" aria-label="回覆">▢ <span>'+directReplies+'</span></button><button class="'+(isReposted?'active':'')+'" data-action="repost" data-id="'+esc(p.id)+'" aria-label="轉發">↻ <span>'+(Number(p.reposts||0)+(isReposted?1:0))+'</span></button><button class="'+(isLiked?'liked':'')+'" data-action="like" data-id="'+esc(p.id)+'" aria-label="喜歡">♡ <span>'+(Number(p.likes||0)+(isLiked?1:0))+'</span></button><button data-action="views" data-id="'+esc(p.id)+'" aria-label="瀏覽次數">▥ <span>'+Math.floor(120+Number(p.likes||0)*2)+'</span></button><button class="'+(isSaved?'active':'')+'" data-action="save" data-id="'+esc(p.id)+'" aria-label="收藏">♧</button><button data-action="share" data-id="'+esc(p.id)+'" aria-label="分享">↗</button></div></div></article>';
  }
  function pageContent(){
   if(activeTab==="home"){
-   const filtered=posts.filter(p=>p.text.toLowerCase().includes(searchTerm.toLowerCase()));
-   return '<div class="x2-feed-tabs"><button class="active" data-action="feed">為你推薦</button><button data-action="feed">正在追蹤</button></div><div class="x2-compose-entry">'+avatar(me.slice(0,1),"",true)+'<button data-action="compose" class="x2-compose-placeholder">有什麼新鮮事？</button><button data-action="compose" class="x2-mini-post">發文</button></div>'+ (filtered.length?filtered.map(postCard).join(''):'<div class="x2-empty">找不到符合的貼文</div>');
+   const filtered=posts.filter(p=>(!searchTerm||p.text.toLowerCase().includes(searchTerm.toLowerCase()))&&(feedMode==="forYou"||p.user==="__me"||xAccountMap[p.user]));
+   return '<div class="x2-feed-tabs"><button class="'+(feedMode==="forYou"?"active":"")+'" data-action="feed" data-feed="forYou">為你推薦</button><button class="'+(feedMode==="following"?"active":"")+'" data-action="feed" data-feed="following">正在追蹤</button></div><div class="x2-compose-entry">'+avatar(me.slice(0,1),"",true)+'<button data-action="compose" class="x2-compose-placeholder">有什麼新鮮事？</button><button data-action="compose" class="x2-mini-post">發文</button></div>'+ (filtered.length?filtered.map(postCard).join(''):'<div class="x2-empty">找不到符合的貼文</div>');
   }
   if(activeTab==="search"){
    return '<section class="x2-search-page"><label class="x2-searchbar"><span>⌕</span><input id="x2SearchInput" value="'+esc(searchTerm)+'" placeholder="搜尋 X" aria-label="搜尋 X"></label><h2>正在發生</h2><div class="x2-trend" data-action="trend"><small>熱門 · 趨勢</small><b>#日常生活</b><span>1,284 篇貼文</span><button aria-label="趨勢選項">•••</button></div><div class="x2-trend" data-action="trend"><small>設計 · 熱門</small><b>介面設計</b><span>2,410 篇貼文</span><button aria-label="趨勢選項">•••</button></div><div class="x2-trend" data-action="trend"><small>今日話題</small><b>週末計畫</b><span>856 篇貼文</span><button aria-label="趨勢選項">•••</button></div><h2>搜尋結果</h2><div id="x2SearchResults">'+posts.filter(p=>!searchTerm||p.text.toLowerCase().includes(searchTerm.toLowerCase())).map(postCard).join('')+'</div></section>';
@@ -2693,7 +2784,9 @@ function renderX(){
   if(modal==="compose") return '<div class="x2-modal-backdrop" data-action="close-modal"><section class="x2-modal" role="dialog" aria-modal="true" aria-label="撰寫貼文" data-modal><header><button data-action="close-modal">取消</button><b>新增貼文</b><button class="x2-modal-post" data-action="publish" '+(!draft.trim()?'disabled':'')+'>發佈</button></header><div class="x2-modal-editor">'+avatar(me.slice(0,1),"",true)+'<textarea id="x2Draft" placeholder="有什麼新鮮事？" maxlength="280">'+esc(draft)+'</textarea></div><footer>◉　任何人都可以回覆　·　<small id="x2DraftCount">'+draft.length+'/280</small></footer></section></div>';
   if(modal==="edit") return '<div class="x2-modal-backdrop" data-action="close-modal"><section class="x2-modal" role="dialog" aria-modal="true" aria-label="編輯個人資料" data-modal><header><button data-action="close-modal">取消</button><b>編輯個人資料</b><button class="x2-modal-post" data-action="save-profile">儲存</button></header><div class="x2-avatar-upload">'+avatar(editName.slice(0,1),"",true)+'<div><b>個人頭像</b><p style="margin:5px 0 8px;color:#71767B;font-size:12px">選擇一張照片作為你的頭像</p><input id="x2AvatarFile" type="file" accept="image/*" aria-label="選擇頭像照片"></div></div><label class="x2-edit-field">名稱<input id="x2EditName" maxlength="40" value="'+esc(editName)+'"></label><label class="x2-edit-field">使用者名稱（@）<input id="x2EditHandle" maxlength="15" autocomplete="off" autocapitalize="none" spellcheck="false" value="'+esc(editHandle)+'"><small>限英文字母、數字與底線，最多 15 個字元</small></label><label class="x2-edit-field">自我介紹<textarea id="x2EditBio" maxlength="160">'+esc(editBio)+'</textarea></label></section></div>';
   if(modal==="reply") return '<div class="x2-modal-backdrop" data-action="close-modal"><section class="x2-modal" role="dialog" aria-modal="true" aria-label="回覆貼文" data-modal><header><button data-action="close-modal">取消</button><b>回覆</b><button class="x2-modal-post" data-action="send-reply" data-id="'+esc(draft)+'">回覆</button></header><textarea class="x2-reply-text" id="x2ReplyText" placeholder="發佈你的回覆"></textarea></section></div>';
-  if(modal==="comments"){const p=posts.find(x=>String(x.id)===String(commentsTarget));if(!p)return '';const rows=(p.comments||[]).map((c,i)=>'<article class="x2-comment-row">'+avatar((c.user||"?").slice(0,1))+'<div class="x2-comment-body"><div><b>'+esc(c.user)+'</b><span class="x2-comment-handle">'+esc(c.handle||"")+'</span></div><div>'+esc(c.text)+'</div><div class="x2-comment-actions"><button class="'+(commentLiked[p.id+":"+i]?"liked":"")+'" data-action="like-comment" data-id="'+p.id+'" data-index="'+i+'">♡ '+esc((c.likes||0)+(commentLiked[p.id+":"+i]?1:0))+'</button><button data-action="reply-comment" data-id="'+p.id+'" data-index="'+i+'">回覆</button></div>'+(Array.isArray(c.replies)&&c.replies.length?'<div class="x2-comment-replies">'+c.replies.map(r=>'<p><b>'+esc(r.user)+'</b> '+esc(r.text)+'</p>').join('')+'</div>':'')+'</div></article>').join('');return '<div class="x2-modal-backdrop" data-action="close-modal"><section class="x2-modal x2-comments" role="dialog" aria-modal="true" aria-label="貼文回覆" data-modal><header><button data-action="close-modal">關閉</button><b>貼文</b><button data-action="close-modal">完成</button></header><div class="x2-comments-scroll"><div class="x2-comments-post"><b>'+esc(me)+' @'+esc(handle)+'</b><p>'+esc(p.text)+'</p><small style="color:#71767B">'+(p.comments||[]).length+' 則回覆</small></div>'+(rows||'<div class="x2-empty">還沒有回覆，成為第一個留言的人吧。</div>')+'</div><form class="x2-comment-compose" id="x2CommentForm"><input id="x2CommentInput" maxlength="280" placeholder="'+(replyTarget?'回覆留言…':'發佈你的回覆…')+'" aria-label="輸入回覆" required><button type="submit">回覆</button></form></section></div>'}
+  if(modal==="comments"){const p=posts.find(x=>String(x.id)===String(commentsTarget));if(!p)return '';const root=authorFor(p);const renderReply=(c,i,parentHandle)=>{const a=authorFor(c);const nested=(c.replies||[]).map((r,j)=>renderReply(r,j,a.handle)).join('');return '<article class="x2-thread-reply">'+avatar(a.face||a.name.slice(0,1))+'<div class="x2-thread-content"><div class="x2-post-meta"><b class="x2-name">'+esc(a.name)+'</b><span>'+esc(a.handle)+'</span><span>· '+esc(c.when||"剛剛")+'</span></div><div class="x2-replying-context">正在回覆 <span>'+esc(parentHandle)+'</span></div><p class="x2-post-text">'+esc(c.text)+'</p><div class="x2-post-actions"><button data-action="reply-comment" data-id="'+esc(p.id)+'" data-index="'+i+'">▢ <span>'+(c.replies||[]).length+'</span></button><button data-action="like-comment" data-id="'+esc(p.id)+'" data-index="'+i+'" class="'+(commentLiked[p.id+":"+i]?"liked":"")+'">♡ '+esc((c.likes||0)+(commentLiked[p.id+":"+i]?1:0))+'</button><button aria-label="分享回覆">↗</button></div>'+(nested?'<div class="x2-nested-replies">'+nested+'</div>':'')+'</div></article>'};
+ const rows=(p.comments||[]).map((c,i)=>renderReply(c,i,root.handle)).join('');
+ return '<div class="x2-modal-backdrop" data-action="close-modal"><section class="x2-modal x2-comments" role="dialog" aria-modal="true" aria-label="貼文對話串" data-modal><header><button data-action="close-modal">←</button><b>貼文</b><button data-action="close-modal">•••</button></header><div class="x2-comments-scroll"><div class="x2-thread-root">'+postCard(p)+'</div><div class="x2-thread-replies-label">回覆</div>'+(rows||'<div class="x2-empty">還沒有回覆。成為第一個回覆的人吧！</div>')+'</div><form class="x2-comment-compose" id="x2CommentForm">'+avatar(me.slice(0,1),"",true)+'<div class="x2-replying-context">正在回覆 <span>@'+esc(root.handle.replace(/^@/,""))+'</span></div><input id="x2CommentInput" maxlength="280" placeholder="'+(replyTarget!==null?'回覆這則貼文…':'發佈你的回覆…')+'" aria-label="輸入回覆" required><button type="submit">回覆</button></form></section></div>'}
   return '';
  }
  function notify(message){
@@ -2708,7 +2801,7 @@ function renderX(){
  });
  $('#appContent').addEventListener('submit',function(e){
   if(e.target.id==="x2ChatForm"){e.preventDefault();const input=$('#x2ChatInput'),text=input.value.trim();if(!text||currentChat<0)return;const c=conversations[currentChat];c.messages.push({text,mine:true,time:"現在"});c.text=text;c.time="現在";render();const sc=$('#x2ChatScroll');if(sc)sc.scrollTop=sc.scrollHeight;const nextInput=$('#x2ChatInput');if(nextInput)nextInput.focus()}
-  if(e.target.id==="x2CommentForm"){e.preventDefault();const input=$('#x2CommentInput'),text=input?.value.trim();if(!text)return;const p=posts.find(x=>String(x.id)===String(commentsTarget));if(!p)return;p.comments=Array.isArray(p.comments)?p.comments:[];if(replyTarget!==null&&p.comments[replyTarget]){const parent=p.comments[replyTarget];parent.replies=Array.isArray(parent.replies)?parent.replies:[];parent.replies.push({user:me,text})}else p.comments.push({user:me,handle:"@"+handle,text,likes:0,replies:[]});p.replies=p.comments.length;persistSocial();replyTarget=null;modal="comments";render();$('#x2CommentInput')?.focus();notify("回覆已發佈")}
+  if(e.target.id==="x2CommentForm"){e.preventDefault();const input=$('#x2CommentInput'),text=input?.value.trim();if(!text)return;const p=posts.find(x=>String(x.id)===String(commentsTarget));if(!p)return;p.comments=Array.isArray(p.comments)?p.comments:[];const mine={user:"__me",handle:"@"+handle,displayName:me,face:me.slice(0,1),text,likes:0,replies:[],when:"剛剛"};if(replyTarget!==null&&p.comments[replyTarget]){const parent=p.comments[replyTarget];parent.replies=Array.isArray(parent.replies)?parent.replies:[];parent.replies.push(mine)}else p.comments.push(mine);p.replies=p.comments.length;persistSocial();replyTarget=null;modal="comments";render();$('#x2CommentInput')?.focus();notify("回覆已發佈")}
  });
  $('#appContent').addEventListener('click',function(e){
   const b=e.target.closest('button,[data-action="trend"]');if(!b)return;
@@ -2716,15 +2809,16 @@ function renderX(){
   if(action==="tab"||["home","search","notifications","messages","profile"].includes(action)){activeTab=action==="tab"?b.dataset.tab:action;currentChat=-1;render();return}
   if(action==="compose"){modal="compose";draft="";render();$('#x2Draft')?.focus();return}
   if(action==="close-modal"){if(e.target.closest('[data-modal]')&&!e.target.closest('button'))return;modal="";render();return}
-  if(action==="publish"){if(!draft.trim())return;posts.unshift({id:Date.now(),text:draft.trim(),when:"現在",likes:0,replies:0,reposts:0,comments:[]});persistSocial();modal="";activeTab="home";searchTerm="";render();notify("貼文已發佈");return}
-  if(action==="comments"){commentsTarget=b.dataset.id;replyTarget=null;modal="comments";render();$('#x2CommentInput')?.focus();return}
+  if(action==="publish"){if(!draft.trim())return;posts.unshift({id:"user_"+Date.now(),user:"__me",handle:"@"+handle,displayName:me,face:me.slice(0,1),text:draft.trim(),when:"剛剛",likes:0,replies:0,reposts:0,comments:[],verified:true});persistSocial();modal="";activeTab="home";searchTerm="";render();notify("貼文已發佈");return}
+  if(action==="feed"){feedMode=b.dataset.feed||"forYou";render();return}
+  if(action==="comments"||action==="reply"){commentsTarget=b.dataset.id;replyTarget=null;modal="comments";render();$('#x2CommentInput')?.focus();return}
   if(action==="reply-comment"){commentsTarget=b.dataset.id;replyTarget=Number(b.dataset.index);modal="comments";render();$('#x2CommentInput')?.focus();return}
   if(action==="like-comment"){const key=b.dataset.id+":"+b.dataset.index;commentLiked[key]=!commentLiked[key];render();return}
   if(action==="like"){const id=b.dataset.id;liked[id]=!liked[id];render();return}
   if(action==="repost"){const id=b.dataset.id;reposted[id]=!reposted[id];render();notify(reposted[id]?"已轉發貼文":"已取消轉發");return}
   if(action==="save"){const id=b.dataset.id;saved[id]=!saved[id];render();notify(saved[id]?"已加入書籤":"已移除書籤");return}
   if(action==="reply"){modal="reply";draft=b.dataset.id;render();$('#x2ReplyText')?.focus();return}
-  if(action==="send-reply"){const text=$('#x2ReplyText')?.value.trim();if(!text){notify("請先輸入回覆");return}const p=posts.find(p=>String(p.id)===String(draft));if(p){p.replies++;p.comments=p.comments||[];p.comments.push({user:me,handle:"@"+handle,text,likes:0,replies:[]})}posts.unshift({id:Date.now(),text:"↳ "+text,when:"現在",likes:0,replies:0,reposts:0,comments:[]});persistSocial();modal="";activeTab="home";render();notify("回覆已送出");return}
+  if(action==="send-reply"){const text=$('#x2ReplyText')?.value.trim();if(!text){notify("請先輸入回覆");return}const p=posts.find(p=>String(p.id)===String(draft));if(p){p.comments=p.comments||[];p.comments.push({user:"__me",handle:"@"+handle,displayName:me,face:me.slice(0,1),text,likes:0,replies:[]});p.replies=p.comments.length}persistSocial();modal="comments";commentsTarget=p?.id;render();notify("回覆已送出");return}
   if(action==="share"){const p=posts.find(p=>String(p.id)===String(b.dataset.id));if(p&&navigator.clipboard?.writeText)navigator.clipboard.writeText(p.text).then(()=>notify("貼文內容已複製")).catch(()=>notify(p.text));else notify(p?p.text:"分享");return}
   if(action==="views"){notify("此貼文的瀏覽次數："+([120,87,214][Number(b.dataset.id)%3]||0));return}
   if(action==="postmore"){modal="";const id=b.dataset.id;saved[id]=!saved[id];render();notify(saved[id]?"已加入書籤":"已移除書籤");return}
