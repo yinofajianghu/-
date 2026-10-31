@@ -2007,31 +2007,50 @@ function renderInstagramApp(){
   const offset=Math.floor(Math.random()*commentTemplates.length);
   const base=commentTemplates[(offset+index)%commentTemplates.length](topic,place);
   const text=personalized?(Math.random()<0.62?personalized:base):base;
-  return {user:person[0],text,likes:Math.floor(Math.random()*18),time:['剛剛','12 分鐘','36 分鐘','1 小時','3 小時'][Math.floor(Math.random()*5)],face:person[1],generated:true,personaVersion:5};
+  return {user:person[0],text,likes:Math.floor(Math.random()*18),time:['剛剛','12 分鐘','36 分鐘','1 小時','3 小時'][Math.floor(Math.random()*5)],face:person[1],generated:true,personaVersion:6};
  };
  const commentsFor=p=>{
   if(!p||!p.id)return [];
   if(!S.comments||typeof S.comments!=='object')S.comments={};
   const saved=Array.isArray(S.comments[p.id])?S.comments[p.id]:[];
-  const needsRefresh=saved.some(c=>c&&c.generated&&c.personaVersion!==5);
+  const needsRefresh=saved.some(c=>c&&c.generated&&c.personaVersion!==6);
   if(needsRefresh||!Array.isArray(S.comments[p.id])){
    const preserved=saved.filter(c=>c&&!c.generated);
    const targetCount=Math.floor(Math.random()*11);
    const remaining=Math.max(0,targetCount-preserved.length);
    const randomPeople=generatedCommenters.slice();
    const rolePeople=friends.filter(f=>f&&f.name&&f.name!==p.user).map(f=>[f.name,f.face||'🙂']);
+   const vbsPeople=[
+    ['vividbadsquad','🎧'],
+    ['shinonome_akito','🎤'],
+    ['aoyagi_toya525','🌷'],
+    ['shiraishi_annn','🎤'],
+    ['azusawa.kohane','🐹']
+   ];
+   const memberPeople=vbsPeople.filter(person=>person[0]!=='vividbadsquad');
    const used=new Set(preserved.map(c=>c.user));
    const candidates=[];
-   for(let i=0;i<remaining;i++){
-    const chooseRole=rolePeople.length>0&&Math.random()<0.32;
+   const availableFrom=pool=>pool.filter(person=>person&&person[0]&&!used.has(person[0])&&person[0]!==p.user);
+   const addComment=person=>{
+    if(!person||!person[0]||used.has(person[0])||person[0]===p.user)return false;
+    used.add(person[0]);
+    candidates.push(makeGeneratedComment(p,person,candidates.length));
+    return true;
+   };
+   if(p.user==='vividbadsquad'&&remaining>0){
+    const memberPool=availableFrom(memberPeople);
+    if(memberPool.length)addComment(memberPool[Math.floor(Math.random()*memberPool.length)]);
+   }else if(p.user!=='vividbadsquad'&&remaining>0&&Math.random()<0.55){
+    addComment(['vividbadsquad','🎧']);
+   }
+   while(candidates.length<remaining){
+    const chooseRole=rolePeople.length>0&&Math.random()<0.38;
     const source=chooseRole?rolePeople:randomPeople;
-    const available=source.filter(person=>person&&person[0]&&!used.has(person[0])&&person[0]!==p.user);
-    const fallback=(chooseRole?randomPeople:rolePeople).filter(person=>person&&person[0]&&!used.has(person[0])&&person[0]!==p.user);
+    const available=availableFrom(source);
+    const fallback=availableFrom(chooseRole?randomPeople:rolePeople);
     const pool=available.length?available:fallback;
     if(!pool.length)break;
-    const person=pool[Math.floor(Math.random()*pool.length)];
-    used.add(person[0]);
-    candidates.push(makeGeneratedComment(p,person,i));
+    addComment(pool[Math.floor(Math.random()*pool.length)]);
    }
    S.comments[p.id]=preserved.concat(candidates).slice(0,10);
    save();
