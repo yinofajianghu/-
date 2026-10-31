@@ -4745,7 +4745,39 @@ window.__phoneMainReady = false;
     const eventTitle=byId('event1');if(eventTitle&&!eventTitle.textContent.trim())eventTitle.textContent='今日も良い一日を';
     const eventTime=byId('eventTime1');if(eventTime&&!eventTime.textContent.trim())eventTime.textContent='予定';
   }
-  try { ensureHomeLauncher(); } catch(error) { console.error('Fallback launcher failed',error); }
+  try {
+    ensureHomeLauncher();
+    // Prefer the app's original icon renderer whenever its main script loaded.
+    if (Array.isArray(window.apps) && typeof window.appButton === 'function') {
+      const grid=byId('appGrid'),dock=byId('dock');
+      if(grid){
+        grid.innerHTML='<div class="home-app-page" data-home-page="0">'+window.apps.slice(0,12).map(window.appButton).join('')+'</div><div class="home-app-page" data-home-page="1">'+window.apps.slice(12).map(window.appButton).join('')+'</div>';
+      }
+      if(dock)dock.innerHTML=window.apps.slice(0,4).map(window.appButton).join('');
+    }
+    if (typeof showApp === 'function') window.showApp = showApp;
+    if (typeof goHome === 'function') window.goHome = goHome;
+  } catch(error) { console.error('Fallback launcher failed',error); }
+
+  // The recovery layer owns a delegated launcher handler so tapping an icon
+  // still opens its app even if the main script failed before binding events.
+  if (!window.__recoveryAppTapBound) {
+    window.__recoveryAppTapBound=true;
+    document.addEventListener('click',function(event){
+      const icon=event.target.closest && event.target.closest('#home [data-app], #dock [data-app]');
+      if(!icon)return;
+      const appId=icon.getAttribute('data-app');
+      if(!appId)return;
+      const launcher=typeof window.showApp==='function'?window.showApp:(typeof showApp==='function'?showApp:null);
+      if(launcher){
+        event.preventDefault();
+        event.stopPropagation();
+        launcher(appId);
+      } else {
+        console.error('App launcher is unavailable because the main application script did not initialize.');
+      }
+    },true);
+  }
 
   let fallbackDigits = '';
   function showPasscode(){
