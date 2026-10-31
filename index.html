@@ -4674,7 +4674,7 @@ setupWallpaperPicker();initHome();updateClock();setInterval(updateClock,1000);
 
 // Recovery bootstrap: keep the clock, wallpaper, and lock-screen entry usable
 // even if another initialization block fails before completing.
-window.__phoneMainReady = false;
+window.__phoneMainReady = true;
 </script>
 <script>
 (function phoneRecoveryBootstrap(){
