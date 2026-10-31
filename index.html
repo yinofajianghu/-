@@ -1877,8 +1877,19 @@ function renderInstagramApp(){
 ];
  const customAccountNames=['mizukiiiii___','en4luv'];
  const customAccountSelf=()=>({name:S.username,displayName:S.displayName||S.username,face:'🙂',bio:S.bio||''});
- customAccountNames.forEach(name=>{S.following[name]=true;});
- customAccountNames.forEach(name=>{const f=friends.find(x=>x.name===name);if(f)f.followingUsers=[S.username,...customAccountNames.filter(other=>other!==name)];});
+ const configuredAccountNames=['shinonome_akito',...friends.map(f=>f.name)];
+ const followAllExcept=excluded=>configuredAccountNames.filter(name=>!excluded.includes(name));
+ const followingRules={
+  aoyagi_toya525:followAllExcept(['aoyagi_toya525']),
+  shiraishi_annn:followAllExcept(['shiraishi_annn']),
+  'azusawa.kohane':['shinonome_akito','aoyagi_toya525','shiraishi_annn','vividbadsquad'],
+  'Kam1._ru1i1':followAllExcept(['Kam1._ru1i1','en4luv','azusawa.kohane']),
+  'tenmatsukasa_._':followAllExcept(['tenmatsukasa_._','en4luv','azusawa.kohane']),
+  en4luv:followAllExcept(['tenmatsukasa_._','Kam1._ru1i1','azusawa.kohane','en4luv']),
+  mizukiiiii___:followAllExcept(['mizukiiiii___'])
+ };
+ friends.forEach(f=>{if(followingRules[f.name])f.followingUsers=followingRules[f.name].slice();});
+ friends.forEach(f=>{S.following[f.name]=true;});
  const displayNameFor=user=>{if(!user)return '';if(user===S.username)return S.displayName||user;const friend=friends.find(f=>f.name===user);if(friend?.displayName)return friend.displayName;const request=S.strangerMessages.find(r=>r.name===user);return request?.displayName||request?.fullName||request?.full_name||user};
 
  const seed=[{id:'seed1',user:'aoyagi_toya525',face:'🌷',place:'台北市',emoji:'🌷',caption:'把平凡的日子，過成喜歡的樣子。今天也留一點時間給自己 ☀️ #日常 #生活',likes:1284,color:'linear-gradient(145deg,#f7c7d8,#f7dfbd 48%,#b5c9ab)',art:'GOOD DAYS',kind:'post'},{id:'seed2',user:'shiraishi_annn',face:'🌊',place:'海邊',emoji:'🌅',caption:'海風、夕陽，還有自由。🌊 #旅行 #海邊',likes:856,color:'linear-gradient(145deg,#77c9dc,#f5b88e 55%,#f7dfbd)',art:'SLOW DOWN',kind:'post'},{id:'seed3',user:'azusawa.kohane',face:'🎨',place:'工作室',emoji:'🎨',caption:'最近的創作紀錄 ✨ #design #創作',likes:542,color:'linear-gradient(145deg,#c5b6ee,#f3b9bd 50%,#f6d8ad)',art:'MAKE IT',kind:'post'},{id:'seed4',user:'vividbadsquad',face:'☕',place:'咖啡店',emoji:'☕',caption:'慢慢醒來，慢慢開始。今天的第一杯咖啡 ☕',likes:231,color:'linear-gradient(145deg,#b88d6e,#eed1a7 50%,#f8e9d8)',art:'SLOW MORNING',kind:'post'}];
