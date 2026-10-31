@@ -2695,7 +2695,7 @@ function renderX(){
   const replyCount=1+Math.floor(Math.random()*3);
   for(let k=0;k<replyCount;k++){const who=rand(eligible);const bank2=replyBank[who.id]||genericBank[xAccounts.indexOf(who)%genericBank.length];replies.push({user:who.id,handle:"@"+who.handle,text:rand(bank2),likes:Math.floor(Math.random()*28),replies:[]})}
   return {id,user:account.id,handle:"@"+account.handle,displayName:account.name,face:account.face,text,when:rand(timeLabels),likes:Math.floor(18+Math.random()*2400),reposts:Math.floor(Math.random()*180),comments:replies,verified:account.id==="vividbadsquad"};
- })).flat();
+ })).flat().sort(()=>Math.random()-.5);
  const ownPosts=(CONFIG.tweets||["今天也要記得留一點時間給自己。","記錄生活裡微小但值得珍惜的瞬間。","慢慢來，也是一種前進。"]).map((text,i)=>({id:"x_own_"+i,user:"__me",handle:"@"+handle,displayName:me,face:me.slice(0,1),text,when:["2 小時","昨天","10月20日"][i%3],likes:[12,8,24][i%3],reposts:[1,2,4][i%3],comments:starterComments[i%starterComments.length].map(c=>({...c,replies:[]})),verified:true}));
  let posts=characterPosts.concat(ownPosts);
  try{const stored=JSON.parse(localStorage.getItem(X_SOCIAL_STORAGE_KEY)||"null");if(stored&&Array.isArray(stored.posts)){const savedById=new Map(stored.posts.filter(p=>p&&typeof p.text==="string"&&Array.isArray(p.comments)).map(p=>[String(p.id),p]));posts=posts.map(base=>savedById.get(String(base.id))||base);const custom=stored.posts.filter(p=>p&&typeof p.text==="string"&&Array.isArray(p.comments)&&!posts.some(base=>String(base.id)===String(p.id)));posts=posts.concat(custom).slice(-500)}}catch(error){console.warn("無法讀取 X 貼文資料",error)}
@@ -2809,7 +2809,7 @@ function renderX(){
   if(action==="tab"||["home","search","notifications","messages","profile"].includes(action)){activeTab=action==="tab"?b.dataset.tab:action;currentChat=-1;render();return}
   if(action==="compose"){modal="compose";draft="";render();$('#x2Draft')?.focus();return}
   if(action==="close-modal"){if(e.target.closest('[data-modal]')&&!e.target.closest('button'))return;modal="";render();return}
-  if(action==="publish"){if(!draft.trim())return;posts.unshift({id:"user_"+Date.now(),user:"__me",handle:"@"+handle,displayName:me,face:me.slice(0,1),text:draft.trim(),when:"剛剛",likes:0,replies:0,reposts:0,comments:[],verified:true});persistSocial();modal="";activeTab="home";searchTerm="";render();notify("貼文已發佈");return}
+  if(action==="publish"){if(!draft.trim())return;const newPost={id:"user_"+Date.now(),user:"__me",handle:"@"+handle,displayName:me,face:me.slice(0,1),text:draft.trim(),when:"剛剛",likes:0,replies:0,reposts:0,comments:[],verified:true};const replyAccounts=xAccounts.filter(a=>a.id!=="vividbadsquad");newPost.comments=Array.from({length:1+Math.floor(Math.random()*3)},()=>{const who=rand(replyAccounts),bank=replyBank[who.id]||genericBank[xAccounts.indexOf(who)%genericBank.length];return {user:who.id,handle:"@"+who.handle,text:rand(bank),likes:Math.floor(Math.random()*12),replies:[],when:"剛剛"}});posts.unshift(newPost);persistSocial();modal="";activeTab="home";searchTerm="";render();notify("貼文已發佈");return}
   if(action==="feed"){feedMode=b.dataset.feed||"forYou";render();return}
   if(action==="comments"||action==="reply"){commentsTarget=b.dataset.id;replyTarget=null;modal="comments";render();$('#x2CommentInput')?.focus();return}
   if(action==="reply-comment"){commentsTarget=b.dataset.id;replyTarget=Number(b.dataset.index);modal="comments";render();$('#x2CommentInput')?.focus();return}
