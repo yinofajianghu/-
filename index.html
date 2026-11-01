@@ -1428,6 +1428,54 @@ html body #controlCenter .cc-native-slider output{
 #home .app-icon[data-app="calendar"] .calendar-live-day{display:flex;align-items:center;justify-content:center;flex:1;color:#202124;font-size:clamp(26px,8vw,39px);font-weight:300;letter-spacing:-1.5px;line-height:1;font-variant-numeric:tabular-nums;margin-top:0;transform:translateY(0px)!important}
 @media(prefers-color-scheme:dark){#home .calendar-live-glyph{background:#fff!important}}
 </style>
+<style id="ios26-tasks-app">
+#home .g-tasks{background:linear-gradient(145deg,#75d98b,#20a85b);color:#fff;font-size:34px;font-weight:700}
+#home .task-home-widget{cursor:pointer;display:flex;flex-direction:column}
+#home .task-home-widget:active{transform:scale(.985)}
+#home .task-home-widget .widget-label{display:flex;justify-content:space-between;align-items:center}
+#home #homeTaskCount{font-size:10px;font-weight:500;color:#ffffffd9}
+#home .task-widget-list{margin-top:7px;min-height:0;overflow:hidden}
+#home .task-widget-row{display:flex;align-items:center;gap:7px;font-size:12px;line-height:1.45;margin:7px 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#home .task-widget-row i{width:13px;height:13px;border:1.4px solid #fff;border-radius:50%;flex:0 0 13px}
+#home .task-widget-row span{overflow:hidden;text-overflow:ellipsis}
+#appContent .task-app{min-height:100%;box-sizing:border-box;background:#f5f6fa;color:#202127;padding:calc(22px + var(--safe-top,0px)) 20px 30px;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+.task-head{display:flex;align-items:flex-end;justify-content:space-between;margin:8px 0 18px}
+.task-eyebrow{font-size:11px;font-weight:800;letter-spacing:2px;color:#21a45b}
+.task-head h1{font-size:34px;letter-spacing:-1px;margin:4px 0 3px;font-weight:800}
+.task-head p{margin:0;color:#888;font-size:13px}
+.task-total{display:flex;flex-direction:column;align-items:flex-end;padding-bottom:4px;color:#888;font-size:11px}
+.task-total strong{font-size:30px;line-height:1;color:#20a85b}
+.task-progress{height:7px;background:#e3e6eb;border-radius:10px;overflow:hidden;margin-bottom:22px}
+.task-progress span{display:block;height:100%;background:linear-gradient(90deg,#36c96b,#1b9f54);border-radius:10px;transition:width .2s}
+.task-filter{display:flex;gap:8px;margin-bottom:22px}
+.task-filter button{border:1px solid #e5e7eb;background:#fff;color:#777;border-radius:20px;padding:8px 13px;font-size:12px}
+.task-filter button.active{background:#202127;color:#fff;border-color:#202127}
+.task-filter b{font-size:11px;margin-left:3px;opacity:.7}
+.task-list-head{display:flex;justify-content:space-between;align-items:center;margin:4px 0 10px;font-size:16px}
+.task-list-head button{background:transparent;color:#159b4c;font-size:14px;font-weight:700;padding:6px}
+.task-list{background:#fff;border-radius:17px;overflow:hidden;box-shadow:0 3px 14px #182a4509}
+.task-item{display:flex;align-items:center;gap:12px;padding:14px 13px;border-bottom:1px solid #f0f1f3;min-height:54px}
+.task-item:last-child{border-bottom:0}
+.task-check{width:23px;height:23px;flex:0 0 23px;border:1.7px solid #b9bec7;border-radius:50%;background:#fff;color:#fff;font-size:14px;font-weight:800;padding:0}
+.task-item.is-done .task-check{background:#27b45d;border-color:#27b45d}
+.task-item-main{flex:1;min-width:0}
+.task-item-title{font-size:14px;line-height:1.45;overflow-wrap:anywhere}
+.task-item.is-done .task-item-title{color:#a3a6ad;text-decoration:line-through}
+.task-due{font-size:11px;color:#999;margin-top:4px}
+.task-delete{background:transparent;color:#b5b8bf;font-size:22px;padding:4px 7px}
+.task-empty{text-align:center;padding:42px 18px;color:#999}
+.task-empty span{display:grid;place-items:center;width:48px;height:48px;border-radius:50%;background:#e9f8ee;color:#24a957;font-size:24px;margin:0 auto 13px}
+.task-empty b{display:block;color:#555;font-size:14px}
+.task-empty p{font-size:12px;line-height:1.6;margin:7px 0 0}
+.task-form{background:#fff;border-radius:16px;padding:13px;margin:0 0 18px;box-shadow:0 3px 14px #182a4509}
+.task-form>input{box-sizing:border-box;width:100%;border:0;outline:0;font-size:15px;padding:8px 3px 13px;color:#202127}
+.task-form-bottom{display:flex;align-items:center;gap:7px;flex-wrap:wrap;border-top:1px solid #f0f1f3;padding-top:10px}
+.task-form-bottom label{font-size:11px;color:#888;display:flex;align-items:center;gap:5px;flex:1}
+.task-form-bottom input{border:0;background:#f4f5f7;border-radius:8px;padding:6px;max-width:125px;color:#555}
+.task-form-bottom button{border:0;border-radius:9px;padding:8px 11px;background:#f1f2f4;color:#777;font-size:12px}
+.task-form-bottom button[type=submit]{background:#22aa59;color:white;font-weight:700}
+.task-footnote{text-align:center;color:#a8abb1;font-size:11px;margin-top:20px}
+</style>
 </head>
 <body>
 <div id="phone">
@@ -1459,7 +1507,7 @@ html body #controlCenter .cc-native-slider output{
     <div class="status"><span id="statusTime">9:41</span><span class="status-right"><span class="signal">▂▄▆</span><span>Wi-Fi</span><span class="battery"></span></span></div>
     <div class="widgets">
       <div class="widget"><div class="widget-label">☀ 天氣</div><div class="weather-place" id="weatherPlace"></div><div class="weather-temp" id="weatherTemp"></div><div class="weather-desc" id="weatherDesc"></div></div>
-      <div class="widget"><div class="widget-label">▦ 即將到來</div><div class="event-title" id="event1"></div><div class="event-row" id="eventTime1"></div><div class="event-row" id="event2"></div></div>
+      <div class="widget task-home-widget" data-app="tasks" role="button" tabindex="0" aria-label="開啟任務欄"><div class="widget-label">✓ 任務欄 <span id="homeTaskCount">0 項待辦</span></div><div class="task-widget-list" id="homeTaskList"><div class="event-title">今天想完成什麼？</div><div class="event-row">點擊查看任務</div></div></div>
     </div>
     <div class="app-grid" id="appGrid"></div>
     <div class="home-page-dots" id="homePageDots" aria-label="主畫面頁數"></div>
@@ -1613,6 +1661,7 @@ const apps = [
   {id:"settings",name:"設定",icon:"⚙",cls:"g-settings"},
   {id:"clock",name:"時鐘",icon:"◷",cls:"g-clock"},
   {id:"calendar",name:"行事曆",icon:"31",cls:"g-calendar"},
+  {id:"tasks",name:"任務欄",icon:"✓",cls:"g-tasks"},
   {id:"files",name:"檔案",icon:"📁",cls:"g-files"},
   {id:"music",name:"音樂",icon:"♫",cls:"g-music"},
   {id:"fitness",name:"pulse.",icon:"🏃",cls:"g-fitness"},
@@ -1725,7 +1774,7 @@ function updateCalendarHomeIcon(){
 }
 function initHome(){
  $('#weatherPlace').textContent=CONFIG.weather.place;$('#weatherTemp').textContent=CONFIG.weather.temp;$('#weatherDesc').textContent=CONFIG.weather.desc || `最高 ${CONFIG.weather.high} / 最低 ${CONFIG.weather.low}`;
- const ev=CONFIG.events||[];$('#event1').textContent=ev[0]?.title||"予定はありません";$('#eventTime1').textContent=ev[0]?.time||"";$('#event2').textContent=ev[1]?`${ev[1].time} · ${ev[1].title}`:"";
+ renderTasksWidget();
  $('#appGrid').innerHTML='<div class="home-app-page" data-home-page="0">'+apps.slice(0,12).map(appButton).join('')+'</div><div class="home-app-page" data-home-page="1">'+apps.slice(12).map(appButton).join('')+'</div>';
  $('#homePageDots').innerHTML='<button class="home-page-dot active" data-page-to="0" aria-label="第 1 頁"></button><button class="home-page-dot" data-page-to="1" aria-label="第 2 頁"></button>';
  $('#homePageDots').querySelectorAll('[data-page-to]').forEach(b=>b.onclick=()=>{const page=Number(b.dataset.pageTo);$('#appGrid').scrollTo({left:page*$('#appGrid').clientWidth,behavior:'smooth'});});
@@ -2245,6 +2294,7 @@ function showApp(id){
   $('#home').classList.remove('active');$('#lock').classList.remove('active');
   if(id==="fitness"){renderFitnessApp();return}
   if(id==="safari"){renderSafariApp();return}
+  if(id==="tasks"){renderTasksApp();return}
   if(["clock","calendar","files","music"].includes(id)){renderUtilityApp(id);return}
   if(id==="instagram"){renderInstagramApp();return}
   if(id==="messages"){renderMessages();return}
@@ -2262,6 +2312,36 @@ function showApp(id){
 }
 
 let fitnessTab='home',fitnessRun=null,fitnessTimer=null,fitnessWatch=null,fitnessLastPos=null,fitnessDistance=0,fitnessPausedAt=0,fitnessElapsedBeforePause=0,fitnessGoal=5,fitnessHistory=[];
+
+const TASKS_STORE_KEY='ios26-tasks-v1';
+function readTaskItems(){try{const v=JSON.parse(localStorage.getItem(TASKS_STORE_KEY)||'[]');return Array.isArray(v)?v.filter(x=>x&&typeof x.title==='string'):[]}catch(e){return[]}}
+function writeTaskItems(items){try{localStorage.setItem(TASKS_STORE_KEY,JSON.stringify(items));return true}catch(e){return false}}
+function renderTasksWidget(){
+ const list=document.getElementById('homeTaskList'),count=document.getElementById('homeTaskCount');if(!list||!count)return;
+ const items=readTaskItems(),open=items.filter(x=>!x.done);
+ count.textContent=open.length+' 項待辦';
+ list.innerHTML=open.length?open.slice(0,2).map(x=>'<div class="task-widget-row"><i></i><span>'+escapeHTML(x.title)+'</span></div>').join(''):'<div class="event-title">'+(items.length?'全部完成了！':'今天想完成什麼？')+'</div><div class="event-row">'+(items.length?'做得好，繼續保持':'點擊新增你的第一項任務')+'</div>';
+}
+function renderTasksApp(){
+ const root=document.getElementById('appContent');if(!root)return;
+ let items=readTaskItems(),filter='all',showForm=false;
+ const esc=escapeHTML;
+ const dateText=v=>{if(!v)return '';const d=new Date(v+'T00:00:00');return Number.isNaN(d.getTime())?'':d.toLocaleDateString('zh-TW',{month:'short',day:'numeric'})};
+ const save=()=>{if(!writeTaskItems(items))toast('儲存失敗，請檢查瀏覽器空間');renderTasksWidget()};
+ const visible=()=>items.filter(x=>filter==='all'||(filter==='open'?!x.done:x.done)).sort((a,b)=>(Number(a.done)-Number(b.done))||((a.due||'9999').localeCompare(b.due||'9999'))||(b.created-a.created));
+ function draw(){
+  const open=items.filter(x=>!x.done).length,done=items.length-open,rows=visible();
+  root.innerHTML='<div class="task-app"><header class="task-head"><div><div class="task-eyebrow">MY DAY</div><h1>任務欄</h1><p>'+new Date().toLocaleDateString('zh-TW',{month:'long',day:'numeric',weekday:'long'})+'</p></div><div class="task-total"><strong>'+open+'</strong><span>待完成</span></div></header><div class="task-progress"><span style="width:'+(items.length?done/items.length*100:0)+'%"></span></div><div class="task-filter"><button data-filter="all" class="'+(filter==='all'?'active':'')+'">全部 <b>'+items.length+'</b></button><button data-filter="open" class="'+(filter==='open'?'active':'')+'">待辦 <b>'+open+'</b></button><button data-filter="done" class="'+(filter==='done'?'active':'')+'">已完成 <b>'+done+'</b></button></div>'+(showForm?'<form class="task-form" id="taskAddForm"><input name="title" maxlength="100" placeholder="輸入任務內容…" required autocomplete="off"><div class="task-form-bottom"><label>到期日 <input type="date" name="due"></label><button type="button" data-task-cancel>取消</button><button type="submit">新增任務</button></div></form>':'')+'<div class="task-list-head"><b>'+(filter==='done'?'已完成':filter==='open'?'待辦清單':'我的任務')+'</b><button data-task-add>＋ 新增</button></div><div class="task-list">'+(rows.length?rows.map(x=>'<article class="task-item '+(x.done?'is-done':'')+'"><button class="task-check" data-task-toggle="'+esc(x.id)+'" aria-label="'+(x.done?'標記未完成':'標記完成')+'">'+(x.done?'✓':'')+'</button><div class="task-item-main"><div class="task-item-title">'+esc(x.title)+'</div>'+(x.due?'<div class="task-due">◷ '+esc(dateText(x.due))+'</div>':'')+'</div><button class="task-delete" data-task-delete="'+esc(x.id)+'" aria-label="刪除任務">×</button></article>').join(''):'<div class="task-empty"><span>✓</span><b>'+(filter==='done'?'還沒有完成的任務':filter==='open'?'目前沒有待辦事項':'清單是空的')+'</b><p>把想完成的事情記下來，一項一項完成吧。</p></div>')+'</div><div class="task-footnote">任務會自動儲存在這台裝置</div></div>';
+  root.querySelectorAll('[data-filter]').forEach(b=>b.onclick=()=>{filter=b.dataset.filter;draw()});
+  root.querySelector('[data-task-add]')?.addEventListener('click',()=>{showForm=true;draw();root.querySelector('[name="title"]')?.focus()});
+  root.querySelector('[data-task-cancel]')?.addEventListener('click',()=>{showForm=false;draw()});
+  root.querySelector('#taskAddForm')?.addEventListener('submit',e=>{e.preventDefault();const f=new FormData(e.currentTarget),title=String(f.get('title')||'').trim();if(!title)return;items.unshift({id:'task-'+Date.now()+'-'+Math.random().toString(36).slice(2,7),title,due:String(f.get('due')||''),done:false,created:Date.now()});save();showForm=false;filter='all';draw()});
+  root.querySelectorAll('[data-task-toggle]').forEach(b=>b.onclick=()=>{const x=items.find(t=>t.id===b.dataset.taskToggle);if(x){x.done=!x.done;save();draw()}});
+  root.querySelectorAll('[data-task-delete]').forEach(b=>b.onclick=()=>{items=items.filter(t=>t.id!==b.dataset.taskDelete);save();draw()});
+ }
+ draw();
+}
+
 function renderFitnessApp(){
  $('#home').classList.remove('active');$('#lock').classList.remove('active');$('#appView').classList.add('active');$('#appView').classList.remove('dark');
  try{fitnessHistory=JSON.parse(localStorage.getItem('fitness-workouts-v1')||'[]')}catch(e){fitnessHistory=[]}
