@@ -3453,440 +3453,7 @@ function startVideoCall(){
  callMode=true;callSeconds=0;callMessageTimers.forEach(clearTimeout);callMessageTimers=[];
  const caller=CONFIG.instagram?.callerName||"unknown",video=CONFIG.instagram?.video||"",myVideo=CONFIG.instagram?.myVideo||"";
  const videoMarkup=video?`<video id="callVideo" src="${escapeHTML(video)}" autoplay loop muted playsinline style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:#161616"></video>`:`<div style="position:absolute;inset:0;background:radial-gradient(ellipse at 40% 20%,#7b7b87,#262630 45%,#111);display:grid;place-items:center;font-size:70px">🌙</div>`;
- $('#appContent').innerHTML=`<div id="videoCall" style="position:absolute;inset:0;background:#111;color:white;overflow:hidden">${videoMarkup}<div style="position:absolute;top:20px;left:0;right:0;text-align:center;text-shadow:0 2px 8px #000;font-size:15px;font-weight:600">${escapeHTML(caller)}<div id="callDuration" style="font-size:12px;font-weight:400;margin-top:5px">00:00</div></div><div id="myVideoBox" style="position:absolute;right:14px;top:62px;width:clamp(82px,25vw,115px);height:150px;border-radius:18px;overflow:hidden;background:linear-gradient(145deg,#8a9aa8,#3d4352);border:1px solid #ffffff66;box-shadow:0 5px 20px #0005;touch-action:none;display:grid;place-items:center;font-size:26px">${myVideo?`<video src="${escapeHTML(myVideo)}" autoplay loop muted playsinline style="width:100%;height:100%;object-fit:cover"></video>`:'☺'}</div><div id="callMessages" style="position:absolute;left:15px;bottom:125px;right:20px;display:flex;flex-direction:column;gap:7px;pointer-events:none;text-align:left;text-shadow:0 2px 5px #000;font-size:14px"></div><form id="callChatForm" style="position:absolute;bottom:calc(80px + var(--safe-bottom));left:12px;right:12px;display:flex;gap:8px"><input id="callChatInput" placeholder="メッセージ…" style="flex:1;min-width:0;border:1px solid #ffffff44;border-radius:22px;padding:11px 15px;background:#0006;color:#fff;backdrop-filter:blur(10px)"><button style="background:#fff;color:#222;border-radius:50%;width:40px;height:40px">➤</button></form><div style="position:absolute;bottom:calc(15px + var(--safe-bottom));left:0;right:0;display:flex;justify-content:center;gap:clamp(14px,5vw,24px)"><button class="call-control" id="flipBtn">↻</button><button class="call-control" id="micBtn">🎙</button><button class="call-control" id="camBtn">▣</button><button class="call-control" id="hangupBtn" style="background:#ff3b30"><svg class="ui-phone-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.62 10.79a15.05 15.05 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.01-.24c1.12.37 2.33.56 3.58.56a1 1 0 0 1 1 1V20a1 1 0 0 1-1 1C10.61 21 3 13.39 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.19 2.46.56 3.58a1 1 0 0 1-.25 1.01z"/></svg></button></div><div id="tapSound" style="position:absolute;inset:0;z-index:0;pointer-events:none"></div></div><style>.call-control{width:54px;height:54px;border-radius:50%;background:#555b;color:white;font-size:21px;box-shadow:0 4px 14px #0003}#callMessages .msg{animation:msgIn .25s ease;transition:opacity 1s}#callMessages .msg.fade{opacity:0}@keyframes msgIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-/* iOS 26 Control Center: final overrides for the replaced Liquid Glass panel */
-#controlCenter{position:absolute!important;inset:0!important;z-index:1000!important;box-sizing:border-box;isolation:isolate;padding:calc(48px + var(--safe-top)) 14px calc(24px + var(--safe-bottom))!important;background:linear-gradient(155deg,rgba(242,245,252,.76),rgba(190,202,222,.58) 55%,rgba(220,226,239,.68))!important;color:#171a22!important;-webkit-backdrop-filter:blur(52px) saturate(1.9)!important;backdrop-filter:blur(52px) saturate(1.9)!important}
-#controlCenter.active{display:flex!important;flex-direction:column!important}
-#controlCenter:before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(ellipse at 12% 8%,rgba(255,255,255,.9),transparent 42%),radial-gradient(ellipse at 92% 34%,rgba(163,184,230,.56),transparent 48%),linear-gradient(180deg,rgba(255,255,255,.12),rgba(255,255,255,0))}
-#controlCenter button{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",sans-serif;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
-#controlCenter .cc-connectivity,#controlCenter .cc-slider,#controlCenter .cc-feature,#controlCenter .cc-tool,#controlCenter .cc-media{border:1px solid rgba(255,255,255,.68)!important;box-shadow:0 8px 26px rgba(34,45,67,.08),inset 0 1px 0 rgba(255,255,255,.82)!important;-webkit-backdrop-filter:blur(30px) saturate(1.7)!important;backdrop-filter:blur(30px) saturate(1.7)!important}
-#controlCenter .cc-connect-main.on,#controlCenter .cc-round.on,#controlCenter .cc-feature.on,#controlCenter .cc-tool.on{background:linear-gradient(145deg,#3e82f7,#1760d9)!important;color:#fff!important;border-color:rgba(255,255,255,.5)!important}
-#controlCenter .cc-page{padding-bottom:18px!important}
-#controlCenter .cc-done{position:relative;z-index:2;min-height:38px;cursor:pointer}
-#controlCenter .cc-close{flex-shrink:0;cursor:pointer;touch-action:manipulation}
-#controlCenter .cc-page-indicator{flex-shrink:0;padding:10px 0 2px}
-@media(prefers-color-scheme:dark){#controlCenter{background:linear-gradient(150deg,rgba(35,39,50,.86),rgba(20,24,34,.82))!important;color:#f7f8fc!important}#controlCenter:before{background:radial-gradient(ellipse at 12% 8%,rgba(255,255,255,.14),transparent 42%),radial-gradient(ellipse at 92% 34%,rgba(78,113,184,.3),transparent 48%)}#controlCenter .cc-eyebrow{color:#c5cad6}#controlCenter .cc-heading{color:#fff}#controlCenter .cc-done{background:rgba(255,255,255,.16);color:#fff;border-color:rgba(255,255,255,.3)}#controlCenter .cc-connectivity,#controlCenter .cc-slider,#controlCenter .cc-feature,#controlCenter .cc-tool,#controlCenter .cc-media{background:rgba(255,255,255,.12)!important;border-color:rgba(255,255,255,.2)!important}}
-
-
-/* Rebuilt iOS 26-style Control Center layout */
-#controlCenter{position:absolute!important;inset:0!important;z-index:1000!important;display:none;box-sizing:border-box;isolation:isolate;overflow:hidden;padding:calc(18px + var(--safe-top)) 17px calc(20px + var(--safe-bottom))!important;color:#fff!important;background:rgba(14,16,22,.28)!important;-webkit-backdrop-filter:blur(54px) saturate(1.65)!important;backdrop-filter:blur(54px) saturate(1.65)!important}
-#controlCenter:before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:linear-gradient(160deg,rgba(18,22,31,.30),rgba(9,12,18,.54)),radial-gradient(ellipse at 80% 5%,rgba(255,255,255,.18),transparent 45%)}
-#controlCenter.active{display:flex!important;flex-direction:column!important;animation:ccIn .23s cubic-bezier(.2,.8,.2,1) both}
-#controlCenter .cc-grabber{width:36px;height:5px;border-radius:8px;background:rgba(255,255,255,.62);margin:0 auto 17px;flex-shrink:0;box-shadow:0 1px 2px #0002}
-#controlCenter .cc-pages{flex:1;min-height:0;margin:0 -1px;gap:0}
-#controlCenter .cc-page{padding:0 1px 12px;overflow-y:auto}
-#controlCenter .cc-native-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:13px;align-content:start}
-#controlCenter .cc-connectivity{grid-column:1;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;align-content:center;justify-items:center;min-height:150px;padding:15px 11px;border-radius:30px;background:rgba(32,35,43,.72)!important;border:1px solid rgba(255,255,255,.17)!important;box-shadow:inset 0 1px rgba(255,255,255,.14),0 8px 28px #0002!important;-webkit-backdrop-filter:blur(28px) saturate(1.5);backdrop-filter:blur(28px) saturate(1.5)}
-#controlCenter .cc-native-connect,#controlCenter .cc-native-round{display:grid;place-items:center;width:43px;height:43px;border:0;border-radius:50%;padding:0;color:#f5f5f7;background:rgba(255,255,255,.17);box-shadow:inset 0 1px rgba(255,255,255,.17);transition:transform .15s,background .18s}
-#controlCenter .cc-native-connect.on{background:#087cff;color:#fff;box-shadow:inset 0 1px rgba(255,255,255,.22)}
-#controlCenter .cc-glyph{display:grid;place-items:center;width:24px;height:24px;font-size:23px;line-height:1}
-#controlCenter .cc-glyph svg,#controlCenter .cc-slider-symbol svg{width:23px;height:23px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-#controlCenter .cc-media{grid-column:2;display:flex;flex-direction:column;justify-content:space-between;min-height:150px;padding:13px;border:1px solid rgba(255,255,255,.15)!important;border-radius:29px;background:rgba(40,42,49,.75)!important;color:#fff;box-shadow:inset 0 1px rgba(255,255,255,.13),0 8px 24px #0002!important}
-#controlCenter .cc-media-top{display:flex;align-items:center;gap:9px;min-width:0}
-#controlCenter .cc-album{width:43px;height:43px;border-radius:9px;background:linear-gradient(145deg,#8d8d95,#383840 70%);display:grid;place-items:center;color:#fff;font-size:22px;flex-shrink:0}
-#controlCenter .cc-track{flex:1;min-width:0}
-#controlCenter .cc-track b{font-size:12px;font-weight:600;display:block;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-#controlCenter .cc-track small{display:block;color:#c5c5cc;font-size:10px;margin-top:4px}
-#controlCenter .cc-output-icon{font-size:18px;color:#d2d2d7}
-#controlCenter .cc-native-progress{height:3px;border-radius:4px;background:#ffffff38;margin:12px 0 7px}
-#controlCenter .cc-native-progress i{display:block;width:25%;height:100%;background:#f5f5f7;border-radius:4px}
-#controlCenter .cc-media-buttons{display:flex;align-items:center;justify-content:space-around}
-#controlCenter .cc-media-buttons button{border:0;background:transparent;color:#fff;font-size:14px;padding:3px 8px}
-#controlCenter .cc-media-buttons #ccPlay,#controlCenter .cc-media-buttons #ccPlay2{width:29px;height:29px;border-radius:50%;background:#f4f4f6;color:#202127;font-size:12px}
-#controlCenter .cc-adjustments{grid-column:1 / -1;display:grid;grid-template-columns:1fr 1fr;gap:13px;height:190px}
-#controlCenter .cc-native-slider{position:relative;overflow:hidden;border-radius:30px;background:rgba(35,37,44,.76);border:1px solid rgba(255,255,255,.15);box-shadow:inset 0 1px rgba(255,255,255,.14),0 8px 24px #0002}
-#controlCenter .cc-native-slider input{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:.01;z-index:3;cursor:pointer;writing-mode:vertical-lr;direction:rtl;touch-action:pan-y}
-#controlCenter .cc-native-slider:before{content:"";position:absolute;left:0;right:0;bottom:0;height:var(--fill,100%);border-radius:25px;background:linear-gradient(180deg,rgba(255,255,255,.98),rgba(235,236,240,.96));transition:height .08s}
-#controlCenter .cc-volume:before{height:65%}
-#controlCenter .cc-slider-symbol{position:absolute;z-index:2;left:0;right:0;bottom:13px;display:flex;justify-content:center;color:#33343a;pointer-events:none}
-#controlCenter .cc-slider-symbol svg{width:22px;height:22px}
-#controlCenter .cc-native-slider output{position:absolute;top:12px;left:0;right:0;text-align:center;font-size:10px;color:#fff;z-index:2;opacity:.0;pointer-events:none}
-#controlCenter .cc-native-control-row{grid-column:1 / -1;display:flex;align-items:center;gap:11px}
-#controlCenter .cc-native-wide{height:58px;flex:1;min-width:0;border-radius:30px;border:1px solid rgba(255,255,255,.16);background:rgba(39,41,49,.78);color:#fff;display:flex;align-items:center;gap:10px;padding:0 15px;font-size:12px;font-weight:600;text-align:left;box-shadow:inset 0 1px rgba(255,255,255,.12)}
-#controlCenter .cc-native-control-icon{display:grid;place-items:center;width:32px;height:32px;flex-shrink:0;border-radius:50%;background:rgba(255,255,255,.17);font-size:20px}
-#controlCenter .cc-chevron{margin-left:auto;color:#bfc0c6;font-size:18px}
-#controlCenter .cc-native-round{width:58px;height:58px;flex-shrink:0;background:rgba(39,41,49,.78);border:1px solid rgba(255,255,255,.16)}
-#controlCenter .cc-native-round.on,#controlCenter .cc-native-wide.on{background:#087cff;color:#fff}
-#controlCenter .cc-secondary-row{justify-content:space-between}
-#controlCenter .cc-native-page-title{font-size:22px;font-weight:700;letter-spacing:-.4px;margin:4px 3px 16px;color:#fff}
-#controlCenter .cc-native-tool-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
-#controlCenter .cc-native-tool{min-height:78px;border:1px solid rgba(255,255,255,.16);border-radius:27px;background:rgba(39,41,49,.78);color:#fff;display:flex;align-items:center;gap:13px;padding:13px 16px;text-align:left}
-#controlCenter .cc-native-tool span{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.17);font-size:21px}
-#controlCenter .cc-native-tool b{font-size:12px;font-weight:600}
-#controlCenter .cc-native-tool.on{background:#087cff}
-#controlCenter .cc-native-note{color:#d3d3d8;font-size:11px;text-align:center;margin:20px 8px}
-#controlCenter .cc-page-indicator{padding:9px 0 10px;gap:6px}
-#controlCenter .cc-page-indicator button{width:6px;height:6px;background:#ffffff62}
-#controlCenter .cc-page-indicator button.active{width:6px;border-radius:50%;background:#fff}
-#controlCenter .cc-close{bottom:calc(8px + var(--safe-bottom));width:135px;height:5px;background:rgba(255,255,255,.88);box-shadow:0 1px 4px #0003;cursor:pointer}
-#controlCenter .cc-native-connect:active,#controlCenter .cc-native-round:active,#controlCenter .cc-native-wide:active{transform:scale(.95)}
-#controlCenter .cc-native-wide.on .cc-native-control-icon{background:#ffffff38}
-@media(max-width:370px){#controlCenter{padding-left:12px!important;padding-right:12px!important}#controlCenter .cc-native-grid{gap:9px}#controlCenter .cc-connectivity{gap:8px;padding:12px 8px}#controlCenter .cc-native-connect{width:39px;height:39px}#controlCenter .cc-media{padding:10px}#controlCenter .cc-album{width:36px;height:36px}#controlCenter .cc-adjustments{height:170px}#controlCenter .cc-native-control-row{gap:7px}#controlCenter .cc-native-round{width:51px;height:51px}#controlCenter .cc-native-wide{padding:0 10px;font-size:11px}}
-@media(max-height:700px){#controlCenter{padding-top:calc(10px + var(--safe-top))!important;padding-bottom:calc(15px + var(--safe-bottom))!important}#controlCenter .cc-grabber{margin-bottom:10px}#controlCenter .cc-connectivity,#controlCenter .cc-media{min-height:130px}#controlCenter .cc-adjustments{height:160px}#controlCenter .cc-native-wide{height:50px}#controlCenter .cc-native-round{width:50px;height:50px}}
-
-
-/* Clear Liquid Glass transparency pass — show the wallpaper through the Control Center */
-#controlCenter{
-  background:rgba(12,15,22,.075)!important;
-  -webkit-backdrop-filter:blur(24px) saturate(1.55)!important;
-  backdrop-filter:blur(24px) saturate(1.55)!important;
-}
-#controlCenter:before{
-  background:
-    linear-gradient(155deg,rgba(14,18,28,.08),rgba(8,11,18,.20)),
-    radial-gradient(ellipse at 16% 0%,rgba(255,255,255,.18),transparent 48%),
-    radial-gradient(ellipse at 88% 22%,rgba(163,194,255,.12),transparent 45%)!important;
-}
-#controlCenter .cc-connectivity,
-#controlCenter .cc-media,
-#controlCenter .cc-native-slider,
-#controlCenter .cc-native-wide,
-#controlCenter .cc-native-round,
-#controlCenter .cc-native-tool{
-  background:linear-gradient(145deg,rgba(255,255,255,.19),rgba(255,255,255,.075))!important;
-  border:1px solid rgba(255,255,255,.27)!important;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.30),inset 0 -1px 0 rgba(255,255,255,.045),0 8px 24px rgba(0,0,0,.075)!important;
-  -webkit-backdrop-filter:blur(22px) saturate(1.65)!important;
-  backdrop-filter:blur(22px) saturate(1.65)!important;
-}
-#controlCenter .cc-native-connect,
-#controlCenter .cc-native-round{
-  background:rgba(255,255,255,.17)!important;
-  border:1px solid rgba(255,255,255,.20)!important;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.24)!important;
-}
-#controlCenter .cc-native-connect.on,
-#controlCenter .cc-native-round.on,
-#controlCenter .cc-native-wide.on,
-#controlCenter .cc-native-tool.on{
-  background:linear-gradient(145deg,rgba(34,139,255,.96),rgba(0,101,238,.88))!important;
-  border-color:rgba(255,255,255,.48)!important;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 3px 12px rgba(0,100,255,.16)!important;
-}
-#controlCenter .cc-native-slider{
-  background:linear-gradient(145deg,rgba(20,23,31,.20),rgba(20,23,31,.11))!important;
-  border-color:rgba(255,255,255,.28)!important;
-}
-#controlCenter .cc-native-slider:before{
-  background:linear-gradient(180deg,rgba(255,255,255,.94),rgba(239,242,248,.84))!important;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.96),0 0 12px rgba(255,255,255,.08);
-}
-#controlCenter .cc-native-slider .cc-slider-symbol{color:rgba(38,42,51,.88)}
-#controlCenter .cc-native-page-title{ text-shadow:0 1px 10px rgba(0,0,0,.22) }
-#controlCenter .cc-grabber{
-  background:rgba(255,255,255,.78)!important;
-  box-shadow:0 1px 5px rgba(0,0,0,.12),inset 0 1px 0 rgba(255,255,255,.65)!important;
-}
-#controlCenter .cc-close{
-  background:rgba(255,255,255,.84)!important;
-  box-shadow:0 1px 5px rgba(0,0,0,.12)!important;
-}
-@media(prefers-color-scheme:light){
-  #controlCenter{color:#fff!important}
-  #controlCenter:before{
-    background:linear-gradient(155deg,rgba(18,23,34,.12),rgba(10,13,22,.28)),radial-gradient(ellipse at 15% 0%,rgba(255,255,255,.22),transparent 48%)!important;
-  }
-  #controlCenter .cc-connectivity,
-  #controlCenter .cc-media,
-  #controlCenter .cc-native-wide,
-  #controlCenter .cc-native-round,
-  #controlCenter .cc-native-tool{
-    background:linear-gradient(145deg,rgba(30,34,44,.25),rgba(24,28,38,.15))!important;
-  }
-}
-@media(prefers-reduced-transparency:reduce){
-  #controlCenter{background:rgba(18,20,27,.82)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
-  #controlCenter .cc-connectivity,#controlCenter .cc-media,#controlCenter .cc-native-slider,#controlCenter .cc-native-wide,#controlCenter .cc-native-round,#controlCenter .cc-native-tool{background:rgba(40,43,51,.94)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
-}
-
-
-/* Complete Control Center concept rebuild — translucent iOS 26 inspired */
-#controlCenter{padding:calc(12px + var(--safe-top)) 20px calc(18px + var(--safe-bottom))!important;background:rgba(30,55,78,.035)!important;-webkit-backdrop-filter:blur(13px) saturate(1.7)!important;backdrop-filter:blur(13px) saturate(1.7)!important;color:#fff!important}
-#controlCenter:before{background:linear-gradient(155deg,rgba(18,39,59,.08),rgba(9,20,34,.20)),radial-gradient(ellipse at 18% 0%,rgba(255,255,255,.20),transparent 50%)!important}
-#controlCenter .cc-statusline{display:flex;justify-content:space-between;align-items:center;padding:1px 18px 18px;font-size:14px;font-weight:650;letter-spacing:.2px;text-shadow:0 1px 8px #0004}
-#controlCenter .cc-pages{flex:1;min-height:0}
-#controlCenter .cc-page{padding:0 0 12px;overflow-y:auto}
-#controlCenter .cc-concept-top{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:12px;align-items:stretch}
-#controlCenter .cc-connectivity{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px;align-content:center;justify-items:center;padding:17px 12px;border-radius:34px;background:linear-gradient(145deg,rgba(255,255,255,.19),rgba(255,255,255,.055))!important;border:1px solid rgba(255,255,255,.35)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.42),0 12px 32px #07182b12!important;-webkit-backdrop-filter:blur(18px) saturate(1.6)!important;backdrop-filter:blur(18px) saturate(1.6)!important}
-#controlCenter .cc-native-connect,#controlCenter .cc-native-round{width:clamp(42px,11vw,54px);height:clamp(42px,11vw,54px);border-radius:50%;display:grid;place-items:center;background:linear-gradient(145deg,rgba(255,255,255,.24),rgba(255,255,255,.08))!important;border:1px solid rgba(255,255,255,.34)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.38),0 4px 14px #07182b0d!important;color:white}
-#controlCenter .cc-glyph{font-size:24px;line-height:1;font-weight:500}
-#controlCenter .cc-native-connect.on,#controlCenter .cc-native-round.on,#controlCenter .cc-native-wide.on,#controlCenter .cc-native-tool.on{background:linear-gradient(145deg,rgba(36,153,255,.94),rgba(0,112,242,.82))!important;border-color:rgba(255,255,255,.62)!important}
-#controlCenter .cc-connectivity .cc-native-wide{grid-column:span 2;width:100%;min-height:48px}
-#controlCenter .cc-adjustments{display:flex;gap:10px;min-width:0}
-#controlCenter .cc-native-slider{position:relative;flex:1;min-width:0;height:clamp(185px,43vh,285px);border-radius:30px!important;overflow:hidden;background:linear-gradient(145deg,rgba(255,255,255,.20),rgba(255,255,255,.07))!important;border:1px solid rgba(255,255,255,.36)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 10px 28px #07182b12!important}
-#controlCenter .cc-native-slider input{position:absolute;inset:0;width:100%;height:100%;opacity:.01;z-index:4;writing-mode:vertical-lr;direction:rtl;cursor:pointer}
-#controlCenter .cc-native-slider:before{content:"";position:absolute;left:3px;right:3px;bottom:3px;height:var(--fill,65%);border-radius:26px;background:linear-gradient(180deg,rgba(255,255,255,.98),rgba(235,245,255,.78))!important;box-shadow:inset 0 1px 0 #fff;pointer-events:none}
-#controlCenter .cc-slider-symbol{position:absolute;z-index:2;bottom:17px;left:0;right:0;text-align:center;color:#63809a;font-size:23px;pointer-events:none}
-#controlCenter .cc-native-slider output{position:absolute;top:10px;left:0;right:0;text-align:center;font-size:10px;color:#ffffffd9;text-shadow:0 1px 5px #0003}
-#controlCenter .cc-native-control-row{display:flex;gap:11px;align-items:center;margin-top:13px}
-#controlCenter .cc-native-wide{flex:1;min-width:0;min-height:54px;padding:10px 13px;border-radius:24px!important;display:flex;align-items:center;gap:9px;background:linear-gradient(145deg,rgba(255,255,255,.19),rgba(255,255,255,.065))!important;border:1px solid rgba(255,255,255,.32)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.34),0 6px 20px #07182b0d!important;color:#fff}
-#controlCenter .cc-native-control-icon{font-size:22px}
-#controlCenter .cc-chevron{margin-left:auto;opacity:.8}
-#controlCenter .cc-concept-shortcuts{justify-content:space-between}
-#controlCenter .cc-concept-shortcuts .cc-native-round{flex:1}
-#controlCenter .cc-native-media{margin:0 0 13px;padding:19px;border-radius:32px!important;background:linear-gradient(145deg,rgba(255,255,255,.24),rgba(255,255,255,.075))!important;border:1px solid rgba(255,255,255,.38)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.44),0 12px 32px #07182b12!important;-webkit-backdrop-filter:blur(22px) saturate(1.65)!important;backdrop-filter:blur(22px) saturate(1.65)!important}
-#controlCenter .cc-media-top{display:flex;align-items:center;gap:12px}
-#controlCenter .cc-album{display:grid;place-items:center;width:62px;height:62px;flex-shrink:0;border-radius:15px;background:linear-gradient(145deg,#a6d8ffb8,#e7efff77),url("https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=180&q=70") center/cover;color:white;font-size:30px;text-shadow:0 1px 6px #0004}
-#controlCenter .cc-track b{font-size:15px}#controlCenter .cc-track small{display:block;margin-top:4px;opacity:.78}
-#controlCenter .cc-output-icon{margin-left:auto;font-size:22px}
-#controlCenter .cc-native-progress{height:4px;border-radius:9px;background:#ffffff65;margin:19px 0 7px;overflow:hidden}
-#controlCenter .cc-native-progress i{display:block;width:34%;height:100%;border-radius:9px;background:#fff}
-#controlCenter .cc-media-time{display:flex;justify-content:space-between;font-size:11px;opacity:.8}
-#controlCenter .cc-media-buttons{display:flex;align-items:center;justify-content:space-evenly;margin-top:14px}
-#controlCenter .cc-media-buttons button{background:transparent;border:0;color:white;font-size:22px;padding:8px 15px}
-#controlCenter .cc-media-buttons #ccPlay2{font-size:29px}
-#controlCenter .cc-native-page-title{font-size:24px;font-weight:700;margin:5px 4px 18px;text-shadow:0 1px 12px #0003}
-#controlCenter .cc-native-tool-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
-#controlCenter .cc-native-tool{min-height:105px;border-radius:27px!important;display:flex;flex-direction:column;align-items:flex-start;justify-content:space-between;padding:15px 12px;background:linear-gradient(145deg,rgba(255,255,255,.20),rgba(255,255,255,.065))!important;border:1px solid rgba(255,255,255,.32)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.35)!important;color:white}
-#controlCenter .cc-native-tool>span{font-size:26px}#controlCenter .cc-native-tool b{font-size:11px;font-weight:600}
-#controlCenter .cc-home-control{margin-top:14px;min-height:80px}
-#controlCenter .cc-page-indicator{padding:10px 0 12px}
-#controlCenter .cc-close{background:rgba(255,255,255,.42)!important;border:1px solid #ffffff80;box-shadow:inset 0 1px 0 #ffffffa0!important}
-@media(max-width:380px){#controlCenter{padding-left:13px!important;padding-right:13px!important}#controlCenter .cc-concept-top{grid-template-columns:minmax(0,1fr) minmax(0,.82fr);gap:8px}#controlCenter .cc-connectivity{gap:8px;padding:12px 7px}#controlCenter .cc-native-slider{height:220px}#controlCenter .cc-native-tool-grid{gap:8px}}
-
-
-/* iOS 26 fidelity pass: native glyphs, tighter grouping, less Android-card styling */
-#controlCenter .cc-statusline{padding-bottom:12px;font-size:14px;letter-spacing:.15px}
-#controlCenter .cc-concept-top{grid-template-columns:minmax(0,1fr) minmax(0,.88fr);gap:9px}
-#controlCenter .cc-connectivity{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;padding:15px 9px;border-radius:29px;background:rgba(35,39,47,.48)!important;border-color:rgba(255,255,255,.23)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.22)!important}
-#controlCenter .cc-native-connect,#controlCenter .cc-native-round{width:clamp(39px,10.5vw,49px);height:clamp(39px,10.5vw,49px);border:0!important;background:rgba(255,255,255,.16)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.20)!important}
-#controlCenter .cc-native-connect .cc-glyph svg,#controlCenter .cc-native-round .cc-glyph svg,#controlCenter .cc-native-tool>span svg{width:23px;height:23px;display:block}
-#controlCenter .cc-native-connect.on{background:#1685ff!important;box-shadow:inset 0 1px 0 #ffffff50!important}
-#controlCenter .cc-connectivity .cc-native-wide{border-radius:24px!important;min-height:46px;font-size:12px;justify-content:center}
-#controlCenter .cc-adjustments{gap:8px}
-#controlCenter .cc-native-slider{border-radius:28px!important;background:rgba(40,44,53,.44)!important;border-color:rgba(255,255,255,.22)!important}
-#controlCenter .cc-native-slider:before{height:var(--fill,65%);border-radius:24px;background:linear-gradient(180deg,#fff,#f1f3f8)!important}
-#controlCenter .cc-native-control-row{gap:9px;margin-top:11px}
-#controlCenter .cc-concept-shortcuts .cc-native-round{height:58px;border-radius:50%!important}
-#controlCenter .cc-native-media{background:rgba(42,46,55,.43)!important;border-color:rgba(255,255,255,.22)!important;border-radius:28px!important;box-shadow:inset 0 1px 0 #ffffff26!important}
-#controlCenter .cc-native-tool-grid{gap:9px}
-#controlCenter .cc-native-tool{min-height:94px;border-radius:23px!important;background:rgba(42,46,55,.42)!important;border-color:rgba(255,255,255,.22)!important;box-shadow:inset 0 1px 0 #ffffff25!important}
-#controlCenter .cc-native-tool>span{font-size:25px}
-#controlCenter .cc-native-wide{background:rgba(42,46,55,.42)!important;border-color:rgba(255,255,255,.22)!important;box-shadow:inset 0 1px 0 #ffffff25!important}
-#controlCenter .cc-native-page-title{font-size:22px;margin-bottom:14px}
-
-
-/* Screenshot-based iOS 26 Control Center alignment */
-#controlCenter{padding:calc(14px + var(--safe-top)) 16px calc(14px + var(--safe-bottom))!important;background:rgba(20,23,31,.22)!important;-webkit-backdrop-filter:blur(34px) saturate(1.55)!important;backdrop-filter:blur(34px) saturate(1.55)!important}
-#controlCenter .cc-page[data-cc-page="0"] .cc-concept-top{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px}
-#controlCenter .cc-page[data-cc-page="0"] .cc-connectivity{padding:12px 9px;gap:8px;border-radius:28px;background:rgba(245,247,252,.15)!important}
-#controlCenter .cc-page[data-cc-page="0"] .cc-adjustments{height:clamp(170px,27vh,220px);gap:10px}
-#controlCenter .cc-page[data-cc-page="2"] .cc-native-tool-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
-#controlCenter .cc-page[data-cc-page="2"] .cc-native-tool{min-height:88px;padding:10px 5px;border-radius:22px!important;flex-direction:column;justify-content:center;gap:7px;text-align:center}
-#controlCenter .cc-page[data-cc-page="2"] .cc-native-tool b{font-size:10px;line-height:1.2}
-/* Control Center spacing + reference-scale controls */
-#controlCenter .cc-page{gap:16px!important}
-#controlCenter .cc-concept-top{gap:14px!important}
-#controlCenter .cc-connectivity{padding:16px!important;gap:12px!important;grid-template-columns:repeat(2,minmax(0,1fr))!important}
-#controlCenter .cc-native-connect{width:100%!important;min-width:0!important;height:54px!important;min-height:54px!important;border-radius:19px!important}
-#controlCenter .cc-native-connect .cc-glyph svg{width:25px!important;height:25px!important}
-#controlCenter .cc-adjustments{gap:12px!important}
-#controlCenter .cc-native-control-row.cc-concept-shortcuts{
- display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;
- gap:18px!important;padding:0 4px!important;margin-top:16px!important;
-}
-#controlCenter .cc-concept-shortcuts .cc-native-round{
- width:100%!important;height:auto!important;aspect-ratio:1/1!important;min-width:0!important;
- border-radius:50%!important;justify-self:stretch!important;
-}
-#controlCenter .cc-native-round .cc-glyph svg{width:27px!important;height:27px!important}
-#controlCenter .cc-native-control-row:not(.cc-concept-shortcuts){gap:14px!important;margin-top:15px!important}
-#controlCenter .cc-native-wide{min-width:0!important;min-height:58px!important;padding:10px 13px!important;gap:12px!important;border-radius:22px!important}
-#controlCenter .cc-native-media{padding:18px!important;margin:2px 0 4px!important}
-#controlCenter .cc-media-buttons{gap:24px!important;margin-top:15px!important}
-#controlCenter .cc-media-buttons button{width:48px!important;height:48px!important;min-width:48px!important;border-radius:50%!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;cursor:pointer!important}
-#controlCenter .cc-native-tool-grid{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:16px!important;padding:4px!important}
-#controlCenter .cc-page[data-cc-page="2"] .cc-native-tool{min-width:0!important;min-height:108px!important;padding:14px 6px!important;gap:12px!important;border-radius:23px!important}
-#controlCenter .cc-page[data-cc-page="2"] .cc-native-tool>span{width:48px!important;height:48px!important;flex:0 0 48px!important;font-size:25px!important}
-#controlCenter .cc-page[data-cc-page="2"] .cc-native-tool b{font-size:11px!important;line-height:1.25!important}
-#controlCenter [data-toggle],#controlCenter .cc-media-buttons button,#controlCenter #ccPageIndicator button,#controlCenter #ccClose{touch-action:manipulation;cursor:pointer}
-#controlCenter [data-toggle]:active,#controlCenter .cc-media-buttons button:active{transform:scale(.94)}
-#controlCenter .cc-native-connect:focus-visible,#controlCenter .cc-native-round:focus-visible,#controlCenter .cc-native-wide:focus-visible,#controlCenter .cc-native-tool:focus-visible,#controlCenter .cc-media-buttons button:focus-visible{outline:2px solid rgba(255,255,255,.9)!important;outline-offset:3px}
-@media(max-width:390px){
- #controlCenter .cc-native-control-row.cc-concept-shortcuts{gap:14px!important}
- #controlCenter .cc-native-connect{height:48px!important;min-height:48px!important}
- #controlCenter .cc-page[data-cc-page="2"] .cc-native-tool-grid{gap:11px!important}
- #controlCenter .cc-page[data-cc-page="2"] .cc-native-tool{min-height:96px!important}
-}
-
-
-/* Reference-led Control Center layout: larger modules, fewer cramped tiles */
-#controlCenter .cc-pages{padding:18px 18px 12px!important;gap:18px!important}
-#controlCenter .cc-page{gap:17px!important;padding:0!important}
-#controlCenter .cc-concept-top{display:grid!important;grid-template-columns:minmax(0,1.45fr) minmax(0,.8fr)!important;gap:14px!important;align-items:stretch!important}
-#controlCenter .cc-connectivity{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;grid-template-rows:repeat(3,minmax(48px,1fr)) auto!important;gap:10px!important;padding:14px!important;border-radius:30px!important;min-width:0!important}
-#controlCenter .cc-native-connect{width:100%!important;height:100%!important;min-height:48px!important;min-width:0!important;border-radius:18px!important}
-#controlCenter .cc-connectivity .cc-native-wide{grid-column:1/-1!important;min-height:48px!important;height:48px!important;border-radius:20px!important}
-#controlCenter .cc-native-connect .cc-glyph svg{width:25px!important;height:25px!important}
-#controlCenter .cc-adjustments{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important;min-width:0!important}
-#controlCenter .cc-native-slider{min-width:0!important;min-height:100%!important;border-radius:28px!important}
-#controlCenter .cc-native-control-row.cc-concept-shortcuts{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:12px!important;padding:0!important;margin-top:0!important}
-#controlCenter .cc-concept-shortcuts .cc-native-round{width:100%!important;height:auto!important;aspect-ratio:1/1!important;min-width:0!important;border-radius:50%!important;justify-self:stretch!important}
-#controlCenter .cc-native-round .cc-glyph svg{width:25px!important;height:25px!important}
-#controlCenter .cc-native-control-row:not(.cc-concept-shortcuts){display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:12px!important;margin-top:0!important}
-#controlCenter .cc-native-wide{min-width:0!important;min-height:60px!important;padding:11px 12px!important;gap:9px!important;border-radius:23px!important}
-#controlCenter .cc-native-media{padding:18px!important;border-radius:28px!important;margin:0!important}
-#controlCenter .cc-media-buttons{display:flex!important;align-items:center!important;justify-content:center!important;gap:25px!important;margin-top:14px!important}
-#controlCenter .cc-media-buttons button{width:44px!important;height:44px!important;min-width:44px!important;border-radius:50%!important;display:inline-flex!important;align-items:center!important;justify-content:center!important}
-#controlCenter .cc-page[data-cc-page="2"] .cc-native-tool-grid{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:12px!important;padding:0!important}
-#controlCenter .cc-page[data-cc-page="2"] .cc-native-tool{min-width:0!important;min-height:100px!important;padding:12px 5px!important;gap:10px!important;border-radius:24px!important}
-#controlCenter .cc-page[data-cc-page="2"] .cc-native-tool>span{width:44px!important;height:44px!important;flex:0 0 44px!important}
-#controlCenter .cc-page[data-cc-page="2"] .cc-native-tool b{font-size:11px!important;line-height:1.25!important}
-#controlCenter .cc-home-control{margin-top:0!important}
-#controlCenter .cc-native-page-title{margin:2px 2px 0!important;font-size:14px!important;letter-spacing:.02em!important}
-#controlCenter .cc-page-indicator{gap:8px!important}
-#controlCenter .cc-page-indicator button{width:7px!important;height:7px!important}
-@media(max-width:390px){
- #controlCenter .cc-pages{padding:14px 14px 10px!important}
- #controlCenter .cc-concept-top{grid-template-columns:minmax(0,1.35fr) minmax(0,.8fr)!important;gap:10px!important}
- #controlCenter .cc-connectivity{padding:10px!important;gap:8px!important}
- #controlCenter .cc-native-connect{min-height:44px!important}
- #controlCenter .cc-connectivity .cc-native-wide{min-height:44px!important;height:44px!important}
- #controlCenter .cc-native-control-row.cc-concept-shortcuts{gap:9px!important}
- #controlCenter .cc-native-wide{padding:9px!important;font-size:12px!important}
-}
-
-/* Spacious iOS-sized control layout: deliberately widen the gaps */
-#controlCenter .cc-page{gap:30px!important;padding:22px 20px 28px!important}
-#controlCenter .cc-concept-top{gap:24px!important;align-items:stretch!important}
-#controlCenter .cc-connectivity{gap:18px!important;padding:20px!important}
-#controlCenter .cc-adjustments{gap:20px!important}
-#controlCenter .cc-native-control-row{gap:22px!important;margin-top:12px!important}
-#controlCenter .cc-native-control-row.cc-concept-shortcuts{column-gap:22px!important;row-gap:22px!important;margin-top:12px!important}
-#controlCenter .cc-native-control-row:not(.cc-concept-shortcuts){column-gap:22px!important;row-gap:22px!important;margin-top:12px!important}
-#controlCenter .cc-native-tool-grid{column-gap:22px!important;row-gap:22px!important}
-#controlCenter .cc-native-round{transform:translateZ(0);}
-#controlCenter .cc-native-control-row.cc-concept-shortcuts .cc-native-round{width:100%!important;max-width:72px!important;justify-self:center!important}
-#controlCenter .cc-native-tool{min-width:0!important}
-@media(max-height:740px){
- #controlCenter .cc-page{gap:22px!important;padding:16px 18px 24px!important}
- #controlCenter .cc-concept-top{gap:18px!important}
- #controlCenter .cc-connectivity{gap:14px!important;padding:16px!important}
- #controlCenter .cc-adjustments{gap:14px!important}
- #controlCenter .cc-native-control-row.cc-concept-shortcuts{column-gap:16px!important;row-gap:18px!important}
- #controlCenter .cc-native-tool-grid{column-gap:18px!important;row-gap:18px!important}
-}
-
-/* More air between every control + animated liquid slider fill */
-#controlCenter .cc-page{gap:22px!important}
-#controlCenter .cc-concept-top{gap:18px!important}
-#controlCenter .cc-connectivity{gap:13px!important;padding:16px!important}
-#controlCenter .cc-adjustments{gap:14px!important}
-#controlCenter .cc-native-control-row.cc-concept-shortcuts{column-gap:17px!important;row-gap:17px!important;margin-top:4px!important}
-#controlCenter .cc-native-control-row:not(.cc-concept-shortcuts){column-gap:16px!important;row-gap:16px!important;margin-top:4px!important}
-#controlCenter .cc-native-round{box-shadow:inset 0 1px 0 rgba(255,255,255,.28),0 8px 20px rgba(0,0,0,.14)!important}
-#controlCenter .cc-native-tool-grid{column-gap:16px!important;row-gap:16px!important}
-#controlCenter .cc-page[data-cc-page="2"] .cc-native-tool{margin:0!important}
-#controlCenter .cc-native-slider{position:relative!important;overflow:hidden!important;isolation:isolate!important;transition:background-color .28s ease,box-shadow .28s ease!important}
-#controlCenter .cc-native-slider:before{
- height:var(--cc-fill,65%)!important;
- transition:height .32s cubic-bezier(.22,.8,.25,1),background .28s ease,box-shadow .28s ease!important;
- will-change:height;
-}
-#controlCenter .cc-native-slider input[type="range"]{
- z-index:3!important;cursor:ns-resize!important;touch-action:pan-x!important;
-}
-#controlCenter .cc-native-slider:after{
- content:"";position:absolute;left:5px;right:5px;bottom:5px;height:var(--cc-fill,65%);
- border-radius:24px;pointer-events:none;z-index:0;
- background:linear-gradient(180deg,rgba(255,255,255,.15),rgba(255,255,255,0));
- opacity:.7;transition:height .32s cubic-bezier(.22,.8,.25,1),opacity .25s ease;
-}
-#controlCenter .cc-native-slider .cc-slider-symbol,
-#controlCenter .cc-native-slider output{z-index:4!important;transition:transform .22s ease,opacity .22s ease!important}
-#controlCenter .cc-native-slider:focus-within{box-shadow:0 0 0 2px rgba(255,255,255,.38),inset 0 1px 0 rgba(255,255,255,.32),0 8px 22px rgba(0,0,0,.15)!important}
-#controlCenter .cc-native-slider:active .cc-slider-symbol{transform:scale(1.12)}
-#controlCenter .cc-native-slider input[type="range"]::-webkit-slider-thumb{transition:transform .18s ease,box-shadow .18s ease}
-#controlCenter .cc-native-slider input[type="range"]:active::-webkit-slider-thumb{transform:scale(1.13);box-shadow:0 0 0 7px rgba(255,255,255,.15)}
-#controlCenter .cc-native-slider input[type="range"]::-moz-range-thumb{transition:transform .18s ease,box-shadow .18s ease}
-#controlCenter .cc-native-slider input[type="range"]:active::-moz-range-thumb{transform:scale(1.13);box-shadow:0 0 0 7px rgba(255,255,255,.15)}
-@media(prefers-reduced-motion:reduce){
- #controlCenter .cc-native-slider,#controlCenter .cc-native-slider:before,#controlCenter .cc-native-slider:after,
- #controlCenter .cc-native-slider .cc-slider-symbol,#controlCenter .cc-native-slider output,
- #controlCenter .cc-native-slider input[type="range"]::-webkit-slider-thumb,
- #controlCenter .cc-native-slider input[type="range"]::-moz-range-thumb{transition:none!important}
-}
-
-/* Final spacing and slider fixes — placed last so earlier theme rules cannot override */
-#controlCenter .cc-page{gap:34px!important;padding:26px 22px 34px!important}
-#controlCenter .cc-concept-top{gap:28px!important}
-#controlCenter .cc-connectivity{gap:22px!important;padding:22px!important}
-#controlCenter .cc-adjustments{gap:24px!important}
-#controlCenter .cc-native-control-row{gap:26px!important;margin-top:18px!important}
-#controlCenter .cc-native-control-row.cc-concept-shortcuts{column-gap:26px!important;row-gap:28px!important;margin-top:18px!important}
-#controlCenter .cc-native-control-row:not(.cc-concept-shortcuts){column-gap:24px!important;row-gap:26px!important;margin-top:18px!important}
-#controlCenter .cc-native-tool-grid{column-gap:26px!important;row-gap:28px!important}
-#controlCenter .cc-native-control-row.cc-concept-shortcuts .cc-native-round{width:100%!important;max-width:68px!important;justify-self:center!important}
-#controlCenter .cc-native-slider{background:rgba(42,46,55,.48)!important;border:1px solid rgba(255,255,255,.22)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.16),0 8px 22px rgba(0,0,0,.16)!important}
-#controlCenter .cc-native-slider:before{height:var(--cc-fill,65%)!important;background:linear-gradient(180deg,rgba(255,255,255,.96),rgba(225,229,236,.92))!important;transition:height .34s cubic-bezier(.22,.8,.25,1)!important}
-#controlCenter .cc-native-slider:after{height:var(--cc-fill,65%)!important}
-#controlCenter .cc-native-slider input[type="range"]{touch-action:none!important;opacity:.015!important;cursor:ns-resize!important}
-@media(max-height:740px){
- #controlCenter .cc-page{gap:26px!important;padding:18px 18px 28px!important}
- #controlCenter .cc-concept-top{gap:20px!important}
- #controlCenter .cc-connectivity{gap:16px!important;padding:17px!important}
- #controlCenter .cc-adjustments{gap:18px!important}
- #controlCenter .cc-native-control-row.cc-concept-shortcuts{column-gap:18px!important;row-gap:22px!important;margin-top:14px!important}
- #controlCenter .cc-native-control-row:not(.cc-concept-shortcuts){column-gap:18px!important;row-gap:22px!important;margin-top:14px!important}
- #controlCenter .cc-native-tool-grid{column-gap:20px!important;row-gap:22px!important}
-}
-
-/* Control Center layout: consistent touch handling, roomy controls, responsive geometry */
-#controlCenter .cc-page{gap:clamp(20px,3.6vh,34px)!important;padding:clamp(14px,2.5vh,24px) clamp(14px,4vw,22px) calc(24px + var(--safe-bottom))!important}
-#controlCenter .cc-pages{padding:14px 14px 12px!important;gap:16px!important}
-#controlCenter .cc-page[data-cc-page="0"] .cc-concept-top{display:grid!important;grid-template-columns:minmax(0,1.12fr) minmax(112px,.88fr)!important;gap:clamp(14px,4vw,22px)!important;align-items:stretch!important}
-#controlCenter .cc-connectivity{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;grid-template-rows:repeat(3,minmax(42px,1fr)) 54px!important;gap:clamp(9px,2.8vw,14px)!important;padding:clamp(12px,3vw,17px)!important;min-width:0!important}
-#controlCenter .cc-connectivity .cc-native-wide[data-toggle="focus"]{grid-column:1/-1!important;width:100%!important;min-height:54px!important;justify-content:flex-start!important;padding-inline:18px!important}
-#controlCenter .cc-adjustments{display:flex!important;gap:clamp(12px,3.5vw,20px)!important;height:clamp(235px,34vh,310px)!important;min-height:220px!important;min-width:0!important}
-#controlCenter .cc-native-slider{position:relative!important;flex:1 1 0!important;min-width:0!important;height:100%!important;min-height:220px!important;border-radius:30px!important;overflow:hidden!important;touch-action:none!important}
-#controlCenter .cc-native-slider input[type="range"]{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;opacity:0!important;z-index:8!important;cursor:ns-resize!important;touch-action:none!important;pointer-events:none!important}
-#controlCenter .cc-native-slider:before,#controlCenter .cc-native-slider:after{height:var(--cc-fill,65%)!important;pointer-events:none!important;transition:height .12s linear!important}
-#controlCenter .cc-native-slider output{z-index:9!important;pointer-events:none!important}
-#controlCenter .cc-native-control-row.cc-concept-shortcuts{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:clamp(14px,4vw,24px)!important;margin-top:0!important;padding:0!important}
-#controlCenter .cc-native-control-row.cc-concept-shortcuts .cc-native-round{width:100%!important;max-width:68px!important;aspect-ratio:1!important;height:auto!important;justify-self:center!important;border-radius:50%!important}
-#controlCenter .cc-native-control-row:not(.cc-concept-shortcuts){display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;column-gap:clamp(14px,4vw,24px)!important;row-gap:clamp(16px,3vh,24px)!important;margin-top:0!important}
-#controlCenter .cc-native-tool-grid{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;column-gap:clamp(14px,4vw,24px)!important;row-gap:clamp(18px,3vh,26px)!important;grid-auto-rows:minmax(112px,auto)!important}
-#controlCenter .cc-page[data-cc-page="2"] .cc-native-tool{min-height:112px!important;padding:15px 12px!important;gap:10px!important}
-#controlCenter .cc-native-tool>span{margin-bottom:5px!important}
-#controlCenter .cc-native-wide{gap:12px!important;padding:10px 14px!important}
-@media(max-height:740px){
- #controlCenter .cc-page{gap:20px!important;padding:14px 14px calc(20px + var(--safe-bottom))!important}
- #controlCenter .cc-adjustments{height:clamp(205px,30vh,250px)!important;min-height:200px!important;gap:12px!important}
- #controlCenter .cc-connectivity{grid-template-rows:repeat(3,minmax(38px,1fr)) 48px!important;gap:9px!important;padding:12px!important}
- #controlCenter .cc-connectivity .cc-native-wide[data-toggle="focus"]{min-height:48px!important}
- #controlCenter .cc-native-tool-grid{grid-auto-rows:minmax(100px,auto)!important;row-gap:16px!important}
- #controlCenter .cc-page[data-cc-page="2"] .cc-native-tool{min-height:100px!important;padding:12px 10px!important}
-}
-@media(max-width:360px){
- #controlCenter .cc-page[data-cc-page="0"] .cc-concept-top{grid-template-columns:minmax(0,1fr) minmax(104px,.86fr)!important;gap:10px!important}
- #controlCenter .cc-connectivity{gap:8px!important;padding:10px!important}
- #controlCenter .cc-native-control-row.cc-concept-shortcuts{gap:12px!important}
-}
-
-/* Focus tile: wider/taller than the other rectangular controls, with centered icon and label */
-#controlCenter .cc-connectivity .cc-native-wide[data-toggle="focus"]{
- grid-column:1/-1!important;
- width:100%!important;
- min-height:76px!important;
- height:76px!important;
- position:relative!important;
- display:flex!important;
- align-items:center!important;
- justify-content:center!important;
- gap:10px!important;
- padding:10px 42px!important;
- text-align:center!important;
-}
-#controlCenter .cc-connectivity .cc-native-wide[data-toggle="focus"] .cc-native-control-icon,
-#controlCenter .cc-connectivity .cc-native-wide[data-toggle="focus"]>span:not(.cc-chevron){flex:0 0 auto!important}
-#controlCenter .cc-connectivity .cc-native-wide[data-toggle="focus"] .cc-chevron{
- position:absolute!important;right:16px!important;top:50%!important;
- transform:translateY(-50%)!important;margin:0!important;
-}
-@media(max-height:740px){
- #controlCenter .cc-connectivity .cc-native-wide[data-toggle="focus"]{min-height:66px!important;height:66px!important}
-}
-</style>`;
+ $('#appContent').innerHTML=`<div id="videoCall" style="position:absolute;inset:0;background:#111;color:white;overflow:hidden">${videoMarkup}<div style="position:absolute;top:20px;left:0;right:0;text-align:center;text-shadow:0 2px 8px #000;font-size:15px;font-weight:600">${escapeHTML(caller)}<div id="callDuration" style="font-size:12px;font-weight:400;margin-top:5px">00:00</div></div><div id="myVideoBox" style="position:absolute;right:14px;top:62px;width:clamp(82px,25vw,115px);height:150px;border-radius:18px;overflow:hidden;background:linear-gradient(145deg,#8a9aa8,#3d4352);border:1px solid #ffffff66;box-shadow:0 5px 20px #0005;touch-action:none;display:grid;place-items:center;font-size:26px">${myVideo?`<video src="${escapeHTML(myVideo)}" autoplay loop muted playsinline style="width:100%;height:100%;object-fit:cover"></video>`:'☺'}</div><div id="callMessages" style="position:absolute;left:15px;bottom:125px;right:20px;display:flex;flex-direction:column;gap:7px;pointer-events:none;text-align:left;text-shadow:0 2px 5px #000;font-size:14px"></div><form id="callChatForm" style="position:absolute;bottom:calc(80px + var(--safe-bottom));left:12px;right:12px;display:flex;gap:8px"><input id="callChatInput" placeholder="メッセージ…" style="flex:1;min-width:0;border:1px solid #ffffff44;border-radius:22px;padding:11px 15px;background:#0006;color:#fff;backdrop-filter:blur(10px)"><button style="background:#fff;color:#222;border-radius:50%;width:40px;height:40px">➤</button></form><div style="position:absolute;bottom:calc(15px + var(--safe-bottom));left:0;right:0;display:flex;justify-content:center;gap:clamp(14px,5vw,24px)"><button class="call-control" id="flipBtn">↻</button><button class="call-control" id="micBtn">🎙</button><button class="call-control" id="camBtn">▣</button><button class="call-control" id="hangupBtn" style="background:#ff3b30"><svg class="ui-phone-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.62 10.79a15.05 15.05 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.01-.24c1.12.37 2.33.56 3.58.56a1 1 0 0 1 1 1V20a1 1 0 0 1-1 1C10.61 21 3 13.39 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.19 2.46.56 3.58a1 1 0 0 1-.25 1.01z"/></svg></button></div><div id="tapSound" style="position:absolute;inset:0;z-index:0;pointer-events:none"></div></div>`;
  const v=$('#callVideo');if(v){v.play().catch(()=>{});$('#videoCall').addEventListener('click',()=>{v.muted=false;v.play().catch(()=>{});},{once:true})}
  callTimer=setInterval(()=>{callSeconds++;$('#callDuration').textContent=String(Math.floor(callSeconds/60)).padStart(2,'0')+':'+String(callSeconds%60).padStart(2,'0')},1000);
  const box=$('#myVideoBox');let dragging=false,startX=0,startY=0,left0=0,top0=0;
@@ -7041,6 +6608,443 @@ function renderSafariApp(){
 
 <style id="x2-post-detail-page">
 .x2-post{cursor:pointer}.x2-post:hover{background:rgba(29,155,240,.025)}.x2-post-detail{min-height:100%;background:var(--x2-bg,#fff)}.x2-detail-header{height:52px;display:flex;align-items:center;gap:26px;padding:0 15px;border-bottom:1px solid #eff3f4;position:sticky;top:0;background:inherit;z-index:3}.x2-detail-header button{background:transparent;color:inherit;font-size:22px;padding:4px 8px}.x2-detail-header b{font-size:17px}.x2-detail-root .x2-post{padding:18px 16px 14px;cursor:default;border-bottom:0}.x2-detail-root .x2-post-avatar,.x2-detail-root .x2-avatar{width:44px;height:44px}.x2-detail-root .x2-post-text{font-size:20px;line-height:1.5;margin:15px 0 22px;white-space:pre-wrap;overflow-wrap:anywhere}.x2-detail-root .x2-post-actions{padding:14px 0 8px;justify-content:space-between;border-top:1px solid #eff3f4}.x2-detail-stats{display:flex;gap:18px;padding:12px 18px;border-top:1px solid #eff3f4;border-bottom:1px solid #eff3f4;color:#536471;font-size:13px}.x2-detail-stats span{font-weight:600}.x2-detail-replies-heading{padding:14px 18px;font-weight:700;border-bottom:1px solid #eff3f4}.x2-detail-replies-heading+.x2-inline-thread{margin:0;padding:0 16px 12px;border:0;background:transparent}.x2-detail-replies-heading+.x2-inline-thread .x2-inline-reply{padding:15px 0}.x2-detail-replies-heading+.x2-inline-thread .x2-inline-compose{position:sticky;bottom:0;background:inherit;padding:12px 0;border-top:1px solid #eff3f4}.x2-post-detail-empty{padding:20px}.x2-post-detail-empty button{background:transparent;color:inherit}
+</style>
+
+<style id="global-control-center-and-call-styles">
+.call-control{width:54px;height:54px;border-radius:50%;background:#555b;color:white;font-size:21px;box-shadow:0 4px 14px #0003}#callMessages .msg{animation:msgIn .25s ease;transition:opacity 1s}#callMessages .msg.fade{opacity:0}@keyframes msgIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+/* iOS 26 Control Center: final overrides for the replaced Liquid Glass panel */
+#controlCenter{position:absolute!important;inset:0!important;z-index:1000!important;box-sizing:border-box;isolation:isolate;padding:calc(48px + var(--safe-top)) 14px calc(24px + var(--safe-bottom))!important;background:linear-gradient(155deg,rgba(242,245,252,.76),rgba(190,202,222,.58) 55%,rgba(220,226,239,.68))!important;color:#171a22!important;-webkit-backdrop-filter:blur(52px) saturate(1.9)!important;backdrop-filter:blur(52px) saturate(1.9)!important}
+#controlCenter.active{display:flex!important;flex-direction:column!important}
+#controlCenter:before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(ellipse at 12% 8%,rgba(255,255,255,.9),transparent 42%),radial-gradient(ellipse at 92% 34%,rgba(163,184,230,.56),transparent 48%),linear-gradient(180deg,rgba(255,255,255,.12),rgba(255,255,255,0))}
+#controlCenter button{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",sans-serif;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+#controlCenter .cc-connectivity,#controlCenter .cc-slider,#controlCenter .cc-feature,#controlCenter .cc-tool,#controlCenter .cc-media{border:1px solid rgba(255,255,255,.68)!important;box-shadow:0 8px 26px rgba(34,45,67,.08),inset 0 1px 0 rgba(255,255,255,.82)!important;-webkit-backdrop-filter:blur(30px) saturate(1.7)!important;backdrop-filter:blur(30px) saturate(1.7)!important}
+#controlCenter .cc-connect-main.on,#controlCenter .cc-round.on,#controlCenter .cc-feature.on,#controlCenter .cc-tool.on{background:linear-gradient(145deg,#3e82f7,#1760d9)!important;color:#fff!important;border-color:rgba(255,255,255,.5)!important}
+#controlCenter .cc-page{padding-bottom:18px!important}
+#controlCenter .cc-done{position:relative;z-index:2;min-height:38px;cursor:pointer}
+#controlCenter .cc-close{flex-shrink:0;cursor:pointer;touch-action:manipulation}
+#controlCenter .cc-page-indicator{flex-shrink:0;padding:10px 0 2px}
+@media(prefers-color-scheme:dark){#controlCenter{background:linear-gradient(150deg,rgba(35,39,50,.86),rgba(20,24,34,.82))!important;color:#f7f8fc!important}#controlCenter:before{background:radial-gradient(ellipse at 12% 8%,rgba(255,255,255,.14),transparent 42%),radial-gradient(ellipse at 92% 34%,rgba(78,113,184,.3),transparent 48%)}#controlCenter .cc-eyebrow{color:#c5cad6}#controlCenter .cc-heading{color:#fff}#controlCenter .cc-done{background:rgba(255,255,255,.16);color:#fff;border-color:rgba(255,255,255,.3)}#controlCenter .cc-connectivity,#controlCenter .cc-slider,#controlCenter .cc-feature,#controlCenter .cc-tool,#controlCenter .cc-media{background:rgba(255,255,255,.12)!important;border-color:rgba(255,255,255,.2)!important}}
+
+
+/* Rebuilt iOS 26-style Control Center layout */
+#controlCenter{position:absolute!important;inset:0!important;z-index:1000!important;display:none;box-sizing:border-box;isolation:isolate;overflow:hidden;padding:calc(18px + var(--safe-top)) 17px calc(20px + var(--safe-bottom))!important;color:#fff!important;background:rgba(14,16,22,.28)!important;-webkit-backdrop-filter:blur(54px) saturate(1.65)!important;backdrop-filter:blur(54px) saturate(1.65)!important}
+#controlCenter:before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:linear-gradient(160deg,rgba(18,22,31,.30),rgba(9,12,18,.54)),radial-gradient(ellipse at 80% 5%,rgba(255,255,255,.18),transparent 45%)}
+#controlCenter.active{display:flex!important;flex-direction:column!important;animation:ccIn .23s cubic-bezier(.2,.8,.2,1) both}
+#controlCenter .cc-grabber{width:36px;height:5px;border-radius:8px;background:rgba(255,255,255,.62);margin:0 auto 17px;flex-shrink:0;box-shadow:0 1px 2px #0002}
+#controlCenter .cc-pages{flex:1;min-height:0;margin:0 -1px;gap:0}
+#controlCenter .cc-page{padding:0 1px 12px;overflow-y:auto}
+#controlCenter .cc-native-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:13px;align-content:start}
+#controlCenter .cc-connectivity{grid-column:1;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;align-content:center;justify-items:center;min-height:150px;padding:15px 11px;border-radius:30px;background:rgba(32,35,43,.72)!important;border:1px solid rgba(255,255,255,.17)!important;box-shadow:inset 0 1px rgba(255,255,255,.14),0 8px 28px #0002!important;-webkit-backdrop-filter:blur(28px) saturate(1.5);backdrop-filter:blur(28px) saturate(1.5)}
+#controlCenter .cc-native-connect,#controlCenter .cc-native-round{display:grid;place-items:center;width:43px;height:43px;border:0;border-radius:50%;padding:0;color:#f5f5f7;background:rgba(255,255,255,.17);box-shadow:inset 0 1px rgba(255,255,255,.17);transition:transform .15s,background .18s}
+#controlCenter .cc-native-connect.on{background:#087cff;color:#fff;box-shadow:inset 0 1px rgba(255,255,255,.22)}
+#controlCenter .cc-glyph{display:grid;place-items:center;width:24px;height:24px;font-size:23px;line-height:1}
+#controlCenter .cc-glyph svg,#controlCenter .cc-slider-symbol svg{width:23px;height:23px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+#controlCenter .cc-media{grid-column:2;display:flex;flex-direction:column;justify-content:space-between;min-height:150px;padding:13px;border:1px solid rgba(255,255,255,.15)!important;border-radius:29px;background:rgba(40,42,49,.75)!important;color:#fff;box-shadow:inset 0 1px rgba(255,255,255,.13),0 8px 24px #0002!important}
+#controlCenter .cc-media-top{display:flex;align-items:center;gap:9px;min-width:0}
+#controlCenter .cc-album{width:43px;height:43px;border-radius:9px;background:linear-gradient(145deg,#8d8d95,#383840 70%);display:grid;place-items:center;color:#fff;font-size:22px;flex-shrink:0}
+#controlCenter .cc-track{flex:1;min-width:0}
+#controlCenter .cc-track b{font-size:12px;font-weight:600;display:block;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#controlCenter .cc-track small{display:block;color:#c5c5cc;font-size:10px;margin-top:4px}
+#controlCenter .cc-output-icon{font-size:18px;color:#d2d2d7}
+#controlCenter .cc-native-progress{height:3px;border-radius:4px;background:#ffffff38;margin:12px 0 7px}
+#controlCenter .cc-native-progress i{display:block;width:25%;height:100%;background:#f5f5f7;border-radius:4px}
+#controlCenter .cc-media-buttons{display:flex;align-items:center;justify-content:space-around}
+#controlCenter .cc-media-buttons button{border:0;background:transparent;color:#fff;font-size:14px;padding:3px 8px}
+#controlCenter .cc-media-buttons #ccPlay,#controlCenter .cc-media-buttons #ccPlay2{width:29px;height:29px;border-radius:50%;background:#f4f4f6;color:#202127;font-size:12px}
+#controlCenter .cc-adjustments{grid-column:1 / -1;display:grid;grid-template-columns:1fr 1fr;gap:13px;height:190px}
+#controlCenter .cc-native-slider{position:relative;overflow:hidden;border-radius:30px;background:rgba(35,37,44,.76);border:1px solid rgba(255,255,255,.15);box-shadow:inset 0 1px rgba(255,255,255,.14),0 8px 24px #0002}
+#controlCenter .cc-native-slider input{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:.01;z-index:3;cursor:pointer;writing-mode:vertical-lr;direction:rtl;touch-action:pan-y}
+#controlCenter .cc-native-slider:before{content:"";position:absolute;left:0;right:0;bottom:0;height:var(--fill,100%);border-radius:25px;background:linear-gradient(180deg,rgba(255,255,255,.98),rgba(235,236,240,.96));transition:height .08s}
+#controlCenter .cc-volume:before{height:65%}
+#controlCenter .cc-slider-symbol{position:absolute;z-index:2;left:0;right:0;bottom:13px;display:flex;justify-content:center;color:#33343a;pointer-events:none}
+#controlCenter .cc-slider-symbol svg{width:22px;height:22px}
+#controlCenter .cc-native-slider output{position:absolute;top:12px;left:0;right:0;text-align:center;font-size:10px;color:#fff;z-index:2;opacity:.0;pointer-events:none}
+#controlCenter .cc-native-control-row{grid-column:1 / -1;display:flex;align-items:center;gap:11px}
+#controlCenter .cc-native-wide{height:58px;flex:1;min-width:0;border-radius:30px;border:1px solid rgba(255,255,255,.16);background:rgba(39,41,49,.78);color:#fff;display:flex;align-items:center;gap:10px;padding:0 15px;font-size:12px;font-weight:600;text-align:left;box-shadow:inset 0 1px rgba(255,255,255,.12)}
+#controlCenter .cc-native-control-icon{display:grid;place-items:center;width:32px;height:32px;flex-shrink:0;border-radius:50%;background:rgba(255,255,255,.17);font-size:20px}
+#controlCenter .cc-chevron{margin-left:auto;color:#bfc0c6;font-size:18px}
+#controlCenter .cc-native-round{width:58px;height:58px;flex-shrink:0;background:rgba(39,41,49,.78);border:1px solid rgba(255,255,255,.16)}
+#controlCenter .cc-native-round.on,#controlCenter .cc-native-wide.on{background:#087cff;color:#fff}
+#controlCenter .cc-secondary-row{justify-content:space-between}
+#controlCenter .cc-native-page-title{font-size:22px;font-weight:700;letter-spacing:-.4px;margin:4px 3px 16px;color:#fff}
+#controlCenter .cc-native-tool-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+#controlCenter .cc-native-tool{min-height:78px;border:1px solid rgba(255,255,255,.16);border-radius:27px;background:rgba(39,41,49,.78);color:#fff;display:flex;align-items:center;gap:13px;padding:13px 16px;text-align:left}
+#controlCenter .cc-native-tool span{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.17);font-size:21px}
+#controlCenter .cc-native-tool b{font-size:12px;font-weight:600}
+#controlCenter .cc-native-tool.on{background:#087cff}
+#controlCenter .cc-native-note{color:#d3d3d8;font-size:11px;text-align:center;margin:20px 8px}
+#controlCenter .cc-page-indicator{padding:9px 0 10px;gap:6px}
+#controlCenter .cc-page-indicator button{width:6px;height:6px;background:#ffffff62}
+#controlCenter .cc-page-indicator button.active{width:6px;border-radius:50%;background:#fff}
+#controlCenter .cc-close{bottom:calc(8px + var(--safe-bottom));width:135px;height:5px;background:rgba(255,255,255,.88);box-shadow:0 1px 4px #0003;cursor:pointer}
+#controlCenter .cc-native-connect:active,#controlCenter .cc-native-round:active,#controlCenter .cc-native-wide:active{transform:scale(.95)}
+#controlCenter .cc-native-wide.on .cc-native-control-icon{background:#ffffff38}
+@media(max-width:370px){#controlCenter{padding-left:12px!important;padding-right:12px!important}#controlCenter .cc-native-grid{gap:9px}#controlCenter .cc-connectivity{gap:8px;padding:12px 8px}#controlCenter .cc-native-connect{width:39px;height:39px}#controlCenter .cc-media{padding:10px}#controlCenter .cc-album{width:36px;height:36px}#controlCenter .cc-adjustments{height:170px}#controlCenter .cc-native-control-row{gap:7px}#controlCenter .cc-native-round{width:51px;height:51px}#controlCenter .cc-native-wide{padding:0 10px;font-size:11px}}
+@media(max-height:700px){#controlCenter{padding-top:calc(10px + var(--safe-top))!important;padding-bottom:calc(15px + var(--safe-bottom))!important}#controlCenter .cc-grabber{margin-bottom:10px}#controlCenter .cc-connectivity,#controlCenter .cc-media{min-height:130px}#controlCenter .cc-adjustments{height:160px}#controlCenter .cc-native-wide{height:50px}#controlCenter .cc-native-round{width:50px;height:50px}}
+
+
+/* Clear Liquid Glass transparency pass — show the wallpaper through the Control Center */
+#controlCenter{
+  background:rgba(12,15,22,.075)!important;
+  -webkit-backdrop-filter:blur(24px) saturate(1.55)!important;
+  backdrop-filter:blur(24px) saturate(1.55)!important;
+}
+#controlCenter:before{
+  background:
+    linear-gradient(155deg,rgba(14,18,28,.08),rgba(8,11,18,.20)),
+    radial-gradient(ellipse at 16% 0%,rgba(255,255,255,.18),transparent 48%),
+    radial-gradient(ellipse at 88% 22%,rgba(163,194,255,.12),transparent 45%)!important;
+}
+#controlCenter .cc-connectivity,
+#controlCenter .cc-media,
+#controlCenter .cc-native-slider,
+#controlCenter .cc-native-wide,
+#controlCenter .cc-native-round,
+#controlCenter .cc-native-tool{
+  background:linear-gradient(145deg,rgba(255,255,255,.19),rgba(255,255,255,.075))!important;
+  border:1px solid rgba(255,255,255,.27)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.30),inset 0 -1px 0 rgba(255,255,255,.045),0 8px 24px rgba(0,0,0,.075)!important;
+  -webkit-backdrop-filter:blur(22px) saturate(1.65)!important;
+  backdrop-filter:blur(22px) saturate(1.65)!important;
+}
+#controlCenter .cc-native-connect,
+#controlCenter .cc-native-round{
+  background:rgba(255,255,255,.17)!important;
+  border:1px solid rgba(255,255,255,.20)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.24)!important;
+}
+#controlCenter .cc-native-connect.on,
+#controlCenter .cc-native-round.on,
+#controlCenter .cc-native-wide.on,
+#controlCenter .cc-native-tool.on{
+  background:linear-gradient(145deg,rgba(34,139,255,.96),rgba(0,101,238,.88))!important;
+  border-color:rgba(255,255,255,.48)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 3px 12px rgba(0,100,255,.16)!important;
+}
+#controlCenter .cc-native-slider{
+  background:linear-gradient(145deg,rgba(20,23,31,.20),rgba(20,23,31,.11))!important;
+  border-color:rgba(255,255,255,.28)!important;
+}
+#controlCenter .cc-native-slider:before{
+  background:linear-gradient(180deg,rgba(255,255,255,.94),rgba(239,242,248,.84))!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.96),0 0 12px rgba(255,255,255,.08);
+}
+#controlCenter .cc-native-slider .cc-slider-symbol{color:rgba(38,42,51,.88)}
+#controlCenter .cc-native-page-title{ text-shadow:0 1px 10px rgba(0,0,0,.22) }
+#controlCenter .cc-grabber{
+  background:rgba(255,255,255,.78)!important;
+  box-shadow:0 1px 5px rgba(0,0,0,.12),inset 0 1px 0 rgba(255,255,255,.65)!important;
+}
+#controlCenter .cc-close{
+  background:rgba(255,255,255,.84)!important;
+  box-shadow:0 1px 5px rgba(0,0,0,.12)!important;
+}
+@media(prefers-color-scheme:light){
+  #controlCenter{color:#fff!important}
+  #controlCenter:before{
+    background:linear-gradient(155deg,rgba(18,23,34,.12),rgba(10,13,22,.28)),radial-gradient(ellipse at 15% 0%,rgba(255,255,255,.22),transparent 48%)!important;
+  }
+  #controlCenter .cc-connectivity,
+  #controlCenter .cc-media,
+  #controlCenter .cc-native-wide,
+  #controlCenter .cc-native-round,
+  #controlCenter .cc-native-tool{
+    background:linear-gradient(145deg,rgba(30,34,44,.25),rgba(24,28,38,.15))!important;
+  }
+}
+@media(prefers-reduced-transparency:reduce){
+  #controlCenter{background:rgba(18,20,27,.82)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+  #controlCenter .cc-connectivity,#controlCenter .cc-media,#controlCenter .cc-native-slider,#controlCenter .cc-native-wide,#controlCenter .cc-native-round,#controlCenter .cc-native-tool{background:rgba(40,43,51,.94)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+}
+
+
+/* Complete Control Center concept rebuild — translucent iOS 26 inspired */
+#controlCenter{padding:calc(12px + var(--safe-top)) 20px calc(18px + var(--safe-bottom))!important;background:rgba(30,55,78,.035)!important;-webkit-backdrop-filter:blur(13px) saturate(1.7)!important;backdrop-filter:blur(13px) saturate(1.7)!important;color:#fff!important}
+#controlCenter:before{background:linear-gradient(155deg,rgba(18,39,59,.08),rgba(9,20,34,.20)),radial-gradient(ellipse at 18% 0%,rgba(255,255,255,.20),transparent 50%)!important}
+#controlCenter .cc-statusline{display:flex;justify-content:space-between;align-items:center;padding:1px 18px 18px;font-size:14px;font-weight:650;letter-spacing:.2px;text-shadow:0 1px 8px #0004}
+#controlCenter .cc-pages{flex:1;min-height:0}
+#controlCenter .cc-page{padding:0 0 12px;overflow-y:auto}
+#controlCenter .cc-concept-top{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:12px;align-items:stretch}
+#controlCenter .cc-connectivity{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px;align-content:center;justify-items:center;padding:17px 12px;border-radius:34px;background:linear-gradient(145deg,rgba(255,255,255,.19),rgba(255,255,255,.055))!important;border:1px solid rgba(255,255,255,.35)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.42),0 12px 32px #07182b12!important;-webkit-backdrop-filter:blur(18px) saturate(1.6)!important;backdrop-filter:blur(18px) saturate(1.6)!important}
+#controlCenter .cc-native-connect,#controlCenter .cc-native-round{width:clamp(42px,11vw,54px);height:clamp(42px,11vw,54px);border-radius:50%;display:grid;place-items:center;background:linear-gradient(145deg,rgba(255,255,255,.24),rgba(255,255,255,.08))!important;border:1px solid rgba(255,255,255,.34)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.38),0 4px 14px #07182b0d!important;color:white}
+#controlCenter .cc-glyph{font-size:24px;line-height:1;font-weight:500}
+#controlCenter .cc-native-connect.on,#controlCenter .cc-native-round.on,#controlCenter .cc-native-wide.on,#controlCenter .cc-native-tool.on{background:linear-gradient(145deg,rgba(36,153,255,.94),rgba(0,112,242,.82))!important;border-color:rgba(255,255,255,.62)!important}
+#controlCenter .cc-connectivity .cc-native-wide{grid-column:span 2;width:100%;min-height:48px}
+#controlCenter .cc-adjustments{display:flex;gap:10px;min-width:0}
+#controlCenter .cc-native-slider{position:relative;flex:1;min-width:0;height:clamp(185px,43vh,285px);border-radius:30px!important;overflow:hidden;background:linear-gradient(145deg,rgba(255,255,255,.20),rgba(255,255,255,.07))!important;border:1px solid rgba(255,255,255,.36)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 10px 28px #07182b12!important}
+#controlCenter .cc-native-slider input{position:absolute;inset:0;width:100%;height:100%;opacity:.01;z-index:4;writing-mode:vertical-lr;direction:rtl;cursor:pointer}
+#controlCenter .cc-native-slider:before{content:"";position:absolute;left:3px;right:3px;bottom:3px;height:var(--fill,65%);border-radius:26px;background:linear-gradient(180deg,rgba(255,255,255,.98),rgba(235,245,255,.78))!important;box-shadow:inset 0 1px 0 #fff;pointer-events:none}
+#controlCenter .cc-slider-symbol{position:absolute;z-index:2;bottom:17px;left:0;right:0;text-align:center;color:#63809a;font-size:23px;pointer-events:none}
+#controlCenter .cc-native-slider output{position:absolute;top:10px;left:0;right:0;text-align:center;font-size:10px;color:#ffffffd9;text-shadow:0 1px 5px #0003}
+#controlCenter .cc-native-control-row{display:flex;gap:11px;align-items:center;margin-top:13px}
+#controlCenter .cc-native-wide{flex:1;min-width:0;min-height:54px;padding:10px 13px;border-radius:24px!important;display:flex;align-items:center;gap:9px;background:linear-gradient(145deg,rgba(255,255,255,.19),rgba(255,255,255,.065))!important;border:1px solid rgba(255,255,255,.32)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.34),0 6px 20px #07182b0d!important;color:#fff}
+#controlCenter .cc-native-control-icon{font-size:22px}
+#controlCenter .cc-chevron{margin-left:auto;opacity:.8}
+#controlCenter .cc-concept-shortcuts{justify-content:space-between}
+#controlCenter .cc-concept-shortcuts .cc-native-round{flex:1}
+#controlCenter .cc-native-media{margin:0 0 13px;padding:19px;border-radius:32px!important;background:linear-gradient(145deg,rgba(255,255,255,.24),rgba(255,255,255,.075))!important;border:1px solid rgba(255,255,255,.38)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.44),0 12px 32px #07182b12!important;-webkit-backdrop-filter:blur(22px) saturate(1.65)!important;backdrop-filter:blur(22px) saturate(1.65)!important}
+#controlCenter .cc-media-top{display:flex;align-items:center;gap:12px}
+#controlCenter .cc-album{display:grid;place-items:center;width:62px;height:62px;flex-shrink:0;border-radius:15px;background:linear-gradient(145deg,#a6d8ffb8,#e7efff77),url("https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=180&q=70") center/cover;color:white;font-size:30px;text-shadow:0 1px 6px #0004}
+#controlCenter .cc-track b{font-size:15px}#controlCenter .cc-track small{display:block;margin-top:4px;opacity:.78}
+#controlCenter .cc-output-icon{margin-left:auto;font-size:22px}
+#controlCenter .cc-native-progress{height:4px;border-radius:9px;background:#ffffff65;margin:19px 0 7px;overflow:hidden}
+#controlCenter .cc-native-progress i{display:block;width:34%;height:100%;border-radius:9px;background:#fff}
+#controlCenter .cc-media-time{display:flex;justify-content:space-between;font-size:11px;opacity:.8}
+#controlCenter .cc-media-buttons{display:flex;align-items:center;justify-content:space-evenly;margin-top:14px}
+#controlCenter .cc-media-buttons button{background:transparent;border:0;color:white;font-size:22px;padding:8px 15px}
+#controlCenter .cc-media-buttons #ccPlay2{font-size:29px}
+#controlCenter .cc-native-page-title{font-size:24px;font-weight:700;margin:5px 4px 18px;text-shadow:0 1px 12px #0003}
+#controlCenter .cc-native-tool-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+#controlCenter .cc-native-tool{min-height:105px;border-radius:27px!important;display:flex;flex-direction:column;align-items:flex-start;justify-content:space-between;padding:15px 12px;background:linear-gradient(145deg,rgba(255,255,255,.20),rgba(255,255,255,.065))!important;border:1px solid rgba(255,255,255,.32)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.35)!important;color:white}
+#controlCenter .cc-native-tool>span{font-size:26px}#controlCenter .cc-native-tool b{font-size:11px;font-weight:600}
+#controlCenter .cc-home-control{margin-top:14px;min-height:80px}
+#controlCenter .cc-page-indicator{padding:10px 0 12px}
+#controlCenter .cc-close{background:rgba(255,255,255,.42)!important;border:1px solid #ffffff80;box-shadow:inset 0 1px 0 #ffffffa0!important}
+@media(max-width:380px){#controlCenter{padding-left:13px!important;padding-right:13px!important}#controlCenter .cc-concept-top{grid-template-columns:minmax(0,1fr) minmax(0,.82fr);gap:8px}#controlCenter .cc-connectivity{gap:8px;padding:12px 7px}#controlCenter .cc-native-slider{height:220px}#controlCenter .cc-native-tool-grid{gap:8px}}
+
+
+/* iOS 26 fidelity pass: native glyphs, tighter grouping, less Android-card styling */
+#controlCenter .cc-statusline{padding-bottom:12px;font-size:14px;letter-spacing:.15px}
+#controlCenter .cc-concept-top{grid-template-columns:minmax(0,1fr) minmax(0,.88fr);gap:9px}
+#controlCenter .cc-connectivity{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;padding:15px 9px;border-radius:29px;background:rgba(35,39,47,.48)!important;border-color:rgba(255,255,255,.23)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.22)!important}
+#controlCenter .cc-native-connect,#controlCenter .cc-native-round{width:clamp(39px,10.5vw,49px);height:clamp(39px,10.5vw,49px);border:0!important;background:rgba(255,255,255,.16)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.20)!important}
+#controlCenter .cc-native-connect .cc-glyph svg,#controlCenter .cc-native-round .cc-glyph svg,#controlCenter .cc-native-tool>span svg{width:23px;height:23px;display:block}
+#controlCenter .cc-native-connect.on{background:#1685ff!important;box-shadow:inset 0 1px 0 #ffffff50!important}
+#controlCenter .cc-connectivity .cc-native-wide{border-radius:24px!important;min-height:46px;font-size:12px;justify-content:center}
+#controlCenter .cc-adjustments{gap:8px}
+#controlCenter .cc-native-slider{border-radius:28px!important;background:rgba(40,44,53,.44)!important;border-color:rgba(255,255,255,.22)!important}
+#controlCenter .cc-native-slider:before{height:var(--fill,65%);border-radius:24px;background:linear-gradient(180deg,#fff,#f1f3f8)!important}
+#controlCenter .cc-native-control-row{gap:9px;margin-top:11px}
+#controlCenter .cc-concept-shortcuts .cc-native-round{height:58px;border-radius:50%!important}
+#controlCenter .cc-native-media{background:rgba(42,46,55,.43)!important;border-color:rgba(255,255,255,.22)!important;border-radius:28px!important;box-shadow:inset 0 1px 0 #ffffff26!important}
+#controlCenter .cc-native-tool-grid{gap:9px}
+#controlCenter .cc-native-tool{min-height:94px;border-radius:23px!important;background:rgba(42,46,55,.42)!important;border-color:rgba(255,255,255,.22)!important;box-shadow:inset 0 1px 0 #ffffff25!important}
+#controlCenter .cc-native-tool>span{font-size:25px}
+#controlCenter .cc-native-wide{background:rgba(42,46,55,.42)!important;border-color:rgba(255,255,255,.22)!important;box-shadow:inset 0 1px 0 #ffffff25!important}
+#controlCenter .cc-native-page-title{font-size:22px;margin-bottom:14px}
+
+
+/* Screenshot-based iOS 26 Control Center alignment */
+#controlCenter{padding:calc(14px + var(--safe-top)) 16px calc(14px + var(--safe-bottom))!important;background:rgba(20,23,31,.22)!important;-webkit-backdrop-filter:blur(34px) saturate(1.55)!important;backdrop-filter:blur(34px) saturate(1.55)!important}
+#controlCenter .cc-page[data-cc-page="0"] .cc-concept-top{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px}
+#controlCenter .cc-page[data-cc-page="0"] .cc-connectivity{padding:12px 9px;gap:8px;border-radius:28px;background:rgba(245,247,252,.15)!important}
+#controlCenter .cc-page[data-cc-page="0"] .cc-adjustments{height:clamp(170px,27vh,220px);gap:10px}
+#controlCenter .cc-page[data-cc-page="2"] .cc-native-tool-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+#controlCenter .cc-page[data-cc-page="2"] .cc-native-tool{min-height:88px;padding:10px 5px;border-radius:22px!important;flex-direction:column;justify-content:center;gap:7px;text-align:center}
+#controlCenter .cc-page[data-cc-page="2"] .cc-native-tool b{font-size:10px;line-height:1.2}
+/* Control Center spacing + reference-scale controls */
+#controlCenter .cc-page{gap:16px!important}
+#controlCenter .cc-concept-top{gap:14px!important}
+#controlCenter .cc-connectivity{padding:16px!important;gap:12px!important;grid-template-columns:repeat(2,minmax(0,1fr))!important}
+#controlCenter .cc-native-connect{width:100%!important;min-width:0!important;height:54px!important;min-height:54px!important;border-radius:19px!important}
+#controlCenter .cc-native-connect .cc-glyph svg{width:25px!important;height:25px!important}
+#controlCenter .cc-adjustments{gap:12px!important}
+#controlCenter .cc-native-control-row.cc-concept-shortcuts{
+ display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;
+ gap:18px!important;padding:0 4px!important;margin-top:16px!important;
+}
+#controlCenter .cc-concept-shortcuts .cc-native-round{
+ width:100%!important;height:auto!important;aspect-ratio:1/1!important;min-width:0!important;
+ border-radius:50%!important;justify-self:stretch!important;
+}
+#controlCenter .cc-native-round .cc-glyph svg{width:27px!important;height:27px!important}
+#controlCenter .cc-native-control-row:not(.cc-concept-shortcuts){gap:14px!important;margin-top:15px!important}
+#controlCenter .cc-native-wide{min-width:0!important;min-height:58px!important;padding:10px 13px!important;gap:12px!important;border-radius:22px!important}
+#controlCenter .cc-native-media{padding:18px!important;margin:2px 0 4px!important}
+#controlCenter .cc-media-buttons{gap:24px!important;margin-top:15px!important}
+#controlCenter .cc-media-buttons button{width:48px!important;height:48px!important;min-width:48px!important;border-radius:50%!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;cursor:pointer!important}
+#controlCenter .cc-native-tool-grid{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:16px!important;padding:4px!important}
+#controlCenter .cc-page[data-cc-page="2"] .cc-native-tool{min-width:0!important;min-height:108px!important;padding:14px 6px!important;gap:12px!important;border-radius:23px!important}
+#controlCenter .cc-page[data-cc-page="2"] .cc-native-tool>span{width:48px!important;height:48px!important;flex:0 0 48px!important;font-size:25px!important}
+#controlCenter .cc-page[data-cc-page="2"] .cc-native-tool b{font-size:11px!important;line-height:1.25!important}
+#controlCenter [data-toggle],#controlCenter .cc-media-buttons button,#controlCenter #ccPageIndicator button,#controlCenter #ccClose{touch-action:manipulation;cursor:pointer}
+#controlCenter [data-toggle]:active,#controlCenter .cc-media-buttons button:active{transform:scale(.94)}
+#controlCenter .cc-native-connect:focus-visible,#controlCenter .cc-native-round:focus-visible,#controlCenter .cc-native-wide:focus-visible,#controlCenter .cc-native-tool:focus-visible,#controlCenter .cc-media-buttons button:focus-visible{outline:2px solid rgba(255,255,255,.9)!important;outline-offset:3px}
+@media(max-width:390px){
+ #controlCenter .cc-native-control-row.cc-concept-shortcuts{gap:14px!important}
+ #controlCenter .cc-native-connect{height:48px!important;min-height:48px!important}
+ #controlCenter .cc-page[data-cc-page="2"] .cc-native-tool-grid{gap:11px!important}
+ #controlCenter .cc-page[data-cc-page="2"] .cc-native-tool{min-height:96px!important}
+}
+
+
+/* Reference-led Control Center layout: larger modules, fewer cramped tiles */
+#controlCenter .cc-pages{padding:18px 18px 12px!important;gap:18px!important}
+#controlCenter .cc-page{gap:17px!important;padding:0!important}
+#controlCenter .cc-concept-top{display:grid!important;grid-template-columns:minmax(0,1.45fr) minmax(0,.8fr)!important;gap:14px!important;align-items:stretch!important}
+#controlCenter .cc-connectivity{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;grid-template-rows:repeat(3,minmax(48px,1fr)) auto!important;gap:10px!important;padding:14px!important;border-radius:30px!important;min-width:0!important}
+#controlCenter .cc-native-connect{width:100%!important;height:100%!important;min-height:48px!important;min-width:0!important;border-radius:18px!important}
+#controlCenter .cc-connectivity .cc-native-wide{grid-column:1/-1!important;min-height:48px!important;height:48px!important;border-radius:20px!important}
+#controlCenter .cc-native-connect .cc-glyph svg{width:25px!important;height:25px!important}
+#controlCenter .cc-adjustments{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important;min-width:0!important}
+#controlCenter .cc-native-slider{min-width:0!important;min-height:100%!important;border-radius:28px!important}
+#controlCenter .cc-native-control-row.cc-concept-shortcuts{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:12px!important;padding:0!important;margin-top:0!important}
+#controlCenter .cc-concept-shortcuts .cc-native-round{width:100%!important;height:auto!important;aspect-ratio:1/1!important;min-width:0!important;border-radius:50%!important;justify-self:stretch!important}
+#controlCenter .cc-native-round .cc-glyph svg{width:25px!important;height:25px!important}
+#controlCenter .cc-native-control-row:not(.cc-concept-shortcuts){display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:12px!important;margin-top:0!important}
+#controlCenter .cc-native-wide{min-width:0!important;min-height:60px!important;padding:11px 12px!important;gap:9px!important;border-radius:23px!important}
+#controlCenter .cc-native-media{padding:18px!important;border-radius:28px!important;margin:0!important}
+#controlCenter .cc-media-buttons{display:flex!important;align-items:center!important;justify-content:center!important;gap:25px!important;margin-top:14px!important}
+#controlCenter .cc-media-buttons button{width:44px!important;height:44px!important;min-width:44px!important;border-radius:50%!important;display:inline-flex!important;align-items:center!important;justify-content:center!important}
+#controlCenter .cc-page[data-cc-page="2"] .cc-native-tool-grid{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:12px!important;padding:0!important}
+#controlCenter .cc-page[data-cc-page="2"] .cc-native-tool{min-width:0!important;min-height:100px!important;padding:12px 5px!important;gap:10px!important;border-radius:24px!important}
+#controlCenter .cc-page[data-cc-page="2"] .cc-native-tool>span{width:44px!important;height:44px!important;flex:0 0 44px!important}
+#controlCenter .cc-page[data-cc-page="2"] .cc-native-tool b{font-size:11px!important;line-height:1.25!important}
+#controlCenter .cc-home-control{margin-top:0!important}
+#controlCenter .cc-native-page-title{margin:2px 2px 0!important;font-size:14px!important;letter-spacing:.02em!important}
+#controlCenter .cc-page-indicator{gap:8px!important}
+#controlCenter .cc-page-indicator button{width:7px!important;height:7px!important}
+@media(max-width:390px){
+ #controlCenter .cc-pages{padding:14px 14px 10px!important}
+ #controlCenter .cc-concept-top{grid-template-columns:minmax(0,1.35fr) minmax(0,.8fr)!important;gap:10px!important}
+ #controlCenter .cc-connectivity{padding:10px!important;gap:8px!important}
+ #controlCenter .cc-native-connect{min-height:44px!important}
+ #controlCenter .cc-connectivity .cc-native-wide{min-height:44px!important;height:44px!important}
+ #controlCenter .cc-native-control-row.cc-concept-shortcuts{gap:9px!important}
+ #controlCenter .cc-native-wide{padding:9px!important;font-size:12px!important}
+}
+
+/* Spacious iOS-sized control layout: deliberately widen the gaps */
+#controlCenter .cc-page{gap:30px!important;padding:22px 20px 28px!important}
+#controlCenter .cc-concept-top{gap:24px!important;align-items:stretch!important}
+#controlCenter .cc-connectivity{gap:18px!important;padding:20px!important}
+#controlCenter .cc-adjustments{gap:20px!important}
+#controlCenter .cc-native-control-row{gap:22px!important;margin-top:12px!important}
+#controlCenter .cc-native-control-row.cc-concept-shortcuts{column-gap:22px!important;row-gap:22px!important;margin-top:12px!important}
+#controlCenter .cc-native-control-row:not(.cc-concept-shortcuts){column-gap:22px!important;row-gap:22px!important;margin-top:12px!important}
+#controlCenter .cc-native-tool-grid{column-gap:22px!important;row-gap:22px!important}
+#controlCenter .cc-native-round{transform:translateZ(0);}
+#controlCenter .cc-native-control-row.cc-concept-shortcuts .cc-native-round{width:100%!important;max-width:72px!important;justify-self:center!important}
+#controlCenter .cc-native-tool{min-width:0!important}
+@media(max-height:740px){
+ #controlCenter .cc-page{gap:22px!important;padding:16px 18px 24px!important}
+ #controlCenter .cc-concept-top{gap:18px!important}
+ #controlCenter .cc-connectivity{gap:14px!important;padding:16px!important}
+ #controlCenter .cc-adjustments{gap:14px!important}
+ #controlCenter .cc-native-control-row.cc-concept-shortcuts{column-gap:16px!important;row-gap:18px!important}
+ #controlCenter .cc-native-tool-grid{column-gap:18px!important;row-gap:18px!important}
+}
+
+/* More air between every control + animated liquid slider fill */
+#controlCenter .cc-page{gap:22px!important}
+#controlCenter .cc-concept-top{gap:18px!important}
+#controlCenter .cc-connectivity{gap:13px!important;padding:16px!important}
+#controlCenter .cc-adjustments{gap:14px!important}
+#controlCenter .cc-native-control-row.cc-concept-shortcuts{column-gap:17px!important;row-gap:17px!important;margin-top:4px!important}
+#controlCenter .cc-native-control-row:not(.cc-concept-shortcuts){column-gap:16px!important;row-gap:16px!important;margin-top:4px!important}
+#controlCenter .cc-native-round{box-shadow:inset 0 1px 0 rgba(255,255,255,.28),0 8px 20px rgba(0,0,0,.14)!important}
+#controlCenter .cc-native-tool-grid{column-gap:16px!important;row-gap:16px!important}
+#controlCenter .cc-page[data-cc-page="2"] .cc-native-tool{margin:0!important}
+#controlCenter .cc-native-slider{position:relative!important;overflow:hidden!important;isolation:isolate!important;transition:background-color .28s ease,box-shadow .28s ease!important}
+#controlCenter .cc-native-slider:before{
+ height:var(--cc-fill,65%)!important;
+ transition:height .32s cubic-bezier(.22,.8,.25,1),background .28s ease,box-shadow .28s ease!important;
+ will-change:height;
+}
+#controlCenter .cc-native-slider input[type="range"]{
+ z-index:3!important;cursor:ns-resize!important;touch-action:pan-x!important;
+}
+#controlCenter .cc-native-slider:after{
+ content:"";position:absolute;left:5px;right:5px;bottom:5px;height:var(--cc-fill,65%);
+ border-radius:24px;pointer-events:none;z-index:0;
+ background:linear-gradient(180deg,rgba(255,255,255,.15),rgba(255,255,255,0));
+ opacity:.7;transition:height .32s cubic-bezier(.22,.8,.25,1),opacity .25s ease;
+}
+#controlCenter .cc-native-slider .cc-slider-symbol,
+#controlCenter .cc-native-slider output{z-index:4!important;transition:transform .22s ease,opacity .22s ease!important}
+#controlCenter .cc-native-slider:focus-within{box-shadow:0 0 0 2px rgba(255,255,255,.38),inset 0 1px 0 rgba(255,255,255,.32),0 8px 22px rgba(0,0,0,.15)!important}
+#controlCenter .cc-native-slider:active .cc-slider-symbol{transform:scale(1.12)}
+#controlCenter .cc-native-slider input[type="range"]::-webkit-slider-thumb{transition:transform .18s ease,box-shadow .18s ease}
+#controlCenter .cc-native-slider input[type="range"]:active::-webkit-slider-thumb{transform:scale(1.13);box-shadow:0 0 0 7px rgba(255,255,255,.15)}
+#controlCenter .cc-native-slider input[type="range"]::-moz-range-thumb{transition:transform .18s ease,box-shadow .18s ease}
+#controlCenter .cc-native-slider input[type="range"]:active::-moz-range-thumb{transform:scale(1.13);box-shadow:0 0 0 7px rgba(255,255,255,.15)}
+@media(prefers-reduced-motion:reduce){
+ #controlCenter .cc-native-slider,#controlCenter .cc-native-slider:before,#controlCenter .cc-native-slider:after,
+ #controlCenter .cc-native-slider .cc-slider-symbol,#controlCenter .cc-native-slider output,
+ #controlCenter .cc-native-slider input[type="range"]::-webkit-slider-thumb,
+ #controlCenter .cc-native-slider input[type="range"]::-moz-range-thumb{transition:none!important}
+}
+
+/* Final spacing and slider fixes — placed last so earlier theme rules cannot override */
+#controlCenter .cc-page{gap:34px!important;padding:26px 22px 34px!important}
+#controlCenter .cc-concept-top{gap:28px!important}
+#controlCenter .cc-connectivity{gap:22px!important;padding:22px!important}
+#controlCenter .cc-adjustments{gap:24px!important}
+#controlCenter .cc-native-control-row{gap:26px!important;margin-top:18px!important}
+#controlCenter .cc-native-control-row.cc-concept-shortcuts{column-gap:26px!important;row-gap:28px!important;margin-top:18px!important}
+#controlCenter .cc-native-control-row:not(.cc-concept-shortcuts){column-gap:24px!important;row-gap:26px!important;margin-top:18px!important}
+#controlCenter .cc-native-tool-grid{column-gap:26px!important;row-gap:28px!important}
+#controlCenter .cc-native-control-row.cc-concept-shortcuts .cc-native-round{width:100%!important;max-width:68px!important;justify-self:center!important}
+#controlCenter .cc-native-slider{background:rgba(42,46,55,.48)!important;border:1px solid rgba(255,255,255,.22)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.16),0 8px 22px rgba(0,0,0,.16)!important}
+#controlCenter .cc-native-slider:before{height:var(--cc-fill,65%)!important;background:linear-gradient(180deg,rgba(255,255,255,.96),rgba(225,229,236,.92))!important;transition:height .34s cubic-bezier(.22,.8,.25,1)!important}
+#controlCenter .cc-native-slider:after{height:var(--cc-fill,65%)!important}
+#controlCenter .cc-native-slider input[type="range"]{touch-action:none!important;opacity:.015!important;cursor:ns-resize!important}
+@media(max-height:740px){
+ #controlCenter .cc-page{gap:26px!important;padding:18px 18px 28px!important}
+ #controlCenter .cc-concept-top{gap:20px!important}
+ #controlCenter .cc-connectivity{gap:16px!important;padding:17px!important}
+ #controlCenter .cc-adjustments{gap:18px!important}
+ #controlCenter .cc-native-control-row.cc-concept-shortcuts{column-gap:18px!important;row-gap:22px!important;margin-top:14px!important}
+ #controlCenter .cc-native-control-row:not(.cc-concept-shortcuts){column-gap:18px!important;row-gap:22px!important;margin-top:14px!important}
+ #controlCenter .cc-native-tool-grid{column-gap:20px!important;row-gap:22px!important}
+}
+
+/* Control Center layout: consistent touch handling, roomy controls, responsive geometry */
+#controlCenter .cc-page{gap:clamp(20px,3.6vh,34px)!important;padding:clamp(14px,2.5vh,24px) clamp(14px,4vw,22px) calc(24px + var(--safe-bottom))!important}
+#controlCenter .cc-pages{padding:14px 14px 12px!important;gap:16px!important}
+#controlCenter .cc-page[data-cc-page="0"] .cc-concept-top{display:grid!important;grid-template-columns:minmax(0,1.12fr) minmax(112px,.88fr)!important;gap:clamp(14px,4vw,22px)!important;align-items:stretch!important}
+#controlCenter .cc-connectivity{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;grid-template-rows:repeat(3,minmax(42px,1fr)) 54px!important;gap:clamp(9px,2.8vw,14px)!important;padding:clamp(12px,3vw,17px)!important;min-width:0!important}
+#controlCenter .cc-connectivity .cc-native-wide[data-toggle="focus"]{grid-column:1/-1!important;width:100%!important;min-height:54px!important;justify-content:flex-start!important;padding-inline:18px!important}
+#controlCenter .cc-adjustments{display:flex!important;gap:clamp(12px,3.5vw,20px)!important;height:clamp(235px,34vh,310px)!important;min-height:220px!important;min-width:0!important}
+#controlCenter .cc-native-slider{position:relative!important;flex:1 1 0!important;min-width:0!important;height:100%!important;min-height:220px!important;border-radius:30px!important;overflow:hidden!important;touch-action:none!important}
+#controlCenter .cc-native-slider input[type="range"]{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;opacity:0!important;z-index:8!important;cursor:ns-resize!important;touch-action:none!important;pointer-events:none!important}
+#controlCenter .cc-native-slider:before,#controlCenter .cc-native-slider:after{height:var(--cc-fill,65%)!important;pointer-events:none!important;transition:height .12s linear!important}
+#controlCenter .cc-native-slider output{z-index:9!important;pointer-events:none!important}
+#controlCenter .cc-native-control-row.cc-concept-shortcuts{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:clamp(14px,4vw,24px)!important;margin-top:0!important;padding:0!important}
+#controlCenter .cc-native-control-row.cc-concept-shortcuts .cc-native-round{width:100%!important;max-width:68px!important;aspect-ratio:1!important;height:auto!important;justify-self:center!important;border-radius:50%!important}
+#controlCenter .cc-native-control-row:not(.cc-concept-shortcuts){display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;column-gap:clamp(14px,4vw,24px)!important;row-gap:clamp(16px,3vh,24px)!important;margin-top:0!important}
+#controlCenter .cc-native-tool-grid{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;column-gap:clamp(14px,4vw,24px)!important;row-gap:clamp(18px,3vh,26px)!important;grid-auto-rows:minmax(112px,auto)!important}
+#controlCenter .cc-page[data-cc-page="2"] .cc-native-tool{min-height:112px!important;padding:15px 12px!important;gap:10px!important}
+#controlCenter .cc-native-tool>span{margin-bottom:5px!important}
+#controlCenter .cc-native-wide{gap:12px!important;padding:10px 14px!important}
+@media(max-height:740px){
+ #controlCenter .cc-page{gap:20px!important;padding:14px 14px calc(20px + var(--safe-bottom))!important}
+ #controlCenter .cc-adjustments{height:clamp(205px,30vh,250px)!important;min-height:200px!important;gap:12px!important}
+ #controlCenter .cc-connectivity{grid-template-rows:repeat(3,minmax(38px,1fr)) 48px!important;gap:9px!important;padding:12px!important}
+ #controlCenter .cc-connectivity .cc-native-wide[data-toggle="focus"]{min-height:48px!important}
+ #controlCenter .cc-native-tool-grid{grid-auto-rows:minmax(100px,auto)!important;row-gap:16px!important}
+ #controlCenter .cc-page[data-cc-page="2"] .cc-native-tool{min-height:100px!important;padding:12px 10px!important}
+}
+@media(max-width:360px){
+ #controlCenter .cc-page[data-cc-page="0"] .cc-concept-top{grid-template-columns:minmax(0,1fr) minmax(104px,.86fr)!important;gap:10px!important}
+ #controlCenter .cc-connectivity{gap:8px!important;padding:10px!important}
+ #controlCenter .cc-native-control-row.cc-concept-shortcuts{gap:12px!important}
+}
+
+/* Focus tile: wider/taller than the other rectangular controls, with centered icon and label */
+#controlCenter .cc-connectivity .cc-native-wide[data-toggle="focus"]{
+ grid-column:1/-1!important;
+ width:100%!important;
+ min-height:76px!important;
+ height:76px!important;
+ position:relative!important;
+ display:flex!important;
+ align-items:center!important;
+ justify-content:center!important;
+ gap:10px!important;
+ padding:10px 42px!important;
+ text-align:center!important;
+}
+#controlCenter .cc-connectivity .cc-native-wide[data-toggle="focus"] .cc-native-control-icon,
+#controlCenter .cc-connectivity .cc-native-wide[data-toggle="focus"]>span:not(.cc-chevron){flex:0 0 auto!important}
+#controlCenter .cc-connectivity .cc-native-wide[data-toggle="focus"] .cc-chevron{
+ position:absolute!important;right:16px!important;top:50%!important;
+ transform:translateY(-50%)!important;margin:0!important;
+}
+@media(max-height:740px){
+ #controlCenter .cc-connectivity .cc-native-wide[data-toggle="focus"]{min-height:66px!important;height:66px!important}
+}
+
 </style>
 </body>
 </html>
