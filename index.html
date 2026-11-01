@@ -4435,7 +4435,6 @@ function renderSpotify(){
   if(a==='genre'){query=v;page='search';spotifyUIQuery=query;spotifyUIPage=page;persist();renderSpotify();return}
   if(a==='setting'){toast(v+'：此項為介面示範設定');return}
   if(a==='edit'){page='edit';spotifyUIPage=page;persist();renderSpotify();return}
-  if(a==='profile'){page='profile';spotifyUIPage=page;persist();renderSpotify();return}
   if(a==='saveName'){const field=$('#spDisplayName');const n=(field?.value||'').trim();if(!n){toast('請輸入顯示名稱');return}CONFIG.userName=n;try{localStorage.setItem('yin_spotify_display_name',n)}catch(e){}page='profile';spotifyUIPage=page;persist();renderSpotify();toast('已儲存顯示名稱');return}
   if(a==='follow'){const t=tracks[Math.max(0,activeTrack||0)].artist;followed=followed.includes(t)?followed.filter(x=>x!==t):followed.concat(t);persist();toast(followed.includes(t)?'已追蹤藝人':'已取消追蹤');renderSpotify();return}
   if(a==='album'){activeTrack=i;spotifyUIActiveTrack=i;page='album';spotifyUIPage=page;persist();renderSpotify();return}
