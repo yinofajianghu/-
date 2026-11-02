@@ -2300,6 +2300,7 @@ function showApp(id){
   // Reset the shared app container before every launch so no previous app overlay can survive.
   const view=$('#appView'),content=$('#appContent');
   if(content?.__igCleanup){try{content.__igCleanup()}catch(e){}content.__igCleanup=null}
+  if(content?.__safariCleanup){try{content.__safariCleanup()}catch(e){}content.__safariCleanup=null}
   if(content)content.replaceChildren();
   if(view){view.classList.remove('dark');view.classList.add('active')}
   $('#home').classList.remove('active');$('#lock').classList.remove('active');
@@ -6464,6 +6465,7 @@ function renderSafariApp(){
  const appMarkup='<div class="safari-app"><div class="sf-status"><span class="sf-clock"></span><span aria-label="行動網路、Wi-Fi 與電池">● ▮▮▮ ▰</span></div><div class="sf-top"><button class="sf-round" data-sf="home" aria-label="起始頁">⌂</button><div class="sf-address"><span class="sf-lock">⌕</span><input id="sfAddress" autocomplete="url" autocapitalize="off" spellcheck="false" placeholder="搜尋或輸入網站名稱" aria-label="搜尋或輸入網站名稱"><button data-sf="reload" aria-label="重新載入">↻</button></div><button class="sf-round" data-sf="more" aria-label="更多選單">•••</button></div><div class="sf-suggestions" id="sfSuggestions" hidden role="listbox" aria-label="搜尋建議"></div><div class="sf-view" id="sfView"></div><div class="sf-bottom"><button data-sf="back" aria-label="上一頁">‹</button><button data-sf="forward" aria-label="下一頁">›</button><button data-sf="share" aria-label="分享網址">↑</button><button data-sf="bookmark" aria-label="加入書籤">＋</button><button data-sf="tabs" class="sf-tabcount" aria-label="分頁總覽">1</button><button data-sf="newtab" aria-label="新增分頁">＋</button></div><div class="sf-notice" hidden role="status" aria-live="polite"></div></div>';
  host.innerHTML=appMarkup;
  const app=host.querySelector('.safari-app'),view=app.querySelector('#sfView'),address=app.querySelector('#sfAddress');
+ const safariEvents=new AbortController();
  const notice=msg=>{const n=app.querySelector('.sf-notice');if(!n)return;n.textContent=msg;n.hidden=false;clearTimeout(noticeTimer);noticeTimer=setTimeout(()=>{n.hidden=true},2600)};
  const currentPrivate=()=>state.privateMode;
  const suggestionBox=app.querySelector('#sfSuggestions');
@@ -6533,7 +6535,7 @@ function renderSafariApp(){
  view.append(p)}
  function action(n){if(n==='back')back();else if(n==='forward')forward();else if(n==='reload'){if(current().url){const frame=view.querySelector('iframe');if(frame)frame.src=current().url;else renderPage()}else renderPage()}else if(n==='home'){const t=current();t.url='';t.title='起始頁';t.nav=t.nav.slice(0,t.navIndex+1);t.nav.push({url:'',title:'起始頁',time:Date.now()});t.navIndex=t.nav.length-1;save();renderPage();update()}else if(n==='newtab')newTab();else if(n==='tabs')showPanel('tabs');else if(n==='bookmark'){const t=current();if(!t.url){notice('請先開啟網站，再加入書籤。');return}const i=state.bookmarks.findIndex(x=>x.url===t.url);if(i>=0)state.bookmarks.splice(i,1);else state.bookmarks.unshift({url:t.url,title:t.title,time:Date.now()});save();update();notice(i>=0?'已移除書籤':'已加入書籤')}else if(n==='share'){if(!current().url){notice('請先開啟網站。');return}if(navigator.share)navigator.share({title:current().title,url:current().url}).catch(()=>{});else copyUrl()}else if(n==='copy')copyUrl();else if(n==='external')external();else if(n==='more')showPanel('more');else if(n==='privacy'||n==='reading'||n==='history'||n==='closed'||n==='settings'||n==='bookmarks')showPanel(n);else if(n==='addfav')addBookmarkPrompt();else if(n==='editstart')showPanel('settings');else if(n==='addreading'){if(!current().url){notice('請先開啟網站。');return}state.reading.unshift({url:current().url,title:current().title,time:Date.now()});state.reading=state.reading.filter((x,i,a)=>a.findIndex(y=>y.url===x.url)===i);save();notice('已加入閱讀列表')}else if(n==='clearhistory'){state.history=[];save();notice('瀏覽紀錄已清除')}}
  app.addEventListener('click',e=>{const b=e.target.closest('[data-sf]');if(b&&app.contains(b)){e.preventDefault();hideSuggestions();action(b.dataset.sf)}});
- document.addEventListener('pointerdown',e=>{if(!app.contains(e.target)||(!e.target.closest('.sf-top')&&!e.target.closest('.sf-suggestions')))hideSuggestions()},{passive:true});
+ document.addEventListener('pointerdown',e=>{if(!app.contains(e.target)||(!e.target.closest('.sf-top')&&!e.target.closest('.sf-suggestions')))hideSuggestions()},{passive:true,signal:safariEvents.signal});
  address.addEventListener('keydown',e=>{
   if(e.key==='ArrowDown'&& !suggestionBox.hidden){e.preventDefault();moveSuggestion(1);return}
   if(e.key==='ArrowUp'&& !suggestionBox.hidden){e.preventDefault();moveSuggestion(-1);return}
@@ -6544,7 +6546,7 @@ function renderSafariApp(){
  address.addEventListener('input',()=>{suggestionIndex=-1;drawSuggestions(address.value)});
  renderPage();update();
  const clockTimer=setInterval(updateClock,30000);
- host.__safariCleanup=()=>{clearInterval(clockTimer);clearTimeout(noticeTimer);hideSuggestions()};
+ host.__safariCleanup=()=>{clearInterval(clockTimer);clearTimeout(noticeTimer);safariEvents.abort();hideSuggestions()};
 }
 </script>
 
