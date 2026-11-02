@@ -5116,6 +5116,23 @@ window.__phoneMainReady = true;
   }
   scene.dataset.weather=String(Number(w&&w.code)||0);
   scene.dataset.time=w&&w.localTime||"";
+  const rainLayer=scene.querySelector(".rain");
+  if(rainLayer&&rainLayer.dataset.realDropsBuilt!=="1"){
+   rainLayer.dataset.realDropsBuilt="1";
+   const drops=document.createDocumentFragment();
+   for(let i=0;i<105;i++){
+    const drop=document.createElement("i");
+    drop.className="wx-rain-drop "+(i%9===0?"depth-near":i%3===0?"depth-far":"");
+    drop.setAttribute("aria-hidden","true");
+    drop.style.setProperty("--drop-x",(Math.random()*100)+"%");
+    drop.style.setProperty("--drop-length",(7+Math.random()*13)+"px");
+    drop.style.setProperty("--drop-duration",(0.48+Math.random()*0.62)+"s");
+    drop.style.setProperty("--drop-delay",(-Math.random()*1.1)+"s");
+    drop.style.setProperty("--drop-opacity",(0.28+Math.random()*0.64).toFixed(2));
+    drops.appendChild(drop);
+   }
+   rainLayer.appendChild(drops);
+  }
  }
  function start(){
   const root=document.getElementById("appView");
@@ -5524,35 +5541,7 @@ window.__phoneMainReady = true;
   to{transform:translate3d(0,125vh,0)}
 }
 </style>
-<script id="wx-true-falling-rain-script">
-(function(){
-  function buildRain(){
-    document.querySelectorAll("#appView .wx-atmo-scene .rain").forEach(function(layer){
-      if(layer.dataset.realDropsBuilt==="1")return;
-      layer.dataset.realDropsBuilt="1";
-      var frag=document.createDocumentFragment();
-      for(var i=0;i<105;i++){
-        var drop=document.createElement("i");
-        drop.className="wx-rain-drop "+(i%9===0?"depth-near":i%3===0?"depth-far":"");
-        drop.setAttribute("aria-hidden","true");
-        drop.style.setProperty("--drop-x",(Math.random()*100)+"%");
-        drop.style.setProperty("--drop-length",(7+Math.random()*13)+"px");
-        drop.style.setProperty("--drop-duration",(0.48+Math.random()*0.62)+"s");
-        drop.style.setProperty("--drop-delay",(-Math.random()*1.1)+"s");
-        drop.style.setProperty("--drop-opacity",(0.28+Math.random()*0.64).toFixed(2));
-        frag.appendChild(drop);
-      }
-      layer.appendChild(frag);
-    });
-  }
-  function start(){
-    buildRain();
-    var root=document.querySelector("#appView");
-    if(root)new MutationObserver(function(){buildRain()}).observe(root,{childList:true,subtree:true});
-  }
-  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",start,{once:true});else start();
-})();
-</script>
+
 
 
 <style id="wx-ios-city-list">
