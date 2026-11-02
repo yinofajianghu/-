@@ -4602,11 +4602,13 @@ window.__phoneMainReady = true;
     if (statusTime) statusTime.textContent = time;
     if (lockDate) lockDate.textContent = date;
   }
+  // The main app already applied CONFIG.wallpaper (including a user-selected image).
+  // Do not let this fallback bootstrap overwrite the active wallpaper.
+  if (window.__phoneMainReady) return;
+
   paintBackground();
   paintClock();
   window.setInterval(paintClock,1000);
-
-  if (window.__phoneMainReady) return;
 
   // If the main initializer stopped early, rebuild the home icons when possible.
   try {
