@@ -5226,11 +5226,16 @@ window.__phoneMainReady = true;
   app.querySelectorAll(".wx-detail").forEach(el=>{const label=el.querySelector(".wx-label"),value=el.querySelector(".wx-value");if(!label||!value||!label.textContent.includes("降雨機率"))return;const m=value.textContent.match(/(\d+(?:\.\d+)?)\s*%/);if(!m)return;const out=rainLabel(m[1]);value.textContent=out;el.style.display=out?"":"none"});
   app.querySelectorAll(".wx-screen").forEach(el=>el.querySelectorAll("*").forEach(node=>{if(node.children.length||!node.textContent.includes("降雨機率"))return;}));
  }
+ let weatherObserver=null,weatherActive=false;
+ function handleVisibilityChange(){const v=document.querySelector("#appView .wx-video-scene video");if(!v)return;if(document.hidden){v.pause()}else if(!window.matchMedia("(prefers-reduced-motion: reduce)").matches){const p=v.play();if(p&&p.catch)p.catch(()=>{})}}
+ function stop(){weatherActive=false;if(weatherObserver){weatherObserver.disconnect();weatherObserver=null}document.removeEventListener("visibilitychange",handleVisibilityChange);const v=document.querySelector("#appView .wx-video-scene video");if(v){v.pause();v.removeAttribute("src");v.load();delete v.dataset.scene}}
+ window.__wxVideoCleanup=stop;
+ function start(){if(weatherActive)return;weatherActive=true;polishRain();const target=document.querySelector("#appView");if(target){weatherObserver=new MutationObserver(()=>{if(!target.querySelector(".wx-app"))return;requestAnimationFrame(polishRain)});weatherObserver.observe(target,{childList:true})}document.addEventListener("visibilitychange",handleVisibilityChange);if(window.matchMedia("(prefers-reduced-motion: reduce)").matches){const v=document.querySelector("#appView .wx-video-scene video");if(v)v.pause()}}
  const oldDraw=window.wxDraw;
- if(typeof oldDraw==="function")window.wxDraw=function(){const r=oldDraw.apply(this,arguments);requestAnimationFrame(polishRain);return r};
+ if(typeof oldDraw==="function")window.wxDraw=function(){const r=oldDraw.apply(this,arguments);start();requestAnimationFrame(polishRain);return r};
  const oldDetail=window.wxDetail;
  if(typeof oldDetail==="function")window.wxDetail=function(title,value,rows){if(Array.isArray(rows))rows=rows.filter(row=>!(Array.isArray(row)&&String(row[0]).includes("降雨機率")&&!rainLabel(row[1]))).map(row=>Array.isArray(row)&&String(row[0]).includes("降雨機率")?[row[0],rainLabel(row[1]),row[2]]:row);return oldDetail.call(this,title,value,rows)};
- function start(){polishRain();const target=document.querySelector("#appView");if(target)new MutationObserver(()=>{if(!target.querySelector(".wx-app"))return;requestAnimationFrame(polishRain)}).observe(target,{childList:true});document.addEventListener("visibilitychange",()=>{const v=document.querySelector("#appView .wx-video-scene video");if(!v)return;if(document.hidden){v.pause()}else if(!window.matchMedia("(prefers-reduced-motion: reduce)").matches){const p=v.play();if(p&&p.catch)p.catch(()=>{})}});if(window.matchMedia("(prefers-reduced-motion: reduce)").matches){const v=document.querySelector("#appView .wx-video-scene video");if(v)v.pause()}}
+
  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",start,{once:true});else start();
 })();
 </script>
@@ -5714,6 +5719,7 @@ window.__phoneMainReady = true;
   var originalShowApp=window.showApp;
   if(typeof originalShowApp==='function'&&!originalShowApp.__wxNavigationFixed){
     var wrapped=function(id){
+      if(id!=='weather'&&typeof window.__wxVideoCleanup==='function')window.__wxVideoCleanup();
       clearWeatherLayers();
       var content=document.getElementById('appContent');
       if(content && id!=='weather') content.querySelectorAll('.wx-app,.wx-screen').forEach(function(el){el.remove()});
@@ -5725,6 +5731,7 @@ window.__phoneMainReady = true;
   var originalGoHome=window.goHome;
   if(typeof originalGoHome==='function'&&!originalGoHome.__wxNavigationFixed){
     var home=function(){
+      if(typeof window.__wxVideoCleanup==='function')window.__wxVideoCleanup();
       clearWeatherLayers();
       return originalGoHome.apply(this,arguments);
     };
