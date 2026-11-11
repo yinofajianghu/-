@@ -2755,6 +2755,75 @@ function finishSpecialDayGroupTask(){
  const id=ensureSpecialDayGroupTask();if(id&&typeof window.completeMainStoryTask==="function")window.completeMainStoryTask(id);ensureSpecialDaySmsTask();if(typeof window.setStoryComposerLocked==="function")window.setStoryComposerLocked("line",false);
  try{localStorage.setItem("yinofajianghu_special_day_group_task_hint_pending_v1","1")}catch(e){}if(window.__activeAppId==="line"&&currentFriend==="告白大作戰💗"){const input=document.getElementById("chatInput");if(input)input.placeholder="請前往任務欄";}
 }
+const CARGO_GROUP_KEY="yinofajianghu_cargo_group_story_v1";
+const CARGO_GROUP_LINES=[
+ {sender:"東雲彰人",text:"［圖片］",time:"08:49",me:true},
+ {sender:"東雲彰人",text:"昨天就到了，我待會準備去領。",time:"08:50",me:true},
+ {sender:"曉山瑞希",text:"哦——！裡面是什麼東西？",time:"08:51"},
+ {sender:"東雲彰人",text:"秘密。",time:"08:52",me:true},
+ {sender:"白石杏",text:"喂喂喂——",time:"08:53"},
+ {sender:"白石杏",text:"等下送了不合適的東西怎麼辦啊？",time:"08:54"},
+ {sender:"東雲彰人",text:"但是那是冬彌之前提過的東西。",time:"08:55",me:true},
+ {sender:"曉山瑞希",text:"嘖嘖，怎麼聽起來就有點無趣。",time:"08:56"},
+ {sender:"東雲彰人",text:"？",time:"08:57",me:true},
+ {sender:"天馬司",text:"不過，畢竟冬彌與我也算是從小認識的交情了",time:"08:58"},
+ {sender:"天馬司",text:"冬彌的幸福至關重要，我會好好注意的😁",time:"08:59"},
+ {sender:"東雲彰人",text:"⋯⋯",time:"09:00",me:true},
+ {sender:"神代類",text:"需要的話我也可以替你們的愛情事業添磚加瓦。",time:"09:01"},
+ {sender:"東雲彰人",text:"謝謝你們，不過，先暫時不用了吧。",time:"09:02",me:true},
+ {sender:"東雲彰人",text:"我要先去把東西領回來了。",time:"09:03",me:true},
+ {sender:"白石杏",text:"一路順風😉",time:"09:04"},
+ {sender:"曉山瑞希",text:"😉✨💗",time:"09:05"}
+];
+function ensureCargoGroupTask(){
+ const KEY="yinofajianghu_cargo_group_task_v1",STORE="ios26-rpg-quests-v2",TITLE="貨運";let id="";
+ try{id=localStorage.getItem(KEY)||""}catch(e){}
+ let items=[];try{const a=JSON.parse(localStorage.getItem(STORE)||"[]");if(Array.isArray(a))items=a}catch(e){}
+ let task=id?items.find(x=>String(x.id)===id):null;
+ if(!task)task=items.find(x=>x&&x.type==="main"&&x.title===TITLE&&!x.done);
+ if(!task&&typeof window.addMainStoryTask==="function"){
+  const r=window.addMainStoryTask({title:TITLE,chapter:"主線任務",description:"回覆群組訊息",trigger:"點開櫻井配送的簡訊"});if(r&&r.ok)task=r.task;
+ }
+ if(task){task.chapter="主線任務";task.description="回覆群組訊息";try{localStorage.setItem(KEY,String(task.id))}catch(e){}if(typeof window.renderTasksWidget==="function")window.renderTasksWidget();return String(task.id)}
+ return "";
+}
+function finishCargoGroupTask(){
+ try{localStorage.setItem(CARGO_GROUP_KEY,String(CARGO_GROUP_LINES.length));localStorage.setItem("yinofajianghu_cargo_group_finished_v1","1")}catch(e){}
+ const id=ensureCargoGroupTask();if(id&&typeof window.completeMainStoryTask==="function")window.completeMainStoryTask(id);
+ if(typeof window.disableStoryComposer==="function")window.disableStoryComposer("line");
+ if(typeof window.setStoryComposerLocked==="function")window.setStoryComposerLocked("line",false);
+}
+function saveCargoGroupStage(stage){try{localStorage.setItem(CARGO_GROUP_KEY,String(stage))}catch(e){}}
+function runCargoGroupStory(){
+ if(window.__cargoGroupTimer)return;
+ let stage=0;try{stage=Number(localStorage.getItem(CARGO_GROUP_KEY)||"0")}catch(e){}
+ if(stage>=CARGO_GROUP_LINES.length){finishCargoGroupTask();return;}
+ if(!LINE_GROUPS.some(g=>g&&g.name==="告白大作戰💗"))ensureSpecialDayGroup();
+ const line=CARGO_GROUP_LINES[stage],name="告白大作戰💗";
+ if(line.me){if(typeof window.enableStoryComposer==="function")window.enableStoryComposer("line",line.text);return;}
+ const list=lineChatStore[name]||(lineChatStore[name]=[]);
+ const exists=list.some(m=>m&&m.sender===line.sender&&m.text===line.text&&m.time===line.time);
+ if(!exists){const msg={from:"them",sender:line.sender,text:line.text,time:line.time,timestamp:Date.UTC(2026,0,1,...line.time.split(":").map(Number))};list.push(msg);lineChatStore[name]=list.slice(-300);saveLineChats();if(window.__activeAppId==="line"&&currentFriend===name&&typeof renderChat==="function"){setLineUnread(name,0);renderChat();}else{setLineUnread(name,lineUnreadCount(name)+1);if(typeof window.showAppNotification==="function")window.showAppNotification("line",name,line.text,line.time);}}
+ saveCargoGroupStage(stage+1);
+ if(stage+1>=CARGO_GROUP_LINES.length){window.__cargoGroupTimer=setTimeout(()=>{window.__cargoGroupTimer=null;finishCargoGroupTask()},900);return;}
+ window.__cargoGroupTimer=setTimeout(()=>{window.__cargoGroupTimer=null;runCargoGroupStory()},1200+Math.floor(Math.random()*8801));
+}
+window.__cargoGroupTime=function(){let stage=0;try{stage=Number(localStorage.getItem(CARGO_GROUP_KEY)||"0")}catch(e){}const line=CARGO_GROUP_LINES[stage];return line&&line.me?line.time:null;};
+window.__cargoGroupSent=function(text){
+ if(currentFriend!=="告白大作戰💗")return;
+ let stage=0;try{stage=Number(localStorage.getItem(CARGO_GROUP_KEY)||"0")}catch(e){}
+ const line=CARGO_GROUP_LINES[stage];if(!line||!line.me||text!==line.text)return;
+ saveCargoGroupStage(stage+1);if(typeof window.disableStoryComposer==="function")window.disableStoryComposer("line");
+ if(stage+1>=CARGO_GROUP_LINES.length){finishCargoGroupTask();return;}
+ window.__cargoGroupTimer=setTimeout(()=>{window.__cargoGroupTimer=null;runCargoGroupStory()},1200+Math.floor(Math.random()*8801));
+};
+window.startCargoGroupFlow=function(){
+ let started=false,finished=false;try{started=localStorage.getItem("yinofajianghu_cargo_group_started_v1")==="1";finished=localStorage.getItem("yinofajianghu_cargo_group_finished_v1")==="1"}catch(e){}
+ if(finished||started)return;
+ try{localStorage.setItem("yinofajianghu_cargo_group_started_v1","1")}catch(e){}
+ ensureSpecialDayGroup();ensureCargoGroupTask();
+ if(!window.__cargoGroupTimer)window.__cargoGroupTimer=setTimeout(()=>{window.__cargoGroupTimer=null;runCargoGroupStory()},500);
+};
 function saveSpecialDayGroupStage(stage){try{localStorage.setItem("yinofajianghu_special_day_group_story_v1",String(stage))}catch(e){}}
 function pauseSpecialDayGroupStory(){/* Story progression continues in the background; leaving the chat only changes the visible screen. */}
 function runSpecialDayGroupStory(){
@@ -3046,7 +3115,7 @@ function renderChat(){
  }else if(typeof window.__aoyagiMainStorySent==="function"){window.__aoyagiMainStorySent=null;}
  const chatInput=$('#chatInput');
  chatInput.addEventListener('focus',()=>{if(currentFriend==="告白大作戰💗"&&chatInput.placeholder==="請前往任務欄"){chatInput.placeholder="輸入訊息";try{localStorage.removeItem("yinofajianghu_special_day_group_task_hint_pending_v1")}catch(e){}}setTimeout(()=>{scroll.scrollTop=scroll.scrollHeight;},80);});
- $('#chatForm').addEventListener('submit',e=>{e.preventDefault();const inp=$('#chatInput');const text=inp.value.trim();if(!text)return;const storyTime=currentFriend==="青柳 冬彌"&&typeof window.__aoyagiStoryTime==="function"?window.__aoyagiStoryTime():(currentFriend==="白石杏"&&typeof window.__annStoryTime==="function"?window.__annStoryTime():(currentFriend==="告白大作戰💗"&&typeof window.__specialDayGroupTime==="function"?window.__specialDayGroupTime():null));const message={from:"me",text:text.slice(0,2000),time:storyTime||timeNow(),timestamp:storyTime?Date.UTC(2026,0,1,...storyTime.split(":").map(Number)):Date.now()};lineChatStore[currentFriend]||(lineChatStore[currentFriend]=[]);lineChatStore[currentFriend].push(message);lineChatStore[currentFriend]=lineChatStore[currentFriend].slice(-300);saveLineChats();addMessage(message);inp.value='';inp.focus();if(typeof window.__aoyagiMainStorySent==='function')window.__aoyagiMainStorySent(text);if(currentFriend==="白石杏"&&typeof window.__annStorySent==='function')window.__annStorySent(text);if(currentFriend==="告白大作戰💗"&&typeof window.__specialDayGroupSent==='function')window.__specialDayGroupSent(text)});
+ $('#chatForm').addEventListener('submit',e=>{e.preventDefault();const inp=$('#chatInput');const text=inp.value.trim();if(!text)return;const storyTime=currentFriend==="青柳 冬彌"&&typeof window.__aoyagiStoryTime==="function"?window.__aoyagiStoryTime():(currentFriend==="白石杏"&&typeof window.__annStoryTime==="function"?window.__annStoryTime():(currentFriend==="告白大作戰💗"?(typeof window.__cargoGroupTime==="function"&&window.__cargoGroupTime()?window.__cargoGroupTime():(typeof window.__specialDayGroupTime==="function"?window.__specialDayGroupTime():null)):null));const message={from:"me",text:text.slice(0,2000),time:storyTime||timeNow(),timestamp:storyTime?Date.UTC(2026,0,1,...storyTime.split(":").map(Number)):Date.now()};lineChatStore[currentFriend]||(lineChatStore[currentFriend]=[]);lineChatStore[currentFriend].push(message);lineChatStore[currentFriend]=lineChatStore[currentFriend].slice(-300);saveLineChats();addMessage(message);inp.value='';inp.focus();if(typeof window.__aoyagiMainStorySent==='function')window.__aoyagiMainStorySent(text);if(currentFriend==="白石杏"&&typeof window.__annStorySent==='function')window.__annStorySent(text);if(currentFriend==="告白大作戰💗"){let cargo=false;try{cargo=localStorage.getItem("yinofajianghu_cargo_group_started_v1")==="1"&&localStorage.getItem("yinofajianghu_cargo_group_finished_v1")!=="1"}catch(e){}if(cargo&&typeof window.__cargoGroupSent==="function")window.__cargoGroupSent(text);else if(typeof window.__specialDayGroupSent==="function")window.__specialDayGroupSent(text)}});
 }
 function renderX(){
  let handle=(CONFIG.twitterHandle||"user").replace(/^@/,'');
@@ -3734,7 +3803,7 @@ function renderMessages(){
   }
  }
  const ids=()=>Object.keys(threads).sort((a,b)=>(threads[b].updated||0)-(threads[a].updated||0)),last=t=>t.items[t.items.length-1]||{text:'尚無訊息，傳送一則訊息開始聊天',time:''};
- const open=id=>{if(threads[id]){state.active=id;threads[id].unread=false;state.editing=false;save();if(id===deliveryNumber){let taskId="";try{taskId=localStorage.getItem("yinofajianghu_special_day_sms_task_v1")||""}catch(e){}if(taskId&&typeof window.completeMainStoryTask==="function")window.completeMainStoryTask(taskId);}updateSmsHomeBadge();draw();}};
+ const open=id=>{if(threads[id]){state.active=id;threads[id].unread=false;state.editing=false;save();if(id===deliveryNumber){let taskId="";try{taskId=localStorage.getItem("yinofajianghu_special_day_sms_task_v1")||""}catch(e){}if(taskId&&typeof window.completeMainStoryTask==="function")window.completeMainStoryTask(taskId);if(typeof window.startCargoGroupFlow==="function")window.startCargoGroupFlow();}updateSmsHomeBadge();draw();}};
  const add=()=>{const v=window.prompt('輸入聯絡人名稱');if(v===null)return;const n=v.trim();if(!n){window.alert('請輸入聯絡人名稱。');return;}const found=Object.keys(threads).find(k=>k.toLowerCase()===n.toLowerCase());if(found){open(found);return;}threads[n]={name:n,items:[],updated:Date.now()};save();open(n);};
  const draw=()=>{
  if(!state.active){
