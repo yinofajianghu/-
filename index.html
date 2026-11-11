@@ -2691,7 +2691,7 @@ window.startAoyagiPrequelOnLineOpen=function(){
   if(chatOpen){setLineUnread("青柳 冬彌",0);renderChat();}
   else{
    setLineUnread("青柳 冬彌",lineUnreadCount("青柳 冬彌")+1);
-   if(window.__activeAppId==="line")renderLine(lineTab);
+   if(window.__activeAppId==="line"&&!document.querySelector(".chat-page"))renderLine(lineTab);
   }
   if(typeof window.showAppNotification==="function")window.showAppNotification("line","青柳冬彌",message.text,time);
  },1000+Math.floor(Math.random()*9001));
