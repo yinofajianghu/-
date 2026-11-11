@@ -2789,6 +2789,7 @@ function showChatOverlay(type,callState='outgoing'){
    if(active)timer=setInterval(()=>{seconds++;const s=overlay.querySelector('.line-call-status');if(s)s.textContent=String(Math.floor(seconds/60)).padStart(2,'0')+':'+String(seconds%60).padStart(2,'0')},1000);
    if(state==='outgoing')noAnswerTimer=setTimeout(()=>{if(state==='outgoing'&&overlay.isConnected){state='unanswered';draw()}},25000);
   }
+  if(window.__lineCallSubtitleHandler)window.removeEventListener('line:call-subtitle',window.__lineCallSubtitleHandler);
   window.__lineCallSubtitleHandler=(event)=>{const detail=event&&event.detail||{};if(state!=='active'||!overlay.isConnected)return;const text=String(detail.text??'').trim();if(!text)return;callLines.push({speaker:String(detail.speaker||currentFriend||'').trim(),text});const box=overlay.querySelector('.line-call-transcript');if(!box)return;const row=document.createElement('div');row.className='line-call-caption-line';const speaker=document.createElement('span');speaker.className='line-call-caption-speaker';speaker.textContent=callLines[callLines.length-1].speaker;const words=document.createElement('span');words.className='line-call-caption-text';words.textContent=text;row.append(speaker,words);box.appendChild(row);while(box.children.length>5)box.removeChild(box.firstChild);box.scrollTop=box.scrollHeight;};
   window.addEventListener('line:call-subtitle',window.__lineCallSubtitleHandler);
   window.pushLineCallSubtitle=(speaker,text)=>window.dispatchEvent(new CustomEvent('line:call-subtitle',{detail:{speaker,text}}));
