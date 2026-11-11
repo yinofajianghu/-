@@ -4510,6 +4510,8 @@ setupWallpaperPicker();initHome();updateClock();setInterval(updateClock,1000);
     const lockButton = $('#flashlightButton');
     if (lockButton) lockButton.setAttribute('aria-pressed', String(Boolean(enabled)));
   }
+  // Keep the lock-screen shortcut and Control Center tile in sync after restoring preferences.
+  setFlashlight(Boolean(savedCC.toggles.flashlight));
 
   // One delegated handler means all controls work consistently on touch and mouse.
   document.addEventListener('click', (e) => {
@@ -4593,6 +4595,7 @@ setupWallpaperPicker();initHome();updateClock();setInterval(updateClock,1000);
   const volumeInputs=Array.from(document.querySelectorAll('#volumeControl,#volumeControl2'));
   function syncVolume(source){const slider=document.querySelector('#controlCenter .cc-volume');if(slider)slider.style.setProperty('--cc-fill',source.value+'%');volumeInputs.forEach(el=>{if(el!==source)el.value=source.value});['#volumeValue','#volumeValue2'].forEach(sel=>{const o=$(sel);if(o)o.textContent=source.value+'%'});saveCCPrefs()}
   volumeInputs.forEach(el=>{el.addEventListener('input',()=>syncVolume(el));el.addEventListener('change',()=>syncVolume(el))});
+  if(volumeInputs[0])syncVolume(volumeInputs[0]);
   const ccPages=$('#ccPages'),ccIndicators=Array.from(document.querySelectorAll('#ccPageIndicator [data-page]'));
   if(ccPages){
     ccPages.addEventListener('scroll',()=>{const index=0;ccIndicators.forEach((b,i)=>b.classList.toggle('active',i===index))},{passive:true});
