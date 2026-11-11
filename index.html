@@ -2642,7 +2642,7 @@ function renderLine(tab){
  let content='';
  const friendRows=(names,chatMode=false)=>names.map((name,i)=>{
   const f=lineFriend(name),last=lineLastMessage(name);
-  return `<div class="friend ${chatMode?'line-chat-row':''}" data-friend="${escapeHTML(name)}"><div class="avatar">${escapeHTML(f.face)}</div><div class="friend-info"><div class="profile-name">${escapeHTML(name)}</div><div class="friend-preview">${escapeHTML(last)}</div></div>${chatMode?`<div class="friend-time">${i===0?'最近':'好友'}</div>`:`<button class="line-action" type="button" data-start-chat="${escapeHTML(name)}">聊天</button>`}</div>`;
+  return `<div class="friend ${chatMode?'line-chat-row':''}" data-friend="${escapeHTML(name)}"><div class="avatar">${escapeHTML(f.face)}</div><div class="friend-info"><div class="profile-name">${escapeHTML(name)}</div></div>${chatMode?`<div class="friend-time">${i===0?'最近':'好友'}</div>`:`<button class="line-action" type="button" data-start-chat="${escapeHTML(name)}">聊天</button>`}</div>`;
  }).join('');
  if(lineTab==='home'){
   content=`<div class="line-profile" id="myProfile">${lineProfileAvatarHTML()}<div><div class="profile-name">${escapeHTML(CONFIG.userName)}</div><div class="profile-sub">查看個人檔案與設定</div></div><div class="chevron">›</div></div><div class="section-label">常用服務</div><div class="line-tool-grid"><button data-line-action="services">🧰　所有服務</button><button data-line-action="stickers">🎁　貼圖小舖</button><button data-line-action="calendar">📅　行事曆</button><button data-line-action="albums">🖼️　相簿</button></div><div class="section-label" style="margin-top:20px">好友（${LINE_FRIENDS.length}）</div>${friendRows(LINE_FRIENDS.map(f=>f.name))}`;
