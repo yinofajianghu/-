@@ -2828,16 +2828,19 @@ function renderChat(){
  if(currentFriend==="青柳 冬彌"){
   const STORY_KEY="yinofajianghu_aoyagi_prequel_v1";
   let storyState=0;try{storyState=Number(localStorage.getItem(STORY_KEY)||"0")}catch(e){}
-  const playerLines={1:"早。",2:"中午要一起吃飯嗎？",3:"好。",4:"好啊。"};
+  const playerLines={1:"早。",2:"中午要一起吃飯嗎？",3:"好。",4:"好啊."};
+  const storyTimes={0:"08:00",1:"08:01",2:"11:30",3:"11:32",4:"11:35",5:"11:36"};
+  const storyStamp=t=>{const p=t.split(":").map(Number);return Date.UTC(2026,0,1,p[0],p[1]);};
+  window.__aoyagiStoryTime=()=>storyTimes[storyState]||"11:36";
   let storyTimer=null;
   const saveStage=n=>{storyState=n;try{localStorage.setItem(STORY_KEY,String(n))}catch(e){}};
-  const sendToya=(text)=>{const m={from:"them",text,time:timeNow(),timestamp:Date.now()};lineChatStore[currentFriend]||(lineChatStore[currentFriend]=[]);lineChatStore[currentFriend].push(m);lineChatStore[currentFriend]=lineChatStore[currentFriend].slice(-300);saveLineChats();addMessage(m);};
+  const sendToya=(text)=>{const stamp=storyStamp(time);const m={from:"them",text,time,timestamp:stamp};lineChatStore[currentFriend]||(lineChatStore[currentFriend]=[]);lineChatStore[currentFriend].push(m);lineChatStore[currentFriend]=lineChatStore[currentFriend].slice(-300);saveLineChats();addMessage(m);if(typeof window.showAppNotification==="function")window.showAppNotification("line","青柳冬彌",text,time);};
   const enableAkito=stage=>{if(playerLines[stage]&&typeof window.enableStoryComposer==="function")window.enableStoryComposer("line",playerLines[stage]);};
   const later=(fn)=>{storyTimer=setTimeout(fn,1000+Math.floor(Math.random()*9001));};
   const resumeReply=stage=>{
-   if(stage===2){sendToya("今天中午有圖書館的事務⋯⋯應該不太行，抱歉。");saveStage(3);enableAkito(3);}
-   else if(stage===3){sendToya("我聽曉山說，最近新開了一間咖啡廳。");later(()=>{sendToya("要不然⋯⋯我們練習完之後一起去試試？");later(()=>{sendToya("（圖片劇情1）（圖片待填充，我之後會補上）");saveStage(4);enableAkito(4);});});}
-   else if(stage===4){sendToya("😉");saveStage(5);if(typeof window.disableStoryComposer==="function")window.disableStoryComposer("line");}
+   if(stage===2){sendToya("今天中午有圖書館的事務⋯⋯應該不太行，抱歉。","11:31");saveStage(3);enableAkito(3);}
+   else if(stage===3){sendToya("我聽曉山說，最近新開了一間咖啡廳。","11:33");later(()=>{sendToya("要不然⋯⋯我們練習完之後一起去試試？","11:34");later(()=>{sendToya("（圖片劇情1）（圖片待填充，我之後會補上）","11:34");saveStage(4);enableAkito(4);});});}
+   else if(stage===4){sendToya("😉","11:36");saveStage(5);if(typeof window.disableStoryComposer==="function")window.disableStoryComposer("line");}
   };
   window.__aoyagiMainStorySent=(text)=>{
    if(currentFriend!=="青柳 冬彌")return;
@@ -2846,13 +2849,13 @@ function renderChat(){
    if(sentStage===1){saveStage(2);enableAkito(2);}
    else{saveStage(-sentStage);later(()=>resumeReply(sentStage));}
   };
-  if(storyState===0||storyState===-1){saveStage(-1);later(()=>{sendToya("彰人，早上好。");saveStage(1);enableAkito(1);});}
+  if(storyState===0||storyState===-1){saveStage(-1);later(()=>{sendToya("彰人，早上好。","08:00");saveStage(1);enableAkito(1);});}
   else if(storyState>0&&storyState<5)enableAkito(storyState);
   else if(storyState<0&&storyState!==-1)later(()=>resumeReply(Math.abs(storyState)));
  }else if(typeof window.__aoyagiMainStorySent==="function"){window.__aoyagiMainStorySent=null;}
  const chatInput=$('#chatInput');
  chatInput.addEventListener('focus',()=>{setTimeout(()=>{scroll.scrollTop=scroll.scrollHeight;},80);});
- $('#chatForm').addEventListener('submit',e=>{e.preventDefault();const inp=$('#chatInput');const text=inp.value.trim();if(!text)return;const message={from:"me",text:text.slice(0,2000),time:timeNow(),timestamp:Date.now()};lineChatStore[currentFriend]||(lineChatStore[currentFriend]=[]);lineChatStore[currentFriend].push(message);lineChatStore[currentFriend]=lineChatStore[currentFriend].slice(-300);saveLineChats();addMessage(message);inp.value='';inp.focus();if(typeof window.__aoyagiMainStorySent==='function')window.__aoyagiMainStorySent(text)});
+ $('#chatForm').addEventListener('submit',e=>{e.preventDefault();const inp=$('#chatInput');const text=inp.value.trim();if(!text)return;const storyTime=currentFriend==="青柳 冬彌"&&typeof window.__aoyagiStoryTime==="function"?window.__aoyagiStoryTime():null;const message={from:"me",text:text.slice(0,2000),time:storyTime||timeNow(),timestamp:storyTime?Date.UTC(2026,0,1,...storyTime.split(":").map(Number)):Date.now()};lineChatStore[currentFriend]||(lineChatStore[currentFriend]=[]);lineChatStore[currentFriend].push(message);lineChatStore[currentFriend]=lineChatStore[currentFriend].slice(-300);saveLineChats();addMessage(message);inp.value='';inp.focus();if(typeof window.__aoyagiMainStorySent==='function')window.__aoyagiMainStorySent(text)});
 }
 function renderX(){
  let handle=(CONFIG.twitterHandle||"user").replace(/^@/,'');
@@ -4387,22 +4390,22 @@ setupWallpaperPicker();initHome();updateClock();setInterval(updateClock,1000);
  const phone=document.querySelector('#phone');
  if(!phone)return;
  let toastTimer=null;
- function toast(title,body,icon='✦',app='system'){
+ function toast(title,body,icon='✦',app='system',timeLabel='現在'){
    const old=document.querySelector('.jp-toast');
    if(old){old.style.animation='toastOut .2s ease both';setTimeout(()=>old.remove(),180)}
    const el=document.createElement('div');el.className='jp-toast jp-toast-'+safe(app);el.dataset.app=app;
    const labels={line:'LINE',instagram:'Instagram',sms:'訊息',x:'X'};
    const icons={line:'LINE',instagram:'◎',sms:'▤',x:'𝕏'};
    const mark=icons[app]||icon,brand=labels[app]||title;
-   el.innerHTML='<div class="jp-toast-icon">'+safe(mark)+'</div><div style="min-width:0;flex:1"><div style="font-weight:700;font-size:13px;margin-bottom:3px">'+safe(brand)+' · '+safe(title)+'</div><div class="jp-toast-message">'+safe(body)+'</div></div><div style="font-size:11px;color:#7b827d;align-self:flex-start">現在</div>';
+   el.innerHTML='<div class="jp-toast-icon">'+safe(mark)+'</div><div style="min-width:0;flex:1"><div style="font-weight:700;font-size:13px;margin-bottom:3px">'+safe(brand)+' · '+safe(title)+'</div><div class="jp-toast-message">'+safe(body)+'</div></div><div style="font-size:11px;color:#7b827d;align-self:flex-start">'+safe(timeLabel)+'</div>';
    phone.appendChild(el);clearTimeout(toastTimer);toastTimer=setTimeout(()=>{el.style.animation='toastOut .3s ease both';setTimeout(()=>el.remove(),280)},4000);
  }
  function safe(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
- window.showAppNotification=function(app,sender,message){
+ window.showAppNotification=function(app,sender,message,timeLabel){
    const key=String(app||'').toLowerCase(),valid={line:'LINE',instagram:'Instagram',sms:'訊息',x:'X',twitter:'X'};
    const normalized=key==='twitter'?'x':key;
    if(!valid[normalized])return false;
-   toast(String(sender||valid[normalized]),String(message||'收到一則新訊息'),'',normalized);return true;
+   toast(String(sender||valid[normalized]),String(message||'收到一則新訊息'),'',normalized,timeLabel||'現在');return true;
  };
  window.addEventListener('story:message',event=>{
    const d=event.detail||{};if(d&&d.app)window.showAppNotification(d.app,d.sender,d.text);
