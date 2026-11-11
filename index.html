@@ -2677,6 +2677,20 @@ function lineUnreadCount(name){return Math.max(0,Number(readLineUnread()[name])|
 function lineTotalUnreadCount(){return Object.values(readLineUnread()).reduce((sum,n)=>sum+Math.max(0,Number(n)||0),0)}
 function updateLineAppUnreadBadge(){const count=lineTotalUnreadCount();document.querySelectorAll('.app-icon[data-app="line"]').forEach(icon=>{const glyph=icon.querySelector(".app-glyph-wrap")||icon;let badge=glyph.querySelector(".app-unread-badge");if(count>0){if(!badge){badge=document.createElement("span");badge.className="app-unread-badge";glyph.appendChild(badge)}badge.textContent=count>99?"99+":String(count);icon.setAttribute("aria-label","LINE，"+count+" 則未讀訊息")}else{if(badge)badge.remove();icon.setAttribute("aria-label","LINE")}})}
 function setLineUnread(name,count){const v=readLineUnread();if(count>0)v[name]=count;else delete v[name];try{localStorage.setItem(LINE_UNREAD_KEY,JSON.stringify(v))}catch(e){}updateLineAppUnreadBadge()}
+updateLineAppUnreadBadge();
+function appendLineIncomingMessage(name,text,time,options={}){
+ const stamp=Date.UTC(2026,0,1,...String(time||"00:00").split(":").map(Number));
+ lineChatStore[name]||(lineChatStore[name]=[]);
+ const existing=lineChatStore[name].find(m=>m&&m.from==="them"&&m.text===text&&m.time===time);
+ if(existing)return {added:false,message:existing,chatOpen:window.__activeAppId==="line"&&!!document.querySelector(".chat-page")&&currentFriend===name};
+ const message={from:"them",text,time,timestamp:stamp};
+ lineChatStore[name].push(message);lineChatStore[name]=lineChatStore[name].slice(-300);saveLineChats();
+ const chatOpen=window.__activeAppId==="line"&&!!document.querySelector(".chat-page")&&currentFriend===name;
+ if(chatOpen){setLineUnread(name,0);if(options.render!==false&&typeof renderChat==="function")renderChat();}
+ else{setLineUnread(name,lineUnreadCount(name)+1);if(window.__activeAppId==="line"&&!document.querySelector(".chat-page")&&typeof renderLine==="function")renderLine(lineTab);}
+ if(typeof window.showAppNotification==="function")window.showAppNotification("line",name,text,time);
+ return {added:true,message,chatOpen};
+}
 
 function ensureAnnConfessionTask(){
  const KEY="yinofajianghu_ann_confession_main_task_v1",STORE="ios26-rpg-quests-v2",TITLE="回覆白石杏的訊息";
@@ -2691,16 +2705,7 @@ function ensureAnnConfessionTask(){
  if(task){task.description="回覆白石杏的訊息";task.chapter="主線任務";try{localStorage.setItem(STORE,JSON.stringify(items));localStorage.setItem(KEY,String(task.id))}catch(e){}if(typeof window.renderTasksWidget==="function")window.renderTasksWidget();id=String(task.id)}
  return id;
 }
-function sendAnnStoryMessage(text,time){
- const name="白石杏",stamp=Date.UTC(2026,0,1,...time.split(":").map(Number));
- lineChatStore[name]||(lineChatStore[name]=[]);
- if(lineChatStore[name].some(m=>m&&m.from==="them"&&m.text===text&&m.time===time))return false;
- const m={from:"them",text,time,timestamp:stamp};
- lineChatStore[name].push(m);lineChatStore[name]=lineChatStore[name].slice(-300);saveLineChats();
- if(window.__activeAppId==="line"&&document.querySelector(".chat-page")&&currentFriend===name){setLineUnread(name,0);renderChat();}
- else setLineUnread(name,lineUnreadCount(name)+1);
- if(typeof window.showAppNotification==="function")window.showAppNotification("line",name,text,time);
-}
+function sendAnnStoryMessage(text,time){return appendLineIncomingMessage("白石杏",text,time,{render:true}).added;}
 function startAnnConfessionStory(){
  const KEY="yinofajianghu_ann_confession_story_v1";
  let stage=0;try{stage=Number(localStorage.getItem(KEY)||"0")}catch(e){}
@@ -2767,19 +2772,9 @@ window.startAoyagiPrequelOnLineOpen=function(){
   if(current!==0)return;
   const already=(lineChatStore["青柳 冬彌"]||[]).some(m=>m&&m.text==="彰人，早上好。");
   if(already){try{localStorage.setItem(STORY_KEY,"1");localStorage.setItem(START_KEY,"1")}catch(e){}return;}
-  const time="07:02",stamp=Date.UTC(2026,0,1,7,2);
-  const message={from:"them",text:"彰人，早上好。",time,timestamp:stamp};
-  lineChatStore["青柳 冬彌"]||(lineChatStore["青柳 冬彌"]=[]);
-  lineChatStore["青柳 冬彌"].push(message);
-  lineChatStore["青柳 冬彌"]=lineChatStore["青柳 冬彌"].slice(-300);
-  saveLineChats();try{localStorage.setItem(STORY_KEY,"1");localStorage.setItem(START_KEY,"1")}catch(e){}
-  const chatOpen=window.__activeAppId==="line"&&document.querySelector(".chat-page")&&currentFriend==="青柳 冬彌";
-  if(chatOpen){setLineUnread("青柳 冬彌",0);renderChat();}
-  else{
-   setLineUnread("青柳 冬彌",lineUnreadCount("青柳 冬彌")+1);
-   if(window.__activeAppId==="line"&&!document.querySelector(".chat-page"))renderLine(lineTab);
-  }
-  if(typeof window.showAppNotification==="function")window.showAppNotification("line","青柳冬彌",message.text,time);
+  const time="07:02";
+  appendLineIncomingMessage("青柳 冬彌","彰人，早上好。",time,{render:true});
+  try{localStorage.setItem(STORY_KEY,"1");localStorage.setItem(START_KEY,"1")}catch(e){}
  },1000+Math.floor(Math.random()*9001));
 }
 function renderLine(tab){
@@ -2952,7 +2947,7 @@ function renderChat(){
   window.__aoyagiStoryTime=()=>storyTimes[storyState]||"11:36";
   let storyTimer=null;
   const saveStage=n=>{storyState=n;try{localStorage.setItem(STORY_KEY,String(n))}catch(e){}};
-  const sendToya=(text,time)=>{const stamp=storyStamp(time);lineChatStore[currentFriend]||(lineChatStore[currentFriend]=[]);if(lineChatStore[currentFriend].some(m=>m&&m.from==="them"&&m.text===text&&m.time===time))return false;const m={from:"them",text,time,timestamp:stamp};lineChatStore[currentFriend].push(m);lineChatStore[currentFriend]=lineChatStore[currentFriend].slice(-300);saveLineChats();addMessage(m);if(typeof window.showAppNotification==="function")window.showAppNotification("line","青柳冬彌",text,time);return true;};
+  const sendToya=(text,time)=>{const result=appendLineIncomingMessage(currentFriend,text,time,{render:false});if(!result.added)return false;if(result.chatOpen)addMessage(result.message);return true;};
   const enableAkito=stage=>{if(playerLines[stage]&&typeof window.enableStoryComposer==="function")window.enableStoryComposer("line",playerLines[stage]);const input=document.getElementById("chatInput");if(input&&stage===1){input.placeholder="點擊打字欄以對話";input.classList.add("story-first-reply-hint");}};
   const later=(fn)=>{storyTimer=setTimeout(fn,1000+Math.floor(Math.random()*9001));};
   const resumeReply=stage=>{
