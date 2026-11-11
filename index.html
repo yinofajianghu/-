@@ -2819,8 +2819,8 @@ window.__cargoGroupSent=function(text){
 };
 window.startCargoGroupFlow=function(){
  let started=false,finished=false;try{started=localStorage.getItem("yinofajianghu_cargo_group_started_v1")==="1";finished=localStorage.getItem("yinofajianghu_cargo_group_finished_v1")==="1"}catch(e){}
- if(finished||started)return;
- try{localStorage.setItem("yinofajianghu_cargo_group_started_v1","1")}catch(e){}
+ if(finished)return;
+ if(!started){try{localStorage.setItem("yinofajianghu_cargo_group_started_v1","1")}catch(e){}}
  ensureSpecialDayGroup();ensureCargoGroupTask();
  if(!window.__cargoGroupTimer)window.__cargoGroupTimer=setTimeout(()=>{window.__cargoGroupTimer=null;runCargoGroupStory()},500);
 };
@@ -3078,7 +3078,7 @@ function renderChat(){
  const scroll=$('#chatScroll');
  function addMessage(m){const mine=m.from==="me"||m.from==="我";const row=document.createElement('div');row.className='bubble-row '+(mine?'mine':'');const senderFriend=m.sender?lineFriend(m.sender):friend;const avatar=escapeHTML(activeGroup&&m.sender?lineGroupMemberFace(m.sender):senderFriend.face);const meta=mine?`<div class="bubble-meta mine-meta"><span class="read-mark">已讀</span><span class="sent-time">${escapeHTML(m.time||timeNow())}</span></div>`:`<div class="bubble-meta them-meta">${escapeHTML(m.time||timeNow())}</div>`;row.innerHTML=mine?`${meta}<div class="bubble-stack"><div class="bubble">${escapeHTML(m.text)}</div></div>`:`<div class="chat-message-avatar" aria-label="對方頭像">${avatar}</div><div class="bubble-stack">${LINE_GROUPS.some(g=>g.name===currentFriend)&&m.sender?`<div class="bubble-sender">${escapeHTML(m.sender)}</div>`:""}<div class="bubble">${escapeHTML(m.text)}</div></div>${meta}`;scroll.appendChild(row);scroll.scrollTop=scroll.scrollHeight}
  msgs.forEach(addMessage);
- if(currentFriend==="告白大作戰💗"){let gs=0;try{gs=Number(localStorage.getItem("yinofajianghu_special_day_group_story_v1")||"0")}catch(e){}if(typeof window.setStoryComposerLocked==="function")window.setStoryComposerLocked("line",gs<SPECIAL_DAY_GROUP_LINES.length);if(gs>=SPECIAL_DAY_GROUP_LINES.length){finishSpecialDayGroupTask();let pending=false;try{pending=localStorage.getItem("yinofajianghu_special_day_group_task_hint_pending_v1")==="1"}catch(e){}if(pending)$("#chatInput").placeholder="請前往任務欄";}else setTimeout(runSpecialDayGroupStory,500);}
+ if(currentFriend==="告白大作戰💗"){let cargoStarted=false,cargoFinished=false,cargoStage=0;try{cargoStarted=localStorage.getItem("yinofajianghu_cargo_group_started_v1")==="1";cargoFinished=localStorage.getItem("yinofajianghu_cargo_group_finished_v1")==="1";cargoStage=Number(localStorage.getItem("yinofajianghu_cargo_group_story_v1")||"0")}catch(e){}if(cargoStarted&&!cargoFinished){if(typeof window.setStoryComposerLocked==="function")window.setStoryComposerLocked("line",cargoStage<CARGO_GROUP_LINES.length);if(cargoStage>=CARGO_GROUP_LINES.length)finishCargoGroupTask();else setTimeout(runCargoGroupStory,500);}else{let gs=0;try{gs=Number(localStorage.getItem("yinofajianghu_special_day_group_story_v1")||"0")}catch(e){}if(typeof window.setStoryComposerLocked==="function")window.setStoryComposerLocked("line",gs<SPECIAL_DAY_GROUP_LINES.length);if(gs>=SPECIAL_DAY_GROUP_LINES.length){finishSpecialDayGroupTask();let pending=false;try{pending=localStorage.getItem("yinofajianghu_special_day_group_task_hint_pending_v1")==="1"}catch(e){}if(pending)$("#chatInput").placeholder="請前往任務欄";}else setTimeout(runSpecialDayGroupStory,500);}}
  if(currentFriend==="白石杏"){
   const KEY="yinofajianghu_ann_confession_story_v1";let annStage=0;try{annStage=Number(localStorage.getItem(KEY)||"0")}catch(e){}
   const annLines={1:"⋯⋯",2:"是。",3:"幹嘛大驚小怪的。",4:"沒有。",5:"啊？"};
