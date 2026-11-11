@@ -2677,6 +2677,67 @@ function lineUnreadCount(name){return Math.max(0,Number(readLineUnread()[name])|
 function lineTotalUnreadCount(){return Object.values(readLineUnread()).reduce((sum,n)=>sum+Math.max(0,Number(n)||0),0)}
 function updateLineAppUnreadBadge(){const count=lineTotalUnreadCount();document.querySelectorAll('.app-icon[data-app="line"]').forEach(icon=>{const glyph=icon.querySelector(".app-glyph-wrap")||icon;let badge=glyph.querySelector(".app-unread-badge");if(count>0){if(!badge){badge=document.createElement("span");badge.className="app-unread-badge";glyph.appendChild(badge)}badge.textContent=count>99?"99+":String(count);icon.setAttribute("aria-label","LINE，"+count+" 則未讀訊息")}else{if(badge)badge.remove();icon.setAttribute("aria-label","LINE")}})}
 function setLineUnread(name,count){const v=readLineUnread();if(count>0)v[name]=count;else delete v[name];try{localStorage.setItem(LINE_UNREAD_KEY,JSON.stringify(v))}catch(e){}updateLineAppUnreadBadge()}
+
+function ensureAnnConfessionTask(){
+ const KEY="yinofajianghu_ann_confession_main_task_v1",STORE="ios26-rpg-quests-v2",TITLE="回覆白石杏的訊息";
+ let id="";try{id=localStorage.getItem(KEY)||""}catch(e){}
+ let items=[];try{const parsed=JSON.parse(localStorage.getItem(STORE)||"[]");if(Array.isArray(parsed))items=parsed}catch(e){}
+ let task=id?items.find(x=>x.id===id):null;
+ if(!task)task=items.find(x=>x&&x.type==="main"&&x.title===TITLE);
+ if(!task&&typeof window.addMainStoryTask==="function"){
+  const result=window.addMainStoryTask({title:TITLE,chapter:"主線任務",description:"回覆白石杏的訊息",trigger:"冬彌的特別日子任務完成"});
+  if(result&&result.ok){task=result.task;try{const saved=JSON.parse(localStorage.getItem(STORE)||"[]");items=Array.isArray(saved)?saved:[]}catch(e){items=[]}}
+ }
+ if(task){task.description="回覆白石杏的訊息";task.chapter="主線任務";try{localStorage.setItem(STORE,JSON.stringify(items));localStorage.setItem(KEY,String(task.id))}catch(e){}if(typeof window.renderTasksWidget==="function")window.renderTasksWidget();id=String(task.id)}
+ return id;
+}
+function sendAnnStoryMessage(text,time){
+ const name="白石杏",stamp=Date.UTC(2026,0,1,...time.split(":").map(Number));
+ const m={from:"them",text,time,timestamp:stamp};
+ lineChatStore[name]||(lineChatStore[name]=[]);
+ lineChatStore[name].push(m);lineChatStore[name]=lineChatStore[name].slice(-300);saveLineChats();
+ if(window.__activeAppId==="line"&&document.querySelector(".chat-page")&&currentFriend===name){setLineUnread(name,0);renderChat();}
+ else setLineUnread(name,lineUnreadCount(name)+1);
+ if(typeof window.showAppNotification==="function")window.showAppNotification("line",name,text,time);
+}
+function startAnnConfessionStory(){
+ const KEY="yinofajianghu_ann_confession_story_v1";
+ let stage=0;try{stage=Number(localStorage.getItem(KEY)||"0")}catch(e){}
+ if(stage!==0)return;
+ const existing=(lineChatStore["白石杏"]||[]).some(m=>m&&m.text==="等等。");
+ if(existing){try{localStorage.setItem(KEY,"1")}catch(e){}return;}
+ try{localStorage.setItem(KEY,"1")}catch(e){}
+ sendAnnStoryMessage("等等。","08:13");
+ window.__annStoryTimer=setTimeout(()=>{
+  window.__annStoryTimer=null;
+  sendAnnStoryMessage("今天是不是你準備要跟冬彌告白的日子？","08:16");
+  try{localStorage.setItem(KEY,"2")}catch(e){}
+ },1000+Math.floor(Math.random()*9001));
+}
+window.__annStorySent=function(text){
+ const KEY="yinofajianghu_ann_confession_story_v1";
+ let stage=0;try{stage=Number(localStorage.getItem(KEY)||"0")}catch(e){}
+ const expected={1:"⋯⋯",2:"是。",3:"幹嘛大驚小怪的。",4:"沒有。",5:"沒有。",6:"啊？"};
+ if(!expected[stage]||text!==expected[stage])return;
+ const save=n=>{stage=n;try{localStorage.setItem(KEY,String(n))}catch(e){}};
+ const later=fn=>setTimeout(fn,1000+Math.floor(Math.random()*9001));
+ if(stage===1){save(2);if(typeof window.enableStoryComposer==="function")window.enableStoryComposer("line","是。");}
+ else if(stage===2){
+  save(3);
+  later(()=>{sendAnnStoryMessage("😱","08:25");later(()=>{sendAnnStoryMessage("我的天","08:28");later(()=>{sendAnnStoryMessage("居然終於到了今天了嗎⋯⋯？","08:31");if(window.__activeAppId==="line"&&currentFriend==="白石杏"&&typeof window.enableStoryComposer==="function")window.enableStoryComposer("line","幹嘛大驚小怪的。");});});});
+ }
+ else if(stage===3){save(4);if(typeof window.enableStoryComposer==="function")window.enableStoryComposer("line","沒有。");}
+ else if(stage===4){
+  save(5);
+  later(()=>{sendAnnStoryMessage("沒有，只是覺得","08:37");later(()=>{sendAnnStoryMessage("而且我們這群軍師跟你是不是始終沒創一個群組啊？","08:40");if(window.__activeAppId==="line"&&currentFriend==="白石杏"&&typeof window.enableStoryComposer==="function")window.enableStoryComposer("line","沒有。");});});
+ }
+ else if(stage===5){save(6);later(()=>{sendAnnStoryMessage("要不現在創一個吧！！","08:46");if(window.__activeAppId==="line"&&currentFriend==="白石杏"&&typeof window.enableStoryComposer==="function")window.enableStoryComposer("line","啊？");});}
+ else if(stage===6){
+  save(7);
+  later(()=>{sendAnnStoryMessage("等等我，我馬上就弄好！","08:55");const taskId=ensureAnnConfessionTask();if(taskId&&typeof window.completeMainStoryTask==="function")window.completeMainStoryTask(taskId);if(typeof window.disableStoryComposer==="function")window.disableStoryComposer("line");});
+ }
+};
+
 function ensureAoyagiSpecialDayTask(){
  const KEY="yinofajianghu_special_day_main_task_v1",STORE="ios26-rpg-quests-v2",TITLE="特別的日子";
  let id="";try{id=localStorage.getItem(KEY)||""}catch(e){}
@@ -2694,7 +2755,7 @@ window.startAoyagiPrequelOnLineOpen=function(){
  const STORY_KEY="yinofajianghu_aoyagi_prequel_v1",START_KEY="yinofajianghu_aoyagi_prequel_started_v1";
  let stage=0;try{stage=Number(localStorage.getItem(STORY_KEY)||"0")}catch(e){}
  const taskId=ensureAoyagiSpecialDayTask();
- if(stage===5&&taskId&&typeof window.completeMainStoryTask==="function")window.completeMainStoryTask(taskId);
+ if(stage===5&&taskId&&typeof window.completeMainStoryTask==="function"){const nextTaskId=ensureAnnConfessionTask();window.completeMainStoryTask(taskId);if(nextTaskId)startAnnConfessionStory();}
  if(stage!==0)return;
  const existing=(lineChatStore["青柳 冬彌"]||[]).some(m=>m&&m.text==="彰人，早上好。");
  if(existing){try{localStorage.setItem(STORY_KEY,"1");localStorage.setItem(START_KEY,"1")}catch(e){}return;}
@@ -2876,7 +2937,12 @@ function renderChat(){
  const scroll=$('#chatScroll');
  function addMessage(m){const mine=m.from==="me"||m.from==="我";const row=document.createElement('div');row.className='bubble-row '+(mine?'mine':'');const senderFriend=m.sender?lineFriend(m.sender):friend;const avatar=escapeHTML(activeGroup&&m.sender?lineGroupMemberFace(m.sender):senderFriend.face);const meta=mine?`<div class="bubble-meta mine-meta"><span class="read-mark">已讀</span><span class="sent-time">${escapeHTML(m.time||timeNow())}</span></div>`:`<div class="bubble-meta them-meta">${escapeHTML(m.time||timeNow())}</div>`;row.innerHTML=mine?`${meta}<div class="bubble-stack"><div class="bubble">${escapeHTML(m.text)}</div></div>`:`<div class="chat-message-avatar" aria-label="對方頭像">${avatar}</div><div class="bubble-stack">${LINE_GROUPS.some(g=>g.name===currentFriend)&&m.sender?`<div class="bubble-sender">${escapeHTML(m.sender)}</div>`:""}<div class="bubble">${escapeHTML(m.text)}</div></div>${meta}`;scroll.appendChild(row);scroll.scrollTop=scroll.scrollHeight}
  msgs.forEach(addMessage);
- if(currentFriend==="青柳 冬彌"){
+ if(currentFriend==="白石杏"){
+  const KEY="yinofajianghu_ann_confession_story_v1";let annStage=0;try{annStage=Number(localStorage.getItem(KEY)||"0")}catch(e){}
+  const annLines={1:"⋯⋯",2:"是。",3:"幹嘛大驚小怪的。",4:"沒有。",5:"沒有。",6:"啊？"};
+  if(annLines[annStage]&&typeof window.enableStoryComposer==="function")window.enableStoryComposer("line",annLines[annStage]);
+  window.__annStoryTime=()=>({1:"08:19",2:"08:22",3:"08:34",4:"08:34",5:"08:43",6:"08:49"}[annStage]||"08:13");
+ }else if(currentFriend==="青柳 冬彌"){
   const STORY_KEY="yinofajianghu_aoyagi_prequel_v1";
   let storyState=0;try{storyState=Number(localStorage.getItem(STORY_KEY)||"0")}catch(e){}
   const playerLines={1:"早。",2:"中午要一起吃飯嗎？",3:"好。",4:"好啊。"};
@@ -2891,7 +2957,7 @@ function renderChat(){
   const resumeReply=stage=>{
    if(stage===2){sendToya("今天中午有圖書館的事務⋯⋯應該不太行，抱歉。","07:32");saveStage(3);enableAkito(3);}
    else if(stage===3){sendToya("我聽曉山說，最近新開了一間咖啡廳。","07:47");later(()=>{sendToya("要不然⋯⋯我們練習完之後一起去試試？","07:55");later(()=>{sendToya("（圖片劇情1）（圖片待填充，我之後會補上）","08:00");saveStage(4);enableAkito(4);});});}
-   else if(stage===4){sendToya("😉","08:10");saveStage(5);const taskId=ensureAoyagiSpecialDayTask();if(taskId&&typeof window.completeMainStoryTask==="function")window.completeMainStoryTask(taskId);if(typeof window.disableStoryComposer==="function")window.disableStoryComposer("line");}
+   else if(stage===4){sendToya("😉","08:10");saveStage(5);const nextTaskId=ensureAnnConfessionTask();const taskId=ensureAoyagiSpecialDayTask();if(taskId&&typeof window.completeMainStoryTask==="function")window.completeMainStoryTask(taskId);if(nextTaskId)startAnnConfessionStory();if(typeof window.disableStoryComposer==="function")window.disableStoryComposer("line");}
   };
   window.__aoyagiMainStorySent=(text)=>{
    if(currentFriend!=="青柳 冬彌")return;
@@ -2907,7 +2973,7 @@ function renderChat(){
  }else if(typeof window.__aoyagiMainStorySent==="function"){window.__aoyagiMainStorySent=null;}
  const chatInput=$('#chatInput');
  chatInput.addEventListener('focus',()=>{setTimeout(()=>{scroll.scrollTop=scroll.scrollHeight;},80);});
- $('#chatForm').addEventListener('submit',e=>{e.preventDefault();const inp=$('#chatInput');const text=inp.value.trim();if(!text)return;const storyTime=currentFriend==="青柳 冬彌"&&typeof window.__aoyagiStoryTime==="function"?window.__aoyagiStoryTime():null;const message={from:"me",text:text.slice(0,2000),time:storyTime||timeNow(),timestamp:storyTime?Date.UTC(2026,0,1,...storyTime.split(":").map(Number)):Date.now()};lineChatStore[currentFriend]||(lineChatStore[currentFriend]=[]);lineChatStore[currentFriend].push(message);lineChatStore[currentFriend]=lineChatStore[currentFriend].slice(-300);saveLineChats();addMessage(message);inp.value='';inp.focus();if(typeof window.__aoyagiMainStorySent==='function')window.__aoyagiMainStorySent(text)});
+ $('#chatForm').addEventListener('submit',e=>{e.preventDefault();const inp=$('#chatInput');const text=inp.value.trim();if(!text)return;const storyTime=currentFriend==="青柳 冬彌"&&typeof window.__aoyagiStoryTime==="function"?window.__aoyagiStoryTime():(currentFriend==="白石杏"&&typeof window.__annStoryTime==="function"?window.__annStoryTime():null);const message={from:"me",text:text.slice(0,2000),time:storyTime||timeNow(),timestamp:storyTime?Date.UTC(2026,0,1,...storyTime.split(":").map(Number)):Date.now()};lineChatStore[currentFriend]||(lineChatStore[currentFriend]=[]);lineChatStore[currentFriend].push(message);lineChatStore[currentFriend]=lineChatStore[currentFriend].slice(-300);saveLineChats();addMessage(message);inp.value='';inp.focus();if(typeof window.__aoyagiMainStorySent==='function')window.__aoyagiMainStorySent(text);if(currentFriend==="白石杏"&&typeof window.__annStorySent==='function')window.__annStorySent(text)});
 }
 function renderX(){
  let handle=(CONFIG.twitterHandle||"user").replace(/^@/,'');
