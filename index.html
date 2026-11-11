@@ -4448,6 +4448,59 @@ setupWallpaperPicker();initHome();updateClock();setInterval(updateClock,1000);
   const closeCC = () => { cc.classList.remove('active'); cc.setAttribute('aria-hidden', 'true'); };
   const openCC = () => { cc.classList.add('active'); cc.setAttribute('aria-hidden', 'false'); };
 
+  // Persist only Control Center state; never capture similarly named controls in other apps.
+  const CC_STORAGE_KEY = 'ios26-control-center-v1';
+  const ccToggleKeys = Array.from(new Set(Array.from(cc.querySelectorAll('[data-toggle]')).map((el) => el.dataset.toggle)));
+  let savedCC = { toggles: {}, brightness: 100, volume: 65 };
+  try {
+    const parsed = JSON.parse(localStorage.getItem(CC_STORAGE_KEY) || 'null');
+    if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+      if (parsed.toggles && typeof parsed.toggles === 'object' && !Array.isArray(parsed.toggles)) {
+        ccToggleKeys.forEach((key) => {
+          if (typeof parsed.toggles[key] === 'boolean') savedCC.toggles[key] = parsed.toggles[key];
+        });
+      }
+      ['brightness', 'volume'].forEach((key) => {
+        const value = Number(parsed[key]);
+        if (Number.isFinite(value)) savedCC[key] = Math.max(0, Math.min(100, value));
+      });
+    }
+  } catch (error) {
+    // Corrupt or unavailable storage must not prevent the simulator from starting.
+    savedCC = { toggles: {}, brightness: 100, volume: 65 };
+  }
+  function saveCCPrefs() {
+    try {
+      const toggles = {};
+      ccToggleKeys.forEach((key) => {
+        const button = cc.querySelector('[data-toggle="' + key + '"]');
+        if (button) toggles[key] = button.classList.contains('on');
+      });
+      const brightnessValue = Number($('#brightnessControl')?.value);
+      const volumeValue = Number($('#volumeControl')?.value);
+      localStorage.setItem(CC_STORAGE_KEY, JSON.stringify({
+        toggles,
+        brightness: Number.isFinite(brightnessValue) ? Math.max(0, Math.min(100, brightnessValue)) : 100,
+        volume: Number.isFinite(volumeValue) ? Math.max(0, Math.min(100, volumeValue)) : 65
+      }));
+    } catch (error) {
+      // Private browsing / quota errors are intentionally non-fatal.
+    }
+  }
+  ccToggleKeys.forEach((key) => {
+    if (!Object.prototype.hasOwnProperty.call(savedCC.toggles, key)) return;
+    cc.querySelectorAll('[data-toggle="' + key + '"]').forEach((button) => {
+      button.classList.toggle('on', savedCC.toggles[key]);
+      button.setAttribute('aria-pressed', String(savedCC.toggles[key]));
+    });
+  });
+  const initialBrightness = $('#brightnessControl');
+  if (initialBrightness) initialBrightness.value = String(savedCC.brightness);
+  const initialVolume = $('#volumeControl');
+  if (initialVolume) initialVolume.value = String(savedCC.volume);
+  const initialVolume2 = $('#volumeControl2');
+  if (initialVolume2) initialVolume2.value = String(savedCC.volume);
+
   function setFlashlight(enabled) {
     phone.classList.toggle('flashlight-on', Boolean(enabled));
     document.querySelectorAll('[data-toggle="flashlight"]').forEach((b) => {
@@ -4460,9 +4513,9 @@ setupWallpaperPicker();initHome();updateClock();setInterval(updateClock,1000);
 
   // One delegated handler means all controls work consistently on touch and mouse.
   document.addEventListener('click', (e) => {
-    if (e.target.closest('.status')) { e.preventDefault(); openCC(); return; }
+    if (e.target.closest('#home .status')) { e.preventDefault(); openCC(); return; }
     if (e.target.closest('#ccDone, #ccClose')) { e.preventDefault(); closeCC(); return; }
-    const tile = e.target.closest('[data-toggle]');
+    const tile = e.target.closest('#controlCenter [data-toggle]');
     if (tile) {
       const enabled = !tile.classList.contains('on');
       document.querySelectorAll('[data-toggle="' + tile.dataset.toggle + '"]').forEach((button) => {
@@ -4470,10 +4523,11 @@ setupWallpaperPicker();initHome();updateClock();setInterval(updateClock,1000);
         button.setAttribute('aria-pressed', String(enabled));
       });
       if (tile.dataset.toggle === 'flashlight') setFlashlight(enabled);
+      saveCCPrefs();
       return;
     }
     if (e.target.closest('#flashlightButton')) {
-      e.preventDefault(); setFlashlight(!phone.classList.contains('flashlight-on')); return;
+      e.preventDefault(); setFlashlight(!phone.classList.contains('flashlight-on')); saveCCPrefs(); return;
     }
     if (e.target.closest('#lockCameraButton')) {
       e.preventDefault();
@@ -4498,6 +4552,7 @@ setupWallpaperPicker();initHome();updateClock();setInterval(updateClock,1000);
       phone.style.setProperty('--screen-brightness', String(value / 100));
       brightness.setAttribute('aria-valuenow', String(value));
       const output=$('#brightnessValue');if(output)output.textContent=value+'%';
+      saveCCPrefs();
     };
     brightness.addEventListener('input', applyBrightness);
     brightness.addEventListener('change', applyBrightness);
@@ -4536,7 +4591,7 @@ setupWallpaperPicker();initHome();updateClock();setInterval(updateClock,1000);
     applyBrightness();
   }
   const volumeInputs=Array.from(document.querySelectorAll('#volumeControl,#volumeControl2'));
-  function syncVolume(source){const slider=document.querySelector('#controlCenter .cc-volume');if(slider)slider.style.setProperty('--cc-fill',source.value+'%');volumeInputs.forEach(el=>{if(el!==source)el.value=source.value});['#volumeValue','#volumeValue2'].forEach(sel=>{const o=$(sel);if(o)o.textContent=source.value+'%'})}
+  function syncVolume(source){const slider=document.querySelector('#controlCenter .cc-volume');if(slider)slider.style.setProperty('--cc-fill',source.value+'%');volumeInputs.forEach(el=>{if(el!==source)el.value=source.value});['#volumeValue','#volumeValue2'].forEach(sel=>{const o=$(sel);if(o)o.textContent=source.value+'%'});saveCCPrefs()}
   volumeInputs.forEach(el=>{el.addEventListener('input',()=>syncVolume(el));el.addEventListener('change',()=>syncVolume(el))});
   const ccPages=$('#ccPages'),ccIndicators=Array.from(document.querySelectorAll('#ccPageIndicator [data-page]'));
   if(ccPages){
