@@ -7272,8 +7272,20 @@ function renderSafariApp(){
 #appView.dark .x2-thread-reply{border-color:#2F3336!important}
 #appView.dark .x2-comment-compose{background:#000!important;border-color:#2F3336!important}
 #appView.dark .x2-comment-compose input{background:#16181C!important;color:#E7E9EA!important;border-color:#2F3336!important}
-</style>
 
+</style>
+<style id="x2-reply-text-cleanup">
+#appView.dark .x2-detail-root .x2-post-text{
+  font-size:16px!important;
+  line-height:1.5!important;
+  margin:12px 0 16px!important;
+}
+#appView.dark .x2-post-detail .x2-replying-context,
+#appView.dark .x2-comments .x2-replying-context,
+#appView.dark .x2-inline-thread .x2-replying-context{
+  display:none!important;
+}
+</style>
 <style id="global-control-center-and-call-styles">
 .call-control{width:54px;height:54px;border-radius:50%;background:#555b;color:white;font-size:21px;box-shadow:0 4px 14px #0003}#callMessages .msg{animation:msgIn .25s ease;transition:opacity 1s}#callMessages .msg.fade{opacity:0}@keyframes msgIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 /* iOS 26 Control Center: final overrides for the replaced Liquid Glass panel */
