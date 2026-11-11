@@ -2356,7 +2356,7 @@ function renderTasksApp(){
  let items=readTaskItems(),tab='main',showForm=false,revealHidden=false,detailId=null;
  const esc=escapeHTML,dateText=v=>{if(!v)return '';const d=new Date(v+'T00:00:00');return Number.isNaN(d.getTime())?'':d.toLocaleDateString('zh-TW',{month:'short',day:'numeric'})};
  const save=()=>{if(!writeTaskItems(items))toast('儲存失敗，請檢查瀏覽器空間');renderTasksWidget()};
- function completeQuest(id){const q=items.find(x=>x.id===id);if(!q||q.done||q.locked)return;q.done=true;if(q.type==='main'){const next=items.filter(x=>x.type==='main'&&!x.done&&x.locked).sort((a,b)=>a.created-b.created)[0];if(next)next.locked=false}save();detailId=null;draw()}
+ function completeQuest(id){const q=items.find(x=>x.id===id);if(!q||q.done||q.locked)return;q.done=true;if(q.type==='main'){const next=items.filter(x=>x.type==='main'&&!x.done&&x.locked).sort((a,b)=>a.created-b.created)[0];if(next)next.locked=false}save();window.dispatchEvent(new CustomEvent('story:task-completed',{detail:{task:q,next:null}}));detailId=null;draw()}
  function draw(){
   const mains=items.filter(x=>x.type==='main'),sides=items.filter(x=>x.type==='side'),hidden=items.filter(x=>x.type==='hidden'),done=items.filter(x=>x.done),active=mains.find(x=>!x.done&&!x.locked);
   const rows=tab==='main'?mains:tab==='side'?sides:tab==='hidden'?hidden:done;
@@ -2777,8 +2777,17 @@ window.__specialDayGroupSent=function(text){
  if(stage+1>=SPECIAL_DAY_GROUP_LINES.length){finishSpecialDayGroupTask();return;}
  window.__specialDayGroupTimer=setTimeout(()=>{window.__specialDayGroupTimer=null;runSpecialDayGroupStory()},1200+Math.floor(Math.random()*8801));
 };
-function startSpecialDayGroupFlow(){ensureSpecialDayGroup();ensureSpecialDayGroupTask();}
+function startSpecialDayGroupFlow(){try{localStorage.setItem("yinofajianghu_special_day_group_unlocked_v1","1")}catch(e){}ensureSpecialDayGroup();ensureSpecialDayGroupTask();}
 
+
+function cleanupPrematureSpecialDayGroup(){
+ const name="告白大作戰💗";let unlocked=false;try{unlocked=localStorage.getItem("yinofajianghu_special_day_group_unlocked_v1")==="1"}catch(e){}
+ if(unlocked)return;
+ const idx=LINE_GROUPS.findIndex(g=>g&&g.name===name);if(idx>=0){LINE_GROUPS.splice(idx,1);saveLineDynamicGroups();}
+ if(Object.prototype.hasOwnProperty.call(lineChatStore,name)){delete lineChatStore[name];saveLineChats();}
+ try{const store="ios26-rpg-quests-v2",items=JSON.parse(localStorage.getItem(store)||"[]");if(Array.isArray(items)){const kept=items.filter(x=>!(x&&x.type==="main"&&x.title==="特別的一天"&&x.description==="回覆群組訊息"));if(kept.length!==items.length)localStorage.setItem(store,JSON.stringify(kept));}localStorage.removeItem("yinofajianghu_special_day_group_task_v1");localStorage.removeItem("yinofajianghu_special_day_group_story_v1");}catch(e){}
+}
+cleanupPrematureSpecialDayGroup();
 
 function startAnnConfessionStory(){
  const KEY="yinofajianghu_ann_confession_story_v1";
@@ -4583,6 +4592,9 @@ setupWallpaperPicker();initHome();updateClock();setInterval(updateClock,1000);
    phone.appendChild(el);clearTimeout(toastTimer);toastTimer=setTimeout(()=>{el.style.animation='toastOut .3s ease both';setTimeout(()=>el.remove(),280)},4000);
  }
  function safe(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+ window.showTaskNotification=function(kind,task){const title=String(task&&task.title||"任務");const body=kind==="completed"?"任務已完成："+title:"新增任務："+title;toast("任務更新",body,"✦","system","現在");};
+ window.addEventListener('story:task-created',event=>window.showTaskNotification('created',event.detail&&event.detail.task));
+ window.addEventListener('story:task-completed',event=>window.showTaskNotification('completed',event.detail&&event.detail.task));
  window.showAppNotification=function(app,sender,message,timeLabel){
    const key=String(app||'').toLowerCase(),valid={line:'LINE',instagram:'Instagram',sms:'訊息',x:'X',twitter:'X'};
    const normalized=key==='twitter'?'x':key;
