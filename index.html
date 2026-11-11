@@ -2706,35 +2706,34 @@ function startAnnConfessionStory(){
  if(stage!==0)return;
  const existing=(lineChatStore["白石杏"]||[]).some(m=>m&&m.text==="等等。");
  if(existing){try{localStorage.setItem(KEY,"1")}catch(e){}return;}
- try{localStorage.setItem(KEY,"1")}catch(e){}
+ try{localStorage.setItem(KEY,"8")}catch(e){}
  sendAnnStoryMessage("等等。","08:13");
  window.__annStoryTimer=setTimeout(()=>{
   window.__annStoryTimer=null;
   sendAnnStoryMessage("今天是不是你準備要跟冬彌告白的日子？","08:16");
-  try{localStorage.setItem(KEY,"2")}catch(e){}
+  try{localStorage.setItem(KEY,"1")}catch(e){}
  },1000+Math.floor(Math.random()*9001));
 }
 window.__annStorySent=function(text){
  const KEY="yinofajianghu_ann_confession_story_v1";
  let stage=0;try{stage=Number(localStorage.getItem(KEY)||"0")}catch(e){}
- const expected={1:"⋯⋯",2:"是。",3:"幹嘛大驚小怪的。",4:"沒有。",5:"沒有。",6:"啊？"};
+ const expected={1:"⋯⋯",2:"是。",3:"幹嘛大驚小怪的。",4:"沒有。",5:"啊？"};
  if(!expected[stage]||text!==expected[stage])return;
  const save=n=>{stage=n;try{localStorage.setItem(KEY,String(n))}catch(e){}};
  const later=fn=>setTimeout(fn,1000+Math.floor(Math.random()*9001));
  if(stage===1){save(2);if(typeof window.enableStoryComposer==="function")window.enableStoryComposer("line","是。");}
  else if(stage===2){
-  save(3);
-  later(()=>{sendAnnStoryMessage("😱","08:25");later(()=>{sendAnnStoryMessage("我的天","08:28");later(()=>{sendAnnStoryMessage("居然終於到了今天了嗎⋯⋯？","08:31");if(window.__activeAppId==="line"&&currentFriend==="白石杏"&&typeof window.enableStoryComposer==="function")window.enableStoryComposer("line","幹嘛大驚小怪的。");});});});
+  save(30);
+  later(()=>{sendAnnStoryMessage("😱","08:25");later(()=>{sendAnnStoryMessage("我的天","08:28");later(()=>{sendAnnStoryMessage("居然終於到了今天了嗎⋯⋯？","08:31");save(3);if(window.__activeAppId==="line"&&currentFriend==="白石杏"&&typeof window.enableStoryComposer==="function")window.enableStoryComposer("line","幹嘛大驚小怪的。");});});});
  }
- else if(stage===3){save(4);if(typeof window.enableStoryComposer==="function")window.enableStoryComposer("line","沒有。");}
- else if(stage===4){
-  save(5);
-  later(()=>{sendAnnStoryMessage("沒有，只是覺得","08:37");later(()=>{sendAnnStoryMessage("而且我們這群軍師跟你是不是始終沒創一個群組啊？","08:40");if(window.__activeAppId==="line"&&currentFriend==="白石杏"&&typeof window.enableStoryComposer==="function")window.enableStoryComposer("line","沒有。");});});
+ else if(stage===3){
+  save(40);
+  later(()=>{sendAnnStoryMessage("沒有，只是覺得","08:37");later(()=>{sendAnnStoryMessage("而且我們這群軍師跟你是不是始終沒創一個群組啊？","08:40");save(4);if(window.__activeAppId==="line"&&currentFriend==="白石杏"&&typeof window.enableStoryComposer==="function")window.enableStoryComposer("line","沒有。");});});
  }
- else if(stage===5){save(6);later(()=>{sendAnnStoryMessage("要不現在創一個吧！！","08:46");if(window.__activeAppId==="line"&&currentFriend==="白石杏"&&typeof window.enableStoryComposer==="function")window.enableStoryComposer("line","啊？");});}
- else if(stage===6){
-  save(7);
-  later(()=>{sendAnnStoryMessage("等等我，我馬上就弄好！","08:55");const taskId=ensureAnnConfessionTask();if(taskId&&typeof window.completeMainStoryTask==="function")window.completeMainStoryTask(taskId);if(typeof window.disableStoryComposer==="function")window.disableStoryComposer("line");});
+ else if(stage===4){save(50);later(()=>{sendAnnStoryMessage("要不現在創一個吧！！","08:46");save(5);if(window.__activeAppId==="line"&&currentFriend==="白石杏"&&typeof window.enableStoryComposer==="function")window.enableStoryComposer("line","啊？");});}
+ else if(stage===5){
+  save(60);
+  later(()=>{sendAnnStoryMessage("等等我，我馬上就弄好！","08:55");save(7);const taskId=ensureAnnConfessionTask();if(taskId&&typeof window.completeMainStoryTask==="function")window.completeMainStoryTask(taskId);if(typeof window.disableStoryComposer==="function")window.disableStoryComposer("line");});
  }
 };
 
@@ -2939,9 +2938,9 @@ function renderChat(){
  msgs.forEach(addMessage);
  if(currentFriend==="白石杏"){
   const KEY="yinofajianghu_ann_confession_story_v1";let annStage=0;try{annStage=Number(localStorage.getItem(KEY)||"0")}catch(e){}
-  const annLines={1:"⋯⋯",2:"是。",3:"幹嘛大驚小怪的。",4:"沒有。",5:"沒有。",6:"啊？"};
+  const annLines={1:"⋯⋯",2:"是。",3:"幹嘛大驚小怪的。",4:"沒有。",5:"啊？"};
   if(annLines[annStage]&&typeof window.enableStoryComposer==="function")window.enableStoryComposer("line",annLines[annStage]);
-  window.__annStoryTime=()=>({1:"08:19",2:"08:22",3:"08:34",4:"08:34",5:"08:43",6:"08:49"}[annStage]||"08:13");
+  window.__annStoryTime=()=>({1:"08:19",2:"08:22",3:"08:34",4:"08:43",5:"08:49"}[annStage]||"08:13");
  }else if(currentFriend==="青柳 冬彌"){
   const STORY_KEY="yinofajianghu_aoyagi_prequel_v1";
   let storyState=0;try{storyState=Number(localStorage.getItem(STORY_KEY)||"0")}catch(e){}
