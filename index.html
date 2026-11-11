@@ -2741,16 +2741,27 @@ function finishSpecialDayGroupTask(){
  const id=ensureSpecialDayGroupTask();if(id&&typeof window.completeMainStoryTask==="function")window.completeMainStoryTask(id);
  if(window.__activeAppId==="line"&&currentFriend==="告白大作戰💗"){const scroll=document.getElementById("chatScroll");if(scroll&&!scroll.querySelector(".special-day-task-hint")){const h=document.createElement("div");h.className="special-day-task-hint";h.textContent="請前往任務欄";h.style.cssText="margin:14px auto 18px;padding:8px 18px;width:max-content;max-width:85%;border-radius:18px;background:rgba(110,104,170,.78);color:#fff;font-size:13px;font-weight:600;text-align:center;";scroll.appendChild(h);scroll.scrollTop=scroll.scrollHeight;}}
 }
+function saveSpecialDayGroupStage(stage){try{localStorage.setItem("yinofajianghu_special_day_group_story_v1",String(stage))}catch(e){}}
 function runSpecialDayGroupStory(){
  if(window.__specialDayGroupTimer)return;let stage=0;try{stage=Number(localStorage.getItem("yinofajianghu_special_day_group_story_v1")||"0")}catch(e){}
  if(stage>=SPECIAL_DAY_GROUP_LINES.length){finishSpecialDayGroupTask();return;}if(!LINE_GROUPS.some(g=>g.name==="告白大作戰💗"))return;
- const line=SPECIAL_DAY_GROUP_LINES[stage],name="告白大作戰💗",list=lineChatStore[name]||(lineChatStore[name]=[]);
+ const line=SPECIAL_DAY_GROUP_LINES[stage],name="告白大作戰💗";
+ if(line.me){if(typeof window.enableStoryComposer==="function")window.enableStoryComposer("line",line.text);return;}
+ const list=lineChatStore[name]||(lineChatStore[name]=[]);
  const exists=list.some(m=>m&&m.sender===line.sender&&m.text===line.text&&m.time===line.time);
- if(!exists){const msg={from:line.me?"me":"them",sender:line.sender,text:line.text,time:line.time,timestamp:Date.UTC(2026,0,1,...line.time.split(":").map(Number)),...(line.sticker?{sticker:true}:{})};list.push(msg);lineChatStore[name]=list.slice(-300);saveLineChats();if(window.__activeAppId==="line"&&currentFriend===name&&typeof renderChat==="function")renderChat();else if(typeof window.showAppNotification==="function")window.showAppNotification("line",name,line.text,line.time);}
- stage++;try{localStorage.setItem("yinofajianghu_special_day_group_story_v1",String(stage))}catch(e){}
- if(stage>=SPECIAL_DAY_GROUP_LINES.length){window.__specialDayGroupTimer=setTimeout(()=>{window.__specialDayGroupTimer=null;finishSpecialDayGroupTask()},900);return;}
+ if(!exists){const msg={from:"them",sender:line.sender,text:line.text,time:line.time,timestamp:Date.UTC(2026,0,1,...line.time.split(":").map(Number)),...(line.sticker?{sticker:true}:{})};list.push(msg);lineChatStore[name]=list.slice(-300);saveLineChats();if(window.__activeAppId==="line"&&currentFriend===name&&typeof renderChat==="function")renderChat();else if(typeof window.showAppNotification==="function")window.showAppNotification("line",name,line.text,line.time);}
+ saveSpecialDayGroupStage(stage+1);
+ if(stage+1>=SPECIAL_DAY_GROUP_LINES.length){window.__specialDayGroupTimer=setTimeout(()=>{window.__specialDayGroupTimer=null;finishSpecialDayGroupTask()},900);return;}
  window.__specialDayGroupTimer=setTimeout(()=>{window.__specialDayGroupTimer=null;runSpecialDayGroupStory()},1200+Math.floor(Math.random()*8801));
 }
+window.__specialDayGroupTime=function(){let stage=0;try{stage=Number(localStorage.getItem("yinofajianghu_special_day_group_story_v1")||"0")}catch(e){}const line=SPECIAL_DAY_GROUP_LINES[stage];return line&&line.me?line.time:null;};
+window.__specialDayGroupSent=function(text){
+ if(currentFriend!=="告白大作戰💗")return;let stage=0;try{stage=Number(localStorage.getItem("yinofajianghu_special_day_group_story_v1")||"0")}catch(e){}
+ const line=SPECIAL_DAY_GROUP_LINES[stage];if(!line||!line.me||text!==line.text)return;
+ saveSpecialDayGroupStage(stage+1);if(typeof window.disableStoryComposer==="function")window.disableStoryComposer("line");
+ if(stage+1>=SPECIAL_DAY_GROUP_LINES.length){finishSpecialDayGroupTask();return;}
+ window.__specialDayGroupTimer=setTimeout(()=>{window.__specialDayGroupTimer=null;runSpecialDayGroupStory()},1200+Math.floor(Math.random()*8801));
+};
 function startSpecialDayGroupFlow(){ensureSpecialDayGroup();ensureSpecialDayGroupTask();if(!window.__specialDayGroupTimer)runSpecialDayGroupStory();}
 try{const savedStage=Number(localStorage.getItem("yinofajianghu_special_day_group_story_v1")||"0");if(savedStage>0&&savedStage<SPECIAL_DAY_GROUP_LINES.length&&LINE_GROUPS.some(g=>g.name==="告白大作戰💗"))setTimeout(runSpecialDayGroupStory,1200)}catch(e){}
 
@@ -2967,13 +2978,6 @@ panel.querySelector('.line-group-info-close').onclick=()=>panel.remove();panel.q
 function renderChat(){
  const friend=lineFriend(currentFriend);const activeGroup=LINE_GROUPS.find(g=>g.name===currentFriend);
  $('#appContent').innerHTML=`<div class="page"><div class="chat-page"><div class="chat-header"><button class="nav-button" id="chatBack">‹</button><div class="avatar">${escapeHTML(friend.face)}</div><div><div class="profile-name">${escapeHTML(friend.name)}${activeGroup?' （'+activeGroup.members.length+'）':''}</div></div><div class="chat-header-actions"><button type="button" class="chat-action-btn" id="chatCall" aria-label="語音通話" title="語音通話"><svg class="ui-phone-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.62 10.79a15.05 15.05 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.01-.24c1.12.37 2.33.56 3.58.56a1 1 0 0 1 1 1V20a1 1 0 0 1-1 1C10.61 21 3 13.39 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.19 2.46.56 3.58a1 1 0 0 1-.25 1.01z"/></svg></button><button type="button" class="chat-action-btn" id="chatAlbum" aria-label="相簿" title="相簿">▣</button>${activeGroup?'<button type="button" class="chat-action-btn" id="chatGroupInfo" aria-label="群組資訊" title="群組資訊">⋯</button>':""}</div></div><div class="chat-scroll" id="chatScroll"></div><form class="chat-compose" id="chatForm"><input id="chatInput" maxlength="2000" placeholder="輸入訊息" autocomplete="off" aria-label="訊息內容"><button class="send-btn" type="submit" aria-label="送出">➤</button></form></div></div>`;
- if(activeGroup){
-  const chatPage=document.querySelector('.chat-page');chatPage.classList.add('line-group-chat');
-  const composer=$('#chatForm');const input=$('#chatInput');input.placeholder='Aa';
-  const makeComposeButton=(label,glyph)=>{const btn=document.createElement('button');btn.type='button';btn.className='compose-extra';btn.setAttribute('aria-label',label);btn.textContent=glyph;return btn;};
-  composer.insertBefore(makeComposeButton('更多','＋'),input);composer.insertBefore(makeComposeButton('相機','◎'),input);composer.insertBefore(makeComposeButton('相簿','▧'),input);
-  const send=composer.querySelector('.send-btn');composer.insertBefore(makeComposeButton('表情符號','☻'),send);composer.insertBefore(makeComposeButton('語音訊息','♩'),send);
- }
  $('#chatBack').onclick=()=>renderLine('chats');
  $('#chatCall').onclick=()=>{showChatOverlay('call');};
  $('#chatAlbum').onclick=()=>{showChatOverlay('album');};const infoBtn=$('#chatGroupInfo');if(infoBtn)infoBtn.onclick=()=>showLineGroupInfo(activeGroup);
@@ -3018,7 +3022,7 @@ function renderChat(){
  }else if(typeof window.__aoyagiMainStorySent==="function"){window.__aoyagiMainStorySent=null;}
  const chatInput=$('#chatInput');
  chatInput.addEventListener('focus',()=>{setTimeout(()=>{scroll.scrollTop=scroll.scrollHeight;},80);});
- $('#chatForm').addEventListener('submit',e=>{e.preventDefault();const inp=$('#chatInput');const text=inp.value.trim();if(!text)return;const storyTime=currentFriend==="青柳 冬彌"&&typeof window.__aoyagiStoryTime==="function"?window.__aoyagiStoryTime():(currentFriend==="白石杏"&&typeof window.__annStoryTime==="function"?window.__annStoryTime():null);const message={from:"me",text:text.slice(0,2000),time:storyTime||timeNow(),timestamp:storyTime?Date.UTC(2026,0,1,...storyTime.split(":").map(Number)):Date.now()};lineChatStore[currentFriend]||(lineChatStore[currentFriend]=[]);lineChatStore[currentFriend].push(message);lineChatStore[currentFriend]=lineChatStore[currentFriend].slice(-300);saveLineChats();addMessage(message);inp.value='';inp.focus();if(typeof window.__aoyagiMainStorySent==='function')window.__aoyagiMainStorySent(text);if(currentFriend==="白石杏"&&typeof window.__annStorySent==='function')window.__annStorySent(text)});
+ $('#chatForm').addEventListener('submit',e=>{e.preventDefault();const inp=$('#chatInput');const text=inp.value.trim();if(!text)return;const storyTime=currentFriend==="青柳 冬彌"&&typeof window.__aoyagiStoryTime==="function"?window.__aoyagiStoryTime():(currentFriend==="白石杏"&&typeof window.__annStoryTime==="function"?window.__annStoryTime():(currentFriend==="告白大作戰💗"&&typeof window.__specialDayGroupTime==="function"?window.__specialDayGroupTime():null));const message={from:"me",text:text.slice(0,2000),time:storyTime||timeNow(),timestamp:storyTime?Date.UTC(2026,0,1,...storyTime.split(":").map(Number)):Date.now()};lineChatStore[currentFriend]||(lineChatStore[currentFriend]=[]);lineChatStore[currentFriend].push(message);lineChatStore[currentFriend]=lineChatStore[currentFriend].slice(-300);saveLineChats();addMessage(message);inp.value='';inp.focus();if(typeof window.__aoyagiMainStorySent==='function')window.__aoyagiMainStorySent(text);if(currentFriend==="白石杏"&&typeof window.__annStorySent==='function')window.__annStorySent(text);if(currentFriend==="告白大作戰💗"&&typeof window.__specialDayGroupSent==='function')window.__specialDayGroupSent(text)});
 }
 function renderX(){
  let handle=(CONFIG.twitterHandle||"user").replace(/^@/,'');
