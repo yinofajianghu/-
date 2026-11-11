@@ -2599,16 +2599,56 @@ function renderPhoneCall(number){
  $('#phoneCallAudio').onclick=()=>{const b=$('#phoneCallAudio'),on=b.getAttribute('aria-pressed')!=='true';b.setAttribute('aria-pressed',String(on));b.textContent=on?'🔈 音訊已開':'🔊 音訊';$('#phoneCallCaption').textContent=on?'已切換模擬音訊狀態':'模擬通話介面'};
 }
 let lineTab='home',lineChatSub='chats',lineSearchMode=false;
+const LINE_FRIENDS=[
+ {name:"青柳 冬彌",face:"🎹",status:"正在練習鋼琴",preview:"今天的練習也辛苦了。"},
+ {name:"白石杏",face:"🎤",status:"街頭演出中！",preview:"彰人！下次一起去練習吧！"},
+ {name:"小豆沢こはね",face:"🐹",status:"慢慢累積中",preview:"我會再多練習一點的……！"},
+ {name:"東雲慎英",face:"🧢",status:"",preview:"有空再聊。"},
+ {name:"東雲繪名",face:"🎨",status:"畫圖中",preview:"不要隨便動我的畫具。"},
+ {name:"三田洸太郎",face:"🎧",status:"",preview:"最近有沒有新歌？"},
+ {name:"白石謙",face:"📘",status:"",preview:"路上小心。"},
+ {name:"曉山瑞希",face:"🎀",status:"今天也要可愛！",preview:"彰人～有空來看看新衣服！"},
+ {name:"天馬司",face:"⭐",status:"世界第一明星！",preview:"哈哈哈哈！下次也來看本團長的演出！"},
+ {name:"神代類",face:"🎭",status:"構思新機關",preview:"呵呵，想到一個有趣的點子。"}
+];
+const LINE_CHAT_STORAGE_KEY="yinofajianghu_line_chats_v1";
+const LINE_CHAT_SEEDS={
+ "青柳 冬彌":[{from:"them",text:"彰人，今天的練習要一起嗎？",time:"17:42"},{from:"me",text:"嗯。把昨天沒對上的地方再確認一次。",time:"17:44"},{from:"them",text:"好，我會先把譜整理好。",time:"17:45"}],
+ "白石杏":[{from:"them",text:"彰人！剛剛那段超有感的！",time:"16:20"},{from:"me",text:"還差得遠吧。下次再試一次。",time:"16:22"},{from:"them",text:"就是這種不服輸的感覺！約好了喔！",time:"16:23"}],
+ "小豆沢こはね":[{from:"them",text:"彰人，剛才那段我有唱得比較穩一點嗎？",time:"15:08"},{from:"me",text:"比上次好多了。照這個方向繼續練。",time:"15:10"},{from:"them",text:"好！我會繼續努力的！",time:"15:11"}],
+ "東雲慎英":[{from:"them",text:"最近還有在練習？",time:"12:16"},{from:"me",text:"當然。",time:"12:18"}],
+ "東雲繪名":[{from:"them",text:"你上次是不是又把外套亂丟在客廳？",time:"19:03"},{from:"me",text:"……我等一下會收。",time:"19:04"},{from:"them",text:"最好是。",time:"19:04"}],
+ "三田洸太郎":[{from:"them",text:"最近聽到一段不錯的 beat，要不要聽聽？",time:"18:31"},{from:"me",text:"傳過來。",time:"18:32"}],
+ "白石謙":[{from:"them",text:"杏最近練習得很認真呢。",time:"11:20"},{from:"me",text:"她一直都很認真。",time:"11:22"}],
+ "曉山瑞希":[{from:"them",text:"彰人～今天有看到很適合你的衣服喔♪",time:"14:36"},{from:"me",text:"不用了。",time:"14:37"},{from:"them",text:"欸——先別這麼快拒絕嘛！",time:"14:38"}],
+ "天馬司":[{from:"them",text:"東雲彰人！下次務必來觀賞本團長的演出！",time:"10:02"},{from:"me",text:"有空再說。",time:"10:04"},{from:"them",text:"哈哈哈哈！就當作你答應了！",time:"10:05"}],
+ "神代類":[{from:"them",text:"彰人君，有個舞台效果想請你提供意見。",time:"20:14"},{from:"me",text:"如果是太誇張的點子就免了。",time:"20:15"},{from:"them",text:"呵呵，這次可是很實用的構想喔。",time:"20:16"}]
+};
+let lineChatStore={};
+try{
+ const saved=JSON.parse(localStorage.getItem(LINE_CHAT_STORAGE_KEY)||"{}");
+ if(saved&&typeof saved==="object"&&!Array.isArray(saved)){
+  for(const f of LINE_FRIENDS){const list=saved[f.name];if(Array.isArray(list))lineChatStore[f.name]=list.filter(m=>m&&typeof m.text==="string"&&["me","them","我","對方"].includes(m.from)).slice(-300).map(m=>({from:m.from,text:m.text.slice(0,2000),time:typeof m.time==="string"?m.time:""}));}
+ }
+}catch(error){lineChatStore={}}
+for(const f of LINE_FRIENDS)if(!lineChatStore[f.name])lineChatStore[f.name]=LINE_CHAT_SEEDS[f.name].map(m=>({...m}));
+function saveLineChats(){try{localStorage.setItem(LINE_CHAT_STORAGE_KEY,JSON.stringify(lineChatStore))}catch(error){console.warn("LINE 聊天紀錄無法儲存",error)}}
+function lineFriend(name){return LINE_FRIENDS.find(f=>f.name===name)||{name,face:"🙂",status:"",preview:"開始聊天"}}
+function lineLastMessage(name){const list=lineChatStore[name]||[];return list.length?list[list.length-1].text:lineFriend(name).preview}
+
 function renderLine(tab){
  if(tab)lineTab=tab;
- const title={home:'主頁',chats:'聊天',discover:'逛逛',news:'LINE TODAY',wallet:'錢包'}[lineTab];
+ const title={home:'主頁',chats:'聊天',discover:'逛逛',news:'LINE TODAY',wallet:'錢包'}[lineTab]||'主頁';
  let content='';
+ const friendRows=(names,chatMode=false)=>names.map((name,i)=>{
+  const f=lineFriend(name),last=lineLastMessage(name);
+  return `<div class="friend ${chatMode?'line-chat-row':''}" data-friend="${escapeHTML(name)}"><div class="avatar">${escapeHTML(f.face)}</div><div class="friend-info"><div class="profile-name">${escapeHTML(name)}</div><div class="friend-preview">${escapeHTML(last)}</div></div>${chatMode?`<div class="friend-time">${i===0?'最近':'好友'}</div>`:`<button class="line-action" type="button" data-start-chat="${escapeHTML(name)}">聊天</button>`}</div>`;
+ }).join('');
  if(lineTab==='home'){
-  content=`<div class="line-profile" id="myProfile">${lineProfileAvatarHTML()}<div><div class="profile-name">${escapeHTML(CONFIG.userName)}</div><div class="profile-sub">查看個人檔案與設定</div></div><div class="chevron">›</div></div>
-  <div class="section-label">常用服務</div><div class="line-tool-grid"><button data-line-action="services">🧰　所有服務</button><button data-line-action="stickers">🎁　貼圖小舖</button><button data-line-action="calendar">📅　行事曆</button><button data-line-action="albums">🖼️　相簿</button></div>
-  <div class="section-label" style="margin-top:20px">好友</div>${[CONFIG.contactName,"ユイ","ソラ"].map((n,i)=>`<div class="friend" data-friend="${escapeHTML(n)}"><div class="avatar">${escapeHTML(n.slice(0,1))}</div><div class="friend-info"><div class="profile-name">${escapeHTML(n)}</div><div class="friend-preview">${i===0?escapeHTML(CONFIG.chat.at(-1)?.text||"傳送訊息"):i===1?"今天也辛苦了！":"傳送了照片"}</div></div><div class="friend-time">${i===0?"18:06":"昨天"}</div></div>`).join('')}`;
+  content=`<div class="line-profile" id="myProfile">${lineProfileAvatarHTML()}<div><div class="profile-name">${escapeHTML(CONFIG.userName)}</div><div class="profile-sub">查看個人檔案與設定</div></div><div class="chevron">›</div></div><div class="section-label">常用服務</div><div class="line-tool-grid"><button data-line-action="services">🧰　所有服務</button><button data-line-action="stickers">🎁　貼圖小舖</button><button data-line-action="calendar">📅　行事曆</button><button data-line-action="albums">🖼️　相簿</button></div><div class="section-label" style="margin-top:20px">好友（${LINE_FRIENDS.length}）</div>${friendRows(LINE_FRIENDS.map(f=>f.name))}`;
  }else if(lineTab==='chats'){
-  content=`<div class="line-subtabs"><button class="${lineChatSub==='chats'?'active':''}" data-line-sub="chats">聊天</button><button class="${lineChatSub==='friends'?'active':''}" data-line-sub="friends">好友</button></div><div class="line-toolbar"><button data-line-action="search">⌕ 搜尋</button><button data-line-action="newchat">＋</button></div><div class="line-search" id="lineSearchBox" style="display:none"><input id="lineSearchInput" placeholder="搜尋聊天或好友"><button data-line-action="closeSearch">取消</button></div>${lineChatSub==='friends'?[CONFIG.contactName,"ユイ","ソラ"].map(n=>`<div class="friend" data-friend="${escapeHTML(n)}"><div class="avatar">${escapeHTML(n.slice(0,1))}</div><div class="friend-info"><div class="profile-name">${escapeHTML(n)}</div><div class="friend-preview">傳送訊息</div></div><button class="line-action" data-start-chat="${escapeHTML(n)}">聊天</button></div>`).join(''):[CONFIG.contactName,"ユイ","ソラ"].map((n,i)=>`<div class="friend line-chat-row" data-friend="${escapeHTML(n)}"><div class="avatar">${escapeHTML(n.slice(0,1))}</div><div class="friend-info"><div class="profile-name">${escapeHTML(n)}</div><div class="friend-preview">${i===0?escapeHTML(CONFIG.chat.at(-1)?.text||"訊息"):i===1?"今天也辛苦了！":"傳送了照片"}</div></div><div class="friend-time">${i===0?"18:06":"昨天"}</div></div>`).join('')}`;
+  const names=LINE_FRIENDS.map(f=>f.name);
+  content=`<div class="line-subtabs"><button class="${lineChatSub==='chats'?'active':''}" data-line-sub="chats">聊天</button><button class="${lineChatSub==='friends'?'active':''}" data-line-sub="friends">好友</button></div><div class="line-toolbar"><button data-line-action="search">⌕ 搜尋</button><button data-line-action="newchat">＋</button></div><div class="line-search" id="lineSearchBox" style="display:none"><input id="lineSearchInput" placeholder="搜尋聊天或好友" autocomplete="off"><button data-line-action="closeSearch">取消</button></div><div id="lineFriendList">${friendRows(names,lineChatSub==='chats')}</div>`;
  }else if(lineTab==='discover'){
   content=`<div class="line-card" style="background:linear-gradient(135deg,#e7f9d7,#fff);border:0"><div style="font-size:21px;font-weight:800">逛逛，發現好生活</div><p>探索購物、送禮、旅遊與官方商店</p><button data-line-action="shop">開始探索</button></div><div class="line-tool-grid"><button data-line-action="shop">🛍️　LINE 購物</button><button data-line-action="gift">🎁　LINE 禮物</button><button data-line-action="travel">✈️　LINE 旅遊</button><button data-line-action="official">🏪　官方帳號商店</button></div><div class="section-label" style="margin-top:20px">為你推薦</div><div class="line-card"><b>今日人氣精選</b><p>探索熱門商品與生活靈感</p><button data-line-action="popular">查看內容</button></div><div class="line-card"><b>我的購物筆記</b><p>儲存喜歡的商品與靈感</p><button data-line-action="notes">開啟筆記</button></div>`;
  }else if(lineTab==='news'){
@@ -2623,10 +2663,10 @@ function renderLine(tab){
  $('#appContent').querySelectorAll('[data-line-sub]').forEach(b=>b.onclick=()=>{lineChatSub=b.dataset.lineSub;renderLine('chats')});
  $('#appContent').querySelectorAll('[data-line-action]').forEach(b=>b.onclick=()=>{
   const a=b.dataset.lineAction;
-  if(a==='search'){const box=$('#lineSearchBox');if(box){box.style.display='flex';$('#lineSearchInput')?.focus()}else lineSimplePage('搜尋','輸入關鍵字搜尋好友、服務與內容',['好友','聊天','服務'])}
-  else if(a==='closeSearch'){const box=$('#lineSearchBox');if(box)box.style.display='none'}
+  if(a==='search'){const box=$('#lineSearchBox');if(box){box.style.display='flex';$('#lineSearchInput')?.focus()}else{lineChatSub='friends';renderLine('chats');const next=$('#lineSearchBox');if(next)next.style.display='flex';$('#lineSearchInput')?.focus()}}
+  else if(a==='closeSearch'){const box=$('#lineSearchBox');if(box)box.style.display='none';const input=$('#lineSearchInput');if(input)input.value='';$('#appContent').querySelectorAll('#lineFriendList .friend').forEach(row=>row.style.display='flex')}
   else if(a==='plus')lineSimplePage('新增','選擇要使用的新增功能',['加入好友','建立聊天室','掃描行動條碼','全部標記為已讀']);
-  else if(a==='newchat')lineSimplePage('建立聊天室','選擇好友後開始聊天',[CONFIG.contactName,'ユイ','ソラ']);
+  else if(a==='newchat'){lineChatSub='friends';renderLine('chats')}
   else if(a==='services')lineSimplePage('所有服務','常用服務入口',['貼圖小舖','行事曆','相簿','LINE Pay']);
   else if(a==='stickers')lineSimplePage('貼圖小舖','瀏覽與管理貼圖',['熱門貼圖','我的貼圖','推薦貼圖']);
   else if(a==='calendar')lineSimplePage('行事曆','查看近期行程',['今天','本週','新增行程']);
@@ -2642,7 +2682,7 @@ function renderLine(tab){
   else if(a==='coupons')lineSimplePage('優惠券','查看可用優惠',['可用優惠','已使用']);
  });
  $('#appContent').querySelectorAll('[data-news-cat],[data-news-open]').forEach(b=>b.onclick=()=>{const cat=b.dataset.newsCat||b.dataset.newsOpen;const feed=$('#lineNewsFeed');if(feed)feed.innerHTML=`<div class="line-card"><div style="font-size:12px;color:#777">LINE TODAY · ${escapeHTML(cat)}</div><h3>${escapeHTML(cat)}新聞與熱門內容</h3><p>這是可互動的模擬內容頁，實際新聞需連線至 LINE TODAY。</p><button data-news-back>返回推薦</button></div>`;const back=$('[data-news-back]');if(back)back.onclick=()=>renderLine('news')});
- const searchInput=$('#lineSearchInput');if(searchInput)searchInput.oninput=()=>$('#appContent').querySelectorAll('.line-chat-row').forEach(row=>row.style.display=row.textContent.toLowerCase().includes(searchInput.value.toLowerCase())?'flex':'none');
+ const searchInput=$('#lineSearchInput');if(searchInput)searchInput.oninput=()=>$('#appContent').querySelectorAll('#lineFriendList .friend').forEach(row=>row.style.display=row.textContent.toLowerCase().includes(searchInput.value.toLowerCase())?'flex':'none');
 }
 function lineSimplePage(title,desc,items){
  $('#appContent').innerHTML=`<div class="page"><div class="profile-full"><div class="nav"><button class="nav-button" id="lineSimpleBack">‹ 返回</button><strong>${escapeHTML(title)}</strong><span></span></div><div class="line-card"><p>${escapeHTML(desc)}</p></div>${items.map((x,i)=>`<button class="settings-row" style="width:100%;text-align:left;color:#222;background:#fff" data-line-simple-item="${escapeHTML(x)}">${escapeHTML(x)} <span style="float:right;color:#aaa">›</span></button>`).join('')}<div id="lineSimpleResult" style="padding:12px;color:#777"></div></div></div>`;
@@ -2725,18 +2765,18 @@ function showChatOverlay(type,callState='outgoing'){
  document.querySelector('.chat-page').appendChild(overlay);
 }
 function renderChat(){
- $('#appContent').innerHTML=`<div class="page"><div class="chat-page"><div class="chat-header"><button class="nav-button" id="chatBack">‹</button><div class="avatar">${escapeHTML((currentFriend||"H").slice(0,1))}</div><div><div class="profile-name">${escapeHTML(currentFriend)}</div><div class="profile-sub">好友</div></div><div class="chat-header-actions"><button type="button" class="chat-action-btn" id="chatCall" aria-label="語音通話" title="語音通話"><svg class="ui-phone-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.62 10.79a15.05 15.05 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.01-.24c1.12.37 2.33.56 3.58.56a1 1 0 0 1 1 1V20a1 1 0 0 1-1 1C10.61 21 3 13.39 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.19 2.46.56 3.58a1 1 0 0 1-.25 1.01z"/></svg></button><button type="button" class="chat-action-btn" id="chatAlbum" aria-label="相簿" title="相簿">▣</button></div></div><div class="chat-scroll" id="chatScroll"></div><form class="chat-compose" id="chatForm"><input id="chatInput" placeholder="輸入訊息" autocomplete="off" aria-label="訊息內容"><button class="send-btn" type="submit" aria-label="送出">➤</button></form></div></div>`;
- $('#chatBack').onclick=renderLine;
+ const friend=lineFriend(currentFriend);
+ $('#appContent').innerHTML=`<div class="page"><div class="chat-page"><div class="chat-header"><button class="nav-button" id="chatBack">‹</button><div class="avatar">${escapeHTML(friend.face)}</div><div><div class="profile-name">${escapeHTML(friend.name)}</div><div class="profile-sub">${escapeHTML(friend.status||'好友')}</div></div><div class="chat-header-actions"><button type="button" class="chat-action-btn" id="chatCall" aria-label="語音通話" title="語音通話"><svg class="ui-phone-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.62 10.79a15.05 15.05 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.01-.24c1.12.37 2.33.56 3.58.56a1 1 0 0 1 1 1V20a1 1 0 0 1-1 1C10.61 21 3 13.39 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.19 2.46.56 3.58a1 1 0 0 1-.25 1.01z"/></svg></button><button type="button" class="chat-action-btn" id="chatAlbum" aria-label="相簿" title="相簿">▣</button></div></div><div class="chat-scroll" id="chatScroll"></div><form class="chat-compose" id="chatForm"><input id="chatInput" maxlength="2000" placeholder="輸入訊息" autocomplete="off" aria-label="訊息內容"><button class="send-btn" type="submit" aria-label="送出">➤</button></form></div></div>`;
+ $('#chatBack').onclick=()=>renderLine('chats');
  $('#chatCall').onclick=()=>{showChatOverlay('call');};
  $('#chatAlbum').onclick=()=>{showChatOverlay('album');};
- const msgs=(CONFIG.chat||[]).map(m=>({...m,from:m.from||"them"}));
- if(currentFriend!==CONFIG.contactName){msgs.push({from:"them",time:"昨日",text:"有空再聊喔！"})}
+ const msgs=lineChatStore[currentFriend]||[];
  const scroll=$('#chatScroll');
- function addMessage(m){const mine=m.from==="me"||m.from==="我";const row=document.createElement('div');row.className='bubble-row '+(mine?'mine':'');const avatar=escapeHTML((currentFriend||"友").trim().slice(0,1)||"友");const meta=mine?`<div class="bubble-meta mine-meta"><span class="read-mark">已讀</span><span class="sent-time">${escapeHTML(m.time||timeNow())}</span></div>`:`<div class="bubble-meta them-meta">${escapeHTML(m.time||timeNow())}</div>`;row.innerHTML=mine?`${meta}<div class="bubble-stack"><div class="bubble">${escapeHTML(m.text)}</div></div>`:`<div class="chat-message-avatar" aria-label="對方頭像">${avatar}</div><div class="bubble-stack"><div class="bubble">${escapeHTML(m.text)}</div></div>${meta}`;scroll.appendChild(row);scroll.scrollTop=scroll.scrollHeight}
+ function addMessage(m){const mine=m.from==="me"||m.from==="我";const row=document.createElement('div');row.className='bubble-row '+(mine?'mine':'');const avatar=escapeHTML(friend.face);const meta=mine?`<div class="bubble-meta mine-meta"><span class="read-mark">已讀</span><span class="sent-time">${escapeHTML(m.time||timeNow())}</span></div>`:`<div class="bubble-meta them-meta">${escapeHTML(m.time||timeNow())}</div>`;row.innerHTML=mine?`${meta}<div class="bubble-stack"><div class="bubble">${escapeHTML(m.text)}</div></div>`:`<div class="chat-message-avatar" aria-label="對方頭像">${avatar}</div><div class="bubble-stack"><div class="bubble">${escapeHTML(m.text)}</div></div>${meta}`;scroll.appendChild(row);scroll.scrollTop=scroll.scrollHeight}
  msgs.forEach(addMessage);
  const chatInput=$('#chatInput');
  chatInput.addEventListener('focus',()=>{setTimeout(()=>{scroll.scrollTop=scroll.scrollHeight;},80);});
- $('#chatForm').addEventListener('submit',e=>{e.preventDefault();const inp=$('#chatInput');const text=inp.value.trim();if(!text)return;addMessage({from:"me",text,time:timeNow()});inp.value='';inp.focus()});
+ $('#chatForm').addEventListener('submit',e=>{e.preventDefault();const inp=$('#chatInput');const text=inp.value.trim();if(!text)return;const message={from:"me",text:text.slice(0,2000),time:timeNow()};lineChatStore[currentFriend]||(lineChatStore[currentFriend]=[]);lineChatStore[currentFriend].push(message);lineChatStore[currentFriend]=lineChatStore[currentFriend].slice(-300);saveLineChats();addMessage(message);inp.value='';inp.focus()});
 }
 function renderX(){
  let handle=(CONFIG.twitterHandle||"user").replace(/^@/,'');
