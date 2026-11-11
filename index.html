@@ -2712,6 +2712,7 @@ function startAnnConfessionStory(){
   window.__annStoryTimer=null;
   sendAnnStoryMessage("今天是不是你準備要跟冬彌告白的日子？","08:16");
   try{localStorage.setItem(KEY,"1")}catch(e){}
+  if(window.__activeAppId==="line"&&currentFriend==="白石杏"&&typeof window.enableStoryComposer==="function")window.enableStoryComposer("line","⋯⋯");
  },1000+Math.floor(Math.random()*9001));
 }
 window.__annStorySent=function(text){
