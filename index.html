@@ -2613,7 +2613,7 @@ const LINE_FRIENDS=[
 ];
 const LINE_GROUPS=[
  {name:"Vivid BAD SQUAD",face:"🎧",status:"彰人、冬彌、杏、小豆",members:["東雲彰人","青柳 冬彌","白石杏","小豆沢こはね"]},
- {name:"神山高中足球部",face:"⚽",status:"放學後練習・彰人協助",members:["佐藤蓮","高橋悠真","山本拓海","中村翔太","石田陸","藤原湊","小林大地","井上颯太","松本蓮司","加藤晴","渡邊悠","吉田海斗","山田直樹","田中奏","岡本翼","清水蒼","伊藤駿","木村陽向"]},
+ {name:"神山高中足球部",face:"⚽",status:"放學後練習・彰人協助",members:["佐藤蓮","森川陸斗","山本拓海","中村翔太","石田陸","藤原湊","小林大地","井上颯太","松本蓮司","加藤晴","渡邊悠","吉田海斗","山田直樹","田中奏","岡本翼","清水蒼","伊藤駿","木村陽向"]},
  {name:"東雲家族",face:"🏠",status:"彰人、繪名、慎英、媽媽",members:["東雲彰人","東雲繪名","東雲慎英","東雲媽媽"]}
 ];
 const LINE_GROUP_SEEDS={
@@ -2627,7 +2627,7 @@ const LINE_GROUP_SEEDS={
  "神山高中足球部":[
   {from:"them",sender:"佐藤蓮",text:"今天放學後的社團練習照常在操場集合嗎？",time:"16:05"},
   {from:"them",sender:"高橋悠真",text:"嗯，放學後先做傳球和短距離衝刺。",time:"16:07"},
-  {from:"them",sender:"高橋悠真",text:"收到！我會帶球過去。",time:"16:08"},
+  {from:"them",sender:"森川陸斗",text:"收到！我會帶球過去，我也會提早到操場。",time:"16:08"},
   {from:"me",text:"我放學後會過去幫忙。你們別遲到，熱身做確實一點。",time:"16:10"},
   {from:"them",sender:"中村翔太",text:"知道了！今天也拜託了。",time:"16:11"}
  ],
@@ -2794,7 +2794,7 @@ function showChatOverlay(type,callState='outgoing'){
  }
  document.querySelector('.chat-page').appendChild(overlay);
 }
-function lineGroupMemberFace(name){const f=LINE_FRIENDS.find(x=>x.name===name);if(f)return f.face;return ({'東雲彰人':'🎸','東雲媽媽':'👩🏻','佐藤蓮':'🧑🏻‍🦱','高橋悠真':'🧑🏻','山本拓海':'👦🏻','中村翔太':'🧑🏻‍🦰','石田陸':'🧑🏻‍🦲','藤原湊':'👨🏻','小林大地':'🧑🏻‍🦱','井上颯太':'👦🏻','松本蓮司':'🧑🏻','加藤晴':'👨🏻‍🦰','渡邊悠':'🧑🏻‍🦳','吉田海斗':'👦🏻','山田直樹':'🧑🏻‍🦱','田中奏':'👨🏻','岡本翼':'🧑🏻‍🦰','清水蒼':'👦🏻','伊藤駿':'🧑🏻‍🦲','木村陽向':'👨🏻‍🦱'})[name]||'🙂';}
+function lineGroupMemberFace(name){const f=LINE_FRIENDS.find(x=>x.name===name);if(f)return f.face;return ({'東雲彰人':'🎸','東雲媽媽':'👩🏻','佐藤蓮':'🧑🏻‍🦱','高橋悠真':'🧑🏻','森川陸斗':'🧑🏻‍🦱','山本拓海':'👦🏻','中村翔太':'🧑🏻‍🦰','石田陸':'🧑🏻‍🦲','藤原湊':'👨🏻','小林大地':'🧑🏻‍🦱','井上颯太':'👦🏻','松本蓮司':'🧑🏻','加藤晴':'👨🏻‍🦰','渡邊悠':'🧑🏻‍🦳','吉田海斗':'👦🏻','山田直樹':'🧑🏻‍🦱','田中奏':'👨🏻','岡本翼':'🧑🏻‍🦰','清水蒼':'👦🏻','伊藤駿':'🧑🏻‍🦲','木村陽向':'👨🏻‍🦱'})[name]||'🙂';}
 function showLineGroupInfo(group){const page=document.querySelector('.chat-page');if(!page)return;const old=page.querySelector('.line-group-info');if(old)old.remove();const members=group.members||[];const panel=document.createElement('div');panel.className='line-group-info';
 panel.innerHTML='<button class="line-group-info-close" type="button">×</button><div class="line-group-info-head"><div class="line-group-info-avatar">'+escapeHTML(group.face)+'</div><div class="line-group-info-title">'+escapeHTML(group.name)+'</div><div class="line-group-info-count">'+members.length+' 位成員</div></div><div class="line-group-info-bar"><button class="line-group-info-action" data-action="album"><span>▣</span>相簿</button><button class="line-group-info-action" data-action="notes"><span>▤</span>記事本</button><button class="line-group-info-action" data-action="search"><span>⌕</span>搜尋</button><button class="line-group-info-action" data-action="invite"><span>＋</span>邀請</button></div><div class="line-group-info-section"><div class="line-group-info-section-title">成員（'+members.length+'）</div>'+members.map(name=>'<div class="line-group-member"><div class="line-group-member-avatar">'+escapeHTML(lineGroupMemberFace(name))+'</div><span>'+escapeHTML(name)+'</span>'+(name==='東雲彰人'?'<span style="margin-left:auto;color:#999;font-size:12px">你</span>':'')+'</div>').join('')+'</div><div class="line-group-info-section"><div class="line-group-info-section-title">群組設定</div><div style="font-size:14px;color:#555;padding:8px 0">通知與聊天設定</div></div>';
 panel.querySelector('.line-group-info-close').onclick=()=>panel.remove();panel.querySelectorAll('[data-action]').forEach(b=>b.onclick=()=>{const a=b.dataset.action;panel.remove();if(a==='album')showChatOverlay('album');else if(a==='notes')lineSimplePage('記事本',group.name+' 的群組記事本',['尚無記事','新增記事']);else if(a==='search')lineSimplePage('搜尋聊天','搜尋 '+group.name+' 的訊息',['搜尋訊息']);else lineSimplePage('邀請成員','選擇要邀請加入 '+group.name+' 的好友',LINE_FRIENDS.map(f=>f.name));});page.appendChild(panel);}
