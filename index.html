@@ -126,7 +126,7 @@ button:active{transform:scale(.965);filter:brightness(.96)}
  backdrop-filter:blur(24px);display:flex;gap:11px;align-items:center;
  animation:toastIn .38s cubic-bezier(.2,.8,.2,1) both;font-size:13px
 }
-.jp-toast .jp-toast-icon{width:34px;height:34px;border-radius:10px;background:#dfe9df;display:grid;place-items:center;font-size:17px;flex-shrink:0}
+.jp-toast .jp-toast-icon{width:34px;height:34px;border-radius:10px;background:#dfe9df;display:grid;place-items:center;font-size:17px;font-weight:800;flex-shrink:0}.jp-toast-line .jp-toast-icon{background:#06c755;color:#fff;font-size:12px}.jp-toast-instagram .jp-toast-icon{background:linear-gradient(135deg,#feda75,#d62976,#962fbf);color:#fff}.jp-toast-sms .jp-toast-icon{background:#34c759;color:#fff}.jp-toast-x .jp-toast-icon{background:#111;color:#fff}.jp-toast-message{color:#69716b;line-height:1.35;overflow-wrap:anywhere}.line-chat-row .friend-info{padding:2px 0}.line-chat-row .friend-preview{max-width:100%;font-size:12px;margin-top:5px}
 @keyframes toastIn{from{opacity:0;transform:translateY(-24px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
 @keyframes toastOut{to{opacity:0;transform:translateY(-20px) scale(.98)}}
 @media (min-width:700px){
@@ -2665,14 +2665,15 @@ if(lineChatStore["東雲家"]&&!lineChatStore["東雲家族"]){lineChatStore["�
 function saveLineChats(){try{localStorage.setItem(LINE_CHAT_STORAGE_KEY,JSON.stringify(lineChatStore))}catch(error){console.warn("LINE 聊天紀錄無法儲存",error)}}
 function lineFriend(name){return LINE_GROUPS.find(f=>f.name===name)||LINE_FRIENDS.find(f=>f.name===name)||{name,face:"🙂",status:"",preview:"開始聊天"}}
 function lineLastMessage(name){const list=lineChatStore[name]||[];return list.length?list[list.length-1].text:lineFriend(name).preview}
+function lineLastMessageTime(name){const list=lineChatStore[name]||[];return list.length?(list[list.length-1].time||''):' '}
 
 function renderLine(tab){
  if(tab)lineTab=tab;
  const title={home:'主頁',chats:'聊天',discover:'逛逛',news:'LINE TODAY',wallet:'錢包'}[lineTab]||'主頁';
  let content='';
  const friendRows=(names,chatMode=false)=>names.map((name,i)=>{
-  const f=lineFriend(name),last=lineLastMessage(name);
-  return `<div class="friend ${chatMode?'line-chat-row':''}" data-friend="${escapeHTML(name)}"><div class="avatar">${escapeHTML(f.face)}</div><div class="friend-info"><div class="profile-name">${escapeHTML(name)}</div></div>${chatMode?`<div class="friend-time">${i===0?'最近':'好友'}</div>`:`<button class="line-action" type="button" data-start-chat="${escapeHTML(name)}">聊天</button>`}</div>`;
+  const f=lineFriend(name),last=lineLastMessage(name),lastTime=lineLastMessageTime(name);
+  return `<div class="friend ${chatMode?'line-chat-row':''}" data-friend="${escapeHTML(name)}"><div class="avatar">${escapeHTML(f.face)}</div><div class="friend-info"><div class="profile-name">${escapeHTML(name)}</div>${chatMode?`<div class="friend-preview">${escapeHTML(last)}</div>`:''}</div>${chatMode?`<div class="friend-time">${escapeHTML(lastTime)}</div>`:`<button class="line-action" type="button" data-start-chat="${escapeHTML(name)}">聊天</button>`}</div>`;
  }).join('');
  if(lineTab==='home'){
   content=`<div class="line-profile" id="myProfile">${lineProfileAvatarHTML()}<div><div class="profile-name">${escapeHTML(CONFIG.userName)}</div><div class="profile-sub">查看個人檔案與設定</div></div><div class="chevron">›</div></div><div class="section-label">常用服務</div><div class="line-tool-grid"><button data-line-action="services">🧰　所有服務</button><button data-line-action="stickers">🎁　貼圖小舖</button><button data-line-action="calendar">📅　行事曆</button><button data-line-action="albums">🖼️　相簿</button></div><div class="section-label" style="margin-top:20px">群組（${LINE_GROUPS.length}）</div>${friendRows(LINE_GROUPS.map(g=>g.name))}<div class="section-label" style="margin-top:20px">好友（${LINE_FRIENDS.length}）</div>${friendRows(LINE_FRIENDS.map(f=>f.name))}`;
@@ -4352,14 +4353,26 @@ setupWallpaperPicker();initHome();updateClock();setInterval(updateClock,1000);
  const phone=document.querySelector('#phone');
  if(!phone)return;
  let toastTimer=null;
- function toast(title,body,icon='✦'){
+ function toast(title,body,icon='✦',app='system'){
    const old=document.querySelector('.jp-toast');
    if(old){old.style.animation='toastOut .2s ease both';setTimeout(()=>old.remove(),180)}
-   const el=document.createElement('div');el.className='jp-toast';
-   el.innerHTML='<div class="jp-toast-icon">'+icon+'</div><div style="min-width:0;flex:1"><div style="font-weight:700;font-size:13px;margin-bottom:3px">'+safe(title)+'</div><div style="color:#69716b;line-height:1.35">'+safe(body)+'</div></div><div style="font-size:11px;color:#7b827d;align-self:flex-start">now</div>';
-   phone.appendChild(el);clearTimeout(toastTimer);toastTimer=setTimeout(()=>{el.style.animation='toastOut .3s ease both';setTimeout(()=>el.remove(),280)},3500);
+   const el=document.createElement('div');el.className='jp-toast jp-toast-'+safe(app);el.dataset.app=app;
+   const labels={line:'LINE',instagram:'Instagram',sms:'訊息',x:'X'};
+   const icons={line:'LINE',instagram:'◎',sms:'▤',x:'𝕏'};
+   const mark=icons[app]||icon,brand=labels[app]||title;
+   el.innerHTML='<div class="jp-toast-icon">'+safe(mark)+'</div><div style="min-width:0;flex:1"><div style="font-weight:700;font-size:13px;margin-bottom:3px">'+safe(brand)+' · '+safe(title)+'</div><div class="jp-toast-message">'+safe(body)+'</div></div><div style="font-size:11px;color:#7b827d;align-self:flex-start">現在</div>';
+   phone.appendChild(el);clearTimeout(toastTimer);toastTimer=setTimeout(()=>{el.style.animation='toastOut .3s ease both';setTimeout(()=>el.remove(),280)},4000);
  }
  function safe(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+ window.showAppNotification=function(app,sender,message){
+   const key=String(app||'').toLowerCase(),valid={line:'LINE',instagram:'Instagram',sms:'訊息',x:'X',twitter:'X'};
+   const normalized=key==='twitter'?'x':key;
+   if(!valid[normalized])return false;
+   toast(String(sender||valid[normalized]),String(message||'收到一則新訊息'),'',normalized);return true;
+ };
+ window.addEventListener('story:message',event=>{
+   const d=event.detail||{};if(d&&d.app)window.showAppNotification(d.app,d.sender,d.text);
+ });
  document.addEventListener('click',e=>{
    const app=e.target.closest('[data-app]');
    if(app){
