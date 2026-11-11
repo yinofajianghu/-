@@ -2834,23 +2834,21 @@ function renderChat(){
   const sendToya=(text)=>{const m={from:"them",text,time:timeNow(),timestamp:Date.now()};lineChatStore[currentFriend]||(lineChatStore[currentFriend]=[]);lineChatStore[currentFriend].push(m);lineChatStore[currentFriend]=lineChatStore[currentFriend].slice(-300);saveLineChats();addMessage(m);};
   const enableAkito=stage=>{if(playerLines[stage]&&typeof window.enableStoryComposer==="function")window.enableStoryComposer("line",playerLines[stage]);};
   const later=(fn)=>{storyTimer=setTimeout(fn,1000+Math.floor(Math.random()*9001));};
+  const resumeReply=stage=>{
+   if(stage===2){sendToya("今天中午有圖書館的事務⋯⋯應該不太行，抱歉。");saveStage(3);enableAkito(3);}
+   else if(stage===3){sendToya("我聽曉山說，最近新開了一間咖啡廳。");later(()=>{sendToya("要不然⋯⋯我們練習完之後一起去試試？");later(()=>{sendToya("（圖片劇情1）（圖片待填充，我之後會補上）");saveStage(4);enableAkito(4);});});}
+   else if(stage===4){sendToya("😉");saveStage(5);if(typeof window.disableStoryComposer==="function")window.disableStoryComposer("line");}
+  };
   window.__aoyagiMainStorySent=(text)=>{
    if(currentFriend!=="青柳 冬彌")return;
    const expected=playerLines[storyState];if(!expected||text!==expected)return;
-   if(storyTimer)clearTimeout(storyTimer);
-   const sentStage=storyState;saveStage(-sentStage);
-   const reply=()=>{
-    if(sentStage===1){sendToya("今天中午有圖書館的事務⋯⋯應該不太行，抱歉。");saveStage(2);enableAkito(2);}
-    else if(sentStage===2){sendToya("我聽曉山說，最近新開了一間咖啡廳。");later(()=>{sendToya("要不然⋯⋯我們練習完之後一起去試試？");later(()=>{sendToya("（圖片劇情1）（圖片待填充，我之後會補上）");saveStage(4);enableAkito(4);});});}
-    else if(sentStage===3){sendToya("😉");saveStage(5);if(typeof window.disableStoryComposer==="function")window.disableStoryComposer("line");}
-    else if(sentStage===4){sendToya("😉");saveStage(5);if(typeof window.disableStoryComposer==="function")window.disableStoryComposer("line");}
-   };
-   later(reply);
+   const sentStage=storyState;
+   if(sentStage===1){saveStage(2);enableAkito(2);}
+   else{saveStage(-sentStage);later(()=>resumeReply(sentStage));}
   };
-  if(storyState===0){saveStage(-1);later(()=>{sendToya("彰人，早上好。");saveStage(1);enableAkito(1);});}
-  else if(storyState===-1){later(()=>{sendToya("彰人，早上好。");saveStage(1);enableAkito(1);});}
+  if(storyState===0||storyState===-1){saveStage(-1);later(()=>{sendToya("彰人，早上好。");saveStage(1);enableAkito(1);});}
   else if(storyState>0&&storyState<5)enableAkito(storyState);
-  else if(storyState<0){const pendingStage=Math.abs(storyState);later(()=>{if(pendingStage===1){sendToya("今天中午有圖書館的事務⋯⋯應該不太行，抱歉。");saveStage(2);enableAkito(2);}else if(pendingStage===2){sendToya("我聽曉山說，最近新開了一間咖啡廳。");later(()=>{sendToya("要不然⋯⋯我們練習完之後一起去試試？");later(()=>{sendToya("（圖片劇情1）（圖片待填充，我之後會補上）");saveStage(4);enableAkito(4);});});}else if(pendingStage===3||pendingStage===4){sendToya("😉");saveStage(5);}});}
+  else if(storyState<0&&storyState!==-1)later(()=>resumeReply(Math.abs(storyState)));
  }else if(typeof window.__aoyagiMainStorySent==="function"){window.__aoyagiMainStorySent=null;}
  const chatInput=$('#chatInput');
  chatInput.addEventListener('focus',()=>{setTimeout(()=>{scroll.scrollTop=scroll.scrollHeight;},80);});
