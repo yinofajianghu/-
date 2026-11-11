@@ -7514,7 +7514,7 @@ function renderSafariApp(){
  const pending=new Map(),enabled=new Set(),locked=new Set(),timers=new WeakMap();
  const keyOf=v=>aliases[String(v||'').toLowerCase()]||String(v||'').toLowerCase();
  const fields=k=>targets[k]?targets[k]():[];
- function apply(k){const blocked=enabled.has(k)||locked.has(k);fields(k).forEach(el=>{el.readOnly=blocked;el.setAttribute('aria-readonly',blocked?'true':'false');el.classList.toggle('story-virtual-input',blocked);el.autocomplete='off';});}
+ function apply(k){fields(k).forEach(el=>{const blocked=enabled.has(k)||(locked.has(k)&&(k!=='line'||!!el.closest('.line-group-chat')));el.readOnly=blocked;el.setAttribute('aria-readonly',blocked?'true':'false');el.classList.toggle('story-virtual-input',blocked);el.autocomplete='off';});}
  window.setStoryComposerLocked=function(app,value){const k=keyOf(app);if(value)locked.add(k);else locked.delete(k);apply(k);return true;};
  window.enableStoryComposer=function(app,text,options={}){
   const k=keyOf(app);if(!targets[k])return false;
@@ -7525,10 +7525,10 @@ function renderSafariApp(){
   const k=keyOf(app);enabled.delete(k);pending.delete(k);fields(k).forEach(el=>{const blocked=locked.has(k);el.readOnly=blocked;if(blocked)el.setAttribute('aria-readonly','true');else el.removeAttribute('aria-readonly');el.classList.toggle('story-virtual-input',blocked);const t=timers.get(el);if(t)clearInterval(t);});return true;
  };
  function appFor(el){if(el.closest('.ig-app'))return 'instagram';if(el.closest('.sms-app'))return 'sms';if(el.closest('.x2-app'))return 'x';if(el.id==='chatInput'||el.closest('.chat-page'))return 'line';return '';}
- document.addEventListener('focusin',e=>{const el=e.target;if(!el.matches('#chatInput,.ig-chat-compose input[name="message"],#smsInput,#x2ChatInput,#x2ReplyText'))return;const k=appFor(el);if(enabled.has(k)||locked.has(k)){el.blur();}},true);
+ document.addEventListener('focusin',e=>{const el=e.target;if(!el.matches('#chatInput,.ig-chat-compose input[name="message"],#smsInput,#x2ChatInput,#x2ReplyText'))return;const k=appFor(el);if(enabled.has(k)||(locked.has(k)&&(k!=='line'||!!el.closest('.line-group-chat')))){el.blur();}},true);
  document.addEventListener('click',e=>{
   const el=e.target.closest('#chatInput,.ig-chat-compose input[name="message"],#smsInput,#x2ChatInput,#x2ReplyText');if(!el)return;
-  const k=appFor(el);if(!enabled.has(k)&&!locked.has(k))return;
+  const k=appFor(el);if(!enabled.has(k)&&!(locked.has(k)&&(k!=='line'||!!el.closest('.line-group-chat'))))return;
   e.preventDefault();e.stopPropagation();
   const job=pending.get(k);if(!job||!job.text)return;
   const old=timers.get(el);if(old)clearInterval(old);
