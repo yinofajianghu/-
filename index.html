@@ -2756,9 +2756,8 @@ function finishSpecialDayGroupTask(){
  try{localStorage.setItem("yinofajianghu_special_day_group_task_hint_pending_v1","1")}catch(e){}if(window.__activeAppId==="line"&&currentFriend==="告白大作戰💗"){const input=document.getElementById("chatInput");if(input)input.placeholder="請前往任務欄";}
 }
 function saveSpecialDayGroupStage(stage){try{localStorage.setItem("yinofajianghu_special_day_group_story_v1",String(stage))}catch(e){}}
-function pauseSpecialDayGroupStory(){if(window.__specialDayGroupTimer){clearTimeout(window.__specialDayGroupTimer);window.__specialDayGroupTimer=null;}if(typeof window.disableStoryComposer==="function")window.disableStoryComposer("line");}
+function pauseSpecialDayGroupStory(){/* Story progression continues in the background; leaving the chat only changes the visible screen. */}
 function runSpecialDayGroupStory(){
- if(window.__activeAppId!=="line"||currentFriend!=="告白大作戰💗")return;
  if(window.__specialDayGroupTimer)return;let stage=0;try{stage=Number(localStorage.getItem("yinofajianghu_special_day_group_story_v1")||"0")}catch(e){}
  if(stage>=SPECIAL_DAY_GROUP_LINES.length){finishSpecialDayGroupTask();return;}if(!LINE_GROUPS.some(g=>g.name==="告白大作戰💗"))return;
  const line=SPECIAL_DAY_GROUP_LINES[stage],name="告白大作戰💗";
