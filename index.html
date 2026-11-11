@@ -2825,9 +2825,36 @@ function renderChat(){
  const scroll=$('#chatScroll');
  function addMessage(m){const mine=m.from==="me"||m.from==="我";const row=document.createElement('div');row.className='bubble-row '+(mine?'mine':'');const senderFriend=m.sender?lineFriend(m.sender):friend;const avatar=escapeHTML(activeGroup&&m.sender?lineGroupMemberFace(m.sender):senderFriend.face);const meta=mine?`<div class="bubble-meta mine-meta"><span class="read-mark">已讀</span><span class="sent-time">${escapeHTML(m.time||timeNow())}</span></div>`:`<div class="bubble-meta them-meta">${escapeHTML(m.time||timeNow())}</div>`;row.innerHTML=mine?`${meta}<div class="bubble-stack"><div class="bubble">${escapeHTML(m.text)}</div></div>`:`<div class="chat-message-avatar" aria-label="對方頭像">${avatar}</div><div class="bubble-stack">${LINE_GROUPS.some(g=>g.name===currentFriend)&&m.sender?`<div class="bubble-sender">${escapeHTML(m.sender)}</div>`:""}<div class="bubble">${escapeHTML(m.text)}</div></div>${meta}`;scroll.appendChild(row);scroll.scrollTop=scroll.scrollHeight}
  msgs.forEach(addMessage);
+ if(currentFriend==="青柳 冬彌"){
+  const STORY_KEY="yinofajianghu_aoyagi_prequel_v1";
+  let storyState=0;try{storyState=Number(localStorage.getItem(STORY_KEY)||"0")}catch(e){}
+  const playerLines={1:"早。",2:"中午要一起吃飯嗎？",3:"好。",4:"好啊。"};
+  let storyTimer=null;
+  const saveStage=n=>{storyState=n;try{localStorage.setItem(STORY_KEY,String(n))}catch(e){}};
+  const sendToya=(text)=>{const m={from:"them",text,time:timeNow(),timestamp:Date.now()};lineChatStore[currentFriend]||(lineChatStore[currentFriend]=[]);lineChatStore[currentFriend].push(m);lineChatStore[currentFriend]=lineChatStore[currentFriend].slice(-300);saveLineChats();addMessage(m);};
+  const enableAkito=stage=>{if(playerLines[stage]&&typeof window.enableStoryComposer==="function")window.enableStoryComposer("line",playerLines[stage]);};
+  const later=(fn)=>{storyTimer=setTimeout(fn,1000+Math.floor(Math.random()*9001));};
+  window.__aoyagiMainStorySent=(text)=>{
+   if(currentFriend!=="青柳 冬彌")return;
+   const expected=playerLines[storyState];if(!expected||text!==expected)return;
+   if(storyTimer)clearTimeout(storyTimer);
+   const sentStage=storyState;saveStage(-sentStage);
+   const reply=()=>{
+    if(sentStage===1){sendToya("今天中午有圖書館的事務⋯⋯應該不太行，抱歉。");saveStage(2);enableAkito(2);}
+    else if(sentStage===2){sendToya("我聽曉山說，最近新開了一間咖啡廳。");later(()=>{sendToya("要不然⋯⋯我們練習完之後一起去試試？");later(()=>{sendToya("（圖片劇情1）（圖片待填充，我之後會補上）");saveStage(4);enableAkito(4);});});}
+    else if(sentStage===3){sendToya("😉");saveStage(5);if(typeof window.disableStoryComposer==="function")window.disableStoryComposer("line");}
+    else if(sentStage===4){sendToya("😉");saveStage(5);if(typeof window.disableStoryComposer==="function")window.disableStoryComposer("line");}
+   };
+   later(reply);
+  };
+  if(storyState===0){saveStage(-1);later(()=>{sendToya("彰人，早上好。");saveStage(1);enableAkito(1);});}
+  else if(storyState===-1){later(()=>{sendToya("彰人，早上好。");saveStage(1);enableAkito(1);});}
+  else if(storyState>0&&storyState<5)enableAkito(storyState);
+  else if(storyState<0){const pendingStage=Math.abs(storyState);later(()=>{if(pendingStage===1){sendToya("今天中午有圖書館的事務⋯⋯應該不太行，抱歉。");saveStage(2);enableAkito(2);}else if(pendingStage===2){sendToya("我聽曉山說，最近新開了一間咖啡廳。");later(()=>{sendToya("要不然⋯⋯我們練習完之後一起去試試？");later(()=>{sendToya("（圖片劇情1）（圖片待填充，我之後會補上）");saveStage(4);enableAkito(4);});});}else if(pendingStage===3||pendingStage===4){sendToya("😉");saveStage(5);}});}
+ }else if(typeof window.__aoyagiMainStorySent==="function"){window.__aoyagiMainStorySent=null;}
  const chatInput=$('#chatInput');
  chatInput.addEventListener('focus',()=>{setTimeout(()=>{scroll.scrollTop=scroll.scrollHeight;},80);});
- $('#chatForm').addEventListener('submit',e=>{e.preventDefault();const inp=$('#chatInput');const text=inp.value.trim();if(!text)return;const message={from:"me",text:text.slice(0,2000),time:timeNow(),timestamp:Date.now()};lineChatStore[currentFriend]||(lineChatStore[currentFriend]=[]);lineChatStore[currentFriend].push(message);lineChatStore[currentFriend]=lineChatStore[currentFriend].slice(-300);saveLineChats();addMessage(message);inp.value='';inp.focus()});
+ $('#chatForm').addEventListener('submit',e=>{e.preventDefault();const inp=$('#chatInput');const text=inp.value.trim();if(!text)return;const message={from:"me",text:text.slice(0,2000),time:timeNow(),timestamp:Date.now()};lineChatStore[currentFriend]||(lineChatStore[currentFriend]=[]);lineChatStore[currentFriend].push(message);lineChatStore[currentFriend]=lineChatStore[currentFriend].slice(-300);saveLineChats();addMessage(message);inp.value='';inp.focus();if(typeof window.__aoyagiMainStorySent==='function')window.__aoyagiMainStorySent(text)});
 }
 function renderX(){
  let handle=(CONFIG.twitterHandle||"user").replace(/^@/,'');
