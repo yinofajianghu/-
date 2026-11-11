@@ -2990,7 +2990,7 @@ function renderChat(){
   const KEY="yinofajianghu_ann_confession_story_v1";let annStage=0;try{annStage=Number(localStorage.getItem(KEY)||"0")}catch(e){}
   const annLines={1:"⋯⋯",2:"是。",3:"幹嘛大驚小怪的。",4:"沒有。",5:"啊？"};
   if(annLines[annStage]&&typeof window.enableStoryComposer==="function")window.enableStoryComposer("line",annLines[annStage]);
-  window.__annStoryTime=()=>({1:"08:16",2:"08:17",3:"08:23",4:"08:28",5:"08:32"}[annStage]||"08:13");
+  window.__annStoryTime=()=>{let currentStage=0;try{currentStage=Number(localStorage.getItem("yinofajianghu_ann_confession_story_v1")||"0")}catch(e){}return ({1:"08:16",2:"08:17",3:"08:23",4:"08:28",5:"08:32"}[currentStage]||"08:13")};
  }else if(currentFriend==="青柳 冬彌"){
   const STORY_KEY="yinofajianghu_aoyagi_prequel_v1";
   let storyState=0;try{storyState=Number(localStorage.getItem(STORY_KEY)||"0")}catch(e){}
