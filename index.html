@@ -2752,6 +2752,7 @@ function runSpecialDayGroupStory(){
  window.__specialDayGroupTimer=setTimeout(()=>{window.__specialDayGroupTimer=null;runSpecialDayGroupStory()},1200+Math.floor(Math.random()*8801));
 }
 function startSpecialDayGroupFlow(){ensureSpecialDayGroup();ensureSpecialDayGroupTask();if(!window.__specialDayGroupTimer)runSpecialDayGroupStory();}
+try{const savedStage=Number(localStorage.getItem("yinofajianghu_special_day_group_story_v1")||"0");if(savedStage>0&&savedStage<SPECIAL_DAY_GROUP_LINES.length&&LINE_GROUPS.some(g=>g.name==="告白大作戰💗"))setTimeout(runSpecialDayGroupStory,1200)}catch(e){}
 
 function startAnnConfessionStory(){
  const KEY="yinofajianghu_ann_confession_story_v1";
