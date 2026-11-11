@@ -4584,7 +4584,7 @@ setupWallpaperPicker();initHome();updateClock();setInterval(updateClock,1000);
  function toast(title,body,icon='✦',app='system',timeLabel='現在'){
    const old=document.querySelector('.jp-toast');
    if(old){old.style.animation='toastOut .2s ease both';setTimeout(()=>old.remove(),180)}
-   const el=document.createElement('div');el.className='jp-toast jp-toast-'+safe(app);el.dataset.app=app;
+   const el=document.createElement('div');el.className='jp-toast jp-toast-'+safe(app);if(app==='task'){el.dataset.taskNotification='1';el.setAttribute('role','button');el.setAttribute('tabindex','0');el.style.cursor='pointer';}else{el.dataset.app=app;}
    const labels={line:'LINE',instagram:'Instagram',sms:'訊息',x:'X'};
    const icons={line:'LINE',instagram:'◎',sms:'▤',x:'𝕏'};
    const mark=icons[app]||icon,brand=labels[app]||title;
@@ -4592,8 +4592,11 @@ setupWallpaperPicker();initHome();updateClock();setInterval(updateClock,1000);
    phone.appendChild(el);clearTimeout(toastTimer);toastTimer=setTimeout(()=>{el.style.animation='toastOut .3s ease both';setTimeout(()=>el.remove(),280)},4000);
  }
  function safe(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
- window.showTaskNotification=function(kind,task){const title=String(task&&task.title||"任務");const body=kind==="completed"?"任務已完成："+title:"新增任務："+title;toast("任務更新",body,"✦","system","現在");};
+ window.showTaskNotification=function(kind,task){const title=String(task&&task.title||"任務");const body=kind==="completed"?"任務已完成："+title:"新增任務："+title;toast("任務更新",body,"✦","task","現在");};
  window.addEventListener('story:task-created',event=>window.showTaskNotification('created',event.detail&&event.detail.task));
+ function openTaskJournal(){const banner=document.querySelector('.jp-toast[data-task-notification="1"]');if(banner){banner.style.animation='toastOut .2s ease both';setTimeout(()=>banner.remove(),180);}if(typeof window.showApp==='function')window.showApp('tasks');else if(typeof showApp==='function')showApp('tasks');}
+ document.addEventListener('click',event=>{const banner=event.target.closest&&event.target.closest('.jp-toast[data-task-notification="1"]');if(!banner)return;event.preventDefault();event.stopPropagation();openTaskJournal();},true);
+ document.addEventListener('keydown',event=>{if(event.key!=='Enter'&&event.key!==' ')return;const banner=event.target.closest&&event.target.closest('.jp-toast[data-task-notification="1"]');if(!banner)return;event.preventDefault();openTaskJournal();});
  window.addEventListener('story:task-completed',event=>window.showTaskNotification('completed',event.detail&&event.detail.task));
  window.showAppNotification=function(app,sender,message,timeLabel){
    const key=String(app||'').toLowerCase(),valid={line:'LINE',instagram:'Instagram',sms:'訊息',x:'X',twitter:'X'};
