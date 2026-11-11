@@ -2777,7 +2777,7 @@ window.__specialDayGroupSent=function(text){
  if(stage+1>=SPECIAL_DAY_GROUP_LINES.length){finishSpecialDayGroupTask();return;}
  window.__specialDayGroupTimer=setTimeout(()=>{window.__specialDayGroupTimer=null;runSpecialDayGroupStory()},1200+Math.floor(Math.random()*8801));
 };
-function startSpecialDayGroupFlow(){try{localStorage.setItem("yinofajianghu_special_day_group_unlocked_v1","1")}catch(e){}ensureSpecialDayGroup();ensureSpecialDayGroupTask();}
+function startSpecialDayGroupFlow(){try{localStorage.setItem("yinofajianghu_special_day_group_unlocked_v1","1")}catch(e){}ensureSpecialDayGroup();ensureSpecialDayGroupTask();if(!window.__specialDayGroupTimer){window.__specialDayGroupTimer=setTimeout(()=>{window.__specialDayGroupTimer=null;runSpecialDayGroupStory()},500);}}
 
 
 function cleanupPrematureSpecialDayGroup(){
