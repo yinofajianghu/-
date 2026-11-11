@@ -2829,7 +2829,7 @@ function renderChat(){
   const STORY_KEY="yinofajianghu_aoyagi_prequel_v1";
   let storyState=0;try{storyState=Number(localStorage.getItem(STORY_KEY)||"0")}catch(e){}
   const playerLines={1:"早。",2:"中午要一起吃飯嗎？",3:"好。",4:"好啊。"};
-  const storyTimes={0:"08:00",1:"08:01",2:"11:30",3:"11:32",4:"11:35",5:"11:36"};
+  const storyTimes={0:"07:02",1:"07:10",2:"07:25",3:"07:40",4:"08:05",5:"08:10"};
   const storyStamp=t=>{const p=t.split(":").map(Number);return Date.UTC(2026,0,1,p[0],p[1]);};
   window.__aoyagiStoryTime=()=>storyTimes[storyState]||"11:36";
   let storyTimer=null;
@@ -2838,9 +2838,9 @@ function renderChat(){
   const enableAkito=stage=>{if(playerLines[stage]&&typeof window.enableStoryComposer==="function")window.enableStoryComposer("line",playerLines[stage]);};
   const later=(fn)=>{storyTimer=setTimeout(fn,1000+Math.floor(Math.random()*9001));};
   const resumeReply=stage=>{
-   if(stage===2){sendToya("今天中午有圖書館的事務⋯⋯應該不太行，抱歉。","11:31");saveStage(3);enableAkito(3);}
-   else if(stage===3){sendToya("我聽曉山說，最近新開了一間咖啡廳。","11:33");later(()=>{sendToya("要不然⋯⋯我們練習完之後一起去試試？","11:34");later(()=>{sendToya("（圖片劇情1）（圖片待填充，我之後會補上）","11:34");saveStage(4);enableAkito(4);});});}
-   else if(stage===4){sendToya("😉","11:36");saveStage(5);if(typeof window.disableStoryComposer==="function")window.disableStoryComposer("line");}
+   if(stage===2){sendToya("今天中午有圖書館的事務⋯⋯應該不太行，抱歉。","07:32");saveStage(3);enableAkito(3);}
+   else if(stage===3){sendToya("我聽曉山說，最近新開了一間咖啡廳。","07:47");later(()=>{sendToya("要不然⋯⋯我們練習完之後一起去試試？","07:55");later(()=>{sendToya("（圖片劇情1）（圖片待填充，我之後會補上）","08:00");saveStage(4);enableAkito(4);});});}
+   else if(stage===4){sendToya("😉","08:10");saveStage(5);if(typeof window.disableStoryComposer==="function")window.disableStoryComposer("line");}
   };
   window.__aoyagiMainStorySent=(text)=>{
    if(currentFriend!=="青柳 冬彌")return;
@@ -2849,7 +2849,7 @@ function renderChat(){
    if(sentStage===1){saveStage(2);enableAkito(2);}
    else{saveStage(-sentStage);later(()=>resumeReply(sentStage));}
   };
-  if(storyState===0||storyState===-1){saveStage(-1);later(()=>{sendToya("彰人，早上好。","08:00");saveStage(1);enableAkito(1);});}
+  if(storyState===0||storyState===-1){saveStage(-1);later(()=>{sendToya("彰人，早上好。","07:02");saveStage(1);enableAkito(1);});}
   else if(storyState>0&&storyState<5)enableAkito(storyState);
   else if(storyState<0&&storyState!==-1)later(()=>resumeReply(Math.abs(storyState)));
  }else if(typeof window.__aoyagiMainStorySent==="function"){window.__aoyagiMainStorySent=null;}
