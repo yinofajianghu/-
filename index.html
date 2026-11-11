@@ -373,7 +373,7 @@ html,body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro 
 
 
 /* Two-page iPhone home screen */
-#home .app-grid{display:flex;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;scroll-behavior:smooth;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;touch-action:pan-x pan-y;gap:0;margin:clamp(18px,3.5vh,30px) 0 0;scrollbar-width:none}
+#home .app-grid{display:flex;overflow-x:auto;overflow-y:hidden;padding-top:8px;scroll-snap-type:x mandatory;scroll-behavior:smooth;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;touch-action:pan-x pan-y;gap:0;margin:clamp(18px,3.5vh,30px) 0 0;scrollbar-width:none}
 #home .app-grid::-webkit-scrollbar{display:none}
 #home .home-app-page{flex:0 0 100%;width:100%;min-width:100%;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));align-content:start;align-items:start;gap:clamp(15px,3.6vh,26px) 8px;padding:0 2px;scroll-snap-align:start;scroll-snap-stop:always}
 #home .home-page-dots{height:22px;display:flex;align-items:center;justify-content:center;gap:8px;flex-shrink:0}
@@ -1921,6 +1921,7 @@ function unlock() {
     home.classList.add('active');
     if (appView) appView.classList.remove('active');
     unlockInProgress = false;
+    if (typeof window.startAoyagiPrequelOnLineOpen === "function") window.startAoyagiPrequelOnLineOpen();
   };
 
   if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
@@ -1956,6 +1957,7 @@ function returnToRecentApp(){
  $('#passcodeScreen').classList.remove('active');
  $('#home').classList.remove('active');
  app.classList.add('active');
+ if(typeof window.startAoyagiPrequelOnLineOpen==='function')window.startAoyagiPrequelOnLineOpen();
  return true;
 }
 
@@ -2683,7 +2685,7 @@ function ensureAoyagiSpecialDayTask(){
  if(!task)task=items.find(x=>x&&x.type==="main"&&x.title===TITLE);
  if(!task&&typeof window.addMainStoryTask==="function"){
   const result=window.addMainStoryTask({title:TITLE,chapter:"主線任務",description:"回覆冬彌的Line訊息",trigger:"收到冬彌的😉訊息"});
-  if(result&&result.ok)task=result.task;
+  if(result&&result.ok){task=result.task;try{const saved=JSON.parse(localStorage.getItem(STORE)||"[]");items=Array.isArray(saved)?saved:[]}catch(e){items=[]}}
  }
  if(task){task.description="回覆冬彌的訊息";task.chapter="主線任務";try{localStorage.setItem(STORE,JSON.stringify(items));localStorage.setItem(KEY,String(task.id))}catch(e){}if(typeof window.renderTasksWidget==="function")window.renderTasksWidget();id=String(task.id)}
  return id;
@@ -2720,7 +2722,6 @@ window.startAoyagiPrequelOnLineOpen=function(){
 }
 function renderLine(tab){
  if(tab)lineTab=tab;
- if(typeof window.startAoyagiPrequelOnLineOpen==="function")window.startAoyagiPrequelOnLineOpen();
  const title={home:'主頁',chats:'聊天',discover:'逛逛',news:'LINE TODAY',wallet:'錢包'}[lineTab]||'主頁';
  let content='';
  const friendRows=(names,chatMode=false)=>names.map((name,i)=>{
