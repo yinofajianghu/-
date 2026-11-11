@@ -2661,6 +2661,7 @@ try{
 }catch(error){lineChatStore={}}
 for(const f of LINE_FRIENDS)if(!lineChatStore[f.name])lineChatStore[f.name]=LINE_CHAT_SEEDS[f.name].map(m=>({...m}));
 for(const g of LINE_GROUPS)if(!lineChatStore[g.name])lineChatStore[g.name]=LINE_GROUP_SEEDS[g.name].map(m=>({...m}));
+if(lineChatStore["東雲家"]&&!lineChatStore["東雲家族"]){lineChatStore["東雲家族"]=lineChatStore["東雲家"];delete lineChatStore["東雲家"];saveLineChats();}
 function saveLineChats(){try{localStorage.setItem(LINE_CHAT_STORAGE_KEY,JSON.stringify(lineChatStore))}catch(error){console.warn("LINE 聊天紀錄無法儲存",error)}}
 function lineFriend(name){return LINE_GROUPS.find(f=>f.name===name)||LINE_FRIENDS.find(f=>f.name===name)||{name,face:"🙂",status:"",preview:"開始聊天"}}
 function lineLastMessage(name){const list=lineChatStore[name]||[];return list.length?list[list.length-1].text:lineFriend(name).preview}
