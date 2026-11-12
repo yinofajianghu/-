@@ -2802,16 +2802,17 @@ function ensureCargoGroupTask(){
  return "";
 }
 function ensureDeliveryVisitTask(){
- const KEY="yinofajianghu_delivery_visit_task_v1",STORE="ios26-rpg-quests-v2",TITLE="前往櫻井配送站";let id="";
- try{id=localStorage.getItem(KEY)||""}catch(e){}
+ const KEY="yinofajianghu_delivery_visit_task_v1",CARGO_KEY="yinofajianghu_cargo_group_task_v1",STORE="ios26-rpg-quests-v2";let id="";
+ try{id=localStorage.getItem(KEY)||localStorage.getItem(CARGO_KEY)||""}catch(e){}
  let items=[];try{const a=JSON.parse(localStorage.getItem(STORE)||"[]");if(Array.isArray(a))items=a}catch(e){}
  let task=id?items.find(x=>String(x.id)===id):null;
- if(!task)task=items.find(x=>x&&x.type==="main"&&x.title===TITLE&&!x.done);
- if(!task&&typeof window.addMainStoryTask==="function"){
-  const r=window.addMainStoryTask({title:TITLE,chapter:"主線劇情｜特別的一天",description:"打開地圖，點擊櫻井配送站並步行前往",trigger:"貨運群組劇情完成"});
-  if(r&&r.ok)task=r.task;
+ if(!task)task=items.find(x=>x&&x.type==="main"&&x.title==="貨運");
+ if(!task)task=items.find(x=>x&&x.type==="main"&&x.title==="步行");
+ if(task){
+  task.title="步行";task.type="main";task.chapter="主線劇情｜步行";task.description="打開地圖，點擊櫻井配送站並選擇步行導航";task.done=false;task.locked=false;
+  try{localStorage.setItem(STORE,JSON.stringify(items));localStorage.setItem(KEY,String(task.id));localStorage.setItem(CARGO_KEY,String(task.id))}catch(e){}
+  if(typeof window.renderTasksWidget==="function")window.renderTasksWidget();return String(task.id);
  }
- if(task){task.chapter="主線劇情｜特別的一天";task.description="打開地圖，點擊櫻井配送站並步行前往";try{localStorage.setItem(KEY,String(task.id))}catch(e){}if(typeof window.renderTasksWidget==="function")window.renderTasksWidget();return String(task.id)}
  return "";
 }
 function activateDeliveryVisitStory(){
@@ -2833,7 +2834,7 @@ function finishDeliveryVisitStory(){
 }
 function finishCargoGroupTask(){
  try{localStorage.setItem(CARGO_GROUP_KEY,String(CARGO_GROUP_LINES.length));localStorage.setItem("yinofajianghu_cargo_group_finished_v1","1")}catch(e){}
- const id=ensureCargoGroupTask();if(id&&typeof window.completeMainStoryTask==="function")window.completeMainStoryTask(id);
+ ensureCargoGroupTask();
  if(typeof window.disableStoryComposer==="function")window.disableStoryComposer("line");
  if(typeof window.setStoryComposerLocked==="function")window.setStoryComposerLocked("line",false);
  activateDeliveryVisitStory();
