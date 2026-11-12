@@ -2867,7 +2867,8 @@ window.__responseStorySent=function(text){
  window.__responseStoryTimer=setTimeout(()=>{window.__responseStoryTimer=null;runResponseStory()},1000+Math.floor(Math.random()*4001));
 };
 function resumeResponseStoryForLegacyPlayers(){
- let started=false,finished=false,stage=0;try{started=localStorage.getItem("yinofajianghu_response_group_started_v1")==="1";finished=localStorage.getItem("yinofajianghu_response_group_finished_v1")==="1";stage=Number(localStorage.getItem(RESPONSE_STORY_KEY)||"0")}catch(e){}
+ let started=false,finished=false,callDone=false,stage=0;try{started=localStorage.getItem("yinofajianghu_response_group_started_v1")==="1";finished=localStorage.getItem("yinofajianghu_response_group_finished_v1")==="1";callDone=localStorage.getItem("yinofajianghu_sudden_toya_call_done_v1")==="1";stage=Number(localStorage.getItem(RESPONSE_STORY_KEY)||"0")}catch(e){}
+ if(!started&&callDone){startResponseStory();return;}
  if(!started||finished||stage>=RESPONSE_STORY_LINES.length)return;
  ensureSpecialDayGroup();ensureResponseStoryTask();
  if(typeof window.setStoryComposerLocked==="function")window.setStoryComposerLocked("line",true);
