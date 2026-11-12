@@ -2809,11 +2809,11 @@ function ensureDeliveryVisitTask(){
  if(task&&task.title==="貨運")task=null;
  if(!task)task=items.find(x=>x&&x.type==="main"&&x.title===TITLE&&!x.done);
  if(!task&&typeof window.addMainStoryTask==="function"){
-  const r=window.addMainStoryTask({title:TITLE,chapter:"主線劇情｜步行",description:"打開地圖，點擊櫻井配送站並選擇步行導航",trigger:"貨運群組劇情完成（瑞希說完最後一句話）"});
+  const r=window.addMainStoryTask({title:TITLE,chapter:"前往櫻井配送站",description:"打開地圖，點擊櫻井配送站並選擇步行導航",trigger:"貨運群組劇情完成（瑞希說完最後一句話）"});
   if(r&&r.ok){task=r.task;items=read();task=items.find(x=>String(x.id)===String(r.task.id))||r.task;}
  }
  if(task){
-  task.title=TITLE;task.type="main";task.chapter="主線劇情｜步行";task.description="打開地圖，點擊櫻井配送站並選擇步行導航";task.done=false;task.locked=false;
+  task.title=TITLE;task.type="main";task.chapter="前往櫻井配送站";task.description="打開地圖，點擊櫻井配送站並選擇步行導航";task.done=false;task.locked=false;
   try{localStorage.setItem(STORE,JSON.stringify(items));localStorage.setItem(KEY,String(task.id))}catch(e){}
   window.dispatchEvent(new CustomEvent("story:tasks-updated",{detail:{tasks:items}}));
   if(typeof window.renderTasksWidget==="function")window.renderTasksWidget();
