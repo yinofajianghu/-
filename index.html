@@ -1510,6 +1510,17 @@ html body #controlCenter .cc-native-slider output{
 #appView:has(.rpg-quest-app) #appContent{overflow-x:hidden!important;overflow-y:auto!important;overscroll-behavior-y:contain!important;-webkit-overflow-scrolling:touch!important;touch-action:pan-y!important}
 #appView:has(.rpg-quest-app) #appContent>.rpg-quest-app{min-height:100%;height:auto;overflow:visible!important;padding-bottom:calc(40px + var(--safe-bottom,0px))!important;box-sizing:border-box}
 </style>
+<style id="sudden-toya-call-story">
+/* 突然的電話：統一字級與顏色的歌詞式通話滾動，以及 LINE 通話紀錄 */
+.line-call-transcript.is-story{justify-content:flex-end;gap:16px;scroll-behavior:smooth;padding-top:24px;padding-bottom:24px}
+.line-call-transcript.is-story .line-call-caption-line{width:100%;min-height:28px;display:flex;align-items:center;justify-content:center;animation:lineCaptionIn .28s ease-out}
+.line-call-transcript.is-story .line-call-caption-speaker{display:none}
+.line-call-transcript.is-story .line-call-caption-text{font-size:17px!important;line-height:1.55!important;font-weight:500!important;color:#fff!important;text-shadow:0 1px 5px #0008!important}
+.line-call-log-row{justify-content:center!important;align-items:center!important;padding:10px 0}
+.line-call-log-card{display:flex;align-items:center;gap:12px;padding:11px 16px;border-radius:14px;background:#06c75518;border:1px solid #06c75545;color:var(--text-primary,#222);min-width:190px}
+.line-call-log-icon{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:#06c755;color:#fff;font-size:20px}
+.line-call-log-card div{display:flex;flex-direction:column;gap:3px}.line-call-log-card small{font-size:11px;color:var(--text-secondary,#777)}
+</style>
 </head>
 <body>
 <div id="phone">
@@ -2685,7 +2696,7 @@ let lineChatStore={};
 try{
  const saved=JSON.parse(localStorage.getItem(LINE_CHAT_STORAGE_KEY)||"{}");
  if(saved&&typeof saved==="object"&&!Array.isArray(saved)){
-  for(const f of [...LINE_FRIENDS,...LINE_GROUPS]){const list=saved[f.name];if(Array.isArray(list))lineChatStore[f.name]=list.filter(m=>m&&typeof m.text==="string"&&["me","them","我","對方"].includes(m.from)).slice(-300).map(m=>({from:m.from,text:m.text.slice(0,2000),time:typeof m.time==="string"?m.time:"",...(typeof m.timestamp==="number"?{timestamp:m.timestamp}:{}),...(typeof m.sender==="string"?{sender:m.sender.slice(0,40)}:{})}));}
+  for(const f of [...LINE_FRIENDS,...LINE_GROUPS]){const list=saved[f.name];if(Array.isArray(list))lineChatStore[f.name]=list.filter(m=>m&&typeof m.text==="string"&&["me","them","我","對方"].includes(m.from)).slice(-300).map(m=>({from:m.from,text:m.text.slice(0,2000),time:typeof m.time==="string"?m.time:"",...(typeof m.timestamp==="number"?{timestamp:m.timestamp}:{}),...(typeof m.sender==="string"?{sender:m.sender.slice(0,40)}:{}),...(m.kind==="call"?{kind:"call",duration:String(m.duration||"00:00"),callStatus:String(m.callStatus||"已接聽")}:{})}));}
  }
 }catch(error){lineChatStore={}}
 for(const f of LINE_FRIENDS)if(!lineChatStore[f.name])lineChatStore[f.name]=LINE_CHAT_SEEDS[f.name].map(m=>({...m}));
@@ -2837,13 +2848,48 @@ function activateDeliveryVisitStory(){
  ensureDeliveryVisitTask();
  if(typeof window.renderTasksWidget==="function")window.renderTasksWidget();
 }
+function ensureSuddenCallStoryTask(){
+ const KEY="yinofajianghu_delivery_visit_task_v1",STORE="ios26-rpg-quests-v2";let id="";try{id=localStorage.getItem(KEY)||""}catch(e){}
+ let items=[];try{const a=JSON.parse(localStorage.getItem(STORE)||"[]");if(Array.isArray(a))items=a}catch(e){}
+ let task=id?items.find(x=>String(x.id)===String(id)):null;if(!task)task=items.find(x=>x&&x.type==="main"&&!x.done&&String(x.title||"").includes("特別的一天"));
+ if(!task)return "";
+ task.title="[主線劇情]突然的電話";task.type="main";task.chapter="特別的一天";task.description="接通冬彌的電話［未達成］";task.done=false;task.locked=false;
+ try{localStorage.setItem(STORE,JSON.stringify(items))}catch(e){}
+ if(typeof window.renderTasksWidget==="function")window.renderTasksWidget();
+ return String(task.id);
+}
+const SUDDEN_TOYA_CALL_LINES=[
+ ["冬彌","彰人。"],["彰人","怎麼了？"],
+ ["冬彌","沒有，剛好整理到一半有了意外的空閒，中午經過你們班教室也沒有看到你的身影。"],
+ ["冬彌","你在哪裡？"],["旁白","⋯⋯"],["旁白","四下一陣沉默。"],["冬彌","彰人？"],
+ ["彰人","咳咳⋯⋯"],["彰人","沒事，我在學校外面。"],["彰人","辦點事。"],
+ ["旁白","冬彌輕輕笑了笑，聲音有些低。"],["冬彌","彰人一直都很忙呢。"],
+ ["彰人","有嗎？我怎麼覺得你其實比我還忙。"],
+ ["冬彌","我聽你們班足球部的人說了，今天下午還要去幫忙，是嗎？"],
+ ["彰人","⋯⋯他們怎麼跑去跟你說了。"],
+ ["冬彌","因為他們看我在找你，他們還納悶我們倆怎麼沒在一起呢。"],
+ ["旁白","不知為何，彰人的內心聽到這句話卻有暖意緩緩升起。他的聲音也染了些笑意。"],
+ ["彰人","嗯。"],["彰人","不過，練習完我會去的。你說的那間咖啡廳。"],
+ ["旁白","冬彌也笑了。"],["冬彌","好，那下午見"],["彰人","好。"]
+];
+function beginSuddenToyaCall(){
+ let done=false,started=false;try{done=localStorage.getItem("yinofajianghu_sudden_toya_call_done_v1")==="1";started=localStorage.getItem("yinofajianghu_sudden_toya_call_started_v1")==="1"}catch(e){}
+ if(done||started)return;
+ try{localStorage.setItem("yinofajianghu_sudden_toya_call_started_v1","1")}catch(e){}
+ ensureSuddenCallStoryTask();
+ if(typeof showApp==="function")showApp("line");
+ currentFriend="青柳 冬彌";lineTab="chats";
+ if(typeof renderChat==="function")renderChat();
+ setTimeout(()=>{if(typeof showChatOverlay==="function")showChatOverlay("call","incoming",{story:"sudden-toya"})},350);
+}
 function finishDeliveryVisitStory(){
  try{
   localStorage.setItem("yinofajianghu_delivery_visit_arrived_v1","1");
   localStorage.setItem("gm_simulated_user_position_v1",JSON.stringify({lat:35.6632,lng:139.6968}));
  }catch(e){}
- const id=ensureDeliveryVisitTask();if(id&&typeof window.completeMainStoryTask==="function")window.completeMainStoryTask(id);
+ ensureSuddenCallStoryTask();
  if(typeof window.renderTasksWidget==="function")window.renderTasksWidget();
+ try{if(!localStorage.getItem("yinofajianghu_sudden_toya_call_done_v1"))setTimeout(beginSuddenToyaCall,5000)}catch(e){setTimeout(beginSuddenToyaCall,5000)}
 }
 function finishCargoGroupTask(){
  try{localStorage.setItem(CARGO_GROUP_KEY,String(CARGO_GROUP_LINES.length));localStorage.setItem("yinofajianghu_cargo_group_finished_v1","1")}catch(e){}
@@ -3118,12 +3164,26 @@ function renderLineProfileEditor(){
  };
  $('#lineProfileCancel').onclick=cancel;$('#lineProfileSave').onclick=save;$('#lineProfileSaveBottom').onclick=save;
 }
-function showChatOverlay(type,callState='outgoing'){
+function showChatOverlay(type,callState='outgoing',callConfig=null){
  const existing=document.getElementById('chatActionOverlay');if(existing)existing.remove();
  const overlay=document.createElement('div');overlay.id='chatActionOverlay';overlay.className='chat-action-overlay';
  if(type==='call'){
   let state=callState;
-  let seconds=0;let timer=null;let noAnswerTimer=null;let callLines=[];
+  let seconds=0;let timer=null;let noAnswerTimer=null;let callLines=[];let storyTimer=null;let storyIndex=0;const storyCall=!!(callConfig&&callConfig.story==="sudden-toya");let storyFinished=false;
+  const finishStoryCall=()=>{
+   if(!storyCall||storyFinished)return;storyFinished=true;if(storyTimer)clearTimeout(storyTimer);
+   try{localStorage.setItem("yinofajianghu_sudden_toya_call_done_v1","1");localStorage.removeItem("yinofajianghu_sudden_toya_call_started_v1")}catch(e){}
+   const taskId=ensureSuddenCallStoryTask();if(taskId&&typeof window.completeMainStoryTask==="function")window.completeMainStoryTask(taskId);
+   const duration=String(Math.floor(seconds/60)).padStart(2,"0")+":"+String(seconds%60).padStart(2,"0");
+   const list=lineChatStore["青柳 冬彌"]||(lineChatStore["青柳 冬彌"]=[]);
+   list.push({from:"them",kind:"call",text:"語音通話",time:timeNow(),duration,callStatus:"已接聽",timestamp:Date.now()});lineChatStore["青柳 冬彌"]=list.slice(-300);saveLineChats();
+  };
+  const playStoryLine=()=>{
+   if(!storyCall||state!=="active"||!overlay.isConnected)return;
+   if(storyIndex>=SUDDEN_TOYA_CALL_LINES.length){state="ended";finishStoryCall();draw();return;}
+   const line=SUDDEN_TOYA_CALL_LINES[storyIndex++];window.pushLineCallSubtitle(line[0],line[1]);
+   storyTimer=setTimeout(playStoryLine,Math.max(1700,Math.min(5200,900+line[1].length*105)));
+  };
   const initial=(currentFriend||"友").trim().slice(0,1)||"友";
   const phoneSvg='<svg class="line-phone-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.62 10.79a15.05 15.05 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.01-.24c1.12.37 2.33.56 3.58.56a1 1 0 0 1 1 1V20a1 1 0 0 1-1 1C10.61 21 3 13.39 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.19 2.46.56 3.58a1 1 0 0 1-.25 1.01z"/></svg>';
   const icon=(name)=>({speaker:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9v6h4l5 4V5L7 9H3zm13.5 3a4.5 4.5 0 0 0-2.5-4.03v8.05a4.5 4.5 0 0 0 2.5-4.02zm-2.5-9v2.06a7 7 0 0 1 0 13.88V21a9 9 0 0 0 0-18z"/></svg>',mute:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.93V21h2v-3.07A7 7 0 0 0 19 11z"/></svg>',keypad:'<svg viewBox="0 0 24 24" aria-hidden="true"><g fill="currentColor" stroke="none"><circle cx="6" cy="5" r="1.7"/><circle cx="12" cy="5" r="1.7"/><circle cx="18" cy="5" r="1.7"/><circle cx="6" cy="12" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="18" cy="12" r="1.7"/><circle cx="6" cy="19" r="1.7"/><circle cx="12" cy="19" r="1.7"/><circle cx="18" cy="19" r="1.7"/></g></svg>'})[name];
@@ -3132,22 +3192,22 @@ function showChatOverlay(type,callState='outgoing'){
    if(noAnswerTimer){clearTimeout(noAnswerTimer);noAnswerTimer=null}
    const incoming=state==='incoming',active=state==='active',ended=state==='ended',unanswered=state==='unanswered';
    const status=incoming?'LINE 語音來電':active?String(Math.floor(seconds/60)).padStart(2,'0')+':'+String(seconds%60).padStart(2,'0'):ended?'通話已結束':unanswered?'無人接聽':'呼叫中…';
-   overlay.innerHTML=`<div class="line-call-screen ${incoming?'is-incoming':''} ${active?'is-active':''} ${ended||unanswered?'is-ended':''}"><div class="line-call-top"><button type="button" class="line-call-back" aria-label="返回">⌄</button><div class="line-call-brand"><span class="line-call-brand-mark">LINE</span></div><button type="button" class="line-call-more" aria-label="切換來電示範">•••</button></div><div class="line-call-person"><div class="line-call-avatar-wrap"><div class="line-call-avatar">${escapeHTML(initial)}</div></div><div class="line-call-name">${escapeHTML(currentFriend||"好友")}</div><div class="line-call-status">${status}</div></div>${active?`<div class="line-call-transcript" aria-live="polite" aria-label="通話字幕"></div>`:""}${ended||unanswered?`<div class="line-call-bottom call-result-actions"><div class="line-call-result-message">${unanswered?'對方沒有接聽，請稍後再試':'本次通話已結束'}</div><button type="button" class="line-call-result-close">完成</button></div>`:incoming?`<div class="line-call-bottom incoming-actions"><button type="button" class="line-call-answer" aria-label="接聽來電">${phoneSvg}<small>接聽</small></button><button type="button" class="line-call-decline" aria-label="拒絕來電">${phoneSvg}<small>拒絕</small></button></div>`: `<div class="line-call-bottom"><div class="line-call-controls">${active?`<button type="button" class="line-call-control speaker"><span>${icon('speaker')}</span><small>擴音</small></button><button type="button" class="line-call-control mute"><span>${icon('mute')}</span><small>靜音</small></button><button type="button" class="line-call-control keypad"><span>${icon('keypad')}</span><small>按鍵</small></button>`:''}</div>${active?'': '<button type="button" class="line-call-secondary">模擬接通</button>'}<button type="button" class="line-call-end" aria-label="${active?'結束通話':'取消通話'}">${phoneSvg}</button><div class="line-call-end-label">${active?'結束通話':'取消'}</div></div>`}</div>`;
+   overlay.innerHTML=`<div class="line-call-screen ${incoming?'is-incoming':''} ${active?'is-active':''} ${ended||unanswered?'is-ended':''}"><div class="line-call-top"><button type="button" class="line-call-back" aria-label="返回">⌄</button><div class="line-call-brand"><span class="line-call-brand-mark">LINE</span></div><button type="button" class="line-call-more" aria-label="切換來電示範">•••</button></div><div class="line-call-person"><div class="line-call-avatar-wrap"><div class="line-call-avatar">${escapeHTML(initial)}</div></div><div class="line-call-name">${escapeHTML(currentFriend||"好友")}</div><div class="line-call-status">${status}</div></div>${active?`<div class="line-call-transcript ${storyCall?"is-story":""}" aria-live="polite" aria-label="通話劇情"></div>`:""}${ended||unanswered?`<div class="line-call-bottom call-result-actions"><div class="line-call-result-message">${unanswered?'對方沒有接聽，請稍後再試':'本次通話已結束'}</div><button type="button" class="line-call-result-close">完成</button></div>`:incoming?`<div class="line-call-bottom incoming-actions"><button type="button" class="line-call-answer" aria-label="接聽來電">${phoneSvg}<small>接聽</small></button><button type="button" class="line-call-decline" aria-label="拒絕來電">${phoneSvg}<small>拒絕</small></button></div>`: `<div class="line-call-bottom"><div class="line-call-controls">${active?`<button type="button" class="line-call-control speaker"><span>${icon('speaker')}</span><small>擴音</small></button><button type="button" class="line-call-control mute"><span>${icon('mute')}</span><small>靜音</small></button><button type="button" class="line-call-control keypad"><span>${icon('keypad')}</span><small>按鍵</small></button>`:''}</div>${active?'': '<button type="button" class="line-call-secondary">模擬接通</button>'}<button type="button" class="line-call-end" aria-label="${active?'結束通話':'取消通話'}">${phoneSvg}</button><div class="line-call-end-label">${active?'結束通話':'取消'}</div></div>`}</div>`;
    const transcript=overlay.querySelector('.line-call-transcript');
-   if(transcript){callLines.slice(-5).forEach(line=>{const row=document.createElement('div');row.className='line-call-caption-line';const speaker=document.createElement('span');speaker.className='line-call-caption-speaker';speaker.textContent=line.speaker;const words=document.createElement('span');words.className='line-call-caption-text';words.textContent=line.text;row.append(speaker,words);transcript.appendChild(row)});transcript.scrollTop=transcript.scrollHeight;}
+   if(transcript){callLines.slice(-5).forEach(line=>{const row=document.createElement('div');row.className='line-call-caption-line';const speaker=document.createElement('span');speaker.className='line-call-caption-speaker';speaker.textContent=line.speaker;const words=document.createElement('span');words.className='line-call-caption-text';words.textContent=line.text;if(storyCall){row.appendChild(words)}else{row.append(speaker,words)}transcript.appendChild(row)});transcript.scrollTop=transcript.scrollHeight;}
    overlay.querySelector('.line-call-back').onclick=()=>{if(timer)clearInterval(timer);if(noAnswerTimer)clearTimeout(noAnswerTimer);overlay.remove()};
    overlay.querySelector('.line-call-more').onclick=()=>{state=state==='incoming'?'outgoing':'incoming';draw()};
-   const end=overlay.querySelector('.line-call-end');if(end)end.onclick=()=>{if(timer)clearInterval(timer);if(noAnswerTimer)clearTimeout(noAnswerTimer);state='ended';draw()};
-   const resultClose=overlay.querySelector('.line-call-result-close');if(resultClose)resultClose.onclick=()=>{if(timer)clearInterval(timer);if(noAnswerTimer)clearTimeout(noAnswerTimer);overlay.remove()};
-   const answer=overlay.querySelector('.line-call-answer');if(answer)answer.onclick=()=>{state='active';draw()};
-   const decline=overlay.querySelector('.line-call-decline');if(decline)decline.onclick=()=>{if(timer)clearInterval(timer);state='ended';draw()};
-   const connect=overlay.querySelector('.line-call-secondary');if(connect)connect.onclick=()=>{state='active';draw()};
+   const end=overlay.querySelector('.line-call-end');if(end)end.onclick=()=>{if(timer)clearInterval(timer);if(noAnswerTimer)clearTimeout(noAnswerTimer);if(storyTimer)clearTimeout(storyTimer);state='ended';if(storyCall&&!storyFinished){try{localStorage.removeItem("yinofajianghu_sudden_toya_call_started_v1")}catch(e){}}draw()};
+   const resultClose=overlay.querySelector('.line-call-result-close');if(resultClose)resultClose.onclick=()=>{if(timer)clearInterval(timer);if(noAnswerTimer)clearTimeout(noAnswerTimer);if(storyTimer)clearTimeout(storyTimer);if(storyCall&&storyFinished){overlay.remove();if(window.__activeAppId==="line"&&currentFriend==="青柳 冬彌")renderChat()}else overlay.remove()};
+   const answer=overlay.querySelector('.line-call-answer');if(answer)answer.onclick=()=>{state='active';draw();if(storyCall){storyIndex=0;playStoryLine()}};
+   const decline=overlay.querySelector('.line-call-decline');if(decline)decline.onclick=()=>{if(timer)clearInterval(timer);if(storyTimer)clearTimeout(storyTimer);state='ended';if(storyCall){try{localStorage.removeItem("yinofajianghu_sudden_toya_call_started_v1")}catch(e){}}draw()};
+   const connect=overlay.querySelector('.line-call-secondary');if(connect)connect.onclick=()=>{state='active';draw();if(storyCall){storyIndex=0;playStoryLine()}};
    overlay.querySelectorAll('.line-call-control').forEach(btn=>btn.onclick=()=>btn.classList.toggle('active'));
    if(active)timer=setInterval(()=>{seconds++;const s=overlay.querySelector('.line-call-status');if(s)s.textContent=String(Math.floor(seconds/60)).padStart(2,'0')+':'+String(seconds%60).padStart(2,'0')},1000);
    if(state==='outgoing')noAnswerTimer=setTimeout(()=>{if(state==='outgoing'&&overlay.isConnected){state='unanswered';draw()}},25000);
   }
   if(window.__lineCallSubtitleHandler)window.removeEventListener('line:call-subtitle',window.__lineCallSubtitleHandler);
-  window.__lineCallSubtitleHandler=(event)=>{const detail=event&&event.detail||{};if(state!=='active'||!overlay.isConnected)return;const text=String(detail.text??'').trim();if(!text)return;callLines.push({speaker:String(detail.speaker||currentFriend||'').trim(),text});const box=overlay.querySelector('.line-call-transcript');if(!box)return;const row=document.createElement('div');row.className='line-call-caption-line';const speaker=document.createElement('span');speaker.className='line-call-caption-speaker';speaker.textContent=callLines[callLines.length-1].speaker;const words=document.createElement('span');words.className='line-call-caption-text';words.textContent=text;row.append(speaker,words);box.appendChild(row);while(box.children.length>5)box.removeChild(box.firstChild);box.scrollTop=box.scrollHeight;};
+  window.__lineCallSubtitleHandler=(event)=>{const detail=event&&event.detail||{};if(state!=='active'||!overlay.isConnected)return;const text=String(detail.text??'').trim();if(!text)return;callLines.push({speaker:String(detail.speaker||currentFriend||'').trim(),text});const box=overlay.querySelector('.line-call-transcript');if(!box)return;const row=document.createElement('div');row.className='line-call-caption-line';const speaker=document.createElement('span');speaker.className='line-call-caption-speaker';speaker.textContent=callLines[callLines.length-1].speaker;const words=document.createElement('span');words.className='line-call-caption-text';words.textContent=text;if(storyCall){row.appendChild(words)}else{row.append(speaker,words)}box.appendChild(row);while(box.children.length>5)box.removeChild(box.firstChild);box.scrollTo({top:box.scrollHeight,behavior:'smooth'});};
   window.addEventListener('line:call-subtitle',window.__lineCallSubtitleHandler);
   window.pushLineCallSubtitle=(speaker,text)=>window.dispatchEvent(new CustomEvent('line:call-subtitle',{detail:{speaker,text}}));
   draw();
@@ -3174,7 +3234,7 @@ function renderChat(){
  const msgs=lineChatStore[currentFriend]||[];
  const scroll=$('#chatScroll');
  const scrollChatToLatest=()=>{const move=()=>{if(scroll&&scroll.isConnected)scroll.scrollTop=scroll.scrollHeight;};move();requestAnimationFrame(()=>{move();requestAnimationFrame(move)});setTimeout(move,120);};
- function addMessage(m){const mine=m.from==="me"||m.from==="我";const row=document.createElement('div');row.className='bubble-row '+(mine?'mine':'');const senderFriend=m.sender?lineFriend(m.sender):friend;const avatar=escapeHTML(activeGroup&&m.sender?lineGroupMemberFace(m.sender):senderFriend.face);const meta=mine?`<div class="bubble-meta mine-meta"><span class="read-mark">已讀</span><span class="sent-time">${escapeHTML(m.time||timeNow())}</span></div>`:`<div class="bubble-meta them-meta">${escapeHTML(m.time||timeNow())}</div>`;row.innerHTML=mine?`${meta}<div class="bubble-stack"><div class="bubble">${escapeHTML(m.text)}</div></div>`:`<div class="chat-message-avatar" aria-label="對方頭像">${avatar}</div><div class="bubble-stack">${LINE_GROUPS.some(g=>g.name===currentFriend)&&m.sender?`<div class="bubble-sender">${escapeHTML(m.sender)}</div>`:""}<div class="bubble">${escapeHTML(m.text)}</div></div>${meta}`;scroll.appendChild(row);scrollChatToLatest()}
+ function addMessage(m){const mine=m.from==="me"||m.from==="我";const row=document.createElement('div');row.className='bubble-row '+(mine?'mine':'')+(m.kind==="call"?' line-call-log-row':'');const senderFriend=m.sender?lineFriend(m.sender):friend;const avatar=escapeHTML(activeGroup&&m.sender?lineGroupMemberFace(m.sender):senderFriend.face);const meta=mine?'<div class="bubble-meta mine-meta"><span class="read-mark">已讀</span><span class="sent-time">'+escapeHTML(m.time||timeNow())+'</span></div>':'<div class="bubble-meta them-meta">'+escapeHTML(m.time||timeNow())+'</div>';if(m.kind==="call"){row.innerHTML='<div class="line-call-log-card"><span class="line-call-log-icon">↗</span><div><b>語音通話</b><small>'+escapeHTML(m.callStatus||"已接聽")+' · '+escapeHTML(m.duration||"00:00")+'</small></div></div>'+meta}else{row.innerHTML=mine?meta+'<div class="bubble-stack"><div class="bubble">'+escapeHTML(m.text)+'</div></div>':'<div class="chat-message-avatar" aria-label="對方頭像">'+avatar+'</div><div class="bubble-stack">'+(LINE_GROUPS.some(g=>g.name===currentFriend)&&m.sender?'<div class="bubble-sender">'+escapeHTML(m.sender)+'</div>':'')+'<div class="bubble">'+escapeHTML(m.text)+'</div></div>'+meta}scroll.appendChild(row);scrollChatToLatest()}
  msgs.forEach(addMessage);
  if(typeof MutationObserver==="function"){const chatMessageObserver=new MutationObserver(records=>{if(records.some(record=>record.addedNodes&&record.addedNodes.length))scrollChatToLatest();});chatMessageObserver.observe(scroll,{childList:true});}
  if(currentFriend==="告白大作戰💗"){let cargoStarted=false,cargoFinished=false,cargoStage=0;try{cargoStarted=localStorage.getItem("yinofajianghu_cargo_group_started_v1")==="1";cargoFinished=localStorage.getItem("yinofajianghu_cargo_group_finished_v1")==="1";cargoStage=Number(localStorage.getItem("yinofajianghu_cargo_group_story_v1")||"0")}catch(e){}if(cargoStarted&&!cargoFinished){if(typeof window.setStoryComposerLocked==="function")window.setStoryComposerLocked("line",cargoStage<CARGO_GROUP_LINES.length);if(cargoStage>=CARGO_GROUP_LINES.length)finishCargoGroupTask();else setTimeout(runCargoGroupStory,500);}else{let gs=0;try{gs=Number(localStorage.getItem("yinofajianghu_special_day_group_story_v1")||"0")}catch(e){}if(typeof window.setStoryComposerLocked==="function")window.setStoryComposerLocked("line",gs<SPECIAL_DAY_GROUP_LINES.length);if(gs>=SPECIAL_DAY_GROUP_LINES.length){finishSpecialDayGroupTask();let pending=false;try{pending=localStorage.getItem("yinofajianghu_special_day_group_task_hint_pending_v1")==="1"}catch(e){}if(pending)$("#chatInput").placeholder="請前往任務欄";}else setTimeout(runSpecialDayGroupStory,500);}}
