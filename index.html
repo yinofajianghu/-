@@ -2836,8 +2836,8 @@ function ensureResponseStoryTask(){
  if(typeof window.renderTasksWidget==="function")window.renderTasksWidget();return String(task.id);
 }
 function responseStoryTime(stage){
- let minute=40;for(let i=0;i<stage;i++)minute+=1+Math.floor(Math.random()*2);
- return "12:"+String(minute%60).padStart(2,"0");
+ let total=40;for(let i=0;i<stage;i++)total+=1+(i%2);
+ return String(12+Math.floor(total/60)).padStart(2,"0")+":"+String(total%60).padStart(2,"0");
 }
 function finishResponseStory(){
  try{localStorage.setItem(RESPONSE_STORY_KEY,String(RESPONSE_STORY_LINES.length));localStorage.setItem("yinofajianghu_response_group_finished_v1","1")}catch(e){}
@@ -2852,7 +2852,7 @@ function runResponseStory(){
  if(line.me){if(typeof window.enableStoryComposer==="function")window.enableStoryComposer("line",line.text);return;}
  const time=responseStoryTime(stage),list=lineChatStore[name]||(lineChatStore[name]=[]);
  const exists=list.some(m=>m&&m.sender===line.sender&&m.text===line.text&&m.time===time);
- if(!exists){list.push({from:"them",sender:line.sender,text:line.text,time,timestamp:Date.UTC(2026,0,1,12,Number(time.slice(3)))});lineChatStore[name]=list.slice(-300);saveLineChats();
+ if(!exists){list.push({from:"them",sender:line.sender,text:line.text,time,timestamp:Date.UTC(2026,0,1,Number(time.slice(0,2)),Number(time.slice(3)))});lineChatStore[name]=list.slice(-300);saveLineChats();
  if(window.__activeAppId==="line"&&currentFriend===name&&typeof renderChat==="function"){setLineUnread(name,0);renderChat();}else{setLineUnread(name,lineUnreadCount(name)+1);if(typeof window.showAppNotification==="function")window.showAppNotification("line",name,line.text,time);}}
  try{localStorage.setItem(RESPONSE_STORY_KEY,String(stage+1))}catch(e){}
  if(stage+1>=RESPONSE_STORY_LINES.length){window.__responseStoryTimer=setTimeout(()=>{window.__responseStoryTimer=null;finishResponseStory()},1200);return;}
@@ -2862,8 +2862,6 @@ window.__responseStoryTime=function(){let stage=0;try{stage=Number(localStorage.
 window.__responseStorySent=function(text){
  if(currentFriend!=="告白大作戰💗")return;let stage=0;try{stage=Number(localStorage.getItem(RESPONSE_STORY_KEY)||"0")}catch(e){}
  const line=RESPONSE_STORY_LINES[stage];if(!line||!line.me||text!==line.text)return;
- const time=responseStoryTime(stage);lineChatStore["告白大作戰💗"]||(lineChatStore["告白大作戰💗"]=[]);
- lineChatStore["告白大作戰💗"].push({from:"me",sender:"東雲彰人",text,time,timestamp:Date.UTC(2026,0,1,12,Number(time.slice(3)))});saveLineChats();
  try{localStorage.setItem(RESPONSE_STORY_KEY,String(stage+1))}catch(e){}
  if(typeof window.disableStoryComposer==="function")window.disableStoryComposer("line");
  window.__responseStoryTimer=setTimeout(()=>{window.__responseStoryTimer=null;runResponseStory()},1000+Math.floor(Math.random()*4001));
