@@ -1933,7 +1933,7 @@ function unlock() {
     home.classList.add('active');
     if (appView) appView.classList.remove('active');
     unlockInProgress = false;
-    // 劇情只允許在指定聊天室開啟時啟動。
+    if (typeof window.startAoyagiPrequelOnLineOpen === "function") window.startAoyagiPrequelOnLineOpen();
   };
 
   if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
@@ -1969,7 +1969,7 @@ function returnToRecentApp(){
  $('#passcodeScreen').classList.remove('active');
  $('#home').classList.remove('active');
  app.classList.add('active');
- // 不在解鎖／返回應用程式時啟動聊天室劇情。
+ if(typeof window.startAoyagiPrequelOnLineOpen==='function')window.startAoyagiPrequelOnLineOpen();
  return true;
 }
 
