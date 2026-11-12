@@ -2792,6 +2792,91 @@ function finishSpecialDayGroupTask(){
  const id=ensureSpecialDayGroupTask();if(id&&typeof window.completeMainStoryTask==="function")window.completeMainStoryTask(id);ensureSpecialDaySmsTask();if(typeof window.setStoryComposerLocked==="function")window.setStoryComposerLocked("line",false);
  try{localStorage.setItem("yinofajianghu_special_day_group_task_hint_pending_v1","1")}catch(e){}if(window.__activeAppId==="line"&&currentFriend==="告白大作戰💗"){const input=document.getElementById("chatInput");if(input)input.placeholder="請前往任務欄";}
 }
+const RESPONSE_STORY_KEY="yinofajianghu_response_group_story_v1";
+const RESPONSE_STORY_LINES=[
+ {sender:"東雲彰人",text:"［圖片］",me:true},
+ {sender:"東雲彰人",text:"準備要送的。",me:true},
+ {sender:"白石杏",text:"？"},
+ {sender:"曉山瑞希",text:"？"},
+ {sender:"天馬司",text:"😧⋯⋯"},
+ {sender:"神代類",text:"哦？"},
+ {sender:"小豆沢こはね",text:"這真的、、有點沒想到就是了。"},
+ {sender:"東雲彰人",text:"可以嗎？",me:true},
+ {sender:"天馬司",text:"是沒怎麼想過的走向呢。"},
+ {sender:"白石杏",text:"是啊，原本以為彰人的個性會送實用或是時尚類的東西。"},
+ {sender:"白石杏",text:"畢竟你之前也幫冬彌買了衣服嘛。"},
+ {sender:"小豆沢こはね",text:"是啊⋯⋯沒想到會是花束呢。"},
+ {sender:"東雲彰人",text:"不好嗎？",me:true},
+ {sender:"曉山瑞希",text:"沒有沒有，弟弟君做得好✨我相信無論你送什麼冬彌都會很開心的。"},
+ {sender:"東雲彰人",text:"⋯⋯那前面想看禮物的又是誰啊。",me:true},
+ {sender:"白石杏",text:"欸嘿嘿嘿嘿⋯⋯"},
+ {sender:"東雲彰人",text:"你們不會還想偷偷再做什麼吧？！",me:true},
+ {sender:"天馬司",text:"今天中午我只看到冬彌在你們教室門口搖頭晃腦。"},
+ {sender:"神代類",text:"而且手上還揣著些什麼，看上去挺緊張的。"},
+ {sender:"天馬司",text:"而且看了半天才舉起手機準備打給你喔。"},
+ {sender:"東雲彰人",text:"啊？",me:true},
+ {sender:"東雲彰人",text:"他今天中午不是有圖書館的時期要做嗎？",me:true},
+ {sender:"白石杏",text:"那不是明天嗎❓"},
+ {sender:"東雲彰人",text:"？？？",me:true},
+ {sender:"神代類",text:"看來，冬彌也隱藏了什麼事情呢🙂‍↕️🙂‍↕️"},
+ {sender:"東雲彰人",text:"你確定他沒遇上什麼困難？",me:true},
+ {sender:"天馬司",text:"可能不太好說？"},
+ {sender:"東雲彰人",text:"⋯⋯",me:true},
+ {sender:"東雲彰人",text:"我現在就回去。",me:true},
+ {sender:"曉山瑞希",text:"哎呀，果然一遇上冬彌的事就會手忙腳亂呢🐙"},
+ {sender:"小豆沢こはね",text:"🤭"}
+];
+function ensureResponseStoryTask(){
+ const KEY="yinofajianghu_response_group_task_v1",STORE="ios26-rpg-quests-v2",TITLE="[主線劇情]應對";let id="";try{id=localStorage.getItem(KEY)||""}catch(e){}
+ let items=[];try{const a=JSON.parse(localStorage.getItem(STORE)||"[]");if(Array.isArray(a))items=a}catch(e){}
+ let task=id?items.find(x=>String(x.id)===id):null;if(!task)task=items.find(x=>x&&x.type==="main"&&x.title===TITLE&&!x.done);
+ if(!task&&typeof window.addMainStoryTask==="function"){const r=window.addMainStoryTask({title:TITLE,chapter:"特別的一天",description:"回覆群組訊息",trigger:"冬彌的電話結束"});if(r&&r.ok){items=[];try{items=JSON.parse(localStorage.getItem(STORE)||"[]")}catch(e){}task=items.find(x=>String(x.id)===String(r.task.id))||r.task;}}
+ if(!task)return "";task.title=TITLE;task.type="main";task.chapter="特別的一天";task.description="回覆群組訊息";task.done=false;task.locked=false;
+ try{localStorage.setItem(STORE,JSON.stringify(items));localStorage.setItem(KEY,String(task.id))}catch(e){}
+ if(typeof window.renderTasksWidget==="function")window.renderTasksWidget();return String(task.id);
+}
+function responseStoryTime(stage){
+ let minute=40;for(let i=0;i<stage;i++)minute+=1+Math.floor(Math.random()*2);
+ return "12:"+String(minute%60).padStart(2,"0");
+}
+function finishResponseStory(){
+ try{localStorage.setItem(RESPONSE_STORY_KEY,String(RESPONSE_STORY_LINES.length));localStorage.setItem("yinofajianghu_response_group_finished_v1","1")}catch(e){}
+ const id=ensureResponseStoryTask();if(id&&typeof window.completeMainStoryTask==="function")window.completeMainStoryTask(id);
+ if(typeof window.disableStoryComposer==="function")window.disableStoryComposer("line");
+ if(typeof window.setStoryComposerLocked==="function")window.setStoryComposerLocked("line",false);
+}
+function runResponseStory(){
+ if(window.__responseStoryTimer)return;let stage=0;try{stage=Number(localStorage.getItem(RESPONSE_STORY_KEY)||"0")}catch(e){}
+ if(stage>=RESPONSE_STORY_LINES.length){finishResponseStory();return;}
+ const line=RESPONSE_STORY_LINES[stage],name="告白大作戰💗";
+ if(line.me){if(typeof window.enableStoryComposer==="function")window.enableStoryComposer("line",line.text);return;}
+ const time=responseStoryTime(stage),list=lineChatStore[name]||(lineChatStore[name]=[]);
+ const exists=list.some(m=>m&&m.sender===line.sender&&m.text===line.text&&m.time===time);
+ if(!exists){list.push({from:"them",sender:line.sender,text:line.text,time,timestamp:Date.UTC(2026,0,1,12,Number(time.slice(3)))});lineChatStore[name]=list.slice(-300);saveLineChats();
+ if(window.__activeAppId==="line"&&currentFriend===name&&typeof renderChat==="function"){setLineUnread(name,0);renderChat();}else{setLineUnread(name,lineUnreadCount(name)+1);if(typeof window.showAppNotification==="function")window.showAppNotification("line",name,line.text,time);}}
+ try{localStorage.setItem(RESPONSE_STORY_KEY,String(stage+1))}catch(e){}
+ if(stage+1>=RESPONSE_STORY_LINES.length){window.__responseStoryTimer=setTimeout(()=>{window.__responseStoryTimer=null;finishResponseStory()},1200);return;}
+ window.__responseStoryTimer=setTimeout(()=>{window.__responseStoryTimer=null;runResponseStory()},1000+Math.floor(Math.random()*4001));
+}
+window.__responseStoryTime=function(){let stage=0;try{stage=Number(localStorage.getItem(RESPONSE_STORY_KEY)||"0")}catch(e){}return RESPONSE_STORY_LINES[stage]?.me?responseStoryTime(stage):null;};
+window.__responseStorySent=function(text){
+ if(currentFriend!=="告白大作戰💗")return;let stage=0;try{stage=Number(localStorage.getItem(RESPONSE_STORY_KEY)||"0")}catch(e){}
+ const line=RESPONSE_STORY_LINES[stage];if(!line||!line.me||text!==line.text)return;
+ const time=responseStoryTime(stage);lineChatStore["告白大作戰💗"]||(lineChatStore["告白大作戰💗"]=[]);
+ lineChatStore["告白大作戰💗"].push({from:"me",sender:"東雲彰人",text,time,timestamp:Date.UTC(2026,0,1,12,Number(time.slice(3)))});saveLineChats();
+ try{localStorage.setItem(RESPONSE_STORY_KEY,String(stage+1))}catch(e){}
+ if(typeof window.disableStoryComposer==="function")window.disableStoryComposer("line");
+ window.__responseStoryTimer=setTimeout(()=>{window.__responseStoryTimer=null;runResponseStory()},1000+Math.floor(Math.random()*4001));
+};
+function startResponseStory(){
+ let started=false;try{started=localStorage.getItem("yinofajianghu_response_group_started_v1")==="1"}catch(e){}
+ if(started)return;try{localStorage.setItem("yinofajianghu_response_group_started_v1","1");localStorage.setItem(RESPONSE_STORY_KEY,"0")}catch(e){}
+ ensureSpecialDayGroup();ensureResponseStoryTask();
+ if(typeof showApp==="function")showApp("line");currentFriend="告白大作戰💗";lineTab="chats";if(typeof renderChat==="function")renderChat();
+ if(typeof window.setStoryComposerLocked==="function")window.setStoryComposerLocked("line",true);
+ window.__responseStoryTimer=setTimeout(()=>{window.__responseStoryTimer=null;runResponseStory()},800);
+}
+
 const CARGO_GROUP_KEY="yinofajianghu_cargo_group_story_v1";
 const CARGO_GROUP_LINES=[
  {sender:"東雲彰人",text:"［圖片］",time:"08:49",me:true},
@@ -3021,8 +3106,9 @@ function runSpecialDayGroupStory(){
  if(stage+1>=SPECIAL_DAY_GROUP_LINES.length){window.__specialDayGroupTimer=setTimeout(()=>{window.__specialDayGroupTimer=null;finishSpecialDayGroupTask()},900);return;}
  window.__specialDayGroupTimer=setTimeout(()=>{window.__specialDayGroupTimer=null;runSpecialDayGroupStory()},1200+Math.floor(Math.random()*8801));
 }
-window.__specialDayGroupTime=function(){let stage=0;try{stage=Number(localStorage.getItem("yinofajianghu_special_day_group_story_v1")||"0")}catch(e){}const line=SPECIAL_DAY_GROUP_LINES[stage];return line&&line.me?line.time:null;};
+window.__specialDayGroupTime=function(){if(localStorage.getItem("yinofajianghu_response_group_started_v1")==="1"&&typeof window.__responseStoryTime==="function")return window.__responseStoryTime();let stage=0;try{stage=Number(localStorage.getItem("yinofajianghu_special_day_group_story_v1")||"0")}catch(e){}const line=SPECIAL_DAY_GROUP_LINES[stage];return line&&line.me?line.time:null;};
 window.__specialDayGroupSent=function(text){
+ if(localStorage.getItem("yinofajianghu_response_group_started_v1")==="1"&&typeof window.__responseStorySent==="function"){window.__responseStorySent(text);return;}
  if(currentFriend!=="告白大作戰💗")return;let stage=0;try{stage=Number(localStorage.getItem("yinofajianghu_special_day_group_story_v1")||"0")}catch(e){}
  const line=SPECIAL_DAY_GROUP_LINES[stage];if(!line||!line.me||text!==line.text)return;
  saveSpecialDayGroupStage(stage+1);if(typeof window.disableStoryComposer==="function")window.disableStoryComposer("line");
@@ -3211,7 +3297,7 @@ function showChatOverlay(type,callState='outgoing',callConfig=null){
   let state=callState;
   let seconds=0;let timer=null;let noAnswerTimer=null;let callLines=[];let storyTimer=null;let storyIndex=0;const storyCall=!!(callConfig&&callConfig.story==="sudden-toya");let storyFinished=false;
   const finishStoryCall=()=>{
-   if(!storyCall||storyFinished)return;storyFinished=true;if(storyTimer)clearTimeout(storyTimer);
+   if(!storyCall||storyFinished)return;storyFinished=true;if(storyTimer)clearTimeout(storyTimer);setTimeout(()=>{try{startResponseStory()}catch(e){console.error("response-story-start",e)}},1800);
    try{localStorage.setItem("yinofajianghu_sudden_toya_call_done_v1","1");localStorage.removeItem("yinofajianghu_sudden_toya_call_started_v1")}catch(e){}
    const taskId=ensureSuddenCallStoryTask();if(taskId){try{const items=JSON.parse(localStorage.getItem("ios26-rpg-quests-v2")||"[]"),task=items.find(x=>String(x.id)===String(taskId));if(task){task.description="接通冬彌的電話";localStorage.setItem("ios26-rpg-quests-v2",JSON.stringify(items))}}catch(e){}if(typeof window.completeMainStoryTask==="function")window.completeMainStoryTask(taskId)}
    const duration=String(Math.floor(seconds/60)).padStart(2,"0")+":"+String(seconds%60).padStart(2,"0");
