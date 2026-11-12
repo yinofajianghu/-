@@ -2696,7 +2696,7 @@ let lineChatStore={};
 try{
  const saved=JSON.parse(localStorage.getItem(LINE_CHAT_STORAGE_KEY)||"{}");
  if(saved&&typeof saved==="object"&&!Array.isArray(saved)){
-  for(const f of [...LINE_FRIENDS,...LINE_GROUPS]){const list=saved[f.name];if(Array.isArray(list))lineChatStore[f.name]=list.filter(m=>m&&typeof m.text==="string"&&["me","them","我","對方"].includes(m.from)).slice(-300).map(m=>({from:m.from,text:m.text.slice(0,2000),time:typeof m.time==="string"?m.time:"",...(typeof m.timestamp==="number"?{timestamp:m.timestamp}:{}),...(typeof m.sender==="string"?{sender:m.sender.slice(0,40)}:{}),...(m.kind==="call"?{kind:"call",duration:String(m.duration||"00:00"),callStatus:String(m.callStatus||"已接聽")}:{})}));}
+  for(const f of [...LINE_FRIENDS,...LINE_GROUPS]){const list=saved[f.name];if(Array.isArray(list))lineChatStore[f.name]=list.filter(m=>m&&typeof m.text==="string"&&["me","them","我","對方"].includes(m.from)).slice(-300).map(m=>({from:m.from,text:m.text.slice(0,2000),time:typeof m.time==="string"?m.time:"",...(typeof m.timestamp==="number"?{timestamp:m.timestamp}:{}),...(typeof m.sender==="string"?{sender:m.sender.slice(0,40)}:{}),...(m.kind==="call"?{kind:"call",duration:String(m.duration||"00:00"),callStatus:String(m.callStatus||"已接聽"),...(typeof m.storyId==="string"?{storyId:m.storyId}:{})}:{})}));}
  }
 }catch(error){lineChatStore={}}
 for(const f of LINE_FRIENDS)if(!lineChatStore[f.name])lineChatStore[f.name]=LINE_CHAT_SEEDS[f.name].map(m=>({...m}));
@@ -2852,6 +2852,10 @@ function ensureSuddenCallStoryTask(){
  const KEY="yinofajianghu_delivery_visit_task_v1",STORE="ios26-rpg-quests-v2";let id="";try{id=localStorage.getItem(KEY)||""}catch(e){}
  let items=[];try{const a=JSON.parse(localStorage.getItem(STORE)||"[]");if(Array.isArray(a))items=a}catch(e){}
  let task=id?items.find(x=>String(x.id)===String(id)):null;if(!task)task=items.find(x=>x&&x.type==="main"&&!x.done&&String(x.title||"").includes("特別的一天"));
+ if(!task&&typeof window.addMainStoryTask==="function"){
+  const r=window.addMainStoryTask({title:"突然的電話",chapter:"特別的一天",description:"接通冬彌的電話",trigger:"抵達櫻井配送站"});
+  if(r&&r.ok){items=[];try{const a=JSON.parse(localStorage.getItem(STORE)||"[]");if(Array.isArray(a))items=a}catch(e){}task=items.find(x=>String(x.id)===String(r.task&&r.task.id))||r.task;}
+ }
  if(!task)return "";
  task.title="[主線劇情]突然的電話";task.type="main";task.chapter="特別的一天";task.description="接通冬彌的電話［未達成］";task.done=false;task.locked=false;
  try{localStorage.setItem(STORE,JSON.stringify(items))}catch(e){}
@@ -2936,6 +2940,37 @@ function resumeWalkingStoryForLegacyPlayers(){
  if(id){activateDeliveryVisitStory();try{localStorage.setItem(DONE_KEY,"1")}catch(e){}}
 }
 
+function resumeSuddenToyaCallForLegacyPlayers(){
+ const DONE="yinofajianghu_sudden_toya_call_done_v1",STARTED="yinofajianghu_sudden_toya_call_started_v1",ARRIVED="yinofajianghu_delivery_visit_arrived_v1";
+ let cargoFinished=false,arrived=false,started=false,done=false;
+ try{
+  cargoFinished=localStorage.getItem("yinofajianghu_cargo_group_finished_v1")==="1"||Number(localStorage.getItem(CARGO_GROUP_KEY)||"0")>=CARGO_GROUP_LINES.length;
+  arrived=localStorage.getItem(ARRIVED)==="1";started=localStorage.getItem(STARTED)==="1";done=localStorage.getItem(DONE)==="1";
+ }catch(e){}
+ if(!cargoFinished){
+  const cargoId=(()=>{try{return localStorage.getItem("yinofajianghu_cargo_group_task_v1")||""}catch(e){return""}})();
+  try{const a=JSON.parse(localStorage.getItem("ios26-rpg-quests-v2")||"[]");const cargo=a.find(x=>x&&((cargoId&&String(x.id)===cargoId)||(x.type==="main"&&x.title==="貨運")));if(cargo&&cargo.done)cargoFinished=true}catch(e){}
+ }
+ if(!cargoFinished)return;
+ let items=[];try{const a=JSON.parse(localStorage.getItem("ios26-rpg-quests-v2")||"[]");if(Array.isArray(a))items=a}catch(e){}
+ const walkingId=(()=>{try{return localStorage.getItem("yinofajianghu_delivery_visit_task_v1")||""}catch(e){return""}})();
+ const walking=items.find(x=>x&&((walkingId&&String(x.id)===walkingId)||(x.type==="main"&&(x.title==="步行"||String(x.title||"").includes("特別的一天")))));
+ if(walking&&walking.done)arrived=true;
+ if(arrived){try{localStorage.setItem(ARRIVED,"1")}catch(e){}}
+ if(!arrived)return;
+ const callLog=(lineChatStore["青柳 冬彌"]||[]).some(m=>m&&m.kind==="call"&&m.storyId==="sudden-toya");
+ if(callLog)done=true;
+ if(done){
+  try{localStorage.setItem(DONE,"1");localStorage.removeItem(STARTED)}catch(e){}
+  const id=ensureSuddenCallStoryTask();if(id&&typeof window.completeMainStoryTask==="function")window.completeMainStoryTask(id);
+  return;
+ }
+ // 舊版本可能已抵達配送站，卻尚未建立來電旗標；或玩家在來電出現前離開網站。
+ if(started){try{localStorage.removeItem(STARTED)}catch(e){}}
+ if(window.__suddenToyaCallResumePending)return;
+ window.__suddenToyaCallResumePending=true;
+ setTimeout(()=>{window.__suddenToyaCallResumePending=false;beginSuddenToyaCall()},5000);
+}
 function saveCargoGroupStage(stage){try{localStorage.setItem(CARGO_GROUP_KEY,String(stage))}catch(e){}}
 function runCargoGroupStory(){
  if(window.__cargoGroupTimer)return;
@@ -3176,7 +3211,7 @@ function showChatOverlay(type,callState='outgoing',callConfig=null){
    const taskId=ensureSuddenCallStoryTask();if(taskId){try{const items=JSON.parse(localStorage.getItem("ios26-rpg-quests-v2")||"[]"),task=items.find(x=>String(x.id)===String(taskId));if(task){task.description="接通冬彌的電話";localStorage.setItem("ios26-rpg-quests-v2",JSON.stringify(items))}}catch(e){}if(typeof window.completeMainStoryTask==="function")window.completeMainStoryTask(taskId)}
    const duration=String(Math.floor(seconds/60)).padStart(2,"0")+":"+String(seconds%60).padStart(2,"0");
    const list=lineChatStore["青柳 冬彌"]||(lineChatStore["青柳 冬彌"]=[]);
-   list.push({from:"them",kind:"call",text:"語音通話",time:timeNow(),duration,callStatus:"已接聽",timestamp:Date.now()});lineChatStore["青柳 冬彌"]=list.slice(-300);saveLineChats();
+   list.push({from:"them",kind:"call",storyId:"sudden-toya",text:"語音通話",time:timeNow(),duration,callStatus:"已接聽",timestamp:Date.now()});lineChatStore["青柳 冬彌"]=list.slice(-300);saveLineChats();
   };
   const playStoryLine=()=>{
    if(!storyCall||state!=="active"||!overlay.isConnected)return;
@@ -7984,9 +8019,13 @@ function renderSafariApp(){
 
 
 <script>
-(()=>{const run=()=>{try{resumeWalkingStoryForLegacyPlayers()}catch(e){console.error("walking-story-migration",e)}};
-if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",run,{once:true});else setTimeout(run,0);
-})();
+/* 所有主線的舊存檔銜接統一由此註冊；每次載入檢查進度，個別遷移函式必須自行確保冪等。 */
+const STORY_LEGACY_MIGRATIONS=[];
+function registerStoryLegacyMigration(id,handler){if(typeof id==="string"&&typeof handler==="function"&&!STORY_LEGACY_MIGRATIONS.some(x=>x.id===id))STORY_LEGACY_MIGRATIONS.push({id,handler})}
+function runStoryLegacyMigrations(){STORY_LEGACY_MIGRATIONS.forEach(entry=>{try{entry.handler()}catch(e){console.error("story-migration:"+entry.id,e)}})}
+registerStoryLegacyMigration("walking-delivery-v1",resumeWalkingStoryForLegacyPlayers);
+registerStoryLegacyMigration("sudden-toya-call-v1",resumeSuddenToyaCallForLegacyPlayers);
+(()=>{if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",runStoryLegacyMigrations,{once:true});else setTimeout(runStoryLegacyMigrations,0)})();
 </script>
 </body>
 </html>
