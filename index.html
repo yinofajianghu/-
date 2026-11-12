@@ -5026,7 +5026,10 @@ setupWallpaperPicker();initHome();updateClock();setInterval(updateClock,1000);
  document.addEventListener('keydown',event=>{if(event.key!=='Enter'&&event.key!==' ')return;const banner=event.target.closest&&event.target.closest('.jp-toast[data-task-notification="1"]');if(!banner)return;event.preventDefault();openTaskJournal();});
  window.addEventListener('story:task-completed',event=>{
   const task=event.detail&&event.detail.task;
-  if(task&&String(task.title||"").includes("突然的電話"))return;
+  if(task&&String(task.title||"").includes("突然的電話")){
+   const noticeKey='yinofajianghu_sudden_toya_call_completion_notice_shown_v1';
+   try{if(localStorage.getItem(noticeKey)==='1')return;localStorage.setItem(noticeKey,'1')}catch(e){return}
+  }
   window.showTaskNotification('completed',task);
  });
  window.showAppNotification=function(app,sender,message,timeLabel){
