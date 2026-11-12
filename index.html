@@ -2856,6 +2856,11 @@ function ensureReturnSchoolTask(){
  try{localStorage.setItem(STORE,JSON.stringify(items));localStorage.setItem(KEY,String(task.id))}catch(e){}
  window.dispatchEvent(new CustomEvent("story:tasks-updated",{detail:{tasks:items}}));if(typeof window.renderTasksWidget==="function")window.renderTasksWidget();return String(task.id);
 }
+function resumeReturnSchoolStoryForLegacyPlayers(){
+ let responseStarted=false,responseFinished=false,responseStage=0,returnStarted=false;
+ try{responseStarted=localStorage.getItem("yinofajianghu_response_group_started_v1")==="1";responseFinished=localStorage.getItem("yinofajianghu_response_group_finished_v1")==="1";responseStage=Number(localStorage.getItem(RESPONSE_STORY_KEY)||"0");returnStarted=localStorage.getItem("yinofajianghu_return_school_started_v1")==="1"}catch(e){}
+ if(responseStarted&&(responseFinished||responseStage>=RESPONSE_STORY_LINES.length)&&!returnStarted)activateReturnSchoolStory();
+}
 function activateReturnSchoolStory(){
  try{localStorage.setItem("yinofajianghu_return_school_started_v1","1");localStorage.removeItem("yinofajianghu_return_school_arrived_v1")}catch(e){}
  ensureReturnSchoolTask();if(typeof window.renderTasksWidget==="function")window.renderTasksWidget();
@@ -8159,6 +8164,7 @@ function runStoryLegacyMigrations(){STORY_LEGACY_MIGRATIONS.forEach(entry=>{try{
 registerStoryLegacyMigration("walking-delivery-v1",resumeWalkingStoryForLegacyPlayers);
 registerStoryLegacyMigration("sudden-toya-call-v1",resumeSuddenToyaCallForLegacyPlayers);
 registerStoryLegacyMigration("response-group-v1",resumeResponseStoryForLegacyPlayers);
+registerStoryLegacyMigration("return-school-v1",resumeReturnSchoolStoryForLegacyPlayers);
 (()=>{if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",runStoryLegacyMigrations,{once:true});else setTimeout(runStoryLegacyMigrations,0)})();
 </script>
 </body>
