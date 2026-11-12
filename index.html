@@ -2807,7 +2807,7 @@ const RESPONSE_STORY_LINES=[
  {sender:"白石杏",text:"畢竟你之前也幫冬彌買了衣服嘛。"},
  {sender:"小豆沢こはね",text:"是啊⋯⋯沒想到會是花束呢。"},
  {sender:"東雲彰人",text:"不好嗎？",me:true},
- {sender:"曉山瑞希",text:"沒有沒有，弟弟君做得好✨我相信無論你送什麼冬彌都會很開心的。"},
+ {sender:"曉山瑞希",text:"沒有沒有，弟弟君做得好✨無論你做什麼冬彌都會開心的～！"},
  {sender:"東雲彰人",text:"⋯⋯那前面想看禮物的又是誰啊。",me:true},
  {sender:"白石杏",text:"欸嘿嘿嘿嘿⋯⋯"},
  {sender:"東雲彰人",text:"你們不會還想偷偷再做什麼吧？！",me:true},
@@ -2815,7 +2815,7 @@ const RESPONSE_STORY_LINES=[
  {sender:"神代類",text:"而且手上還揣著些什麼，看上去挺緊張的。"},
  {sender:"天馬司",text:"而且看了半天才舉起手機準備打給你喔。"},
  {sender:"東雲彰人",text:"啊？",me:true},
- {sender:"東雲彰人",text:"他今天中午不是有圖書館的時期要做嗎？",me:true},
+ {sender:"東雲彰人",text:"他今天中午不是有圖書館的事情要做嗎？",me:true},
  {sender:"白石杏",text:"那不是明天嗎❓"},
  {sender:"東雲彰人",text:"？？？",me:true},
  {sender:"神代類",text:"看來，冬彌也隱藏了什麼事情呢🙂‍↕️🙂‍↕️"},
@@ -2824,7 +2824,7 @@ const RESPONSE_STORY_LINES=[
  {sender:"東雲彰人",text:"⋯⋯",me:true},
  {sender:"東雲彰人",text:"我現在就回去。",me:true},
  {sender:"曉山瑞希",text:"哎呀，果然一遇上冬彌的事就會手忙腳亂呢🐙"},
- {sender:"小豆沢こはね",text:"🤭"}
+ {sender:"小豆沢こはね",text:"☺️"}
 ];
 function ensureResponseStoryTask(){
  const KEY="yinofajianghu_response_group_task_v1",STORE="ios26-rpg-quests-v2",TITLE="[主線劇情]應對";let id="";try{id=localStorage.getItem(KEY)||""}catch(e){}
@@ -2835,6 +2835,12 @@ function ensureResponseStoryTask(){
  try{localStorage.setItem(STORE,JSON.stringify(items));localStorage.setItem(KEY,String(task.id))}catch(e){}
  if(typeof window.renderTasksWidget==="function")window.renderTasksWidget();return String(task.id);
 }
+function setResponseStoryKeyboardSuppressed(suppressed){
+ const input=document.getElementById("chatInput");if(!input)return;
+ input.readOnly=!!suppressed;
+ if(suppressed){input.setAttribute("inputmode","none");input.blur();}
+ else input.removeAttribute("inputmode");
+}
 function responseStoryTime(stage){
  let total=40;for(let i=0;i<stage;i++)total+=1+(i%2);
  return String(12+Math.floor(total/60)).padStart(2,"0")+":"+String(total%60).padStart(2,"0");
@@ -2844,6 +2850,7 @@ function finishResponseStory(){
  const id=ensureResponseStoryTask();if(id&&typeof window.completeMainStoryTask==="function")window.completeMainStoryTask(id);
  if(typeof window.disableStoryComposer==="function")window.disableStoryComposer("line");
  if(typeof window.setStoryComposerLocked==="function")window.setStoryComposerLocked("line",false);
+ setResponseStoryKeyboardSuppressed(false);
 }
 function runResponseStory(){
  if(window.__responseStoryTimer)return;let stage=0;try{stage=Number(localStorage.getItem(RESPONSE_STORY_KEY)||"0")}catch(e){}
@@ -2872,6 +2879,7 @@ function resumeResponseStoryForLegacyPlayers(){
  if(!started||finished||stage>=RESPONSE_STORY_LINES.length)return;
  ensureSpecialDayGroup();ensureResponseStoryTask();
  if(typeof window.setStoryComposerLocked==="function")window.setStoryComposerLocked("line",true);
+ setResponseStoryKeyboardSuppressed(true);
  if(stage<RESPONSE_STORY_LINES.length&&RESPONSE_STORY_LINES[stage].me){
   if(typeof showApp==="function")showApp("line");currentFriend="告白大作戰💗";lineTab="chats";if(typeof renderChat==="function")renderChat();
   if(typeof window.enableStoryComposer==="function")window.enableStoryComposer("line",RESPONSE_STORY_LINES[stage].text);
@@ -2885,6 +2893,7 @@ function startResponseStory(){
  ensureSpecialDayGroup();ensureResponseStoryTask();
  if(typeof showApp==="function")showApp("line");currentFriend="告白大作戰💗";lineTab="chats";if(typeof renderChat==="function")renderChat();
  if(typeof window.setStoryComposerLocked==="function")window.setStoryComposerLocked("line",true);
+ setResponseStoryKeyboardSuppressed(true);
  window.__responseStoryTimer=setTimeout(()=>{window.__responseStoryTimer=null;runResponseStory()},800);
 }
 
