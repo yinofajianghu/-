@@ -3109,7 +3109,7 @@ function renderChat(){
   window.__aoyagiStoryTime=()=>storyTimes[storyState]||"11:36";
   let storyTimer=null;
   const saveStage=n=>{storyState=n;try{localStorage.setItem(STORY_KEY,String(n))}catch(e){}};
-  const sendToya=(text,time)=>{const result=appendLineIncomingMessage(currentFriend,text,time,{render:false});if(!result.added)return false;if(result.chatOpen)addMessage(result.message);return true;};
+  const sendToya=(text,time)=>{const targetChat="青柳 冬彌";const result=appendLineIncomingMessage(targetChat,text,time,{render:false});if(!result.added)return false;if(result.chatOpen)addMessage(result.message);return true;};
   const enableAkito=stage=>{if(playerLines[stage]&&typeof window.enableStoryComposer==="function")window.enableStoryComposer("line",playerLines[stage]);const input=document.getElementById("chatInput");if(input&&stage===1){input.placeholder="點擊打字欄以對話";input.classList.add("story-first-reply-hint");}};
   const later=(fn)=>{storyTimer=setTimeout(fn,1000+Math.floor(Math.random()*9001));};
   const resumeReply=stage=>{
