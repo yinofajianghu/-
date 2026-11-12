@@ -3016,6 +3016,12 @@ const SUDDEN_TOYA_CALL_LINES=[
 function beginSuddenToyaCall(){
  let done=false,started=false;try{done=localStorage.getItem("yinofajianghu_sudden_toya_call_done_v1")==="1";started=localStorage.getItem("yinofajianghu_sudden_toya_call_started_v1")==="1"}catch(e){}
  if(done||started)return;
+ const home=document.getElementById("home"),lock=document.getElementById("lock"),passcode=document.getElementById("passcodeScreen"),controlCenter=document.getElementById("controlCenter");
+ const mainInterfaceReady=!!(home&&home.classList.contains("active")&&!(lock&&lock.classList.contains("active"))&&!(passcode&&passcode.classList.contains("active"))&&!(controlCenter&&controlCenter.classList.contains("active")));
+ if(!mainInterfaceReady){
+  if(!window.__suddenToyaCallWaitTimer)window.__suddenToyaCallWaitTimer=setTimeout(()=>{window.__suddenToyaCallWaitTimer=null;beginSuddenToyaCall()},900);
+  return;
+ }
  try{localStorage.setItem("yinofajianghu_sudden_toya_call_started_v1","1")}catch(e){}
  ensureSuddenCallStoryTask();
  if(typeof showApp==="function")showApp("line");
@@ -5018,7 +5024,11 @@ setupWallpaperPicker();initHome();updateClock();setInterval(updateClock,1000);
  function openTaskJournal(){const banner=document.querySelector('.jp-toast[data-task-notification="1"]');if(banner) dismissToast(banner);if(typeof window.showApp==='function')window.showApp('tasks');else if(typeof showApp==='function')showApp('tasks');}
  document.addEventListener('click',event=>{const banner=event.target.closest&&event.target.closest('.jp-toast[data-task-notification="1"]');if(!banner)return;event.preventDefault();event.stopPropagation();openTaskJournal();},true);
  document.addEventListener('keydown',event=>{if(event.key!=='Enter'&&event.key!==' ')return;const banner=event.target.closest&&event.target.closest('.jp-toast[data-task-notification="1"]');if(!banner)return;event.preventDefault();openTaskJournal();});
- window.addEventListener('story:task-completed',event=>window.showTaskNotification('completed',event.detail&&event.detail.task));
+ window.addEventListener('story:task-completed',event=>{
+  const task=event.detail&&event.detail.task;
+  if(task&&String(task.title||"").includes("突然的電話"))return;
+  window.showTaskNotification('completed',task);
+ });
  window.showAppNotification=function(app,sender,message,timeLabel){
    const key=String(app||'').toLowerCase(),valid={line:'LINE',instagram:'Instagram',sms:'訊息',x:'X',twitter:'X'};
    const normalized=key==='twitter'?'x':key;
