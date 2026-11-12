@@ -2882,6 +2882,7 @@ function resumeResponseStoryForLegacyPlayers(){
  setResponseStoryKeyboardSuppressed(true);
  if(stage<RESPONSE_STORY_LINES.length&&RESPONSE_STORY_LINES[stage].me){
   if(typeof showApp==="function")showApp("line");currentFriend="告白大作戰💗";lineTab="chats";if(typeof renderChat==="function")renderChat();
+  setResponseStoryKeyboardSuppressed(true);
   if(typeof window.enableStoryComposer==="function")window.enableStoryComposer("line",RESPONSE_STORY_LINES[stage].text);
  }else if(!window.__responseStoryTimer){
   window.__responseStoryTimer=setTimeout(()=>{window.__responseStoryTimer=null;runResponseStory()},1800);
