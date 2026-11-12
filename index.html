@@ -7774,6 +7774,23 @@ function renderSafariApp(){
 <style>
 .story-virtual-input{caret-color:transparent!important;cursor:pointer!important;user-select:none!important;-webkit-user-select:none!important}
 #chatInput.story-first-reply-hint::placeholder{color:#b8bbc2!important;opacity:1!important}
+
+/* Wallpaper visibility recovery: keep the background above the phone canvas
+   and below every interactive screen layer. */
+#phone{background:#182d47!important}
+#phone>.wallpaper{
+  z-index:0!important;
+  display:block!important;
+  visibility:visible!important;
+  opacity:1!important;
+  background-color:#344f71!important;
+  background-image:var(--wallpaper,linear-gradient(145deg,#8fc8e6,#6f79bd 55%,#19283f))!important;
+  background-size:cover!important;
+  background-position:center!important;
+  background-repeat:no-repeat!important;
+  pointer-events:auto;
+}
+#phone>#lock,#phone>#home,#phone>#appView{z-index:1}
 </style>
 
 
