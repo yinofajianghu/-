@@ -2853,6 +2853,36 @@ function finishCargoGroupTask(){
  activateDeliveryVisitStory();
  if(typeof window.renderTasksWidget==="function")window.renderTasksWidget();
 }
+function resumeWalkingStoryForLegacyPlayers(){
+ const DONE_KEY="yinofajianghu_legacy_walking_migrated_v1";
+ try{if(localStorage.getItem(DONE_KEY)==="1")return;}catch(e){}
+ let finished=false,stage=0,cargoId="";
+ try{
+  finished=localStorage.getItem("yinofajianghu_cargo_group_finished_v1")==="1";
+  stage=Number(localStorage.getItem(CARGO_GROUP_KEY)||"0");
+  cargoId=localStorage.getItem("yinofajianghu_cargo_group_task_v1")||"";
+ }catch(e){}
+ let items=[];try{const a=JSON.parse(localStorage.getItem("ios26-rpg-quests-v2")||"[]");if(Array.isArray(a))items=a}catch(e){}
+ let cargo=cargoId?items.find(x=>String(x.id)===cargoId):null;
+ if(!cargo)cargo=items.find(x=>x&&x.type==="main"&&x.title==="貨運");
+ if(cargo&&cargo.done)finished=true;
+ if(stage>=CARGO_GROUP_LINES.length)finished=true;
+ if(!finished)return;
+ try{
+  localStorage.setItem("yinofajianghu_cargo_group_finished_v1","1");
+  localStorage.setItem(CARGO_GROUP_KEY,String(CARGO_GROUP_LINES.length));
+ }catch(e){}
+ if(cargo&&!cargo.done){
+  try{cargo.locked=false;localStorage.setItem("ios26-rpg-quests-v2",JSON.stringify(items))}catch(e){}
+  if(typeof window.completeMainStoryTask==="function")window.completeMainStoryTask(cargo.id);
+ }
+ let arrived=false,started=false;try{arrived=localStorage.getItem("yinofajianghu_delivery_visit_arrived_v1")==="1";started=localStorage.getItem("yinofajianghu_delivery_visit_started_v1")==="1"}catch(e){}
+ if(arrived){try{localStorage.setItem(DONE_KEY,"1")}catch(e){}return;}
+ if(started){const id=ensureDeliveryVisitTask();if(id){try{localStorage.setItem(DONE_KEY,"1")}catch(e){}}return;}
+ const id=ensureDeliveryVisitTask();
+ if(id){activateDeliveryVisitStory();try{localStorage.setItem(DONE_KEY,"1")}catch(e){}}
+}
+
 function saveCargoGroupStage(stage){try{localStorage.setItem(CARGO_GROUP_KEY,String(stage))}catch(e){}}
 function runCargoGroupStory(){
  if(window.__cargoGroupTimer)return;
@@ -7885,5 +7915,11 @@ function renderSafariApp(){
 })();
 </script>
 
+
+<script>
+(()=>{const run=()=>{try{resumeWalkingStoryForLegacyPlayers()}catch(e){console.error("walking-story-migration",e)}};
+if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",run,{once:true});else setTimeout(run,0);
+})();
+</script>
 </body>
 </html>
