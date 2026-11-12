@@ -2866,6 +2866,18 @@ window.__responseStorySent=function(text){
  if(typeof window.disableStoryComposer==="function")window.disableStoryComposer("line");
  window.__responseStoryTimer=setTimeout(()=>{window.__responseStoryTimer=null;runResponseStory()},1000+Math.floor(Math.random()*4001));
 };
+function resumeResponseStoryForLegacyPlayers(){
+ let started=false,finished=false,stage=0;try{started=localStorage.getItem("yinofajianghu_response_group_started_v1")==="1";finished=localStorage.getItem("yinofajianghu_response_group_finished_v1")==="1";stage=Number(localStorage.getItem(RESPONSE_STORY_KEY)||"0")}catch(e){}
+ if(!started||finished||stage>=RESPONSE_STORY_LINES.length)return;
+ ensureSpecialDayGroup();ensureResponseStoryTask();
+ if(typeof window.setStoryComposerLocked==="function")window.setStoryComposerLocked("line",true);
+ if(stage<RESPONSE_STORY_LINES.length&&RESPONSE_STORY_LINES[stage].me){
+  if(typeof showApp==="function")showApp("line");currentFriend="告白大作戰💗";lineTab="chats";if(typeof renderChat==="function")renderChat();
+  if(typeof window.enableStoryComposer==="function")window.enableStoryComposer("line",RESPONSE_STORY_LINES[stage].text);
+ }else if(!window.__responseStoryTimer){
+  window.__responseStoryTimer=setTimeout(()=>{window.__responseStoryTimer=null;runResponseStory()},1800);
+ }
+}
 function startResponseStory(){
  let started=false;try{started=localStorage.getItem("yinofajianghu_response_group_started_v1")==="1"}catch(e){}
  if(started)return;try{localStorage.setItem("yinofajianghu_response_group_started_v1","1");localStorage.setItem(RESPONSE_STORY_KEY,"0")}catch(e){}
@@ -8114,6 +8126,7 @@ function registerStoryLegacyMigration(id,handler){if(typeof id==="string"&&typeo
 function runStoryLegacyMigrations(){STORY_LEGACY_MIGRATIONS.forEach(entry=>{try{entry.handler()}catch(e){console.error("story-migration:"+entry.id,e)}})}
 registerStoryLegacyMigration("walking-delivery-v1",resumeWalkingStoryForLegacyPlayers);
 registerStoryLegacyMigration("sudden-toya-call-v1",resumeSuddenToyaCallForLegacyPlayers);
+registerStoryLegacyMigration("response-group-v1",resumeResponseStoryForLegacyPlayers);
 (()=>{if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",runStoryLegacyMigrations,{once:true});else setTimeout(runStoryLegacyMigrations,0)})();
 </script>
 </body>
