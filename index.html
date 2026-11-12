@@ -1512,18 +1512,18 @@ html body #controlCenter .cc-native-slider output{
 </style>
 <style id="sudden-toya-call-story">
 /* 突然的電話：統一字級與顏色的歌詞式通話滾動，以及 LINE 通話紀錄 */
-.line-call-transcript.is-story{box-sizing:border-box;flex:0 1 32%;min-height:140px;max-height:38%;width:100%;justify-content:flex-end;gap:10px;overflow-y:auto;scroll-behavior:smooth;padding:14px 16px;margin:4px 0 8px;border-radius:14px}
-.line-call-transcript.is-story .line-call-caption-line{box-sizing:border-box;width:100%;min-height:0;flex:0 0 auto;display:block!important;text-align:left;line-height:1.65;white-space:normal;overflow-wrap:anywhere;animation:storyLyricRise .42s ease-out both}
-.line-call-transcript.is-story .line-call-caption-speaker,.line-call-transcript.is-story .line-call-caption-text{display:inline!important;width:auto!important;max-width:none!important;font-size:clamp(20px,5.2vw,24px)!important;line-height:1.65!important;font-weight:500!important;color:#fff!important;text-align:left!important;text-shadow:0 1px 5px #0008!important;vertical-align:baseline;white-space:normal}
-.line-call-transcript.is-story .line-call-caption-speaker{letter-spacing:0!important;margin:0!important;padding:0!important;white-space:nowrap!important;color:#b9f2d2!important;flex:none!important}
+.line-call-transcript.is-story{box-sizing:border-box;flex:0 1 25%;min-height:108px;max-height:30%;width:100%;justify-content:flex-end;gap:8px;overflow-y:auto;scroll-behavior:smooth;padding:11px 14px;margin:4px 0 8px;border-radius:14px}
+.line-call-transcript.is-story .line-call-caption-line{box-sizing:border-box;width:100%;min-height:0;flex:0 0 auto;display:block!important;text-align:left;line-height:1.6;white-space:normal;overflow-wrap:anywhere;animation:storyLyricSoftFade .38s ease-out both}
+.line-call-transcript.is-story .line-call-caption-speaker,.line-call-transcript.is-story .line-call-caption-text{display:inline!important;width:auto!important;max-width:none!important;font-size:clamp(18px,4.7vw,21px)!important;line-height:1.6!important;font-weight:500!important;color:#fff!important;text-align:left!important;text-shadow:0 1px 5px #0008!important;vertical-align:baseline;white-space:normal}
+.line-call-transcript.is-story .line-call-caption-speaker{letter-spacing:0!important;margin:0!important;padding:0!important;white-space:nowrap!important;color:#fff!important;flex:none!important}
 .line-call-transcript.is-story .line-call-caption-text{white-space:normal!important;overflow-wrap:anywhere!important}
-.line-call-transcript.is-story .story-lyric-char{display:inline;opacity:.25;animation:storyLyricGlow .55s ease-out both;animation-delay:var(--lyric-delay,0ms)}
-@keyframes storyLyricRise{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
-@keyframes storyLyricGlow{0%{opacity:.2;text-shadow:0 0 0 #fff}55%{opacity:1;text-shadow:0 0 9px #b9f2d2}100%{opacity:1;text-shadow:0 1px 5px #0008}}
+.line-call-transcript.is-story .story-lyric-char{display:inline;opacity:1;animation:none!important}
+@keyframes storyLyricSoftFade{from{opacity:0;filter:blur(3px)}to{opacity:1;filter:blur(0)}}
 .line-call-log-row{justify-content:center!important;align-items:center!important;padding:10px 0}
 .line-call-log-card{display:flex;align-items:center;gap:12px;padding:11px 16px;border-radius:14px;background:#06c75518;border:1px solid #06c75545;color:var(--text-primary,#222);min-width:190px}
 .line-call-log-icon{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:#06c755;color:#fff;font-size:20px}
 .line-call-log-card div{display:flex;flex-direction:column;gap:3px}.line-call-log-card small{font-size:11px;color:var(--text-secondary,#777)}
+.line-call-screen.is-active .line-call-control{min-width:66px}.line-call-screen.is-active .line-call-control span{width:66px;height:66px;min-width:66px;min-height:66px}.line-call-screen.is-active .line-call-control span svg{width:28px;height:28px}
 </style>
 </head>
 <body>
