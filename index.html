@@ -3183,15 +3183,15 @@ cleanupPrematureSpecialDayGroup();
 function cleanupPrematureCargoGroupFlow(){
  let specialStage=0,cargoStarted=false,cargoFinished=false;
  try{specialStage=Number(localStorage.getItem("yinofajianghu_special_day_group_story_v1")||"0");cargoStarted=localStorage.getItem("yinofajianghu_cargo_group_started_v1")==="1";cargoFinished=localStorage.getItem("yinofajianghu_cargo_group_finished_v1")==="1"}catch(e){}
- if(specialStage>=SPECIAL_DAY_GROUP_LINES.length||!cargoStarted||cargoFinished)return;
+ if(specialStage>=SPECIAL_DAY_GROUP_LINES.length||(!cargoStarted&&!cargoFinished))return;
  if(window.__cargoGroupTimer){clearTimeout(window.__cargoGroupTimer);window.__cargoGroupTimer=null;}
  const name="告白大作戰💗",list=lineChatStore[name]||[],cargoEntries=CARGO_GROUP_LINES.map(x=>({text:x.text,time:x.time}));
  lineChatStore[name]=list.filter(m=>!cargoEntries.some(x=>m&&m.text===x.text&&m.time===x.time));saveLineChats();
  try{
   localStorage.removeItem(CARGO_GROUP_KEY);localStorage.removeItem("yinofajianghu_cargo_group_started_v1");localStorage.removeItem("yinofajianghu_cargo_group_finished_v1");
-  const store="ios26-rpg-quests-v2",items=JSON.parse(localStorage.getItem(store)||"[]"),cargoId=localStorage.getItem("yinofajianghu_cargo_group_task_v1")||"";
-  if(Array.isArray(items)){const kept=items.filter(x=>!(x&&x.type==="main"&&(String(x.id)===cargoId||x.title==="貨運")));if(kept.length!==items.length)localStorage.setItem(store,JSON.stringify(kept));}
-  localStorage.removeItem("yinofajianghu_cargo_group_task_v1");
+  const store="ios26-rpg-quests-v2",items=JSON.parse(localStorage.getItem(store)||"[]"),cargoId=localStorage.getItem("yinofajianghu_cargo_group_task_v1")||"",deliveryId=localStorage.getItem("yinofajianghu_delivery_visit_task_v1")||"";
+  if(Array.isArray(items)){const kept=items.filter(x=>!(x&&x.type==="main"&&(String(x.id)===cargoId||String(x.id)===deliveryId||x.title==="貨運")));if(kept.length!==items.length)localStorage.setItem(store,JSON.stringify(kept));}
+  localStorage.removeItem("yinofajianghu_cargo_group_task_v1");localStorage.removeItem("yinofajianghu_delivery_visit_task_v1");localStorage.removeItem("yinofajianghu_delivery_visit_started_v1");localStorage.removeItem("yinofajianghu_delivery_visit_arrived_v1");
  }catch(e){}
 }
 cleanupPrematureCargoGroupFlow();
