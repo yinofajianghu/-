@@ -1506,6 +1506,8 @@ html body #controlCenter .cc-native-slider output{
 </style>
 
 <style id="quest-app-scroll-and-newest-first">
+/* 任務日誌：停用手動新增與刪除任務入口 */
+.rpg-quest-app [data-quest-add],.rpg-quest-app [data-quest-delete],.rpg-quest-app .quest-remove,.rpg-quest-app #questAddForm{display:none!important;visibility:hidden!important;pointer-events:none!important}
 /* 任務日誌獨立使用垂直捲動，避免被其他 App 的全螢幕容器規則鎖住 */
 #appView:has(.rpg-quest-app) #appContent{overflow-x:hidden!important;overflow-y:auto!important;overscroll-behavior-y:contain!important;-webkit-overflow-scrolling:touch!important;touch-action:pan-y!important}
 #appView:has(.rpg-quest-app) #appContent>.rpg-quest-app{min-height:100%;height:auto;overflow:visible!important;padding-bottom:calc(40px + var(--safe-bottom,0px))!important;box-sizing:border-box}
@@ -2404,18 +2406,18 @@ function renderTasksApp(){
   html+=active?'<section class="quest-current"><div class="quest-section-kicker">CURRENT OBJECTIVE · 目前目標</div><div class="quest-current-title">'+esc(mainStoryDisplayTitle(active))+'</div><div class="quest-current-chapter">'+esc(active.chapter)+'</div>'+(active.description?'<p>'+esc(active.description)+'</p>':'')+'<button data-quest-detail="'+esc(active.id)+'">查看任務詳情　›</button></section>':'<section class="quest-current quest-no-current"><div class="quest-section-kicker">CURRENT OBJECTIVE</div><div class="quest-current-title">'+(mains.length?'目前沒有可進行的主線':'故事尚未開始')+'</div><p>新的主線任務會隨著劇情進度自動解鎖。</p></section>';
   html+='<nav class="quest-tabs"><button data-quest-tab="main" class="'+(tab==='main'?'active':'')+'">主線 <small>'+mains.filter(x=>!x.done).length+'</small></button><button data-quest-tab="side" class="'+(tab==='side'?'active':'')+'">支線 <small>'+sides.filter(x=>!x.done).length+'</small></button><button data-quest-tab="hidden" class="'+(tab==='hidden'?'active':'')+'">隱藏 <small>✦</small></button><button data-quest-tab="archive" class="'+(tab==='archive'?'active':'')+'">紀錄</button></nav><div class="quest-list-heading"><div><span class="quest-section-kicker">'+({main:'MAIN STORY',side:'SIDE STORIES',hidden:'SECRET QUESTS',archive:'COMPLETED LOG'}[tab])+'</span><h2>'+({main:'主線任務',side:'支線任務',hidden:'隱藏任務',archive:'完成紀錄'}[tab])+'</h2></div></div>';
   if(tab==='hidden')html+='<button class="quest-reveal" data-quest-reveal>'+(revealHidden?'隱藏未揭露任務':'顯示已設定的隱藏任務')+'</button>';
-  if(showForm)html+='<form class="quest-form" id="questAddForm"><label>任務名稱<input name="title" maxlength="100" placeholder="輸入任務名稱" required></label><label>任務類型<select name="type"><option value="main" '+(tab==='main'?'selected':'')+'>主線任務</option><option value="side" '+(tab==='side'?'selected':'')+'>支線任務</option><option value="hidden" '+(tab==='hidden'?'selected':'')+'>隱藏任務</option></select></label><label>章節／分類<input name="chapter" maxlength="50" placeholder="例如：第一章・相遇"></label><label>任務描述<textarea name="description" maxlength="500" rows="3" placeholder="記下劇情內容、目標或觸發條件…"></textarea></label><label>完成獎勵<input name="reward" maxlength="100" placeholder="例如：解鎖新劇情、羈絆 +10"></label><label>期限（選填）<input type="date" name="due"></label><div class="quest-form-actions"><button type="button" data-quest-cancel>取消</button><button type="submit">建立任務</button></div></form>';
+
   if(q){html+='<section class="quest-detail"><button data-quest-close>← 返回任務列表</button><div class="quest-detail-type">'+({main:'MAIN QUEST',side:'SIDE QUEST',hidden:'HIDDEN QUEST'}[q.type])+'</div><h2>'+esc(mainStoryDisplayTitle(q))+'</h2><div class="quest-detail-chapter">'+esc(q.chapter)+'</div><p>'+esc(q.description||'尚未設定任務描述。')+'</p>'+(q.reward?'<div class="quest-reward">✧ 完成獎勵　'+esc(q.reward)+'</div>':'')+(q.due?'<div class="quest-reward">期限　'+esc(dateText(q.due))+'</div>':'')+(q.locked?'<div class="quest-locked-note">🔒 完成前置主線後即可解鎖</div>':q.done?'<div class="quest-done-note">✓ 已完成</div>':'<div class="quest-progress-note">◷ 進行中 · 依照劇情條件自動更新任務進度</div>')+'</section>'}
   else html+='<div class="quest-list">'+(shown.length?shown.map(x=>'<article class="quest-card '+(x.done?'is-done':'')+' '+(x.locked?'is-locked':'')+'"><button class="quest-card-main" data-quest-detail="'+esc(x.id)+'"><span class="quest-card-symbol">'+(x.done?'✓':x.locked?'🔒':x.type==='main'?'◆':x.type==='hidden'?'✦':'◇')+'</span><span class="quest-card-copy"><b>'+esc(mainStoryDisplayTitle(x))+'</b><small>'+esc(x.chapter)+(x.reward?'　·　獎勵 '+esc(x.reward):'')+'</small></span><span class="quest-card-arrow">›</span></button><span class="quest-state '+(!x.done&&!x.locked?'quest-state-active':'')+'">'+(x.done?'已完成':x.locked?'尚未解鎖':'進行中')+'</span></article>').join(''):'<div class="task-empty quest-empty"><span>✦</span><b>'+(tab==='main'?'尚無主線任務':tab==='side'?'尚無支線任務':tab==='hidden'?'尚無已揭露的隱藏任務':'尚無完成紀錄')+'</b><p>任務會隨著故事進度自動出現。</p></div>')+'</div>';
   html+='<div class="task-footnote">QUEST DATA SAVED LOCALLY · 冒險紀錄自動保存</div></div>';root.innerHTML=html;
   root.querySelectorAll('[data-quest-tab]').forEach(b=>b.onclick=()=>{tab=b.dataset.questTab;detailId=null;showForm=false;draw()});
-  root.querySelector('[data-quest-add]')?.addEventListener('click',()=>{showForm=true;detailId=null;draw()});
-  root.querySelector('[data-quest-cancel]')?.addEventListener('click',()=>{showForm=false;draw()});
+
+
   root.querySelector('[data-quest-reveal]')?.addEventListener('click',()=>{revealHidden=!revealHidden;draw()});
   root.querySelectorAll('[data-quest-detail]').forEach(b=>b.onclick=()=>{detailId=b.dataset.questDetail;showForm=false;draw()});
   root.querySelector('[data-quest-close]')?.addEventListener('click',()=>{detailId=null;draw()});
-  root.querySelector('#questAddForm')?.addEventListener('submit',e=>{e.preventDefault();const f=new FormData(e.currentTarget),title=String(f.get('title')||'').trim();if(!title)return;const type=String(f.get('type')||'side'),active=items.some(x=>x.type==='main'&&!x.done&&!x.locked);items.push({id:'quest-'+Date.now()+'-'+Math.random().toString(36).slice(2,7),title,type,chapter:String(f.get('chapter')||'未分類章節').trim(),description:String(f.get('description')||'').trim(),reward:String(f.get('reward')||'').trim(),due:String(f.get('due')||''),done:false,locked:type==='main'&&active,revealed:type!=='hidden',created:Date.now()});save();tab=type;showForm=false;detailId=null;draw()});
-  root.querySelectorAll('[data-quest-delete]').forEach(b=>b.onclick=()=>{items=items.filter(x=>x.id!==b.dataset.questDelete);save();detailId=null;draw()});
+
+
  }
  draw();
 }
