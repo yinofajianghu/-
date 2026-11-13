@@ -8157,21 +8157,13 @@ function renderSafariApp(){
 /* Main-story trigger and quest journal bridge. Story text is always caller-supplied. */
 (()=>{
  const STORE='ios26-rpg-quests-v2',STARTED='ios26-main-story-started-v1';
- const read=()=>{try{const a=JSON.parse(localStorage.getItem(STORE)||'[]');return Array.isArray(a)?a:[]}catch(e){return[]}};
- const write=a=>{try{localStorage.setItem(STORE,JSON.stringify(a));window.dispatchEvent(new CustomEvent('story:tasks-updated',{detail:{tasks:a}}));return true}catch(e){return false}};
- const refresh=()=>{if(typeof window.renderTasksWidget==='function')window.renderTasksWidget();if(window.__activeAppId==='tasks'&&typeof window.renderTasksApp==='function')window.renderTasksApp();};
- window.addMainStoryTask=function(data={}){
-  const title=String(data.title??'').trim();if(!title)return {ok:false,error:'title-required'};
-  const items=read(),active=items.some(x=>x.type==='main'&&!x.done&&!x.locked);
-  const task={id:'main-'+Date.now()+'-'+Math.random().toString(36).slice(2,8),title,type:'main',chapter:String(data.chapter??'').trim()||'主線',description:String(data.description??''),reward:String(data.reward??''),due:String(data.due??''),done:false,locked:active,revealed:true,created:Date.now(),trigger:String(data.trigger??'story-event')};
-  items.push(task);if(!write(items))return {ok:false,error:'storage-failed'};refresh();
-  window.dispatchEvent(new CustomEvent('story:task-created',{detail:{task}}));return {ok:true,task};
- };
- window.completeMainStoryTask=function(id){
-  const items=read(),task=items.find(x=>x.id===String(id));if(!task||task.type!=='main'||task.done||task.locked)return false;
-  task.done=true;const next=items.filter(x=>x.type==='main'&&!x.done&&x.locked).sort((a,b)=>(Number(a.created)||0)-(Number(b.created)||0))[0];if(next)next.locked=false;
-  if(!write(items))return false;refresh();window.dispatchEvent(new CustomEvent('story:task-completed',{detail:{task,next:next||null}}));return true;
- };
+ const orderMain=a=>a.filter(x=>x&&x.type==='main').sort((x,y)=>(Number(x.created)||0)-(Number(y.created)||0));
+ const reconcile=a=>{const main=orderMain(a),first=main.find(x=>!x.done);main.forEach(x=>{x.locked=!x.done&&x!==first;});return {items:a,next:first||null};};
+ const read=()=>{try{const a=JSON.parse(localStorage.getItem(STORE)||'[]');if(!Array.isArray(a))return[];const before=JSON.stringify(a);reconcile(a);if(JSON.stringify(a)!==before)localStorage.setItem(STORE,JSON.stringify(a));return a}catch(e){return[]}};
+ const write=a=>{try{reconcile(a);localStorage.setItem(STORE,JSON.stringify(a));window.dispatchEvent(new CustomEvent('story:tasks-updated',{detail:{tasks:a}}));return true}catch(e){return false}};
+ const refresh=()=>{read();if(typeof window.renderTasksWidget==='function')window.renderTasksWidget();if(window.__activeAppId==='tasks'&&typeof window.renderTasksApp==='function')window.renderTasksApp();};
+ window.addMainStoryTask=function(data={}){const title=String(data.title??'').trim();if(!title)return {ok:false,error:'title-required'};const items=read();const task={id:'main-'+Date.now()+'-'+Math.random().toString(36).slice(2,8),title,type:'main',chapter:String(data.chapter??'').trim()||'主線',description:String(data.description??''),reward:String(data.reward??''),due:String(data.due??''),done:false,locked:true,revealed:true,created:Date.now(),trigger:String(data.trigger??'story-event')};items.push(task);if(!write(items))return {ok:false,error:'storage-failed'};refresh();window.dispatchEvent(new CustomEvent('story:task-created',{detail:{task}}));return {ok:true,task};};
+ window.completeMainStoryTask=function(id){const items=read(),task=items.find(x=>x.id===String(id));if(!task||task.type!=='main'||task.done||task.locked)return false;const earlier=orderMain(items).some(x=>!x.done&&x!==task&&(Number(x.created)||0)<(Number(task.created)||0));if(earlier)return false;task.done=true;const state=reconcile(items),next=state.next;if(!write(items))return false;refresh();window.dispatchEvent(new CustomEvent('story:task-completed',{detail:{task,next:next||null}}));return true;};
  window.addEventListener('story:task-create',e=>{window.addMainStoryTask(e.detail||{});});
  window.addEventListener('story:task-complete',e=>{if(e.detail?.id)window.completeMainStoryTask(e.detail.id);});
  const start=()=>{
