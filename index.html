@@ -2350,6 +2350,7 @@ function showApp(id){
   const view=$('#appView'),content=$('#appContent');
   if(content?.__igCleanup){try{content.__igCleanup()}catch(e){}content.__igCleanup=null}
   if(content?.__safariCleanup){try{content.__safariCleanup()}catch(e){}content.__safariCleanup=null}
+  const playerOverlay=$('#fullPlayer');if(playerOverlay)playerOverlay.remove();
   if(content)content.replaceChildren();
   if(view){view.classList.remove('dark');view.classList.add('active')}
   $('#home').classList.remove('active');$('#lock').classList.remove('active');
@@ -2605,6 +2606,7 @@ function goHome(){
   if(homeScreen?.classList.contains('active')&&!currentView?.classList.contains('active'))return;
   $('#lock').classList.remove('active');
 
+  const playerOverlay=$('#fullPlayer');if(playerOverlay)playerOverlay.remove();
   const activeContent=$('#appContent');if(activeContent?.__igCleanup){try{activeContent.__igCleanup()}catch(e){}activeContent.__igCleanup=null}
   if(window.__activeAppId==="clock")stopIOSClockApp();
   window.__activeAppId=null;
